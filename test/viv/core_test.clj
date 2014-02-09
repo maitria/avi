@@ -3,9 +3,11 @@
   (:require [viv.core :as core]))
 
 (defn displays
-  [string _ [i j]]
+  [expected _ [i j]]
   (fn [viv]
-    (= string (.substring (core/screen-line viv i) j (+ j (count string))))))
+    (let [line (core/screen-line viv i)
+          actual (.substring line j (+ j (count expected)))]
+      (= expected actual))))
 
 (fact "it displays the content of loaded files"
   (let [viv (core/start [80 25] ["test/test.txt"])]
