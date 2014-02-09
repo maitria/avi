@@ -9,17 +9,21 @@
 
 (defn start
   [[lines columns] args]
-  (let [file-lines (string/split (slurp (first args)) #"\n")
-        display-lines (take (- lines 2) (concat file-lines (repeat "~")))]
+  (let [file-lines (->> (string/split (slurp (first args)) #"\n")
+                        (map #(vector :white :black %)))
+        tilde-lines (repeat [:white :black "~"]) 
+        display-lines (take (- lines 2) (concat file-lines tilde-lines))]
     {:screen (vec (concat
                     display-lines
-                    [(first args)]))}))
+                    [[:black :white (first args)]]))}))
 
 (defn- update-screen
   [viv scr]
   (let [lines (:screen viv)]
     (doseq [i (range (count lines))]
-      (s/put-string scr 0 i (get lines i))))
+      (let [[color background text] (get lines i)]
+        (s/put-string scr 0 i text {:bg background
+                                    :fg color}))))
   (s/redraw scr))
 
 (defn -main

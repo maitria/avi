@@ -3,9 +3,13 @@
   (:require [viv.core :as core]))
 
 (defn displays
-  [expected _ [i j]]
+  [expected & {[i j] :at,
+               color :color,
+               background :background,
+               :or {color :white,
+                    background :black}}]
   (fn [viv]
-    (let [line (core/screen-line viv i)
+    (let [[actual-color actual-background line] (core/screen-line viv i)
           actual (.substring line j (+ j (count expected)))]
       (= expected actual))))
 
@@ -21,4 +25,4 @@
       viv => (displays "~" :at [7 0]))
 
     (fact "it displays the filename in the status bar"
-      viv => (displays "test/test.txt" :at [8 0]))))
+      viv => (displays "test/test.txt" :at [8 0] :color :black :background :white))))
