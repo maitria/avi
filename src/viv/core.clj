@@ -11,7 +11,9 @@
   [[lines columns] args]
   (let [file-lines (string/split (slurp (first args)) #"\n")
         display-lines (take (- lines 2) (concat file-lines (repeat "~")))]
-    {:screen (vec display-lines)}))
+    {:screen (vec (concat
+                    display-lines
+                    [(first args)]))}))
 
 (defn- update-screen
   [viv scr]
