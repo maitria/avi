@@ -4,8 +4,8 @@
 
 (defn displays
   [expected & {[i j] :at,
-               expected-color :color,
-               expected-background :background,
+               expected-color :in,
+               expected-background :on,
                :or {expected-color :white,
                     expected-background :black}}]
   (fn [viv]
@@ -24,8 +24,8 @@
       viv => (displays "Three" :at [2 0]))
 
     (fact "it displays tildes after the file contents"
-      viv => (displays "~" :at [3 0] :color :blue)
-      viv => (displays "~" :at [7 0] :color :blue))
+      viv => (displays "~" :at [3 0] :in :blue)
+      viv => (displays "~" :at [7 0] :in :blue))
 
     (fact "it displays the filename in the status bar"
-      viv => (displays "test/test.txt" :at [8 0] :color :black :background :white))))
+      viv => (displays "test/test.txt" :at [8 0] :in :black :on :white))))
