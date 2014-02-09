@@ -9,7 +9,9 @@
 
 (defn start
   [[lines columns] args]
-  {:screen (vec (string/split (slurp (first args)) #"\n"))})
+  (let [file-lines (string/split (slurp (first args)) #"\n")
+        display-lines (take (- lines 2) (concat file-lines (repeat "~")))]
+    {:screen (vec display-lines)}))
 
 (defn- update-screen
   [viv scr]
@@ -22,7 +24,8 @@
   [& args]
   (let [scr (s/get-screen :unix)]
     (s/start scr)
-    (-> (start (s/get-size scr) args)
-        (update-screen scr))
+    (let [[columns lines] (s/get-size scr)]
+      (-> (start [lines columns] args)
+          (update-screen scr)))
     (s/get-key-blocking scr)
     (s/stop scr)))
