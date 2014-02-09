@@ -14,4 +14,5 @@
     viv => (displays "One" :at [0 0])
     viv => (displays "Two" :at [1 0])
     viv => (displays "Three" :at [2 0])
-    viv => (displays "~" :at [3 0])))
+    viv => (displays "~" :at [3 0])
+    viv => (displays "~" :at [7 0])))
