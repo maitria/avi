@@ -16,16 +16,16 @@
         (= expected-color actual-color)
         (= expected-background actual-background)))))
 
-(facts "about loading a file on start"
+(facts "regarding displaying of a loaded file:"
   (let [viv (core/start [10 80] ["test/test.txt"])]
-    (fact "it displays the content of loaded files"
+    (fact "Each line is displayed on a different line."
       viv => (displays "One" :at [0 0])
       viv => (displays "Two" :at [1 0])
       viv => (displays "Three" :at [2 0]))
 
-    (fact "it displays tildes after the file contents"
+    (fact "Tildes are displayed on blank lines."
       viv => (displays "~" :at [3 0] :in :blue)
       viv => (displays "~" :at [7 0] :in :blue))
 
-    (fact "it displays the filename in the status bar"
+    (fact "The filename appears in the status bar."
       viv => (displays "test/test.txt" :at [8 0] :in :black :on :white))))
