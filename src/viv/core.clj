@@ -8,6 +8,7 @@
   {:mode :normal
    :buffer-name filename
    :buffer-lines (string/split (slurp filename) #"\n")
+   :cursor [0 0]
    :lines lines
    :columns columns})
 
@@ -16,6 +17,9 @@
   (cond
     (= key :enter)
     (assoc editor :mode :finished)
+
+    (= key \j)
+    (assoc editor :cursor [1 0])
     
     :else
     editor))
@@ -29,7 +33,7 @@
               (concat
                 (take (- (:lines editor) 2) (concat buffer-lines tilde-lines))
                 [status-line])),
-     :cursor [0 0]}))
+     :cursor (:cursor editor)}))
 
 (defn- update-screen
   [editor screen]
