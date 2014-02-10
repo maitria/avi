@@ -10,24 +10,28 @@
    :buffer-lines (string/split (slurp filename) #"\n")
    :cursor [0 0]
    :lines lines
-   :columns columns})
+   :columns columns
+   :beep? false})
 
 (defn process-key
   [editor key]
-  (cond
-    (= key :enter)
-    (assoc editor :mode :finished)
+  (let [editor (assoc editor :beep? false)]
+    (cond
+      (= key :enter)
+      (assoc editor :mode :finished)
 
-    (= key \j)
-    (let [[i j] (:cursor editor)]
-      (assoc editor :cursor [(min (dec (count (:buffer-lines editor))) (inc i)) j]))
+      (= key \j)
+      (let [[i j] (:cursor editor)]
+        (assoc editor :cursor [(min (dec (count (:buffer-lines editor))) (inc i)) j]))
 
-    (= key \k)
-    (let [[i j] (:cursor editor)]
-      (assoc editor :cursor [(max 0 (dec i)) j]))
-    
-    :else
-    editor))
+      (= key \k)
+      (let [[i j] (:cursor editor)]
+        (if (= i 0)
+          (assoc editor :beep? true)
+          (assoc editor :cursor [(dec i) j])))
+
+      :else
+      editor)))
 
 (defn render
   [editor]

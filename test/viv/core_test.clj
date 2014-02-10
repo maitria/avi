@@ -28,6 +28,10 @@
   [keys]
   (:cursor (core/render (editor-after-typing keys))))
 
+(defn beeped?
+  [editor]
+  (:beep? editor))
+
 (facts "regarding displaying of a loaded file"
   (let [editor (core/start [10 80] "test/test.txt")]
     (fact "Each line is displayed on a different line."
@@ -54,7 +58,9 @@
     (cursor-after-typing "jk") => [0 0]
     (cursor-after-typing "jjjkk") => [1 0])
   (fact "k won't move above the first line."
-    (cursor-after-typing "k") => [0 0]))
+    (cursor-after-typing "k") => [0 0]
+    (editor-after-typing "k") => beeped?
+    (editor-after-typing "kj") =not=> beeped?))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
