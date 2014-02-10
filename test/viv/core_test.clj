@@ -42,13 +42,15 @@
     (fact "The filename appears in the status bar."
       editor => (displays "test/test.txt" :at [8 0] :in :black :on :white))))
 
-(facts "regarding the cursor"
+(facts "regarding cursor movement"
   (fact "The cursor starts on line 1, column 0."
     (cursor-after-typing "") => [0 0])
-  (fact "j moves it down one line."
-    (cursor-after-typing "j") => [1 0])
-  (fact "jj moves it down two lines."
-    (cursor-after-typing "jj") => [2 0]))
+  (fact "j moves the cursor down one line."
+    (cursor-after-typing "j") => [1 0]
+    (cursor-after-typing "jj") => [2 0])
+  (fact "k moves the cursor up one line."
+    (cursor-after-typing "jk") => [0 0])
+    (cursor-after-typing "jjjkk") => [1 0])
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."

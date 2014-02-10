@@ -21,6 +21,10 @@
     (= key \j)
     (let [[i j] (:cursor editor)]
       (assoc editor :cursor [(inc i) j]))
+
+    (= key \k)
+    (let [[i j] (:cursor editor)]
+      (assoc editor :cursor [(dec i) j]))
     
     :else
     editor))
