@@ -8,14 +8,14 @@
   (get (:screen editor) i))
 
 (defn start
-  [[lines columns] args]
-  (let [file-lines (->> (string/split (slurp (first args)) #"\n")
+  [[lines columns] filename]
+  (let [file-lines (->> (string/split (slurp filename) #"\n")
                         (map #(vector :white :black %)))
         tilde-lines (repeat [:blue :black "~"]) 
         display-lines (take (- lines 2) (concat file-lines tilde-lines))]
     {:screen (vec (concat
                     display-lines
-                    [[:black :white (first args)]]))}))
+                    [[:black :white filename]]))}))
 
 (defn- update-screen
   [editor screen]
@@ -27,11 +27,11 @@
   (lanterna/redraw screen))
 
 (defn -main
-  [& args]
+  [filename]
   (let [screen (lanterna/get-screen :unix)]
     (lanterna/start screen)
     (let [[columns lines] (lanterna/get-size screen)]
-      (-> (start [lines columns] args)
+      (-> (start [lines columns] filename)
           (update-screen screen)))
     (lanterna/get-key-blocking screen)
     (lanterna/stop screen)))
