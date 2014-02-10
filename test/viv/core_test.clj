@@ -36,7 +36,7 @@
       editor => (displays "Three" :at [2 0]))
 
     (fact "Tildes are displayed on blank lines."
-      editor => (displays "~" :at [3 0] :in :blue)
+      editor => (displays "~" :at [4 0] :in :blue)
       editor => (displays "~" :at [7 0] :in :blue))
 
     (fact "The filename appears in the status bar."
@@ -48,6 +48,8 @@
   (fact "j moves the cursor down one line."
     (cursor-after-typing "j") => [1 0]
     (cursor-after-typing "jj") => [2 0])
+  (fact "j won't move the cursor below the last line."
+    (cursor-after-typing "jjjj") => [3 0])
   (fact "k moves the cursor up one line."
     (cursor-after-typing "jk") => [0 0]
     (cursor-after-typing "jjjkk") => [1 0])

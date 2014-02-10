@@ -20,7 +20,7 @@
 
     (= key \j)
     (let [[i j] (:cursor editor)]
-      (assoc editor :cursor [(inc i) j]))
+      (assoc editor :cursor [(min (dec (count (:buffer-lines editor))) (inc i)) j]))
 
     (= key \k)
     (let [[i j] (:cursor editor)]
