@@ -4,8 +4,8 @@
   (:gen-class))
 
 (defn screen-line
-  [viv i]
-  (get (:screen viv) i))
+  [editor i]
+  (get (:screen editor) i))
 
 (defn start
   [[lines columns] args]
@@ -18,8 +18,8 @@
                     [[:black :white (first args)]]))}))
 
 (defn- update-screen
-  [viv scr]
-  (let [lines (:screen viv)]
+  [editor scr]
+  (let [lines (:screen editor)]
     (doseq [i (range (count lines))]
       (let [[color background text] (get lines i)]
         (screen/put-string scr 0 i text {:bg background
