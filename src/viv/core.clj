@@ -24,7 +24,7 @@
 
     (= key \k)
     (let [[i j] (:cursor editor)]
-      (assoc editor :cursor [(dec i) j]))
+      (assoc editor :cursor [(max 0 (dec i)) j]))
     
     :else
     editor))

@@ -50,7 +50,9 @@
     (cursor-after-typing "jj") => [2 0])
   (fact "k moves the cursor up one line."
     (cursor-after-typing "jk") => [0 0]
-    (cursor-after-typing "jjjkk") => [1 0]))
+    (cursor-after-typing "jjjkk") => [1 0])
+  (fact "k won't move above the first line."
+    (cursor-after-typing "k") => [0 0]))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
