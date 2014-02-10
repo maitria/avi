@@ -19,7 +19,8 @@
     (assoc editor :mode :finished)
 
     (= key \j)
-    (assoc editor :cursor [1 0])
+    (let [[i j] (:cursor editor)]
+      (assoc editor :cursor [(inc i) j]))
     
     :else
     editor))

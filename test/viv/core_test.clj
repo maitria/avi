@@ -36,7 +36,11 @@
     (:cursor (core/render (core/start [10 80] "test/test.txt"))) => [0 0])
   (fact "j moves it down one line."
     (:cursor (core/render (-> (core/start [10 80] "test/test.txt")
-                              (core/process-key \j)))) => [1 0]))
+                              (core/process-key \j)))) => [1 0])
+  (fact "jj moves it down two lines."
+    (:cursor (core/render (-> (core/start [10 80] "test/test.txt")
+                              (core/process-key \j)
+                              (core/process-key \j)))) => [2 0]))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
