@@ -22,7 +22,9 @@
 
       (= key \j)
       (let [[i j] (:cursor editor)]
-        (assoc editor :cursor [(min (dec (count (:buffer-lines editor))) (inc i)) j]))
+        (if (= i (dec (count (:buffer-lines editor))))
+          (assoc editor :beep? true)
+          (assoc editor :cursor [(inc i) j])))
 
       (= key \k)
       (let [[i j] (:cursor editor)]

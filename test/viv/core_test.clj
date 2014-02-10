@@ -53,7 +53,8 @@
     (cursor-after-typing "j") => [1 0]
     (cursor-after-typing "jj") => [2 0])
   (fact "j won't move the cursor below the last line."
-    (cursor-after-typing "jjjj") => [3 0])
+    (cursor-after-typing "jjjj") => [3 0]
+    (editor-after-typing "jjjj") => beeped?)
   (fact "k moves the cursor up one line."
     (cursor-after-typing "jk") => [0 0]
     (cursor-after-typing "jjjkk") => [1 0])
