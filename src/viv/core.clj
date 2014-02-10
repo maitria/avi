@@ -5,10 +5,20 @@
 
 (defn start
   [[lines columns] filename]
-  {:buffer-name filename
+  {:mode :normal
+   :buffer-name filename
    :buffer-lines (string/split (slurp filename) #"\n")
    :lines lines
    :columns columns})
+
+(defn process-key
+  [editor key]
+  (cond
+    (= key :enter)
+    (assoc editor :mode :finished)
+    
+    :else
+    editor))
 
 (defn render
   [editor]
@@ -32,8 +42,9 @@
   [filename]
   (let [screen (lanterna/get-screen :unix)]
     (lanterna/start screen)
-    (let [[columns lines] (lanterna/get-size screen)]
-      (-> (start [lines columns] filename)
-          (update-screen screen)))
-    (lanterna/get-key-blocking screen)
+    (loop [editor (let [[columns lines] (lanterna/get-size screen)]
+                    (start [lines columns] filename))]
+      (update-screen editor screen)
+      (if-not (= (:mode editor) :finished)
+        (recur (process-key editor (lanterna/get-key-blocking screen)))))
     (lanterna/stop screen)))

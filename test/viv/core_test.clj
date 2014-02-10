@@ -33,4 +33,9 @@
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
-    (:mode (core/start [10 80] "test/test.txt")) =not=> :finished))
+    (:mode (core/start [10 80] "test/test.txt")) =not=> :finished)
+  (fact "It exits after :q<CR>."
+    (:mode (-> (core/start [10 80] "test/test.txt")
+               (core/process-key \:)
+               (core/process-key \q)
+               (core/process-key :enter))) => :finished))
