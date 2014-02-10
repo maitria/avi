@@ -16,7 +16,7 @@
         (= expected-color actual-color)
         (= expected-background actual-background)))))
 
-(facts "regarding displaying of a loaded file:"
+(facts "regarding displaying of a loaded file"
   (let [editor (core/start [10 80] "test/test.txt")]
     (fact "Each line is displayed on a different line."
       editor => (displays "One" :at [0 0])
