@@ -3,27 +3,29 @@
             [clojure.string :as string])
   (:gen-class))
 
-(defn screen-line
-  [editor i]
-  (get (:screen editor) i))
-
 (defn start
   [[lines columns] filename]
-  (let [file-lines (->> (string/split (slurp filename) #"\n")
-                        (map #(vector :white :black %)))
-        tilde-lines (repeat [:blue :black "~"]) 
-        display-lines (take (- lines 2) (concat file-lines tilde-lines))]
-    {:screen (vec (concat
-                    display-lines
-                    [[:black :white filename]]))}))
+  {:buffer-name filename
+   :buffer-lines (string/split (slurp filename) #"\n")
+   :lines lines
+   :columns columns})
+
+(defn render
+  [editor]
+  (let [buffer-lines (map #(vector :white :black %) (:buffer-lines editor))
+        tilde-lines (repeat [:blue :black "~"])
+        status-line [:black :white (:buffer-name editor)]]
+    (vec
+      (concat
+        (take (- (:lines editor) 2) (concat buffer-lines tilde-lines))
+        [status-line]))))
 
 (defn- update-screen
   [editor screen]
-  (let [lines (:screen editor)]
-    (doseq [i (range (count lines))]
-      (let [[color background text] (get lines i)]
-        (lanterna/put-string screen 0 i text {:bg background
-                                              :fg color}))))
+  (let [screen-lines (render editor)]
+    (doseq [i (range (count screen-lines))]
+      (let [[color background text] (get screen-lines i)]
+        (lanterna/put-string screen 0 i text {:bg background, :fg color}))))
   (lanterna/redraw screen))
 
 (defn -main

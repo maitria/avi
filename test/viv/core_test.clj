@@ -9,7 +9,8 @@
                :or {expected-color :white,
                     expected-background :black}}]
   (fn [editor]
-    (let [[actual-color actual-background line] (core/screen-line editor i)
+    (let [screen-lines (core/render editor)
+          [actual-color actual-background line] (get screen-lines i)
           actual (.substring line j (+ j (count expected)))]
       (and
         (= expected actual)
