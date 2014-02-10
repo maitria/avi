@@ -25,18 +25,22 @@
   (let [buffer-lines (map #(vector :white :black %) (:buffer-lines editor))
         tilde-lines (repeat [:blue :black "~"])
         status-line [:black :white (:buffer-name editor)]]
-    (vec
-      (concat
-        (take (- (:lines editor) 2) (concat buffer-lines tilde-lines))
-        [status-line]))))
+    {:lines (vec
+              (concat
+                (take (- (:lines editor) 2) (concat buffer-lines tilde-lines))
+                [status-line])),
+     :cursor [0 0]}))
 
 (defn- update-screen
   [editor screen]
-  (let [screen-lines (render editor)]
+  (let [rendition (render editor)
+        screen-lines (:lines rendition)
+        [cursor-i cursor-j] (:cursor rendition)]
     (doseq [i (range (count screen-lines))]
       (let [[color background text] (get screen-lines i)]
-        (lanterna/put-string screen 0 i text {:bg background, :fg color}))))
-  (lanterna/redraw screen))
+        (lanterna/put-string screen 0 i text {:bg background, :fg color})))
+    (lanterna/move-cursor screen cursor-j cursor-i)
+    (lanterna/redraw screen)))
 
 (defn -main
   [filename]

@@ -9,7 +9,7 @@
                :or {expected-color :white,
                     expected-background :black}}]
   (fn [editor]
-    (let [screen-lines (core/render editor)
+    (let [screen-lines (:lines (core/render editor))
           [actual-color actual-background line] (get screen-lines i)
           actual (.substring line j (+ j (count expected)))]
       (and
@@ -30,6 +30,10 @@
 
     (fact "The filename appears in the status bar."
       editor => (displays "test/test.txt" :at [8 0] :in :black :on :white))))
+
+(facts "regarding the cursor"
+  (fact "The cursor starts on line 1, column 0."
+    (:cursor (core/render (core/start [10 80] "test/test.txt"))) => [0 0]))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
