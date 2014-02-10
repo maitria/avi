@@ -1,5 +1,5 @@
 (ns viv.core
-  (:require [lanterna.screen :as s]
+  (:require [lanterna.screen :as screen]
             [clojure.string :as string])
   (:gen-class))
 
@@ -22,16 +22,16 @@
   (let [lines (:screen viv)]
     (doseq [i (range (count lines))]
       (let [[color background text] (get lines i)]
-        (s/put-string scr 0 i text {:bg background
+        (screen/put-string scr 0 i text {:bg background
                                     :fg color}))))
-  (s/redraw scr))
+  (screen/redraw scr))
 
 (defn -main
   [& args]
-  (let [scr (s/get-screen :unix)]
-    (s/start scr)
-    (let [[columns lines] (s/get-size scr)]
+  (let [scr (screen/get-screen :unix)]
+    (screen/start scr)
+    (let [[columns lines] (screen/get-size scr)]
       (-> (start [lines columns] args)
           (update-screen scr)))
-    (s/get-key-blocking scr)
-    (s/stop scr)))
+    (screen/get-key-blocking scr)
+    (screen/stop scr)))
