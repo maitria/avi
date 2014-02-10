@@ -30,3 +30,7 @@
 
     (fact "The filename appears in the status bar."
       editor => (displays "test/test.txt" :at [8 0] :in :black :on :white))))
+
+(facts "regarding quitting"
+  (fact "It doesn't start in the 'finished' state."
+    (:mode (core/start [10 80] "test/test.txt")) =not=> :finished))
