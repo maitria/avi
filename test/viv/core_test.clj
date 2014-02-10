@@ -24,6 +24,10 @@
     (core/start [10 80] "test/test.txt")
     keys))
 
+(defn cursor-after-typing
+  [keys]
+  (:cursor (core/render (editor-after-typing keys))))
+
 (facts "regarding displaying of a loaded file"
   (let [editor (core/start [10 80] "test/test.txt")]
     (fact "Each line is displayed on a different line."
@@ -40,11 +44,11 @@
 
 (facts "regarding the cursor"
   (fact "The cursor starts on line 1, column 0."
-    (:cursor (core/render (editor-after-typing ""))) => [0 0])
+    (cursor-after-typing "") => [0 0])
   (fact "j moves it down one line."
-    (:cursor (core/render (editor-after-typing "j"))) => [1 0])
+    (cursor-after-typing "j") => [1 0])
   (fact "jj moves it down two lines."
-    (:cursor (core/render (editor-after-typing "jj"))) => [2 0]))
+    (cursor-after-typing "jj") => [2 0]))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
@@ -52,7 +56,5 @@
     (:mode (editor-after-typing ":")) =not=> :finished
     (:mode (editor-after-typing ":q")) =not=> :finished)
   (fact "It exits after :q<CR>."
-    (:mode (-> (core/start [10 80] "test/test.txt")
-               (core/process-key \:)
-               (core/process-key \q)
+    (:mode (-> (editor-after-typing ":q")
                (core/process-key :enter))) => :finished))
