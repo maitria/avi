@@ -24,7 +24,7 @@
       (case kind
         :after-typing
         (reduce
-          #(core/process-key %1 %2)
+          #(core/process %1 %2)
           editor
           value)))
     (core/start [10 80] "test/test.txt")
@@ -84,4 +84,4 @@
     (:mode (editor :after-typing ":q")) =not=> :finished)
   (fact "It exits after :q<CR>."
     (:mode (-> (editor :after-typing ":q")
-               (core/process-key :enter))) => :finished))
+               (core/process :enter))) => :finished))

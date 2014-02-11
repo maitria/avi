@@ -28,7 +28,7 @@
       (assoc-in editor [:buffer :cursor] new-position)
       (assoc editor :beep? true))))
 
-(defn process-key
+(defn process
   [editor key]
   (let [editor (assoc editor :beep? false)]
     (cond
@@ -80,5 +80,5 @@
                     (start [lines columns] filename))]
       (update-screen editor screen)
       (if-not (= (:mode editor) :finished)
-        (recur (process-key editor (lanterna/get-key-blocking screen)))))
+        (recur (process editor (lanterna/get-key-blocking screen)))))
     (lanterna/stop screen)))
