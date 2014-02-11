@@ -45,7 +45,10 @@
           (assoc-in editor [:buffer :cursor] [(inc i) j])))
 
       (= key \k)
-      (move-cursor editor [-1 0])
+      (let [[i j] (get-in editor [:buffer :cursor])]
+        (if (<= i 0)
+          (assoc editor :beep? true)
+          (assoc-in editor [:buffer :cursor] [(dec i) j])))
 
       (= key \l)
       (move-cursor editor [0 +1])

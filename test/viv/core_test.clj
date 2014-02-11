@@ -65,6 +65,8 @@
     (cursor :after-typing "k") => [0 0]
     (editor :after-typing "k") => beeped?
     (editor :after-typing "kj") =not=> beeped?)
+  (fact "`k` can move to a zero-length line."
+    (cursor :when-editing "\nOne" :after-typing "jk") => [0 0])
   (fact "`l` moves to the right one character."
     (cursor :after-typing "l") => [0 1]
     (cursor :after-typing "ll") => [0 2])
