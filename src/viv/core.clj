@@ -15,9 +15,7 @@
 
 (defn- valid-cursor-position?
   [editor [i j]]
-  (and (>= i 0)
-       (>= j 0)
-       (< i (count (get-in editor [:buffer :lines])))
+  (and (>= j 0)
        (< j (count (get-in editor [:buffer :lines i])))))
 
 (defn- move-cursor
@@ -27,6 +25,14 @@
     (if (valid-cursor-position? editor new-position)
       (assoc-in editor [:buffer :cursor] new-position)
       (assoc editor :beep? true))))
+
+(defn- change-line
+  [editor i-fn]
+  (let [[i j] (get-in editor [:buffer :cursor])]
+    (if (or (< (i-fn i) 0)
+            (>= (i-fn i) (count (get-in editor [:buffer :lines]))))
+      (assoc editor :beep? true)
+      (assoc-in editor [:buffer :cursor] [(i-fn i) j]))))
 
 (defn process
   [editor key]
@@ -39,16 +45,10 @@
       (move-cursor editor [0 -1])
 
       (= key \j)
-      (let [[i j] (get-in editor [:buffer :cursor])]
-        (if (>= (inc i) (count (get-in editor [:buffer :lines])))
-          (assoc editor :beep? true)
-          (assoc-in editor [:buffer :cursor] [(inc i) j])))
+      (change-line editor inc)
 
       (= key \k)
-      (let [[i j] (get-in editor [:buffer :cursor])]
-        (if (<= i 0)
-          (assoc editor :beep? true)
-          (assoc-in editor [:buffer :cursor] [(dec i) j])))
+      (change-line editor dec)
 
       (= key \l)
       (move-cursor editor [0 +1])
