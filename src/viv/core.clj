@@ -26,11 +26,15 @@
       (assoc-in editor [:buffer :cursor] new-position)
       (assoc editor :beep? true))))
 
+(defn- valid-line?
+  [editor i]
+  (or (< i 0)
+      (>= i (count (get-in editor [:buffer :lines])))))
+
 (defn- change-line
   [editor i-fn]
   (let [[i j] (get-in editor [:buffer :cursor])]
-    (if (or (< (i-fn i) 0)
-            (>= (i-fn i) (count (get-in editor [:buffer :lines]))))
+    (if (valid-line? editor (i-fn i))
       (assoc editor :beep? true)
       (assoc-in editor [:buffer :cursor] [(i-fn i) j]))))
 
