@@ -63,6 +63,9 @@
   (fact "l moves to the right one character."
     (cursor-after-typing "l") => [0 1]
     (cursor-after-typing "ll") => [0 2])
+  (fact "l won't move beyond the end of the line."
+    (cursor-after-typing "lll") => [0 2]
+    (editor-after-typing "lll") => beeped?)
   (fact "h moves to the left one character."
     (cursor-after-typing "llh") => [0 1])
   (fact "h won't move before the beginning of the line."

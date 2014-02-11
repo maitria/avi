@@ -17,7 +17,8 @@
   [editor [i j]]
   (and (>= i 0)
        (>= j 0)
-       (< i (count (get-in editor [:buffer :lines])))))
+       (< i (count (get-in editor [:buffer :lines])))
+       (< j (count (get-in editor [:buffer :lines i])))))
 
 (defn- move-cursor
   [editor [i-delta j-delta]]
