@@ -39,7 +39,10 @@
       (move-cursor editor [0 -1])
 
       (= key \j)
-      (move-cursor editor [+1 0])
+      (let [[i j] (get-in editor [:buffer :cursor])]
+        (if (>= (inc i) (count (get-in editor [:buffer :lines])))
+          (assoc editor :beep? true)
+          (assoc-in editor [:buffer :cursor] [(inc i) j])))
 
       (= key \k)
       (move-cursor editor [-1 0])

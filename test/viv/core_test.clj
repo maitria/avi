@@ -18,17 +18,15 @@
         (= expected-background actual-background)))))
 
 (defn editor
-  [& args]
+  [& {file-contents :when-editing,
+      keystrokes :after-typing,
+      :or {file-contents "One\nTwo\nThree\n."
+           keystrokes ""}}]
   (reduce
-    (fn [editor [kind value]]
-      (case kind
-        :after-typing
-        (reduce
-          #(core/process %1 %2)
-          editor
-          value)))
-    (core/start [10 80] "test/test.txt")
-    (partition 2 args)))
+    core/process
+    (with-redefs [slurp (constantly file-contents)]
+      (core/start [10 80] "test/test.txt"))
+    keystrokes))
 
 (defn cursor
   [& args]
@@ -55,6 +53,8 @@
   (fact "`j` moves the cursor down one line."
     (cursor :after-typing "j") => [1 0]
     (cursor :after-typing "jj") => [2 0])
+  (fact "`j` can move to a zero-length line."
+    (cursor :when-editing "One\n\nTwo" :after-typing "j") => [1 0])
   (fact "`j` won't move the cursor below the last line."
     (cursor :after-typing "jjjj") => [3 0]
     (editor :after-typing "jjjj") => beeped?)
