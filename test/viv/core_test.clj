@@ -2,7 +2,7 @@
   (:use midje.sweet)
   (:require [viv.core :as core]))
 
-(defn displays
+(defn renders
   [expected & {[i j] :at,
                expected-color :in,
                expected-background :on,
@@ -40,14 +40,14 @@
 
 (facts "regarding displaying of a loaded file"
   (fact "Each line is displayed on a different line."
-    (editor) => (displays "One" :at [0 0])
-    (editor) => (displays "Two" :at [1 0])
-    (editor) => (displays "Three" :at [2 0]))
+    (editor) => (renders "One" :at [0 0])
+    (editor) => (renders "Two" :at [1 0])
+    (editor) => (renders "Three" :at [2 0]))
   (fact "Tildes are displayed on blank lines."
-    (editor) => (displays "~" :at [4 0] :in :blue)
-    (editor) => (displays "~" :at [7 0] :in :blue))
+    (editor) => (renders "~" :at [4 0] :in :blue)
+    (editor) => (renders "~" :at [7 0] :in :blue))
   (fact "The filename appears in the status bar."
-    (editor) => (displays "test/test.txt" :at [8 0] :in :black :on :white)))
+    (editor) => (renders "test/test.txt" :at [8 0] :in :black :on :white)))
 
 (facts "regarding cursor movement"
   (fact "The cursor starts on line 1, column 0."
