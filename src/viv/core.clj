@@ -13,16 +13,16 @@
    :columns columns
    :beep? false})
 
-(defn- valid-cursor-position?
+(defn- valid-column?
   [editor [i j]]
   (and (>= j 0)
        (< j (count (get-in editor [:buffer :lines i])))))
 
-(defn- move-cursor
-  [editor [i-delta j-delta]]
+(defn- change-column
+  [editor j-fn]
   (let [[i j] (get-in editor [:buffer :cursor])
-        new-position [(+ i i-delta) (+ j j-delta)]]
-    (if (valid-cursor-position? editor new-position)
+        new-position [i (j-fn j)]]
+    (if (valid-column? editor new-position)
       (assoc-in editor [:buffer :cursor] new-position)
       (assoc editor :beep? true))))
 
@@ -42,7 +42,7 @@
       (assoc editor :mode :finished)
 
       (= key \h)
-      (move-cursor editor [0 -1])
+      (change-column editor dec)
 
       (= key \j)
       (change-line editor inc)
@@ -51,7 +51,7 @@
       (change-line editor dec)
 
       (= key \l)
-      (move-cursor editor [0 +1])
+      (change-column editor inc)
 
       :else
       (assoc editor :beep? true))))
