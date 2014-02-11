@@ -16,6 +16,7 @@
 (defn- valid-cursor-position?
   [editor [i j]]
   (and (>= i 0)
+       (>= j 0)
        (< i (count (get-in editor [:buffer :lines])))))
 
 (defn- move-cursor
@@ -33,14 +34,20 @@
       (= key :enter)
       (assoc editor :mode :finished)
 
+      (= key \h)
+      (move-cursor editor [0 -1])
+
       (= key \j)
       (move-cursor editor [+1 0])
 
       (= key \k)
       (move-cursor editor [-1 0])
 
+      (= key \l)
+      (move-cursor editor [0 +1])
+
       :else
-      editor)))
+      (assoc editor :beep? true))))
 
 (defn render
   [editor]

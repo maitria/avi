@@ -59,7 +59,15 @@
   (fact "k won't move above the first line."
     (cursor-after-typing "k") => [0 0]
     (editor-after-typing "k") => beeped?
-    (editor-after-typing "kj") =not=> beeped?))
+    (editor-after-typing "kj") =not=> beeped?)
+  (fact "l moves to the right one character."
+    (cursor-after-typing "l") => [0 1]
+    (cursor-after-typing "ll") => [0 2])
+  (fact "h moves to the left one character."
+    (cursor-after-typing "llh") => [0 1])
+  (fact "h won't move before the beginning of the line."
+    (cursor-after-typing "h") => [0 0]
+    (editor-after-typing "h") => beeped?))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
