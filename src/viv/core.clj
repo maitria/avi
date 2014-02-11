@@ -13,6 +13,16 @@
    :columns columns
    :beep? false})
 
+(defn move-cursor
+  [editor [i-delta j-delta]]
+  (let [[i j] (get-in editor [:buffer :cursor])
+        new-i (+ i i-delta)
+        new-j (+ j j-delta)]
+    (if (and (>= new-i 0)
+             (< new-i (count (get-in editor [:buffer :lines]))))
+      (assoc-in editor [:buffer :cursor] [new-i new-j])
+      (assoc editor :beep? true))))
+
 (defn process-key
   [editor key]
   (let [editor (assoc editor :beep? false)]
@@ -21,16 +31,10 @@
       (assoc editor :mode :finished)
 
       (= key \j)
-      (let [[i j] (get-in editor [:buffer :cursor])]
-        (if (= i (dec (count (get-in editor [:buffer :lines]))))
-          (assoc editor :beep? true)
-          (assoc-in editor [:buffer :cursor] [(inc i) j])))
+      (move-cursor editor [+1 0])
 
       (= key \k)
-      (let [[i j] (get-in editor [:buffer :cursor])]
-        (if (= i 0)
-          (assoc editor :beep? true)
-          (assoc-in editor [:buffer :cursor] [(dec i) j])))
+      (move-cursor editor [-1 0])
 
       :else
       editor)))
