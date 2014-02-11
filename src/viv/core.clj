@@ -6,9 +6,9 @@
 (defn start
   [[lines columns] filename]
   {:mode :normal
-   :buffer-name filename
-   :buffer-lines (string/split (slurp filename) #"\n")
-   :cursor [0 0]
+   :buffer {:name filename,
+            :lines (string/split (slurp filename) #"\n")
+            :cursor [0 0]}
    :lines lines
    :columns columns
    :beep? false})
@@ -21,30 +21,30 @@
       (assoc editor :mode :finished)
 
       (= key \j)
-      (let [[i j] (:cursor editor)]
-        (if (= i (dec (count (:buffer-lines editor))))
+      (let [[i j] (get-in editor [:buffer :cursor])]
+        (if (= i (dec (count (get-in editor [:buffer :lines]))))
           (assoc editor :beep? true)
-          (assoc editor :cursor [(inc i) j])))
+          (assoc-in editor [:buffer :cursor] [(inc i) j])))
 
       (= key \k)
-      (let [[i j] (:cursor editor)]
+      (let [[i j] (get-in editor [:buffer :cursor])]
         (if (= i 0)
           (assoc editor :beep? true)
-          (assoc editor :cursor [(dec i) j])))
+          (assoc-in editor [:buffer :cursor] [(dec i) j])))
 
       :else
       editor)))
 
 (defn render
   [editor]
-  (let [buffer-lines (map #(vector :white :black %) (:buffer-lines editor))
+  (let [buffer-lines (map #(vector :white :black %) (get-in editor [:buffer :lines]))
         tilde-lines (repeat [:blue :black "~"])
-        status-line [:black :white (:buffer-name editor)]]
+        status-line [:black :white (get-in editor [:buffer :name])]]
     {:lines (vec
               (concat
                 (take (- (:lines editor) 2) (concat buffer-lines tilde-lines))
                 [status-line])),
-     :cursor (:cursor editor)}))
+     :cursor (get-in editor [:buffer :cursor])}))
 
 (defn- update-screen
   [editor screen]

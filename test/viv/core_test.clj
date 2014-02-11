@@ -38,11 +38,9 @@
       editor => (displays "One" :at [0 0])
       editor => (displays "Two" :at [1 0])
       editor => (displays "Three" :at [2 0]))
-
     (fact "Tildes are displayed on blank lines."
       editor => (displays "~" :at [4 0] :in :blue)
       editor => (displays "~" :at [7 0] :in :blue))
-
     (fact "The filename appears in the status bar."
       editor => (displays "test/test.txt" :at [8 0] :in :black :on :white))))
 
