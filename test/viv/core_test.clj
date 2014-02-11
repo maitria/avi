@@ -52,28 +52,28 @@
 (facts "regarding cursor movement"
   (fact "The cursor starts on line 1, column 0."
     (cursor) => [0 0])
-  (fact "j moves the cursor down one line."
+  (fact "`j` moves the cursor down one line."
     (cursor :after-typing "j") => [1 0]
     (cursor :after-typing "jj") => [2 0])
-  (fact "j won't move the cursor below the last line."
+  (fact "`j` won't move the cursor below the last line."
     (cursor :after-typing "jjjj") => [3 0]
     (editor :after-typing "jjjj") => beeped?)
-  (fact "k moves the cursor up one line."
+  (fact "`k` moves the cursor up one line."
     (cursor :after-typing "jk") => [0 0]
     (cursor :after-typing "jjjkk") => [1 0])
-  (fact "k won't move above the first line."
+  (fact "`k` won't move above the first line."
     (cursor :after-typing "k") => [0 0]
     (editor :after-typing "k") => beeped?
     (editor :after-typing "kj") =not=> beeped?)
-  (fact "l moves to the right one character."
+  (fact "`l` moves to the right one character."
     (cursor :after-typing "l") => [0 1]
     (cursor :after-typing "ll") => [0 2])
-  (fact "l won't move beyond the end of the line."
+  (fact "`l` won't move beyond the end of the line."
     (cursor :after-typing "lll") => [0 2]
     (editor :after-typing "lll") => beeped?)
-  (fact "h moves to the left one character."
+  (fact "`h` moves to the left one character."
     (cursor :after-typing "llh") => [0 1])
-  (fact "h won't move before the beginning of the line."
+  (fact "`h` won't move before the beginning of the line."
     (cursor :after-typing "h") => [0 0]
     (editor :after-typing "h") => beeped?))
 
@@ -82,6 +82,6 @@
     (:mode (editor)) =not=> :finished
     (:mode (editor :after-typing ":")) =not=> :finished
     (:mode (editor :after-typing ":q")) =not=> :finished)
-  (fact "It exits after :q<CR>."
+  (fact "It exits after `:q<CR>`."
     (:mode (-> (editor :after-typing ":q")
                (core/process :enter))) => :finished))
