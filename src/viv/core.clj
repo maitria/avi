@@ -13,14 +13,17 @@
    :columns columns
    :beep? false})
 
-(defn move-cursor
+(defn- valid-cursor-position?
+  [editor [i j]]
+  (and (>= i 0)
+       (< i (count (get-in editor [:buffer :lines])))))
+
+(defn- move-cursor
   [editor [i-delta j-delta]]
   (let [[i j] (get-in editor [:buffer :cursor])
-        new-i (+ i i-delta)
-        new-j (+ j j-delta)]
-    (if (and (>= new-i 0)
-             (< new-i (count (get-in editor [:buffer :lines]))))
-      (assoc-in editor [:buffer :cursor] [new-i new-j])
+        new-position [(+ i i-delta) (+ j j-delta)]]
+    (if (valid-cursor-position? editor new-position)
+      (assoc-in editor [:buffer :cursor] new-position)
       (assoc editor :beep? true))))
 
 (defn process-key
