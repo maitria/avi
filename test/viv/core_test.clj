@@ -60,6 +60,8 @@
     (editor :after-typing "jjjj") => beeped?)
   (fact "`j` won't place the cursor after the end of the line."
     (cursor :when-editing "Hello\nOne" :after-typing "llllj") => [1 2])
+  (fact "`j` remembers the last explicitly-set column."
+    (cursor :when-editing "Hello\n.\nThere" :after-typing "lljj") => [2 2])
   (fact "`k` moves the cursor up one line."
     (cursor :after-typing "jk") => [0 0]
     (cursor :after-typing "jjjkk") => [1 0])

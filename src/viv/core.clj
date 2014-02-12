@@ -7,8 +7,9 @@
   [[lines columns] filename]
   {:mode :normal
    :buffer {:name filename,
-            :lines (string/split (slurp filename) #"\n")
-            :cursor [0 0]}
+            :lines (string/split (slurp filename) #"\n"),
+            :cursor [0 0],
+            :last-explicit-j 0}
    :lines lines
    :columns columns
    :beep? false})
@@ -21,9 +22,12 @@
 (defn- change-column
   [editor j-fn]
   (let [[i j] (get-in editor [:buffer :cursor])
-        new-position [i (j-fn j)]]
+        j (j-fn j)
+        new-position [i j]]
     (if (valid-column? editor new-position)
-      (assoc-in editor [:buffer :cursor] new-position)
+      (-> editor
+          (assoc-in [:buffer :cursor] new-position)
+          (assoc-in [:buffer :last-explicit-j] j))
       (assoc editor :beep? true))))
 
 (defn- valid-line?
@@ -33,7 +37,8 @@
 
 (defn- j-within-line
   [editor [i j]]
-  (max 0 (min (dec (count (get-in editor [:buffer :lines i]))) j)))
+  (let [j (get-in editor [:buffer :last-explicit-j])]
+    (max 0 (min (dec (count (get-in editor [:buffer :lines i]))) j))))
 
 (defn- change-line
   [editor i-fn]
