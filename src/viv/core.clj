@@ -12,6 +12,7 @@
             :last-explicit-j 0}
    :lines lines
    :columns columns
+   :count nil
    :beep? false})
 
 (defn- valid-column?
@@ -59,9 +60,14 @@
         j (max 0 (dec line-length))]
     (change-column editor (constantly j))))
 
+(defn- update-count
+  [editor digit]
+  (assoc editor :count digit))
+
 (def ^:private key-map
   {:enter #(assoc % :mode :finished)
    \0 #(change-column % (constantly 0))
+   \2 #(update-count % 2)
    \$ move-to-end-of-line
    \h #(change-column % dec),
    \j #(change-line % inc),
@@ -79,9 +85,10 @@
 
 (defn process
   [editor key]
-  (-> editor
-      (assoc :beep? false)
-      ((key-handler editor key))))
+  (let [repeat-count (or (:count editor) 1)
+        handler (key-handler editor key)
+        editor (assoc editor :beep? false)]
+    (nth (iterate handler editor) repeat-count)))
 
 (defn render
   [editor]

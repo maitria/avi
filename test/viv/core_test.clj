@@ -47,6 +47,11 @@
   (fact "The filename appears in the status bar."
     (editor) => (renders "test/test.txt" :at [8 0] :in :black :on :white)))
 
+(facts "regarding repeating commands"
+  (fact "`1` through `9` can be used as repeat counts."
+    (cursor :when-editing "0123456789x" :after-typing "1l") => [0 1]
+    (cursor :when-editing "0123456789x" :after-typing "2l") => [0 2]))
+
 (facts "regarding cursor movement"
   (fact "The cursor starts on line 1, column 0."
     (cursor) => [0 0])
