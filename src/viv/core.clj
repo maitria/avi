@@ -52,27 +52,27 @@
       (assoc editor :beep? true)
       (assoc-in editor [:buffer :cursor] [i j]))))
 
+(def ^:private key-map
+  {:enter #(assoc % :mode :finished)
+   \h #(change-column % dec),
+   \j #(change-line % inc),
+   \k #(change-line % dec),
+   \l #(change-column % inc)})
+
+(defn- beep
+  [editor]
+  (assoc editor :beep? true))
+
+(defn- key-handler
+  [editor key]
+  (or (get key-map key)
+      beep))
+
 (defn process
   [editor key]
-  (let [editor (assoc editor :beep? false)]
-    (cond
-      (= key :enter)
-      (assoc editor :mode :finished)
-
-      (= key \h)
-      (change-column editor dec)
-
-      (= key \j)
-      (change-line editor inc)
-
-      (= key \k)
-      (change-line editor dec)
-
-      (= key \l)
-      (change-column editor inc)
-
-      :else
-      (assoc editor :beep? true))))
+  (-> editor
+      (assoc :beep? false)
+      ((key-handler editor key))))
 
 (defn render
   [editor]
