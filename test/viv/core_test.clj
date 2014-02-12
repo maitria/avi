@@ -108,6 +108,9 @@
     (fact "`h` won't move before the beginning of the line."
       (cursor :after-typing "h") => [0 0]
       (editor :after-typing "h") => beeped?))
+  (facts "about `G`"
+    (fact "`G` moves to the last line."
+      (cursor :when-editing ".\n.\nThree" :after-typing "G") => [2 0]))
   (fact "`0` moves to the first character on the line."
     (cursor :after-typing "ll0") => [0 0])
   (fact "`$` moves to the last character on the line."
