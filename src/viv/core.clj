@@ -52,9 +52,17 @@
       (assoc editor :beep? true)
       (assoc-in editor [:buffer :cursor] [i j]))))
 
+(defn- move-to-end-of-line
+  [editor]
+  (let [[i j] (get-in editor [:buffer :cursor])
+        line-length (count (get-in editor [:buffer :lines i]))
+        j (max 0 (dec line-length))]
+    (change-column editor (constantly j))))
+
 (def ^:private key-map
   {:enter #(assoc % :mode :finished)
    \0 #(change-column % (constantly 0))
+   \$ move-to-end-of-line
    \h #(change-column % dec),
    \j #(change-line % inc),
    \k #(change-line % dec),
