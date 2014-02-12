@@ -74,16 +74,16 @@
 
 (def ^:private key-map
   {:enter {:handler #(assoc % :mode :finished)}
-   \0 {:handler handle-0, :keep-count? true}
-   \1 {:handler #(update-count % 1), :keep-count? true}
-   \2 {:handler #(update-count % 2), :keep-count? true}
-   \3 {:handler #(update-count % 3), :keep-count? true}
-   \4 {:handler #(update-count % 4), :keep-count? true}
-   \5 {:handler #(update-count % 5), :keep-count? true}
-   \6 {:handler #(update-count % 6), :keep-count? true}
-   \7 {:handler #(update-count % 7), :keep-count? true}
-   \8 {:handler #(update-count % 8), :keep-count? true}
-   \9 {:handler #(update-count % 9), :keep-count? true}
+   \0 {:handler handle-0, :keep-count? true, :no-repeat? true}
+   \1 {:handler #(update-count % 1), :keep-count? true, :no-repeat? true}
+   \2 {:handler #(update-count % 2), :keep-count? true, :no-repeat? true}
+   \3 {:handler #(update-count % 3), :keep-count? true, :no-repeat? true}
+   \4 {:handler #(update-count % 4), :keep-count? true, :no-repeat? true}
+   \5 {:handler #(update-count % 5), :keep-count? true, :no-repeat? true}
+   \6 {:handler #(update-count % 6), :keep-count? true, :no-repeat? true}
+   \7 {:handler #(update-count % 7), :keep-count? true, :no-repeat? true}
+   \8 {:handler #(update-count % 8), :keep-count? true, :no-repeat? true}
+   \9 {:handler #(update-count % 9), :keep-count? true, :no-repeat? true}
    \$ {:handler move-to-end-of-line}
    \h {:handler #(change-column % dec)}
    \j {:handler #(change-line % inc)}
@@ -102,12 +102,15 @@
 (defn process
   [editor key]
   (let [repeat-count (or (:count editor) 1)
-        {:keys [handler keep-count?]} (key-handler editor key)
+        {:keys [handler keep-count? no-repeat?]} (key-handler editor key)
+        handler (if no-repeat?
+                  handler
+                  #(nth (iterate handler %) repeat-count))
         editor (assoc editor :beep? false)
-        editor-without-count (if keep-count?
-                               editor
-                               (assoc editor :count nil))]
-    (nth (iterate handler editor-without-count) repeat-count)))
+        editor (if keep-count?
+                 editor
+                 (assoc editor :count nil))]
+    (handler editor)))
 
 (defn render
   [editor]

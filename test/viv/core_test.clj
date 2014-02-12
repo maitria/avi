@@ -63,7 +63,9 @@
   (fact "`0` can be used in a repeat count."
     (cursor :when-editing "0000000000111111111" :after-typing "10l") => [0 10])
   (fact "The repeat goes away after a command is executed."
-    (cursor :when-editing "0123456789x" :after-typing "4ll") => [0 5]))
+    (cursor :when-editing "0123456789x" :after-typing "4ll") => [0 5])
+  (fact "None of the digits clear the repeat count."
+    (:count (editor :after-typing "1234567890")) => 1234567890))
 
 (facts "regarding cursor movement"
   (fact "The cursor starts on line 1, column 0."
