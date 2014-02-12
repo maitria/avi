@@ -110,7 +110,9 @@
       (editor :after-typing "h") => beeped?))
   (facts "about `G`"
     (fact "`G` moves to the last line."
-      (cursor :when-editing ".\n.\nThree" :after-typing "G") => [2 0]))
+      (cursor :when-editing ".\n.\nThree" :after-typing "G") => [2 0])
+    (fact "`G` moves to the line in the count register."
+      (cursor :when-editing ".\n.\nThree" :after-typing "2G") => [1 0]))
   (fact "`0` moves to the first character on the line."
     (cursor :after-typing "ll0") => [0 0])
   (fact "`$` moves to the last character on the line."

@@ -74,8 +74,9 @@
 
 (defn handle-G
   [editor]
-  (let [last-line (dec (count (get-in editor [:buffer :lines])))]
-    (change-line editor (constantly last-line))))
+  (let [last-line (count (get-in editor [:buffer :lines]))
+        target-line (or (:count editor) last-line)]
+    (change-line editor (constantly (dec target-line)))))
 
 (def ^:private key-map
   {:enter {:handler #(assoc % :mode :finished)}
@@ -94,7 +95,7 @@
    \j {:handler #(change-line % inc)}
    \k {:handler #(change-line % dec)}
    \l {:handler #(change-column % inc)}
-   \G {:handler handle-G}})
+   \G {:handler handle-G, :no-repeat? true}})
 
 (defn- beep
   [editor]
@@ -112,10 +113,10 @@
         handler (if no-repeat?
                   handler
                   #(nth (iterate handler %) repeat-count))
-        editor (assoc editor :beep? false)
-        editor (if keep-count?
-                 editor
-                 (assoc editor :count nil))]
+        handler (if keep-count?
+                  handler
+                  #(assoc (handler %) :count nil))
+        editor (assoc editor :beep? false)]
     (handler editor)))
 
 (defn render
