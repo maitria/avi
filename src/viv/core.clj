@@ -68,6 +68,13 @@
   {:enter #(assoc % :mode :finished)
    \0 #(change-column % (constantly 0))
    \2 #(update-count % 2)
+   \3 #(update-count % 3)
+   \4 #(update-count % 4)
+   \5 #(update-count % 5)
+   \6 #(update-count % 6)
+   \7 #(update-count % 7)
+   \8 #(update-count % 8)
+   \9 #(update-count % 9)
    \$ move-to-end-of-line
    \h #(change-column % dec),
    \j #(change-line % inc),

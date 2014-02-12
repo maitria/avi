@@ -50,7 +50,14 @@
 (facts "regarding repeating commands"
   (fact "`1` through `9` can be used as repeat counts."
     (cursor :when-editing "0123456789x" :after-typing "1l") => [0 1]
-    (cursor :when-editing "0123456789x" :after-typing "2l") => [0 2]))
+    (cursor :when-editing "0123456789x" :after-typing "2l") => [0 2]
+    (cursor :when-editing "0123456789x" :after-typing "3l") => [0 3]
+    (cursor :when-editing "0123456789x" :after-typing "4l") => [0 4]
+    (cursor :when-editing "0123456789x" :after-typing "5l") => [0 5]
+    (cursor :when-editing "0123456789x" :after-typing "6l") => [0 6]
+    (cursor :when-editing "0123456789x" :after-typing "7l") => [0 7]
+    (cursor :when-editing "0123456789x" :after-typing "8l") => [0 8]
+    (cursor :when-editing "0123456789x" :after-typing "9l") => [0 9]))
 
 (facts "regarding cursor movement"
   (fact "The cursor starts on line 1, column 0."
