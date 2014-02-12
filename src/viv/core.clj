@@ -54,6 +54,7 @@
 
 (def ^:private key-map
   {:enter #(assoc % :mode :finished)
+   \0 #(change-column % (constantly 0))
    \h #(change-column % dec),
    \j #(change-line % inc),
    \k #(change-line % dec),

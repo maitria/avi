@@ -83,7 +83,9 @@
     (cursor :after-typing "llh") => [0 1])
   (fact "`h` won't move before the beginning of the line."
     (cursor :after-typing "h") => [0 0]
-    (editor :after-typing "h") => beeped?))
+    (editor :after-typing "h") => beeped?)
+  (fact "`0` moves to the first character of the line."
+    (cursor :after-typing "ll0") => [0 0]))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
