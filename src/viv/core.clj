@@ -73,22 +73,22 @@
     (change-column editor (constantly 0))))
 
 (def ^:private key-map
-  {:enter #(assoc % :mode :finished)
-   \0 handle-0
-   \1 #(update-count % 1)
-   \2 #(update-count % 2)
-   \3 #(update-count % 3)
-   \4 #(update-count % 4)
-   \5 #(update-count % 5)
-   \6 #(update-count % 6)
-   \7 #(update-count % 7)
-   \8 #(update-count % 8)
-   \9 #(update-count % 9)
-   \$ move-to-end-of-line
-   \h #(change-column % dec),
-   \j #(change-line % inc),
-   \k #(change-line % dec),
-   \l #(change-column % inc)})
+  {:enter {:handler #(assoc % :mode :finished)}
+   \0 {:handler handle-0, :keep-count? true}
+   \1 {:handler #(update-count % 1), :keep-count? true}
+   \2 {:handler #(update-count % 2), :keep-count? true}
+   \3 {:handler #(update-count % 3), :keep-count? true}
+   \4 {:handler #(update-count % 4), :keep-count? true}
+   \5 {:handler #(update-count % 5), :keep-count? true}
+   \6 {:handler #(update-count % 6), :keep-count? true}
+   \7 {:handler #(update-count % 7), :keep-count? true}
+   \8 {:handler #(update-count % 8), :keep-count? true}
+   \9 {:handler #(update-count % 9), :keep-count? true}
+   \$ {:handler move-to-end-of-line}
+   \h {:handler #(change-column % dec)}
+   \j {:handler #(change-line % inc)}
+   \k {:handler #(change-line % dec)}
+   \l {:handler #(change-column % inc)}})
 
 (defn- beep
   [editor]
@@ -97,14 +97,17 @@
 (defn- key-handler
   [editor key]
   (or (get key-map key)
-      beep))
+      {:handler beep}))
 
 (defn process
   [editor key]
   (let [repeat-count (or (:count editor) 1)
-        handler (key-handler editor key)
-        editor (assoc editor :beep? false)]
-    (nth (iterate handler editor) repeat-count)))
+        {:keys [handler keep-count?]} (key-handler editor key)
+        editor (assoc editor :beep? false)
+        editor-without-count (if keep-count?
+                               editor
+                               (assoc editor :count nil))]
+    (nth (iterate handler editor-without-count) repeat-count)))
 
 (defn render
   [editor]
