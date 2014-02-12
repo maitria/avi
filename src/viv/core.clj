@@ -62,11 +62,14 @@
 
 (defn- update-count
   [editor digit]
-  (assoc editor :count digit))
+  (let [old-count (or (:count editor) 0)
+        new-count (+ (* 10 old-count) digit)]
+    (assoc editor :count new-count)))
 
 (def ^:private key-map
   {:enter #(assoc % :mode :finished)
    \0 #(change-column % (constantly 0))
+   \1 #(update-count % 1)
    \2 #(update-count % 2)
    \3 #(update-count % 3)
    \4 #(update-count % 4)

@@ -57,7 +57,9 @@
     (cursor :when-editing "0123456789x" :after-typing "6l") => [0 6]
     (cursor :when-editing "0123456789x" :after-typing "7l") => [0 7]
     (cursor :when-editing "0123456789x" :after-typing "8l") => [0 8]
-    (cursor :when-editing "0123456789x" :after-typing "9l") => [0 9]))
+    (cursor :when-editing "0123456789x" :after-typing "9l") => [0 9])
+  (fact "multiple digits can be used as the repeat count."
+    (cursor :when-editing "00000000001111111111" :after-typing "17l") => [0 17]))
 
 (facts "regarding cursor movement"
   (fact "The cursor starts on line 1, column 0."
