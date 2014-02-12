@@ -33,10 +33,12 @@
 
 (defn- change-line
   [editor i-fn]
-  (let [[i j] (get-in editor [:buffer :cursor])]
-    (if (valid-line? editor (i-fn i))
+  (let [[i j] (get-in editor [:buffer :cursor])
+        i (i-fn i)
+        j (max 0 (min (dec (count (get-in editor [:buffer :lines i]))) j))]
+    (if (valid-line? editor i)
       (assoc editor :beep? true)
-      (assoc-in editor [:buffer :cursor] [(i-fn i) j]))))
+      (assoc-in editor [:buffer :cursor] [i j]))))
 
 (defn process
   [editor key]

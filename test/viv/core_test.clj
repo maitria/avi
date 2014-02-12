@@ -58,6 +58,8 @@
   (fact "`j` won't move the cursor below the last line."
     (cursor :after-typing "jjjj") => [3 0]
     (editor :after-typing "jjjj") => beeped?)
+  (fact "`j` won't place the cursor after the end of the line."
+    (cursor :when-editing "Hello\nOne" :after-typing "llllj") => [1 2])
   (fact "`k` moves the cursor up one line."
     (cursor :after-typing "jk") => [0 0]
     (cursor :after-typing "jjjkk") => [1 0])
