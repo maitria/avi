@@ -37,8 +37,11 @@
 
 (defn- j-within-line
   [editor [i j]]
-  (let [j (get-in editor [:buffer :last-explicit-j])]
-    (max 0 (min (dec (count (get-in editor [:buffer :lines i]))) j))))
+  (let [j (get-in editor [:buffer :last-explicit-j])
+        line-length (count (get-in editor [:buffer :lines i]))
+        j-not-after-end (min (dec line-length) j)
+        j-within-line (max 0 j-not-after-end)]
+    j-within-line))
 
 (defn- change-line
   [editor i-fn]
