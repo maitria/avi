@@ -66,9 +66,15 @@
         new-count (+ (* 10 old-count) digit)]
     (assoc editor :count new-count)))
 
+(defn- handle-0
+  [editor]
+  (if (:count editor)
+    (update-count editor 0)
+    (change-column editor (constantly 0))))
+
 (def ^:private key-map
   {:enter #(assoc % :mode :finished)
-   \0 #(change-column % (constantly 0))
+   \0 handle-0
    \1 #(update-count % 1)
    \2 #(update-count % 2)
    \3 #(update-count % 3)
