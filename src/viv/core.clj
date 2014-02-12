@@ -31,11 +31,15 @@
   (or (< i 0)
       (>= i (count (get-in editor [:buffer :lines])))))
 
+(defn- j-within-line
+  [editor [i j]]
+  (max 0 (min (dec (count (get-in editor [:buffer :lines i]))) j)))
+
 (defn- change-line
   [editor i-fn]
   (let [[i j] (get-in editor [:buffer :cursor])
         i (i-fn i)
-        j (max 0 (min (dec (count (get-in editor [:buffer :lines i]))) j))]
+        j (j-within-line editor [i j])]
     (if (valid-line? editor i)
       (assoc editor :beep? true)
       (assoc-in editor [:buffer :cursor] [i j]))))
