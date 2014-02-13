@@ -1,14 +1,22 @@
 (ns viv.normal
   (:require [viv.buffer :as buffer]))
 
+(defn current-buffer
+  [editor]
+  (:buffer editor))
+
+(defn- beep
+  [editor]
+  (assoc editor :beep? true))
+
 (defn- valid-column?
   [editor [i j]]
   (and (>= j 0)
-       (< j (count (get-in editor [:buffer :lines i])))))
+       (< j (count (buffer/line (current-buffer editor) i)))))
 
 (defn- change-column
   [editor j-fn]
-  (let [[i j] (get-in editor [:buffer :cursor])
+  (let [[i j] (buffer/cursor (current-buffer editor))
         j (j-fn j)
         new-position [i j]]
     (if (valid-column? editor new-position)
@@ -20,19 +28,20 @@
 (defn- valid-line?
   [editor i]
   (or (< i 0)
-      (>= i (count (get-in editor [:buffer :lines])))))
+      (>= i (buffer/lines (current-buffer editor)))))
 
 (defn- j-within-line
   [editor [i j]]
-  (let [j (get-in editor [:buffer :last-explicit-j])
-        line-length (count (get-in editor [:buffer :lines i]))
+  (let [b (current-buffer editor)
+        j (buffer/last-explicit-j b)
+        line-length (count (buffer/line b i))
         j-not-after-end (min (dec line-length) j)
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
 
 (defn- change-line
   [editor i-fn]
-  (let [[i j] (get-in editor [:buffer :cursor])
+  (let [[i j] (buffer/cursor (current-buffer editor))
         i (i-fn i)
         j (j-within-line editor [i j])]
     (if (valid-line? editor i)
@@ -63,10 +72,6 @@
   (let [last-line (count (get-in editor [:buffer :lines]))
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
-
-(defn- beep
-  [editor]
-  (assoc editor :beep? true))
 
 (def ^:private key-map
   {:enter {:handler #(assoc % :mode :finished)}
