@@ -119,17 +119,16 @@
 
 (defn- key-handler
   [editor key]
-  (or (get key-map key)
-      {:handler beep}))
+  (let [{:keys [handler keep-count? no-repeat?]} (or (get key-map key)
+                                                     {:handler beep})]
+    (cond-> handler
+      true              wrap-handler-with-beep-reset
+      (not no-repeat?)  wrap-handler-with-repeat-loop
+      (not keep-count?) wrap-handler-with-count-reset)))
 
 (defn process
   [editor key]
-  (let [{:keys [handler keep-count? no-repeat?]} (key-handler editor key)
-        handler (cond-> handler
-                  true              wrap-handler-with-beep-reset
-                  (not no-repeat?)  wrap-handler-with-repeat-loop
-                  (not keep-count?) wrap-handler-with-count-reset)]
-    (handler editor)))
+  ((key-handler editor key) editor))
 
 (defn render
   [editor]
