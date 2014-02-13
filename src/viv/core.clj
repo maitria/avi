@@ -101,6 +101,21 @@
   [editor]
   (assoc editor :beep? true))
 
+(defn- wrap-handler-with-beep-reset
+  [handler]
+  (fn [editor]
+    (handler (assoc editor :beep? false))))
+
+(defn- wrap-handler-with-repeat-loop
+  [handler repeat-count]
+  (fn [editor]
+    (nth (iterate handler editor) repeat-count)))
+
+(defn- wrap-handler-with-count-reset
+  [handler]
+  (fn [editor]
+    (assoc (handler editor) :count nil)))
+
 (defn- key-handler
   [editor key]
   (or (get key-map key)
@@ -110,13 +125,10 @@
   [editor key]
   (let [repeat-count (or (:count editor) 1)
         {:keys [handler keep-count? no-repeat?]} (key-handler editor key)
-        handler (if no-repeat?
-                  handler
-                  #(nth (iterate handler %) repeat-count))
-        handler (if keep-count?
-                  handler
-                  #(assoc (handler %) :count nil))
-        editor (assoc editor :beep? false)]
+        handler (cond-> handler
+                  true              wrap-handler-with-beep-reset
+                  (not no-repeat?)  (wrap-handler-with-repeat-loop repeat-count)
+                  (not keep-count?) wrap-handler-with-count-reset)]
     (handler editor)))
 
 (defn render
