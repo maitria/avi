@@ -12,9 +12,17 @@
   [buffer]
   (:cursor buffer))
 
+(defn with-cursor
+  [buffer cursor]
+  (assoc buffer :cursor cursor))
+
 (defn last-explicit-j
   [buffer]
   (:last-explicit-j buffer))
+
+(defn with-last-explicit-j
+  [buffer j]
+  (assoc buffer :last-explicit-j j))
 
 (defn line
   [buffer i]

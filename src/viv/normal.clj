@@ -5,6 +5,10 @@
   [editor]
   (:buffer editor))
 
+(defn update-current-buffer
+  [editor buffer-fn]
+  (assoc editor :buffer (buffer-fn (current-buffer editor))))
+
 (defn- beep
   [editor]
   (assoc editor :beep? true))
@@ -21,8 +25,8 @@
         new-position [i j]]
     (if (valid-column? editor new-position)
       (-> editor
-          (assoc-in [:buffer :cursor] new-position)
-          (assoc-in [:buffer :last-explicit-j] j))
+          (update-current-buffer #(buffer/with-cursor % new-position))
+          (update-current-buffer #(buffer/with-last-explicit-j % j)))
       (beep editor))))
 
 (defn- valid-line?
@@ -46,7 +50,7 @@
         j (j-within-line editor [i j])]
     (if (valid-line? editor i)
       (beep editor)
-      (assoc-in editor [:buffer :cursor] [i j]))))
+      (update-current-buffer editor #(buffer/with-cursor % [i j])))))
 
 (defn- move-to-end-of-line
   [editor]
