@@ -50,8 +50,9 @@
 
 (defn- move-to-end-of-line
   [editor]
-  (let [[i j] (get-in editor [:buffer :cursor])
-        line-length (count (get-in editor [:buffer :lines i]))
+  (let [b (current-buffer editor)
+        [i j] (buffer/cursor b)
+        line-length (count (buffer/line b i))
         j (max 0 (dec line-length))]
     (change-column editor (constantly j))))
 
@@ -69,7 +70,7 @@
 
 (defn handle-G
   [editor]
-  (let [last-line (count (get-in editor [:buffer :lines]))
+  (let [last-line (buffer/lines (current-buffer editor))
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
