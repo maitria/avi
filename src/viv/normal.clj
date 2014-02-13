@@ -1,4 +1,5 @@
-(ns viv.normal)
+(ns viv.normal
+  (:require [viv.buffer :as buffer]))
 
 (defn- valid-column?
   [editor [i j]]

@@ -1,16 +1,13 @@
 (ns viv.core
   (:require [lanterna.screen :as lanterna]
-            [clojure.string :as string]
-            [viv.normal :as normal])
+            [viv.normal :as normal]
+            [viv.buffer :as buffer])
   (:gen-class))
 
 (defn start
   [[lines columns] filename]
   {:mode :normal
-   :buffer {:name filename,
-            :lines (string/split (slurp filename) #"\n"),
-            :cursor [0 0],
-            :last-explicit-j 0}
+   :buffer (buffer/open filename)
    :lines lines
    :columns columns
    :count nil
