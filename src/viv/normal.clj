@@ -23,7 +23,7 @@
       (-> editor
           (assoc-in [:buffer :cursor] new-position)
           (assoc-in [:buffer :last-explicit-j] j))
-      (assoc editor :beep? true))))
+      (beep editor))))
 
 (defn- valid-line?
   [editor i]
@@ -45,7 +45,7 @@
         i (i-fn i)
         j (j-within-line editor [i j])]
     (if (valid-line? editor i)
-      (assoc editor :beep? true)
+      (beep editor)
       (assoc-in editor [:buffer :cursor] [i j]))))
 
 (defn- move-to-end-of-line
