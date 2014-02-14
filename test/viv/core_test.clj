@@ -132,6 +132,7 @@
                (core/process [:keystroke :enter]))) => :finished))
 
 (facts "regarding screen resizes"
-  (fact "It updates the editor width."
+  (fact "It updates the editor columns."
     (:columns (editor :after-receiving [:resize [10 50]])) => 50
-    (:lines (editor :after-receiving [:resize [30 80]])) => 30))
+  (fact "It updates the editor lines."
+    (:lines (editor :after-receiving [:resize [30 80]])) => 30)))

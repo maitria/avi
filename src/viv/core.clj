@@ -54,9 +54,15 @@
   [filename]
   (let [screen (lanterna/get-screen :text)]
     (lanterna/start screen)
-    (loop [editor (let [[columns lines] (lanterna/get-size screen)]
-                    (start [lines columns] filename))]
-      (update-screen editor screen)
-      (if-not (= (:mode editor) :finished)
-        (recur (process editor [:keystroke (lanterna/get-key-blocking screen)]))))
+    (loop [[columns lines] (lanterna/get-size screen)
+           editor (start [lines columns] filename)]
+      (let [editor (if (or (not= columns (:columns editor))
+                           (not= lines (:lines editor)))
+                     (process editor [:resize [lines columns]])
+                     editor)]
+        (update-screen editor screen)
+        (if-not (= (:mode editor) :finished)
+          (recur
+            (lanterna/get-size screen)
+            (process editor [:keystroke (lanterna/get-key-blocking screen)])))))
     (lanterna/stop screen)))
