@@ -26,7 +26,7 @@
   (let [key-events (map #(vector :keystroke %) keystrokes)
         events (concat key-events [event])
         initial-editor (with-redefs [slurp (constantly file-contents)]
-                         (core/start [10 80] "test/test.txt"))]
+                         (core/start [10 15] "test/test.txt"))]
     (reduce
       core/process
       initial-editor
@@ -51,7 +51,8 @@
   (fact "The filename appears in the status bar."
     (editor) => (renders "test/test.txt" :at [8 0] :in :black :on :white))
   (fact "The rest of each line is filled with spaces."
-    (editor) => (renders "                                                                             " :at [0 3])))
+    (editor) => (renders "           " :at [0 3])
+    (editor) => (renders "              " :at [4 1] :in :blue)))
 
 (facts "regarding repeating commands"
   (fact "`1` through `9` can be used as repeat counts."

@@ -48,7 +48,7 @@
         buffer-lines (->> (:lines (editor/current-buffer editor))
                           (map #(ensure-line-length % columns))
                           (map #(vector :white :black %)))
-        tilde-lines (repeat [:blue :black "~"])
+        tilde-lines (repeat [:blue :black (ensure-line-length "~" columns)])
         status-line [:black :white (get-in editor [:buffer :name])]]
     {:lines (vec
               (concat
