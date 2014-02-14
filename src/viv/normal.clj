@@ -1,13 +1,6 @@
 (ns viv.normal
-  (:require [viv.buffer :as buffer]))
-
-(defn current-buffer
-  [editor]
-  (:buffer editor))
-
-(defn update-current-buffer
-  [editor buffer-fn]
-  (assoc editor :buffer (buffer-fn (current-buffer editor))))
+  (:require [viv.buffer :as buffer]
+            [viv.editor :as editor]))
 
 (defn- beep
   [editor]
@@ -16,25 +9,25 @@
 (defn- valid-column?
   [editor [i j]]
   (and (>= j 0)
-       (< j (count (buffer/line (current-buffer editor) i)))))
+       (< j (count (buffer/line (editor/current-buffer editor) i)))))
 
 (defn- change-column
   [editor j-fn]
-  (let [[i j] (buffer/cursor (current-buffer editor))
+  (let [[i j] (buffer/cursor (editor/current-buffer editor))
         j (j-fn j)
         new-position [i j]]
     (if (valid-column? editor new-position)
-      (update-current-buffer editor #(buffer/with-cursor % new-position j))
+      (editor/update-current-buffer editor #(buffer/with-cursor % new-position j))
       (beep editor))))
 
 (defn- valid-line?
   [editor i]
   (or (< i 0)
-      (>= i (buffer/lines (current-buffer editor)))))
+      (>= i (buffer/lines (editor/current-buffer editor)))))
 
 (defn- j-within-line
   [editor [i j]]
-  (let [b (current-buffer editor)
+  (let [b (editor/current-buffer editor)
         j (buffer/last-explicit-j b)
         line-length (count (buffer/line b i))
         j-not-after-end (min (dec line-length) j)
@@ -43,16 +36,16 @@
 
 (defn- change-line
   [editor i-fn]
-  (let [[i j] (buffer/cursor (current-buffer editor))
+  (let [[i j] (buffer/cursor (editor/current-buffer editor))
         i (i-fn i)
         j (j-within-line editor [i j])]
     (if (valid-line? editor i)
       (beep editor)
-      (update-current-buffer editor #(buffer/with-cursor % [i j])))))
+      (editor/update-current-buffer editor #(buffer/with-cursor % [i j])))))
 
 (defn- move-to-end-of-line
   [editor]
-  (let [b (current-buffer editor)
+  (let [b (editor/current-buffer editor)
         [i j] (buffer/cursor b)
         line-length (count (buffer/line b i))
         j (max 0 (dec line-length))]
@@ -72,7 +65,7 @@
 
 (defn handle-G
   [editor]
-  (let [last-line (buffer/lines (current-buffer editor))
+  (let [last-line (buffer/lines (editor/current-buffer editor))
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
