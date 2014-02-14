@@ -26,7 +26,7 @@
     core/process
     (with-redefs [slurp (constantly file-contents)]
       (core/start [10 80] "test/test.txt"))
-    keystrokes))
+    (map #(vector :keystroke %) keystrokes)))
 
 (defn cursor
   [& args]
@@ -125,4 +125,4 @@
     (:mode (editor :after-typing ":q")) =not=> :finished)
   (fact "It exits after `:q<CR>`."
     (:mode (-> (editor :after-typing ":q")
-               (core/process :enter))) => :finished))
+               (core/process [:keystroke :enter]))) => :finished))

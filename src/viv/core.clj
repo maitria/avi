@@ -14,8 +14,8 @@
    :beep? false})
 
 (defn process
-  [editor key]
-  (normal/process editor key))
+  [editor [event-kind event-data]]
+  (normal/process editor event-data))
 
 (defn render
   [editor]
@@ -47,5 +47,5 @@
                     (start [lines columns] filename))]
       (update-screen editor screen)
       (if-not (= (:mode editor) :finished)
-        (recur (process editor (lanterna/get-key-blocking screen)))))
+        (recur (process editor [:keystroke (lanterna/get-key-blocking screen)]))))
     (lanterna/stop screen)))
