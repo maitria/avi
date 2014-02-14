@@ -29,9 +29,24 @@
     :else
     editor))
 
+(defn- ensure-line-length
+  [line length]
+  (let [line-length (count line)]
+    (cond
+      (= line-length length)
+      line
+
+      (> line-length length)
+      (.substring line 0 length)
+      
+      :else
+      (apply str line (repeat (- length line-length) \space)))))
+
 (defn render
   [editor]
-  (let [buffer-lines (->> (:lines (editor/current-buffer editor))
+  (let [columns (:columns editor)
+        buffer-lines (->> (:lines (editor/current-buffer editor))
+                          (map #(ensure-line-length % columns))
                           (map #(vector :white :black %)))
         tilde-lines (repeat [:blue :black "~"])
         status-line [:black :white (get-in editor [:buffer :name])]]

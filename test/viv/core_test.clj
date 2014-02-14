@@ -49,7 +49,9 @@
     (editor) => (renders "~" :at [4 0] :in :blue)
     (editor) => (renders "~" :at [7 0] :in :blue))
   (fact "The filename appears in the status bar."
-    (editor) => (renders "test/test.txt" :at [8 0] :in :black :on :white)))
+    (editor) => (renders "test/test.txt" :at [8 0] :in :black :on :white))
+  (fact "The rest of each line is filled with spaces."
+    (editor) => (renders "                                                                             " :at [0 3])))
 
 (facts "regarding repeating commands"
   (fact "`1` through `9` can be used as repeat counts."
