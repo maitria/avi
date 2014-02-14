@@ -20,13 +20,17 @@
 (defn editor
   [& {file-contents :when-editing,
       keystrokes :after-typing,
+      event :after-receiving
       :or {file-contents "One\nTwo\nThree\n."
            keystrokes ""}}]
-  (reduce
-    core/process
-    (with-redefs [slurp (constantly file-contents)]
-      (core/start [10 80] "test/test.txt"))
-    (map #(vector :keystroke %) keystrokes)))
+  (let [key-events (map #(vector :keystroke %) keystrokes)
+        events (concat key-events [event])
+        initial-editor (with-redefs [slurp (constantly file-contents)]
+                         (core/start [10 80] "test/test.txt"))]
+    (reduce
+      core/process
+      initial-editor
+      events)))
 
 (defn cursor
   [& args]
@@ -126,3 +130,8 @@
   (fact "It exits after `:q<CR>`."
     (:mode (-> (editor :after-typing ":q")
                (core/process [:keystroke :enter]))) => :finished))
+
+(facts "regarding screen resizes"
+  (fact "It updates the editor width."
+    (:columns (editor :after-receiving [:resize [10 50]])) => 50
+    (:lines (editor :after-receiving [:resize [30 80]])) => 30))

@@ -15,7 +15,18 @@
 
 (defn process
   [editor [event-kind event-data]]
-  (normal/process editor event-data))
+  (cond
+    (= :keystroke event-kind)
+    (normal/process editor event-data)
+
+    (= :resize event-kind)
+    (let [[lines columns] event-data]
+      (-> editor
+          (assoc :lines lines)
+          (assoc :columns columns)))
+
+    :else
+    editor))
 
 (defn render
   [editor]
