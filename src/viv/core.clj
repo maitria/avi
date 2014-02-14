@@ -41,7 +41,7 @@
 
 (defn -main
   [filename]
-  (let [screen (lanterna/get-screen :unix)]
+  (let [screen (lanterna/get-screen :text)]
     (lanterna/start screen)
     (loop [editor (let [[columns lines] (lanterna/get-size screen)]
                     (start [lines columns] filename))]
