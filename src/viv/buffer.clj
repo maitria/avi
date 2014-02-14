@@ -13,16 +13,14 @@
   (:cursor buffer))
 
 (defn with-cursor
-  [buffer cursor]
-  (assoc buffer :cursor cursor))
+  [buffer cursor & [j]]
+  (cond-> buffer
+    true (assoc :cursor cursor)
+    j    (assoc :last-explicit-j j)))
 
 (defn last-explicit-j
   [buffer]
   (:last-explicit-j buffer))
-
-(defn with-last-explicit-j
-  [buffer j]
-  (assoc buffer :last-explicit-j j))
 
 (defn line
   [buffer i]

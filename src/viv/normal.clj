@@ -24,9 +24,7 @@
         j (j-fn j)
         new-position [i j]]
     (if (valid-column? editor new-position)
-      (-> editor
-          (update-current-buffer #(buffer/with-cursor % new-position))
-          (update-current-buffer #(buffer/with-last-explicit-j % j)))
+      (update-current-buffer editor #(buffer/with-cursor % new-position j))
       (beep editor))))
 
 (defn- valid-line?
