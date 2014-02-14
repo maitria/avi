@@ -1,5 +1,6 @@
 (ns viv.core
   (:require [lanterna.screen :as lanterna]
+            [viv.editor :as editor]
             [viv.normal :as normal]
             [viv.buffer :as buffer])
   (:gen-class))
@@ -30,7 +31,8 @@
 
 (defn render
   [editor]
-  (let [buffer-lines (map #(vector :white :black %) (get-in editor [:buffer :lines]))
+  (let [buffer-lines (->> (:lines (editor/current-buffer editor))
+                          (map #(vector :white :black %)))
         tilde-lines (repeat [:blue :black "~"])
         status-line [:black :white (get-in editor [:buffer :name])]]
     {:lines (vec
