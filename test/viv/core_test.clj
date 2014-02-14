@@ -42,17 +42,16 @@
 
 (facts "regarding displaying of a loaded file"
   (fact "Each line is displayed on a different line."
-    (editor) => (renders "One" :at [0 0])
-    (editor) => (renders "Two" :at [1 0])
-    (editor) => (renders "Three" :at [2 0]))
+    (editor) => (renders "One            " :at [0 0])
+    (editor) => (renders "Two            " :at [1 0])
+    (editor) => (renders "Three          " :at [2 0]))
   (fact "Tildes are displayed on blank lines."
-    (editor) => (renders "~" :at [4 0] :in :blue)
-    (editor) => (renders "~" :at [7 0] :in :blue))
+    (editor) => (renders "~              " :at [4 0] :in :blue)
+    (editor) => (renders "~              " :at [7 0] :in :blue))
   (fact "The filename appears in the status bar."
-    (editor) => (renders "test/test.txt" :at [8 0] :in :black :on :white))
-  (fact "The rest of each line is filled with spaces."
-    (editor) => (renders "           " :at [0 3])
-    (editor) => (renders "              " :at [4 1] :in :blue)))
+    (editor) => (renders "test/test.txt  " :at [8 0] :in :black :on :white))
+  (fact "The prompt line is clear."
+    (editor) => (renders "               " :at [9 0])))
 
 (facts "regarding repeating commands"
   (fact "`1` through `9` can be used as repeat counts."

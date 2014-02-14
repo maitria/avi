@@ -49,11 +49,13 @@
                           (map #(ensure-line-length % columns))
                           (map #(vector :white :black %)))
         tilde-lines (repeat [:blue :black (ensure-line-length "~" columns)])
-        status-line [:black :white (get-in editor [:buffer :name])]]
+        status-line [:black :white (ensure-line-length (get-in editor [:buffer :name]) columns)]
+        prompt-line [:white :black (ensure-line-length "" columns)]]
     {:lines (vec
               (concat
                 (take (- (:lines editor) 2) (concat buffer-lines tilde-lines))
-                [status-line])),
+                [status-line]
+                [prompt-line])),
      :cursor (get-in editor [:buffer :cursor])}))
 
 (defn- update-screen
