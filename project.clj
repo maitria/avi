@@ -8,4 +8,6 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [clojure-lanterna "0.9.4"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
+  :aliases {"install" ^{:doc "Install viv on this machine"}
+            ["do" "uberjar" ["run" "-m" "viv.install/install"]]}
   :main viv.core)

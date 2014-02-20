@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ -z "$JAVA_CMD" ]
+then
+	JAVA_CMD=java
+fi
+
+viv_prefix="/usr/local"
+viv_classpath="$viv_prefix/share/viv/viv.jar"
+
+exec "$JAVA_CMD" -Dapple.awt.UIElement=true -jar "$viv_classpath" "$@"

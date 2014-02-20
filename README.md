@@ -2,7 +2,13 @@
 
 A vim clone designed to be pluggable, reusable, and threaded.
 
-## Usage
+## Installing
+
+```
+$ git clone https://github.com/maitria/viv.git
+$ cd viv
+$ lein install
+```
 
 ## License
 
