@@ -9,13 +9,19 @@
                :or {expected-color :white,
                     expected-background :black}}]
   (fn [editor]
-    (let [screen-lines (:lines (core/render editor))
-          [actual-color actual-background line] (get screen-lines i)
-          actual (.substring line j (+ j (count expected)))]
-      (and
-        (= expected actual)
-        (= expected-color actual-color)
-        (= expected-background actual-background)))))
+    (let [{:keys [lines columns]} editor
+          {:keys [chars attrs]} (core/render editor)
+          expected-attrs (core/make-attrs expected-color expected-background)
+          expected-chars (->> (range (count expected))
+                              (map (partial + j))
+                              (map #(vector %1 i %2) expected))]
+      (every?
+        (fn [[c i j]]
+          (let [index (+ j (* i columns))]
+            (and
+              (= (get chars index) c)
+              (= (get attrs index) expected-attrs))))
+        expected-chars))))
 
 (defn editor
   [& {file-contents :when-editing,
