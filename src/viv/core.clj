@@ -46,33 +46,42 @@
   (byte (bit-or (bit-shift-left (color-number color) 3)
                 (color-number background))))
 
+(defn- render-line
+  [editor i]
+  (let [height (:lines editor)
+        prompt-line (dec height)
+        status-line (dec prompt-line)
+        last-edit-line (dec status-line)
+        last-file-line (min last-edit-line (dec (count (:lines (editor/current-buffer editor)))))]
+    (cond
+      (= prompt-line i)
+      [:white :black ""]
+
+      (= status-line i)
+      [:black :white (:name (editor/current-buffer editor))]
+
+      (<= i last-file-line)
+      [:white :black (get (:lines (editor/current-buffer editor)) i)]
+
+      :else
+      [:blue :black "~"])))
+
 (defn render
   [editor]
   (let [lines (:lines editor)
         width (:columns editor)
         rendered-chars (char-array (* lines width) \space)
-        rendered-attrs (byte-array (* lines width) (make-attrs :white :black))
-        buffer-lines (->> (:lines (editor/current-buffer editor))
-                          (map #(vector :white :black %)))
-        tilde-lines (repeat [:blue :black "~"])
-        status-line [:black :white (get-in editor [:buffer :name])]
-        prompt-line [:white :black ""]
-        lines (vec
-                (concat
-                  (take (- (:lines editor) 2) (concat buffer-lines tilde-lines))
-                  [status-line]
-                  [prompt-line]))]
-    (doseq [i (range (count lines))
+        rendered-attrs (byte-array (* lines width) (make-attrs :white :black))]
+    (doseq [i (range lines)
             j (range width)]
       (let [index (+ j (* i width))
-            [color background text] (get lines i)
+            [color background text] (render-line editor i)
             c (or (get text j) \space)]
         (aset rendered-chars index c)
         (aset rendered-attrs index (make-attrs color background))))
     {:width width
      :chars rendered-chars
      :attrs rendered-attrs
-     :lines lines
      :cursor (get-in editor [:buffer :cursor])}))
 
 (defn- update-screen
