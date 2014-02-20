@@ -10,4 +10,5 @@
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
   :aliases {"install" ^{:doc "Install viv on this machine"}
             ["do" "uberjar" ["run" "-m" "viv.install/install"]]}
+  :java-source-paths ["java-src"]
   :main viv.core)
