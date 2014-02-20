@@ -29,19 +29,6 @@
     :else
     editor))
 
-(defn- ensure-line-length
-  [line length]
-  (let [line-length (count line)]
-    (cond
-      (= line-length length)
-      line
-
-      (> line-length length)
-      (.substring line 0 length)
-      
-      :else
-      (apply str line (repeat (- length line-length) \space)))))
-
 (defn- color-number
   [color]
   (case color
@@ -66,21 +53,20 @@
         rendered-chars (char-array (* lines width) \space)
         rendered-attrs (byte-array (* lines width) (make-attrs :white :black))
         buffer-lines (->> (:lines (editor/current-buffer editor))
-                          (map #(ensure-line-length % width))
                           (map #(vector :white :black %)))
-        tilde-lines (repeat [:blue :black (ensure-line-length "~" width)])
-        status-line [:black :white (ensure-line-length (get-in editor [:buffer :name]) width)]
-        prompt-line [:white :black (ensure-line-length "" width)]
+        tilde-lines (repeat [:blue :black "~"])
+        status-line [:black :white (get-in editor [:buffer :name])]
+        prompt-line [:white :black ""]
         lines (vec
                 (concat
                   (take (- (:lines editor) 2) (concat buffer-lines tilde-lines))
                   [status-line]
                   [prompt-line]))]
     (doseq [i (range (count lines))
-            j (range (count (last (get lines i))))]
+            j (range width)]
       (let [index (+ j (* i width))
             [color background text] (get lines i)
-            c (get text j)]
+            c (or (get text j) \space)]
         (aset rendered-chars index c)
         (aset rendered-attrs index (make-attrs color background))))
     {:width width
