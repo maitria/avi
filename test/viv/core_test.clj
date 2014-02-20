@@ -9,15 +9,14 @@
                :or {expected-color :white,
                     expected-background :black}}]
   (fn [editor]
-    (let [{:keys [lines columns]} editor
-          {:keys [chars attrs]} (core/render editor)
+    (let [{:keys [chars attrs width]} (core/render editor)
           expected-attrs (core/make-attrs expected-color expected-background)
           expected-chars (->> (range (count expected))
                               (map (partial + j))
                               (map #(vector %1 i %2) expected))]
       (every?
         (fn [[c i j]]
-          (let [index (+ j (* i columns))]
+          (let [index (+ j (* i width))]
             (and
               (= (get chars index) c)
               (= (get attrs index) expected-attrs))))

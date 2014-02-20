@@ -56,22 +56,21 @@
 
 (defn make-attrs
   [color background]
-  (byte
-    (bit-or (bit-shift-left (color-number color) 3)
-            (color-number background))))
+  (byte (bit-or (bit-shift-left (color-number color) 3)
+                (color-number background))))
 
 (defn render
   [editor]
   (let [lines (:lines editor)
-        columns (:columns editor)
-        rendered-chars (char-array (* lines columns) \space)
-        rendered-attrs (byte-array (* lines columns) (byte 0))
+        width (:columns editor)
+        rendered-chars (char-array (* lines width) \space)
+        rendered-attrs (byte-array (* lines width) (make-attrs :white :black))
         buffer-lines (->> (:lines (editor/current-buffer editor))
-                          (map #(ensure-line-length % columns))
+                          (map #(ensure-line-length % width))
                           (map #(vector :white :black %)))
-        tilde-lines (repeat [:blue :black (ensure-line-length "~" columns)])
-        status-line [:black :white (ensure-line-length (get-in editor [:buffer :name]) columns)]
-        prompt-line [:white :black (ensure-line-length "" columns)]
+        tilde-lines (repeat [:blue :black (ensure-line-length "~" width)])
+        status-line [:black :white (ensure-line-length (get-in editor [:buffer :name]) width)]
+        prompt-line [:white :black (ensure-line-length "" width)]
         lines (vec
                 (concat
                   (take (- (:lines editor) 2) (concat buffer-lines tilde-lines))
@@ -79,13 +78,12 @@
                   [prompt-line]))]
     (doseq [i (range (count lines))
             j (range (count (last (get lines i))))]
-      (let [index (+ j (* i columns))
+      (let [index (+ j (* i width))
             [color background text] (get lines i)
             c (get text j)]
         (aset rendered-chars index c)
         (aset rendered-attrs index (make-attrs color background))))
-    {
-     :columns columns
+    {:width width
      :chars rendered-chars
      :attrs rendered-attrs
      :lines lines
