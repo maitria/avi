@@ -32,15 +32,9 @@
     editor))
 
 (defn- update-screen
-  [editor screen]
-  (let [rendition (render/render editor)
-        screen-lines (:lines rendition)
-        [cursor-i cursor-j] (:cursor rendition)]
-    (doseq [i (range (count screen-lines))]
-      (let [[color background text] (get screen-lines i)]
-        (lanterna/put-string screen 0 i text {:bg background, :fg color})))
-    (lanterna/move-cursor screen cursor-j cursor-i)
-    (lanterna/redraw screen)))
+  [editor]
+  (let [{:keys [width chars]} (render/render editor)]
+    (Screen/refresh width chars)))
 
 (defn -main
   [filename]
@@ -52,7 +46,7 @@
                            (not= lines (:lines editor)))
                      (process editor [:resize [lines columns]])
                      editor)]
-        (update-screen editor screen)
+        (update-screen editor)
         (if-not (= (:mode editor) :finished)
           (recur
             (lanterna/get-size screen)
