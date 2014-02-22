@@ -3,7 +3,7 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :jvm-opts ["-Dapple.awt.UIElement=true"]
+  :jvm-opts ["-Dapple.awt.UIElement=true" "-Djava.library.path=/usr/local/lib/viv"]
   :plugins [[lein-midje "3.0.0"]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [clojure-lanterna "0.9.4"]]

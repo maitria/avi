@@ -1,4 +1,5 @@
 (ns viv.core
+  (:import [viv.terminal Screen])
   (:require [lanterna.screen :as lanterna]
             [viv.buffer :as buffer]
             [viv.editor :as editor]
@@ -43,7 +44,8 @@
 
 (defn -main
   [filename]
-  (let [screen (lanterna/get-screen :text)]
+  (let [s (Screen.)
+        screen (lanterna/get-screen :text)]
     (lanterna/start screen)
     (loop [[columns lines] (lanterna/get-size screen)
            editor (start [lines columns] filename)]
