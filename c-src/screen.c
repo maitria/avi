@@ -6,6 +6,8 @@ Java_viv_terminal_Screen_nativeStart(JNIEnv *env, jclass k)
 {
 	initscr();
 	cbreak();
+	noecho();
+	keypad(stdscr, 1);
 }
 
 JNIEXPORT void JNICALL
