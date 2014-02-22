@@ -1,6 +1,7 @@
 (ns viv.core-test
   (:use midje.sweet)
-  (:require [viv.core :as core]))
+  (:require [viv.core :as core]
+            [viv.render :as render]))
 
 (defn renders
   [expected & {[i j] :at,
@@ -9,8 +10,8 @@
                :or {expected-color :white,
                     expected-background :black}}]
   (fn [editor]
-    (let [{:keys [chars attrs width]} (core/render editor)
-          expected-attrs (core/make-attrs expected-color expected-background)
+    (let [{:keys [chars attrs width]} (render/render editor)
+          expected-attrs (render/make-attrs expected-color expected-background)
           expected-chars (->> (range (count expected))
                               (map (partial + j))
                               (map #(vector %1 i %2) expected))]
@@ -39,7 +40,7 @@
 
 (defn cursor
   [& args]
-  (:cursor (core/render (apply editor args))))
+  (:cursor (render/render (apply editor args))))
 
 (defn beeped?
   [editor]
