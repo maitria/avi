@@ -23,7 +23,7 @@ Java_viv_terminal_Screen_getch(JNIEnv *env, jclass k)
 }
 
 JNIEXPORT void JNICALL
-Java_viv_terminal_Screen_refresh(JNIEnv *env, jclass k, jint width, jcharArray charsArray)
+Java_viv_terminal_Screen_refresh(JNIEnv *env, jclass k, jint cursorI, jint cursorJ, jint width, jcharArray charsArray)
 {
 	jsize size = (*env)->GetArrayLength(env, charsArray);
 	jchar *chars = (*env)->GetCharArrayElements(env, charsArray, NULL);
@@ -32,6 +32,7 @@ Java_viv_terminal_Screen_refresh(JNIEnv *env, jclass k, jint width, jcharArray c
 		for (jint j = 0; j < width; ++j)
 			mvaddch(i, j, chars[offset+j]);
 
+	move(cursorI, cursorJ);
 	refresh();
 	(*env)->ReleaseCharArrayElements(env, charsArray, chars, 0);
 }

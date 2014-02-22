@@ -33,8 +33,10 @@
 
 (defn- update-screen
   [editor]
-  (let [{:keys [width chars]} (render/render editor)]
-    (Screen/refresh width chars)))
+  (let [{chars :chars,
+         width :width,
+         [i j] :cursor} (render/render editor)]
+    (Screen/refresh i j width chars)))
 
 (defn -main
   [filename]
