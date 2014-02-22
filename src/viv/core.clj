@@ -56,5 +56,5 @@
         (if-not (= (:mode editor) :finished)
           (recur
             (lanterna/get-size screen)
-            (process editor [:keystroke (lanterna/get-key-blocking screen)])))))
+            (process editor [:keystroke (Screen/getch)])))))
     (Screen/stop)))

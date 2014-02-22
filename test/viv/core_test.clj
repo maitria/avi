@@ -136,8 +136,7 @@
     (:mode (editor :after-typing ":")) =not=> :finished
     (:mode (editor :after-typing ":q")) =not=> :finished)
   (fact "It exits after `:q<CR>`."
-    (:mode (-> (editor :after-typing ":q")
-               (core/process [:keystroke :enter]))) => :finished))
+    (:mode (editor :after-typing ":q\r")) => :finished))
 
 (facts "regarding screen resizes"
   (fact "It updates the editor columns."

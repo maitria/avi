@@ -13,3 +13,9 @@ Java_viv_terminal_Screen_stop(JNIEnv *env, jclass k)
 {
 	endwin();
 }
+
+JNIEXPORT jchar JNICALL
+Java_viv_terminal_Screen_getch(JNIEnv *env, jclass k)
+{
+	return getch();
+}

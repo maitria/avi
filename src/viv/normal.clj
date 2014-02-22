@@ -70,7 +70,7 @@
     (change-line editor (constantly (dec target-line)))))
 
 (def ^:private key-map
-  {:enter {:handler #(assoc % :mode :finished)}
+  {\return {:handler #(assoc % :mode :finished)}
    \0 {:handler handle-0, :keep-count? true, :no-repeat? true}
    \1 {:handler #(update-count % 1), :keep-count? true, :no-repeat? true}
    \2 {:handler #(update-count % 2), :keep-count? true, :no-repeat? true}
