@@ -44,9 +44,8 @@
 
 (defn -main
   [filename]
-  (let [s (Screen.)
-        screen (lanterna/get-screen :text)]
-    (lanterna/start screen)
+  (let [screen (lanterna/get-screen :text)]
+    (Screen/start)
     (loop [[columns lines] (lanterna/get-size screen)
            editor (start [lines columns] filename)]
       (let [editor (if (or (not= columns (:columns editor))
@@ -58,4 +57,4 @@
           (recur
             (lanterna/get-size screen)
             (process editor [:keystroke (lanterna/get-key-blocking screen)])))))
-    (lanterna/stop screen)))
+    (Screen/stop)))
