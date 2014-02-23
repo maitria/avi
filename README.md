@@ -5,7 +5,6 @@ A lively vi.
 ## Vision
 
 We love vim. We want more! Test coverage. Flexibilty. Live REPLs! 
-This is a tribute to the beauty of vim, and an offering of something more.
 
 ## Guiding Principles
 
