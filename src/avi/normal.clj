@@ -81,7 +81,8 @@
 
 (defn move-to-first-non-space 
   [editor]
-  (change-column editor (constantly (first-non-space-position (current-line editor)))))
+  (let [position (first-non-space-position (current-line editor))]
+    (change-column editor (constantly position))))
 
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}
