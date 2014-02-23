@@ -69,6 +69,11 @@
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
+(defn move-to-first-non-space 
+  [editor]
+  (change-column editor (constantly 0))
+  )
+
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}
    \0 {:handler handle-0, :keep-count? true, :no-repeat? true}
@@ -81,7 +86,7 @@
    \7 {:handler #(update-count % 7), :keep-count? true, :no-repeat? true}
    \8 {:handler #(update-count % 8), :keep-count? true, :no-repeat? true}
    \9 {:handler #(update-count % 9), :keep-count? true, :no-repeat? true}
-   \^ {:handler #(change-column % (constantly 0))}
+   \^ {:handler move-to-first-non-space}
    \$ {:handler move-to-end-of-line}
    \h {:handler #(change-column % dec)}
    \j {:handler #(change-line % inc)}
