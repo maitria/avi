@@ -81,6 +81,7 @@
    \7 {:handler #(update-count % 7), :keep-count? true, :no-repeat? true}
    \8 {:handler #(update-count % 8), :keep-count? true, :no-repeat? true}
    \9 {:handler #(update-count % 9), :keep-count? true, :no-repeat? true}
+   \^ {:handler #(change-column % (constantly 0))}
    \$ {:handler move-to-end-of-line}
    \h {:handler #(change-column % dec)}
    \j {:handler #(change-line % inc)}
