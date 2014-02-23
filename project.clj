@@ -1,8 +1,8 @@
 (defproject avi "0.1.0-SNAPSHOT"
   :description "a lively vi"
   :url "http://github.com/maitria/avi"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :license {:name "avi license"
+            :url "http://github.com/maitria/avi/README.md"}
   :jvm-opts ["-Dapple.awt.UIElement=true" "-Djava.library.path=/usr/local/lib/avi"]
   :plugins [[lein-midje "3.0.0"]]
   :dependencies [[org.clojure/clojure "1.5.1"]]
