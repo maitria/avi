@@ -16,6 +16,10 @@ We love vim. We want more! Test coverage. Flexibilty. Live REPLs!
 ## Status
 
 Our intention is for the unit tests to provide friendly documention of what's been implemented so far.
+To run the unit tests with verbose output, use
+```
+$ lein midje :print-facts
+```
 
 ## Installing
 
