@@ -11,4 +11,5 @@ public class Screen {
     public static native void stop();
     public static native char getch();
     public static native void refresh(int cursorI, int cursorJ, int width, char[] chars, byte[] attrs);
+    public static native int[] size();
 }

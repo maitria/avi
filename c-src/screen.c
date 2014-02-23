@@ -71,3 +71,18 @@ Java_viv_terminal_Screen_refresh(JNIEnv *env, jclass k, jint cursorI, jint curso
 	(*env)->ReleaseCharArrayElements(env, charsArray, chars, 0);
 	(*env)->ReleaseByteArrayElements(env, attrsArray, attrs, 0);
 }
+
+JNIEXPORT jintArray JNICALL
+Java_viv_terminal_Screen_size(JNIEnv *env, jclass k)
+{
+	jintArray sizeArray;
+	jint *size;
+
+	sizeArray = (*env)->NewIntArray(env, 2);
+	size = (*env)->GetIntArrayElements(env, sizeArray, NULL);
+
+	getmaxyx(stdscr, size[0], size[1]);
+
+	(*env)->ReleaseIntArrayElements(env, sizeArray, size, 0);
+	return sizeArray;
+}

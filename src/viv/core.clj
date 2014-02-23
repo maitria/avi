@@ -39,19 +39,24 @@
          [i j] :cursor} (render/render editor)]
     (Screen/refresh i j width chars attrs)))
 
+(defn- screen-size
+  []
+  (let [size (Screen/size)]
+    [(get size 0) (get size 1)]))
+
 (defn -main
   [filename]
   (let [screen (lanterna/get-screen :text)]
     (Screen/start)
-    (loop [[columns lines] (lanterna/get-size screen)
-           editor (start [lines columns] filename)]
-      (let [editor (if (or (not= columns (:columns editor))
-                           (not= lines (:lines editor)))
-                     (process editor [:resize [lines columns]])
+    (loop [[height width] (screen-size)
+           editor (start [height width] filename)]
+      (let [editor (if (or (not= width (:columns editor))
+                           (not= height (:lines editor)))
+                     (process editor [:resize [height width]])
                      editor)]
         (update-screen editor)
         (if-not (= (:mode editor) :finished)
           (recur
-            (lanterna/get-size screen)
+            (screen-size)
             (process editor [:keystroke (Screen/getch)])))))
     (Screen/stop)))
