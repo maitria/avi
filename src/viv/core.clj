@@ -50,6 +50,8 @@
     (Screen/start)
     (loop [[height width] (screen-size)
            editor (start [height width] filename)]
+      (if (:beep? editor)
+        (Screen/beep))
       (let [editor (if (or (not= width (:columns editor))
                            (not= height (:lines editor)))
                      (process editor [:resize [height width]])

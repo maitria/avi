@@ -86,3 +86,9 @@ Java_viv_terminal_Screen_size(JNIEnv *env, jclass k)
 	(*env)->ReleaseIntArrayElements(env, sizeArray, size, 0);
 	return sizeArray;
 }
+
+JNIEXPORT void JNICALL
+Java_viv_terminal_Screen_beep(JNIEnv *env, jclass k)
+{
+	beep();
+}
