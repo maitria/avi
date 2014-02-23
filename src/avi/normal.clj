@@ -69,10 +69,19 @@
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
+(defn current-line 
+  [editor] 
+  (let [buffer (editor/current-buffer editor)
+        [row column] (buffer/cursor buffer)]
+    (buffer/line buffer row)))
+
+(defn first-non-space-position
+  [current-line]
+  (count (re-find #"^\s*" current-line)))
+
 (defn move-to-first-non-space 
   [editor]
-  (change-column editor (constantly 0))
-  )
+  (change-column editor (constantly (first-non-space-position (current-line editor)))))
 
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}

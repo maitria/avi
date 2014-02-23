@@ -131,7 +131,8 @@
     (fact "`$` moves to the last character on the line."
       (cursor :after-typing "$") => [0 2])
     (fact "`^` moves to the first non-space character"
-      (cursor :when-editing "no leading \nspaces" :after-typing "j$^") => [1 0]))
+      (cursor :when-editing "bob" :after-typing "$^") => [0 0]
+      (cursor :when-editing "  bob" :after-typing "$^") => [0 2]))
 
   (facts "about `G`"
     (fact "`G` moves to the last line."
