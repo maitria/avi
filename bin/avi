@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ -z "$JAVA_CMD" ]
+then
+	JAVA_CMD=java
+fi
+
+avi_prefix="/usr/local"
+avi_classpath="$avi_prefix/share/avi/avi.jar"
+avi_library_path="$avi_prefix/lib/avi"
+
+exec "$JAVA_CMD" -Dapple.awt.UIElement=true -Djava.library.path="$avi_library_path" -jar "$avi_classpath" "$@"

@@ -1,12 +1,12 @@
-# viv
+# avi
 
-A vim clone designed to be pluggable, reusable, and threaded.
+A lively vi.
 
 ## Installing
 
 ```
-$ git clone https://github.com/maitria/viv.git
-$ cd viv
+$ git clone https://github.com/maitria/avi.git
+$ cd avi
 $ lein install
 ```
 

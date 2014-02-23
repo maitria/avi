@@ -1,9 +1,9 @@
-package viv.terminal;
+package avi.terminal;
 
 public class Screen {
 
     public static void start() {
-        System.loadLibrary("viv_terminal_Screen");
+        System.loadLibrary("avi_terminal_Screen");
         nativeStart();
     }
 

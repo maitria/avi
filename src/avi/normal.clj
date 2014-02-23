@@ -1,6 +1,6 @@
-(ns viv.normal
-  (:require [viv.buffer :as buffer]
-            [viv.editor :as editor]))
+(ns avi.normal
+  (:require [avi.buffer :as buffer]
+            [avi.editor :as editor]))
 
 (defn- beep
   [editor]

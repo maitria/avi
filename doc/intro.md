@@ -1,3 +1,3 @@
-# Introduction to viv
+# Introduction to avi
 
 TODO: write [great documentation](http://jacobian.org/writing/great-documentation/what-to-write/)

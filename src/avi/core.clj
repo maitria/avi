@@ -1,9 +1,9 @@
-(ns viv.core
-  (:import [viv.terminal Screen])
-  (:require [viv.buffer :as buffer]
-            [viv.editor :as editor]
-            [viv.normal :as normal]
-            [viv.render :as render])
+(ns avi.core
+  (:import [avi.terminal Screen])
+  (:require [avi.buffer :as buffer]
+            [avi.editor :as editor]
+            [avi.normal :as normal]
+            [avi.render :as render])
   (:gen-class))
 
 (defn start

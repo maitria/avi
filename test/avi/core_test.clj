@@ -1,7 +1,7 @@
-(ns viv.core-test
+(ns avi.core-test
   (:use midje.sweet)
-  (:require [viv.core :as core]
-            [viv.render :as render]))
+  (:require [avi.core :as core]
+            [avi.render :as render]))
 
 (defn renders
   [expected & {[i j] :at,

@@ -15,7 +15,7 @@ static const int SCREEN_COLORS[] = {
 const int SCREEN_COLOR_COUNT = sizeof(SCREEN_COLORS)/sizeof(SCREEN_COLORS[0]);
 
 JNIEXPORT void JNICALL
-Java_viv_terminal_Screen_nativeStart(JNIEnv *env, jclass k)
+Java_avi_terminal_Screen_nativeStart(JNIEnv *env, jclass k)
 {
 	initscr();
 	start_color();
@@ -30,7 +30,7 @@ Java_viv_terminal_Screen_nativeStart(JNIEnv *env, jclass k)
 }
 
 JNIEXPORT void JNICALL
-Java_viv_terminal_Screen_stop(JNIEnv *env, jclass k)
+Java_avi_terminal_Screen_stop(JNIEnv *env, jclass k)
 {
 	endwin();
 }
@@ -41,7 +41,7 @@ static jboolean is_enter_key(jchar character)
 }
 
 JNIEXPORT jchar JNICALL
-Java_viv_terminal_Screen_getch(JNIEnv *env, jclass k)
+Java_avi_terminal_Screen_getch(JNIEnv *env, jclass k)
 {
 	jchar character = getch();
 	if (is_enter_key(character)) 
@@ -51,7 +51,7 @@ Java_viv_terminal_Screen_getch(JNIEnv *env, jclass k)
 }
 
 JNIEXPORT void JNICALL
-Java_viv_terminal_Screen_refresh(JNIEnv *env, jclass k, jint cursorI, jint cursorJ, jint width, jcharArray charsArray, jbyteArray attrsArray)
+Java_avi_terminal_Screen_refresh(JNIEnv *env, jclass k, jint cursorI, jint cursorJ, jint width, jcharArray charsArray, jbyteArray attrsArray)
 {
 	chtype ch;
 	jsize size = (*env)->GetArrayLength(env, charsArray);
@@ -73,7 +73,7 @@ Java_viv_terminal_Screen_refresh(JNIEnv *env, jclass k, jint cursorI, jint curso
 }
 
 JNIEXPORT jintArray JNICALL
-Java_viv_terminal_Screen_size(JNIEnv *env, jclass k)
+Java_avi_terminal_Screen_size(JNIEnv *env, jclass k)
 {
 	jintArray sizeArray;
 	jint *size;
@@ -88,7 +88,7 @@ Java_viv_terminal_Screen_size(JNIEnv *env, jclass k)
 }
 
 JNIEXPORT void JNICALL
-Java_viv_terminal_Screen_beep(JNIEnv *env, jclass k)
+Java_avi_terminal_Screen_beep(JNIEnv *env, jclass k)
 {
 	beep();
 }

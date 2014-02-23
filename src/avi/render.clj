@@ -1,5 +1,5 @@
-(ns viv.render
-  (:require [viv.editor :as editor]))
+(ns avi.render
+  (:require [avi.editor :as editor]))
 
 (defn- color-number
   [color]

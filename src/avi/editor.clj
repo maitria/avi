@@ -1,4 +1,4 @@
-(ns viv.editor)
+(ns avi.editor)
 
 (defn current-buffer
   [editor]

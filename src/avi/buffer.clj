@@ -1,4 +1,4 @@
-(ns viv.buffer
+(ns avi.buffer
   (:require [clojure.string :as string]))
 
 (defn open

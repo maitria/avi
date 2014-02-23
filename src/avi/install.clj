@@ -1,13 +1,13 @@
-(ns viv.install
+(ns avi.install
   (:require [clojure.java.io :as io]
             [clojure.java.shell]))
 
 (def prefix "/usr/local/")
-(def viv-bin-path (str prefix "bin/viv"))
-(def viv-jar-dir (str prefix "share/viv/"))
-(def viv-jar-path (str viv-jar-dir "viv.jar"))
-(def viv-lib-dir (str prefix "lib/viv/"))
-(def viv-Screen-path (str viv-lib-dir "libviv_terminal_Screen.dylib"))
+(def avi-bin-path (str prefix "bin/avi"))
+(def avi-jar-dir (str prefix "share/avi/"))
+(def avi-jar-path (str avi-jar-dir "avi.jar"))
+(def avi-lib-dir (str prefix "lib/avi/"))
+(def avi-Screen-path (str avi-lib-dir "libavi_terminal_Screen.dylib"))
 
 (defn sh
   [& args]
@@ -21,14 +21,14 @@
 
 (defn install
   []
-  (sh "install" "-d" viv-jar-dir)
-  (sh "install" "-m" "0755" "bin/viv" viv-bin-path)
-  (sh "install" "-m" "0644" (str "target/viv-" (version) "-standalone.jar") viv-jar-path)
-  (sh "install" "-d" viv-lib-dir)
+  (sh "install" "-d" avi-jar-dir)
+  (sh "install" "-m" "0755" "bin/avi" avi-bin-path)
+  (sh "install" "-m" "0644" (str "target/avi-" (version) "-standalone.jar") avi-jar-path)
+  (sh "install" "-d" avi-lib-dir)
   (sh "cc"
       "-dynamiclib"
       (str "-I" (System/getProperty "java.home") "/../include")
       (str "-I" (System/getProperty "java.home") "/../include/darwin")
       "-lcurses"
-      "-o" viv-Screen-path
+      "-o" avi-Screen-path
       "c-src/screen.c"))
