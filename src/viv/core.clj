@@ -1,7 +1,6 @@
 (ns viv.core
   (:import [viv.terminal Screen])
-  (:require [lanterna.screen :as lanterna]
-            [viv.buffer :as buffer]
+  (:require [viv.buffer :as buffer]
             [viv.editor :as editor]
             [viv.normal :as normal]
             [viv.render :as render])
@@ -46,19 +45,18 @@
 
 (defn -main
   [filename]
-  (let [screen (lanterna/get-screen :text)]
-    (Screen/start)
-    (loop [[height width] (screen-size)
-           editor (start [height width] filename)]
-      (if (:beep? editor)
-        (Screen/beep))
-      (let [editor (if (or (not= width (:columns editor))
-                           (not= height (:lines editor)))
-                     (process editor [:resize [height width]])
-                     editor)]
-        (update-screen editor)
-        (if-not (= (:mode editor) :finished)
-          (recur
-            (screen-size)
-            (process editor [:keystroke (Screen/getch)])))))
-    (Screen/stop)))
+  (Screen/start)
+  (loop [[height width] (screen-size)
+         editor (start [height width] filename)]
+    (if (:beep? editor)
+      (Screen/beep))
+    (let [editor (if (or (not= width (:columns editor))
+                         (not= height (:lines editor)))
+                   (process editor [:resize [height width]])
+                   editor)]
+      (update-screen editor)
+      (if-not (= (:mode editor) :finished)
+        (recur
+          (screen-size)
+          (process editor [:keystroke (Screen/getch)])))))
+  (Screen/stop))
