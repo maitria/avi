@@ -38,7 +38,11 @@ Java_viv_terminal_Screen_stop(JNIEnv *env, jclass k)
 JNIEXPORT jchar JNICALL
 Java_viv_terminal_Screen_getch(JNIEnv *env, jclass k)
 {
-	return getch();
+	jchar character = getch();
+	if (character == KEY_ENTER || character == '\n') 
+		return 13;
+
+	return character;
 }
 
 JNIEXPORT void JNICALL
