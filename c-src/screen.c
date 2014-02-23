@@ -35,12 +35,17 @@ Java_viv_terminal_Screen_stop(JNIEnv *env, jclass k)
 	endwin();
 }
 
+static jboolean is_enter_key(jchar character) 
+{
+	return character == KEY_ENTER || character == '\n';
+}
+
 JNIEXPORT jchar JNICALL
 Java_viv_terminal_Screen_getch(JNIEnv *env, jclass k)
 {
 	jchar character = getch();
-	if (character == KEY_ENTER || character == '\n') 
-		return 13;
+	if (is_enter_key(character)) 
+		character = '\r';
 
 	return character;
 }
