@@ -24,6 +24,8 @@ $ lein midje :print-facts
 
 ## Installing
 
+Works with Leiningen 2.2 and JDK 1.7
+
 ```
 $ git clone https://github.com/maitria/avi.git
 $ cd avi
