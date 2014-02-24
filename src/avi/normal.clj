@@ -8,8 +8,11 @@
 
 (defn- valid-column?
   [editor [i j]]
-  (and (>= j 0)
-       (< j (count (b/line (e/current-buffer editor) i)))))
+  (let [line-length (count (b/line (e/current-buffer editor) i))]
+    (or (and (>= j 0)
+             (< j line-length))
+        (and (zero? j)
+             (zero? line-length)))))
 
 (defn- change-column
   [editor j-fn]

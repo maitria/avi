@@ -127,7 +127,9 @@
 
   (facts "about moving to the beginning or end of line"
     (fact "`0` moves to the first character on the line."
-      (cursor :after-typing "ll0") => [0 0])
+      (cursor :after-typing "ll0") => [0 0]
+      (editor :when-editing "\n" :after-typing "0") =not=> beeped?)
+
     (fact "`$` moves to the last character on the line."
       (cursor :after-typing "$") => [0 2])
     (fact "`^` moves to the first non-space character"
