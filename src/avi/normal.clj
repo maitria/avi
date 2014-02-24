@@ -66,13 +66,13 @@
     (update-count editor 0)
     (change-column editor (constantly 0))))
 
-(defn handle-G
+(defn- handle-G
   [editor]
   (let [last-line (b/lines (e/current-buffer editor))
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
-(defn current-line 
+(defn- current-line 
   [editor] 
   (let [buffer (e/current-buffer editor)
         [row column] (b/cursor buffer)]
