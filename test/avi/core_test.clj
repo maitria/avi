@@ -42,7 +42,7 @@
   [& args]
   (:cursor (render/render (apply editor args))))
 
-(defn beeped?
+(defn beeped
   [editor]
   (:beep? editor))
 
@@ -95,7 +95,7 @@
       (cursor :when-editing "One\n\nTwo" :after-typing "j") => [1 0])
     (fact "`j` won't move the cursor below the last line."
       (cursor :after-typing "jjjj") => [3 0]
-      (editor :after-typing "jjjj") => beeped?)
+      (editor :after-typing "jjjj") => beeped)
     (fact "`j` won't place the cursor after the end of the line."
       (cursor :when-editing "Hello\nOne" :after-typing "llllj") => [1 2])
     (fact "`j` remembers the last explicitly-set column."
@@ -107,7 +107,7 @@
       (cursor :after-typing "jjjkk") => [1 0])
     (fact "`k` won't move above the first line."
       (cursor :after-typing "k") => [0 0]
-      (editor :after-typing "k") => beeped?
+      (editor :after-typing "k") => beeped
       (editor :after-typing "kj") => did-not-beep)
     (fact "`k` can move to a zero-length line."
       (cursor :when-editing "\nOne" :after-typing "jk") => [0 0])
@@ -120,14 +120,14 @@
       (cursor :after-typing "ll") => [0 2])
     (fact "`l` won't move beyond the end of the line."
       (cursor :after-typing "lll") => [0 2]
-      (editor :after-typing "lll") => beeped?))
+      (editor :after-typing "lll") => beeped))
 
   (facts "about `h`"
     (fact "`h` moves to the left one character."
       (cursor :after-typing "llh") => [0 1])
     (fact "`h` won't move before the beginning of the line."
       (cursor :after-typing "h") => [0 0]
-      (editor :after-typing "h") => beeped?))
+      (editor :after-typing "h") => beeped))
 
   (facts "about moving to the beginning or end of line"
     (fact "`0` moves to the first character on the line."
