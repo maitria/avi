@@ -6,7 +6,7 @@
   [editor]
   (assoc editor :beep? true))
 
-(defn- valid-column?
+(defn- cursor-can-move-to-column?
   [editor [i j]]
   (let [line-length (count (b/line (e/current-buffer editor) i))]
     (or (and (>= j 0)
@@ -19,7 +19,7 @@
   (let [[i j] (b/cursor (e/current-buffer editor))
         j (j-fn j)
         new-position [i j]]
-    (if (valid-column? editor new-position)
+    (if (cursor-can-move-to-column? editor new-position)
       (e/update-current-buffer editor #(b/with-cursor % new-position j))
       (beep editor))))
 
