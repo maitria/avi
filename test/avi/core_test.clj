@@ -135,7 +135,8 @@
     (fact "`^` moves to the first non-space character"
       (cursor :when-editing "bob" :after-typing "$^") => [0 0]
       (cursor :when-editing "  bob" :after-typing "$^") => [0 2]
-      (editor :when-editing ".\n\n." :after-typing "j^") =not=> beeped?))
+      (editor :when-editing ".\n\n." :after-typing "j^") =not=> beeped?
+      (cursor :when-editing "   " :after-typing "0^") => [0 2]))
 
   (facts "about `G`"
     (fact "`G` moves to the last line."

@@ -78,13 +78,18 @@
         [row column] (b/cursor buffer)]
     (b/line buffer row)))
 
-(defn first-non-space-position
-  [current-line]
-  (count (re-find #"^\s*" current-line)))
+(defn- index-of-first-non-blank
+  [line]
+  (let [leading-space-count (count (re-find #"^\s*" line))
+        all-spaces? (and (> leading-space-count 0)
+                         (= leading-space-count (count line)))]
+    (if all-spaces?
+      (dec leading-space-count)
+      leading-space-count)))
 
-(defn move-to-first-non-space 
+(defn- move-to-first-non-blank-column
   [editor]
-  (let [position (first-non-space-position (current-line editor))]
+  (let [position (index-of-first-non-blank (current-line editor))]
     (change-column editor (constantly position))))
 
 (def ^:private key-map
@@ -99,7 +104,7 @@
    \7 {:handler #(update-count % 7), :keep-count? true, :no-repeat? true}
    \8 {:handler #(update-count % 8), :keep-count? true, :no-repeat? true}
    \9 {:handler #(update-count % 9), :keep-count? true, :no-repeat? true}
-   \^ {:handler move-to-first-non-space}
+   \^ {:handler move-to-first-non-blank-column}
    \$ {:handler move-to-end-of-line}
    \h {:handler #(change-column % dec)}
    \j {:handler #(change-line % inc)}
