@@ -1,7 +1,6 @@
 (ns avi.core
   (:import [avi.terminal Screen])
-  (:require [avi.buffer :as buffer]
-            [avi.editor :as editor]
+  (:require [avi.buffer :as b]
             [avi.normal :as normal]
             [avi.render :as render])
   (:gen-class))
@@ -9,7 +8,7 @@
 (defn start
   [[lines columns] filename]
   {:mode :normal
-   :buffer (buffer/open filename)
+   :buffer (b/open filename)
    :lines lines
    :columns columns
    :count nil
