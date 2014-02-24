@@ -46,6 +46,10 @@
   [editor]
   (:beep? editor))
 
+(defn did-not-beep
+  [editor]
+  (not (:beep? editor)))
+
 (facts "regarding displaying of a loaded file"
   (fact "Each line is displayed on a different line."
     (editor) => (renders "One            " :at [0 0])
@@ -104,7 +108,7 @@
     (fact "`k` won't move above the first line."
       (cursor :after-typing "k") => [0 0]
       (editor :after-typing "k") => beeped?
-      (editor :after-typing "kj") =not=> beeped?)
+      (editor :after-typing "kj") => did-not-beep)
     (fact "`k` can move to a zero-length line."
       (cursor :when-editing "\nOne" :after-typing "jk") => [0 0])
     (fact "`k` won't place the cursor after the end of the line."
@@ -128,14 +132,14 @@
   (facts "about moving to the beginning or end of line"
     (fact "`0` moves to the first character on the line."
       (cursor :after-typing "ll0") => [0 0]
-      (editor :when-editing "\n" :after-typing "0") =not=> beeped?)
+      (editor :when-editing "\n" :after-typing "0") => did-not-beep)
 
     (fact "`$` moves to the last character on the line."
       (cursor :after-typing "$") => [0 2])
     (fact "`^` moves to the first non-space character"
       (cursor :when-editing "bob" :after-typing "$^") => [0 0]
       (cursor :when-editing "  bob" :after-typing "$^") => [0 2]
-      (editor :when-editing ".\n\n." :after-typing "j^") =not=> beeped?
+      (editor :when-editing ".\n\n." :after-typing "j^") => did-not-beep
       (cursor :when-editing "   " :after-typing "0^") => [0 2]))
 
   (facts "about `G`"
