@@ -14,9 +14,9 @@
 
 (defn with-cursor
   [buffer cursor & [j]]
-  (cond-> buffer
-    true (assoc :cursor cursor)
-    j    (assoc :last-explicit-j j)))
+  (-> buffer
+      (assoc :cursor cursor)
+      (cond-> j (assoc :last-explicit-j j))))
 
 (defn last-explicit-j
   [buffer]
