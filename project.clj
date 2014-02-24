@@ -3,7 +3,7 @@
   :url "http://github.com/maitria/avi"
   :license {:name "avi license"
             :url "http://github.com/maitria/avi/README.md"}
-  :jvm-opts ["-Dapple.awt.UIElement=true" "-Djava.library.path=/usr/local/lib/avi"]
+  :jvm-opts ["-Djava.library.path=/usr/local/lib/avi"]
   :plugins [[lein-midje "3.0.0"]]
   :dependencies [[org.clojure/clojure "1.5.1"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}

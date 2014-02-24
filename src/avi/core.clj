@@ -14,20 +14,18 @@
    :count nil
    :beep? false})
 
-(defn process
-  [editor [event-kind event-data]]
-  (cond
-    (= :keystroke event-kind)
-    (normal/process editor event-data)
+(defmulti process (fn [_ [event-kind]]
+                    event-kind))
 
-    (= :resize event-kind)
-    (let [[lines columns] event-data]
-      (-> editor
-          (assoc :lines lines)
-          (assoc :columns columns)))
+(defmethod process :keystroke
+  [editor [_ event-data]]
+  (normal/process editor event-data))
 
-    :else
-    editor))
+(defmethod process :resize
+  [editor [_ [lines columns]]]
+  (assoc editor
+         :lines lines
+         :columns columns))
 
 (defn- update-screen
   [editor]

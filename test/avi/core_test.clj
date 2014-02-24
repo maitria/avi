@@ -30,7 +30,8 @@
       :or {file-contents "One\nTwo\nThree\n."
            keystrokes ""}}]
   (let [key-events (map #(vector :keystroke %) keystrokes)
-        events (concat key-events [event])
+        events (concat key-events (if event
+                                    [event]))
         initial-editor (with-redefs [slurp (constantly file-contents)]
                          (core/start [10 15] "test/test.txt"))]
     (reduce
