@@ -1,5 +1,5 @@
 (ns avi.render
-  (:require [avi.editor :as editor]))
+  (:require [avi.editor :as e]))
 
 (defn- color-number
   [color]
@@ -24,16 +24,16 @@
         prompt-line (dec height)
         status-line (dec prompt-line)
         last-edit-line (dec status-line)
-        last-file-line (min last-edit-line (dec (count (:lines (editor/current-buffer editor)))))]
+        last-file-line (min last-edit-line (dec (count (:lines (e/current-buffer editor)))))]
     (cond
       (= prompt-line i)
       [:white :black ""]
 
       (= status-line i)
-      [:black :white (:name (editor/current-buffer editor))]
+      [:black :white (:name (e/current-buffer editor))]
 
       (<= i last-file-line)
-      [:white :black (get (:lines (editor/current-buffer editor)) i)]
+      [:white :black (get (:lines (e/current-buffer editor)) i)]
 
       :else
       [:blue :black "~"])))
