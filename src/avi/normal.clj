@@ -8,11 +8,12 @@
 
 (defn- cursor-can-move-to-column?
   [editor [i j]]
-  (let [line-length (count (b/line (e/current-buffer editor) i))]
-    (or (and (>= j 0)
-             (< j line-length))
-        (and (zero? j)
-             (zero? line-length)))))
+  (let [line-length (count (b/line (e/current-buffer editor) i))
+        inside-line? (and (>= j 0)
+                          (< j line-length))
+        column-zero? (zero? j)]
+    (or inside-line?
+        column-zero?)))
 
 (defn- change-column
   [editor j-fn]
