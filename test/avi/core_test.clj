@@ -31,7 +31,7 @@
 
 (facts "regarding scrolling"
   (fact "line-wise cursor movement will keep the cursor in the viewport"
-    (editor :when-editing twelve-lines :after-typing "8j")
+    (editor :when-editing ten-lines :after-typing "8j")
     ))
 
 (facts "regarding quitting"
