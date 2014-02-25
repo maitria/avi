@@ -2,16 +2,37 @@
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 
+(def ten-lines
+  (str "One\nTwo\nThree\nFour\nFive\nSix\n"
+       "Seven\nEight\nNine\nTen"))
+
 (facts "regarding displaying of a loaded file"
-  (editor) => (looks-like
-                "One            "
-                "Two            "
-                "Three          "
-                ".              "
-                "~              " [:blue]
-                "~              " [:blue]
-                "test/test.txt  " [:black :on :white]
-                "               "))
+  (editor)
+   => (looks-like
+        "One            "
+        "Two            "
+        "Three          "
+        ".              "
+        "~              " [:blue]
+        "~              " [:blue]
+        "test/test.txt  " [:black :on :white]
+        "               ")
+  (editor :when-editing ten-lines)
+   => (looks-like
+        "One            "
+        "Two            "
+        "Three          "
+        "Four           "
+        "Five           "
+        "Six            "
+        "test/test.txt  " [:black :on :white]
+        "               "))
+
+
+(facts "regarding scrolling"
+  (fact "line-wise cursor movement will keep the cursor in the viewport"
+    (editor :when-editing twelve-lines :after-typing "8j")
+    ))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
