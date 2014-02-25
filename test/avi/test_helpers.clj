@@ -17,7 +17,7 @@
          (filter (partial not= expected-attrs))
          empty?)))
 
-(defn- partition-lines
+(defn- partition-looks-like-lines
   [lines]
   (loop [[text maybe-attributes & lines] lines
          result []]
@@ -42,7 +42,7 @@
   (fn [editor]
     (let [rendering (render/render editor)]
       (->> args
-           partition-lines
+           partition-looks-like-lines
            (map-indexed 
              (fn [i [text color]]
                (and (text-matches-rendering? rendering i text)
