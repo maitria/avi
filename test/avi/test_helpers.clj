@@ -9,17 +9,13 @@
     (= text actual-text)))
 
 (defn- color-matches-rendering?
-  [rendering i color]
+  [rendering i expected-attrs]
   (let [{:keys [attrs width]} rendering
         offset (* i width)
-        line-attrs (subvec (into [] attrs) offset (+ offset width))
-        expected-attrs (case color
-                         :white (render/make-attrs :white :black)
-                         :blue (render/make-attrs :blue :black)
-                         :inverse (render/make-attrs :black :white))]
+        line-attrs (subvec (into [] attrs) offset (+ offset width))]
     (->> line-attrs
-         (filter (partial not= color))
-         seq)))
+         (filter (partial not= expected-attrs))
+         empty?)))
 
 (defn- partition-lines
   [lines]
@@ -29,13 +25,17 @@
       (not text)
       result
 
-      (keyword? maybe-attributes)
-      (recur lines
-             (conj result [text maybe-attributes]))
+      (vector? maybe-attributes)
+      (let [[specified-foreground on specified-background] maybe-attributes
+            foreground (or specified-foreground :white)
+            background (or specified-background :black)
+            attrs (render/make-attrs foreground background)]
+        (recur lines
+               (conj result [text attrs])))
 
       :else
       (recur (cons maybe-attributes lines)
-             (conj result [text :white])))))
+             (conj result [text (render/make-attrs :white :black)])))))
 
 (defn looks-like
   [& args]

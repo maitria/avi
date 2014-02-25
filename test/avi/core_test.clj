@@ -8,9 +8,9 @@
                 "Two            "
                 "Three          "
                 ".              "
-                "~              " :blue
-                "~              " :blue
-                "test/test.txt  " :inverse
+                "~              " [:blue]
+                "~              " [:blue]
+                "test/test.txt  " [:black :on :white]
                 "               "))
 
 (facts "regarding quitting"
