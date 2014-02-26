@@ -42,17 +42,19 @@
       :else
       [:blue :black "~"])))
 
+(defn- cursor-position
+  [editor]
+  (let [buffer (e/current-buffer editor)
+        buffer-cursor (:cursor buffer)
+        viewport-offset (:viewport-offset buffer)]
+    (vec (map - buffer-cursor viewport-offset))))
+
 (defn render
   [editor]
   (let [lines (:lines editor)
         width (:columns editor)
         rendered-chars (char-array (* lines width) \space)
-        rendered-attrs (byte-array (* lines width) (make-attrs :white :black))
-        buffer (e/current-buffer editor)
-        [buffer-cursor-i buffer-cursor-j] (:cursor buffer)
-        [viewport-offset-i viewport-offset-j] (:viewport-offset buffer)
-        cursor [(- buffer-cursor-i viewport-offset-i)
-                (- buffer-cursor-j viewport-offset-j)]]
+        rendered-attrs (byte-array (* lines width) (make-attrs :white :black))]
     (doseq [i (range lines)
             j (range width)]
       (let [index (+ j (* i width))
@@ -63,4 +65,4 @@
     {:width width
      :chars rendered-chars
      :attrs rendered-attrs
-     :cursor cursor}))
+     :cursor (cursor-position editor)}))
