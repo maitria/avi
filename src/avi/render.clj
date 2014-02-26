@@ -47,7 +47,12 @@
   (let [lines (:lines editor)
         width (:columns editor)
         rendered-chars (char-array (* lines width) \space)
-        rendered-attrs (byte-array (* lines width) (make-attrs :white :black))]
+        rendered-attrs (byte-array (* lines width) (make-attrs :white :black))
+        buffer (e/current-buffer editor)
+        [buffer-cursor-i buffer-cursor-j] (:cursor buffer)
+        [viewport-offset-i viewport-offset-j] (:viewport-offset buffer)
+        cursor [(- buffer-cursor-i viewport-offset-i)
+                (- buffer-cursor-j viewport-offset-j)]]
     (doseq [i (range lines)
             j (range width)]
       (let [index (+ j (* i width))
@@ -58,4 +63,4 @@
     {:width width
      :chars rendered-chars
      :attrs rendered-attrs
-     :cursor (:cursor (e/current-buffer editor))}))
+     :cursor cursor}))

@@ -40,6 +40,7 @@
           "Seven          "
           "test/test.txt  " [:black :on :white]
           "               ")
+    (cursor :when-editing ten-lines :after-typing "6j") => [5 0]
     (editor :when-editing ten-lines :after-typing "7j")
      => (looks-like
           "Three          "
@@ -49,7 +50,8 @@
           "Seven          "
           "Eight          "
           "test/test.txt  " [:black :on :white]
-          "               ")))
+          "               ")
+    (cursor :when-editing ten-lines :after-typing "7j") => [5 0]))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
