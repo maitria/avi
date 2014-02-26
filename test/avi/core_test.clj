@@ -28,11 +28,18 @@
         "test/test.txt  " [:black :on :white]
         "               "))
 
-
 (facts "regarding scrolling"
   (fact "line-wise cursor movement will keep the cursor in the viewport"
-    (editor :when-editing ten-lines :after-typing "8j")
-    ))
+    (editor :when-editing ten-lines :after-typing "6j")
+     => (looks-like
+          "Two            "
+          "Three          "
+          "Four           "
+          "Five           "
+          "Six            "
+          "Seven          "
+          "test/test.txt  " [:black :on :white]
+          "               ")))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
