@@ -23,7 +23,7 @@
   [editor i]
   (let [height (:lines editor)
         buffer (e/current-buffer editor)
-        [top] (:viewport-offset buffer)
+        top (:viewport-top buffer)
         prompt-line (dec height)
         status-line (dec prompt-line)
         last-edit-line (dec status-line)
@@ -45,9 +45,9 @@
 (defn- cursor-position
   [editor]
   (let [buffer (e/current-buffer editor)
-        buffer-cursor (:cursor buffer)
-        viewport-offset (:viewport-offset buffer)]
-    (vec (map - buffer-cursor viewport-offset))))
+        [buffer-cursor-i buffer-cursor-j] (:cursor buffer)
+        viewport-top (:viewport-top buffer)]
+    [(- buffer-cursor-i viewport-top) buffer-cursor-j]))
 
 (defn render
   [editor]

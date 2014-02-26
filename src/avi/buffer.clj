@@ -5,7 +5,7 @@
   [filename size]
   {:name filename,
    :lines (string/split (slurp filename) #"\n"),
-   :viewport-offset [0 0]
+   :viewport-top 0
    :viewport-size size
    :cursor [0 0],
    :last-explicit-j 0})
@@ -17,15 +17,15 @@
 (defn- adjust-viewport-to-contain-cursor
   [buffer]
   (let [[height] (:viewport-size buffer)
-        [viewport-offset-i] (:viewport-offset buffer)
-        bottom-line (dec (+ viewport-offset-i height))
+        viewport-top (:viewport-top buffer)
+        viewport-bottom (dec (+ viewport-top height))
         [cursor-i] (:cursor buffer)]
     (cond-> buffer
-      (< cursor-i viewport-offset-i)
-      (assoc :viewport-offset [cursor-i 0])
+      (< cursor-i viewport-top)
+      (assoc :viewport-top cursor-i)
 
-      (> cursor-i bottom-line)
-      (assoc :viewport-offset [(inc (- cursor-i height)) 0]))))
+      (> cursor-i viewport-bottom)
+      (assoc :viewport-top (inc (- cursor-i height))))))
 
 (defn with-cursor
   [buffer cursor & [j]]
