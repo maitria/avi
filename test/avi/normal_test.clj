@@ -4,21 +4,21 @@
 
 (facts "regarding repeating commands"
   (fact "`1` through `9` can be used as repeat counts."
-    (cursor :when-editing "0123456789x" :after "1l") => [0 1]
-    (cursor :when-editing "0123456789x" :after "2l") => [0 2]
-    (cursor :when-editing "0123456789x" :after "3l") => [0 3]
-    (cursor :when-editing "0123456789x" :after "4l") => [0 4]
-    (cursor :when-editing "0123456789x" :after "5l") => [0 5]
-    (cursor :when-editing "0123456789x" :after "6l") => [0 6]
-    (cursor :when-editing "0123456789x" :after "7l") => [0 7]
-    (cursor :when-editing "0123456789x" :after "8l") => [0 8]
-    (cursor :when-editing "0123456789x" :after "9l") => [0 9])
+    (cursor :editing "0123456789x" :after "1l") => [0 1]
+    (cursor :editing "0123456789x" :after "2l") => [0 2]
+    (cursor :editing "0123456789x" :after "3l") => [0 3]
+    (cursor :editing "0123456789x" :after "4l") => [0 4]
+    (cursor :editing "0123456789x" :after "5l") => [0 5]
+    (cursor :editing "0123456789x" :after "6l") => [0 6]
+    (cursor :editing "0123456789x" :after "7l") => [0 7]
+    (cursor :editing "0123456789x" :after "8l") => [0 8]
+    (cursor :editing "0123456789x" :after "9l") => [0 9])
   (fact "Multiple digits can be used as the repeat count."
-    (cursor :when-editing "0000000000111111111" :after "17l") => [0 17])
+    (cursor :editing "0000000000111111111" :after "17l") => [0 17])
   (fact "`0` can be used in a repeat count."
-    (cursor :when-editing "0000000000111111111" :after "10l") => [0 10])
+    (cursor :editing "0000000000111111111" :after "10l") => [0 10])
   (fact "The repeat goes away after a command is executed."
-    (cursor :when-editing "0123456789x" :after "4ll") => [0 5])
+    (cursor :editing "0123456789x" :after "4ll") => [0 5])
   (fact "None of the digits clear the repeat count."
     (:count (editor :after "1234567890")) => 1234567890))
 
@@ -31,14 +31,14 @@
       (cursor :after "j") => [1 0]
       (cursor :after "jj") => [2 0])
     (fact "`j` can move to a zero-length line."
-      (cursor :when-editing "One\n\nTwo" :after "j") => [1 0])
+      (cursor :editing "One\n\nTwo" :after "j") => [1 0])
     (fact "`j` won't move the cursor below the last line."
       (cursor :after "jjjj") => [3 0]
       (editor :after "jjjj") => beeped)
     (fact "`j` won't place the cursor after the end of the line."
-      (cursor :when-editing "Hello\nOne" :after "llllj") => [1 2])
+      (cursor :editing "Hello\nOne" :after "llllj") => [1 2])
     (fact "`j` remembers the last explicitly-set column."
-      (cursor :when-editing "Hello\n.\nThere" :after "lljj") => [2 2]))
+      (cursor :editing "Hello\n.\nThere" :after "lljj") => [2 2]))
 
   (facts "about `k`"
     (fact "`k` moves the cursor up one line."
@@ -49,9 +49,9 @@
       (editor :after "k") => beeped
       (editor :after "kj") => did-not-beep)
     (fact "`k` can move to a zero-length line."
-      (cursor :when-editing "\nOne" :after "jk") => [0 0])
+      (cursor :editing "\nOne" :after "jk") => [0 0])
     (fact "`k` won't place the cursor after the end of the line."
-      (cursor :when-editing "One\nHello" :after "jllllk") => [0 2]))
+      (cursor :editing "One\nHello" :after "jllllk") => [0 2]))
 
   (facts "about `l`"
     (fact "`l` moves to the right one character."
@@ -71,18 +71,18 @@
   (facts "about moving to the beginning or end of line"
     (fact "`0` moves to the first character on the line."
       (cursor :after "ll0") => [0 0]
-      (editor :when-editing "\n" :after "0") => did-not-beep)
+      (editor :editing "\n" :after "0") => did-not-beep)
 
     (fact "`$` moves to the last character on the line."
       (cursor :after "$") => [0 2])
     (fact "`^` moves to the first non-space character"
-      (cursor :when-editing "bob" :after "$^") => [0 0]
-      (cursor :when-editing "  bob" :after "$^") => [0 2]
-      (editor :when-editing ".\n\n." :after "j^") => did-not-beep
-      (cursor :when-editing "   " :after "0^") => [0 2]))
+      (cursor :editing "bob" :after "$^") => [0 0]
+      (cursor :editing "  bob" :after "$^") => [0 2]
+      (editor :editing ".\n\n." :after "j^") => did-not-beep
+      (cursor :editing "   " :after "0^") => [0 2]))
 
   (facts "about `G`"
     (fact "`G` moves to the last line."
-      (cursor :when-editing ".\n.\nThree" :after "G") => [2 0])
+      (cursor :editing ".\n.\nThree" :after "G") => [2 0])
     (fact "`G` moves to the line in the count register."
-      (cursor :when-editing ".\n.\nThree" :after "2G") => [1 0])))
+      (cursor :editing ".\n.\nThree" :after "2G") => [1 0])))

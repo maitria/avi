@@ -62,7 +62,7 @@
     spec))
 
 (defn editor
-  [& {file-contents :when-editing,
+  [& {file-contents :editing,
       keystrokes :after
       :or {file-contents "One\nTwo\nThree\n."
            keystrokes ""}}]

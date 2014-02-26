@@ -17,7 +17,7 @@
         "~              " [:blue]
         "test/test.txt  " [:black :on :white]
         "               ")
-  (editor :when-editing ten-lines)
+  (editor :editing ten-lines)
    => (looks-like
         "One            "
         "Two            "
@@ -31,7 +31,7 @@
 (facts "regarding scrolling"
   (fact "line-wise cursor movement will keep the cursor in the viewport"
     (fact "can scroll down some lines"
-      (editor :when-editing ten-lines :after "7j")
+      (editor :editing ten-lines :after "7j")
        => (looks-like
             "Three          "
             "Four           "
@@ -41,10 +41,10 @@
             "Eight          "
             "test/test.txt  " [:black :on :white]
             "               ")
-      (cursor :when-editing ten-lines :after "7j") => [5 0])
+      (cursor :editing ten-lines :after "7j") => [5 0])
         
     (fact "viewport stays when moving back up"
-      (editor :when-editing ten-lines :after "7jk")
+      (editor :editing ten-lines :after "7jk")
        => (looks-like
             "Three          "
             "Four           "
@@ -54,10 +54,10 @@
             "Eight          "
             "test/test.txt  " [:black :on :white]
             "               ")
-      (cursor :when-editing ten-lines :after "7jk") => [4 0])
+      (cursor :editing ten-lines :after "7jk") => [4 0])
 
     (fact "can scroll up some lines"
-      (editor :when-editing ten-lines :after "7j6k")
+      (editor :editing ten-lines :after "7j6k")
        => (looks-like
             "Two            "
             "Three          "
@@ -67,7 +67,7 @@
             "Seven          "
             "test/test.txt  " [:black :on :white]
             "               ")
-      (cursor :when-editing ten-lines :after "7j6k") => [0 0])))
+      (cursor :editing ten-lines :after "7j6k") => [0 0])))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
