@@ -21,7 +21,7 @@
 
 (defn- render-line
   [editor i]
-  (let [height (:lines editor)
+  (let [[height] (:size editor)
         buffer (e/current-buffer editor)
         top (:viewport-top buffer)
         prompt-line (dec height)
@@ -51,11 +51,10 @@
 
 (defn render
   [editor]
-  (let [lines (:lines editor)
-        width (:columns editor)
-        rendered-chars (char-array (* lines width) \space)
-        rendered-attrs (byte-array (* lines width) (make-attrs :white :black))]
-    (doseq [i (range lines)
+  (let [[height width] (:size editor)
+        rendered-chars (char-array (* height width) \space)
+        rendered-attrs (byte-array (* height width) (make-attrs :white :black))]
+    (doseq [i (range height)
             j (range width)]
       (let [index (+ j (* i width))
             [color background text] (render-line editor i)

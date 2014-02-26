@@ -9,8 +9,7 @@
   [[lines columns] filename]
   {:mode :normal
    :buffer (b/open filename (- lines 2))
-   :lines lines
-   :columns columns
+   :size [lines columns]
    :count nil
    :beep? false})
 
@@ -22,10 +21,8 @@
   (normal/process editor event-data))
 
 (defmethod process :resize
-  [editor [_ [lines columns]]]
-  (assoc editor
-         :lines lines
-         :columns columns))
+  [editor [_ size]]
+  (assoc editor :size size))
 
 (defn- update-screen
   [editor]
