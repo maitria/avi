@@ -39,6 +39,16 @@
           "Six            "
           "Seven          "
           "test/test.txt  " [:black :on :white]
+          "               ")
+    (editor :when-editing ten-lines :after-typing "7j")
+     => (looks-like
+          "Three          "
+          "Four           "
+          "Five           "
+          "Six            "
+          "Seven          "
+          "Eight          "
+          "test/test.txt  " [:black :on :white]
           "               ")))
 
 (facts "regarding quitting"

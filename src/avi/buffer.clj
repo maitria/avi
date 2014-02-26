@@ -24,7 +24,7 @@
           (assoc :last-explicit-j j)
 
           (>= cursor-i height)
-          (assoc :viewport-offset [1 0])))))
+          (assoc :viewport-offset [(inc (- cursor-i height)) 0])))))
 
 (defn last-explicit-j
   [buffer]
