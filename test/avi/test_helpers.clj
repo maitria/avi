@@ -49,15 +49,25 @@
                     (color-matches-rendering? rendering i color))))
            (every? identity)))))
 
+(defn- make-events
+  [spec]
+  (cond
+    (string? spec)
+    (mapcat make-events spec)
+
+    (char? spec)
+    [[:keystroke spec]]
+
+    :else
+    spec))
+
 (defn editor
   [& {file-contents :when-editing,
-      keystrokes :after-typing,
-      event :after-receiving
+      keystrokes :after
       :or {file-contents "One\nTwo\nThree\n."
            keystrokes ""}}]
-  (let [key-events (map #(vector :keystroke %) keystrokes)
-        events (concat key-events (if event
-                                    [event]))
+  (let [
+        events (make-events keystrokes)
         initial-editor (with-redefs [slurp (constantly file-contents)]
                          (core/start [8 15] "test/test.txt"))]
     (reduce

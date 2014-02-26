@@ -31,7 +31,7 @@
 (facts "regarding scrolling"
   (fact "line-wise cursor movement will keep the cursor in the viewport"
     (fact "can scroll down some lines"
-      (editor :when-editing ten-lines :after-typing "7j")
+      (editor :when-editing ten-lines :after "7j")
        => (looks-like
             "Three          "
             "Four           "
@@ -41,10 +41,10 @@
             "Eight          "
             "test/test.txt  " [:black :on :white]
             "               ")
-      (cursor :when-editing ten-lines :after-typing "7j") => [5 0])
+      (cursor :when-editing ten-lines :after "7j") => [5 0])
         
     (fact "viewport stays when moving back up"
-      (editor :when-editing ten-lines :after-typing "7jk")
+      (editor :when-editing ten-lines :after "7jk")
        => (looks-like
             "Three          "
             "Four           "
@@ -54,10 +54,10 @@
             "Eight          "
             "test/test.txt  " [:black :on :white]
             "               ")
-      (cursor :when-editing ten-lines :after-typing "7jk") => [4 0])
+      (cursor :when-editing ten-lines :after "7jk") => [4 0])
 
     (fact "can scroll up some lines"
-      (editor :when-editing ten-lines :after-typing "7j6k")
+      (editor :when-editing ten-lines :after "7j6k")
        => (looks-like
             "Two            "
             "Three          "
@@ -67,16 +67,16 @@
             "Seven          "
             "test/test.txt  " [:black :on :white]
             "               ")
-      (cursor :when-editing ten-lines :after-typing "7j6k") => [0 0])))
+      (cursor :when-editing ten-lines :after "7j6k") => [0 0])))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
     (:mode (editor)) =not=> :finished
-    (:mode (editor :after-typing ":")) =not=> :finished
-    (:mode (editor :after-typing ":q")) =not=> :finished)
+    (:mode (editor :after ":")) =not=> :finished
+    (:mode (editor :after ":q")) =not=> :finished)
   (fact "It exits after `:q<CR>`."
-    (:mode (editor :after-typing ":q\r")) => :finished))
+    (:mode (editor :after ":q\r")) => :finished))
 
 (facts "regarding screen resizes"
   (fact "It updates the editor size."
-    (:size (editor :after-receiving [:resize [17 42]])) => [17 42]))
+    (:size (editor :after [[:resize [17 42]]])) => [17 42]))
