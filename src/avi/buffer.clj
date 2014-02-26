@@ -14,22 +14,25 @@
   [buffer]
   (:cursor buffer))
 
-(defn with-cursor
-  [buffer [cursor-i cursor-j :as cursor] & [j]]
+(defn- adjust-viewport-to-contain-cursor
+  [buffer]
   (let [[height] (:viewport-size buffer)
         [viewport-offset-i] (:viewport-offset buffer)
-        bottom-line (dec (+ viewport-offset-i height))]
-    (-> buffer
-        (assoc :cursor cursor)
-        (cond->
-          j
-          (assoc :last-explicit-j j)
+        bottom-line (dec (+ viewport-offset-i height))
+        [cursor-i] (:cursor buffer)]
+    (cond-> buffer
+      (< cursor-i viewport-offset-i)
+      (assoc :viewport-offset [cursor-i 0])
 
-          (< cursor-i viewport-offset-i)
-          (assoc :viewport-offset [cursor-i 0])
+      (> cursor-i bottom-line)
+      (assoc :viewport-offset [(inc (- cursor-i height)) 0]))))
 
-          (> cursor-i bottom-line)
-          (assoc :viewport-offset [(inc (- cursor-i height)) 0])))))
+(defn with-cursor
+  [buffer cursor & [j]]
+  (-> buffer
+      (assoc :cursor cursor)
+      (cond-> j (assoc :last-explicit-j j))
+      (adjust-viewport-to-contain-cursor)))
 
 (defn last-explicit-j
   [buffer]
