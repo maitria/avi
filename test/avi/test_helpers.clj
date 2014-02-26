@@ -49,25 +49,28 @@
                     (color-matches-rendering? rendering i color))))
            (every? identity)))))
 
-(defn- make-events
+(defn- make-events-from-specification
   [spec]
-  (cond
-    (string? spec)
-    (mapcat make-events spec)
+  (loop [spec-left spec
+         events []]
+    (cond
+      (not (seq spec-left))
+      events
 
-    (char? spec)
-    [[:keystroke spec]]
+      (char? (first spec-left))
+      (recur (rest spec-left)
+             (conj events [:keystroke (first spec-left)]))
 
-    :else
-    spec))
+      (keyword? (first spec-left))
+      (recur (rest (rest spec-left))
+             (conj events [(first spec-left) (second spec-left)])))))
 
 (defn editor
   [& {file-contents :editing,
-      keystrokes :after
+      event-spec :after
       :or {file-contents "One\nTwo\nThree\n."
            keystrokes ""}}]
-  (let [
-        events (make-events keystrokes)
+  (let [events (make-events-from-specification event-spec)
         initial-editor (with-redefs [slurp (constantly file-contents)]
                          (core/start [8 15] "test/test.txt"))]
     (reduce

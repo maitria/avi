@@ -45,3 +45,7 @@
 (defn lines
   [buffer]
   (count (:lines buffer)))
+
+(defn resize
+  [buffer height]
+  (assoc buffer :viewport-height height))

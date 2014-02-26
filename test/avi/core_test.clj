@@ -79,4 +79,19 @@
 
 (facts "regarding screen resizes"
   (fact "It updates the editor size."
-    (:size (editor :after [[:resize [17 42]]])) => [17 42]))
+    (:size (editor :after [:resize [17 42]])) => [17 42])
+  (fact "It updates the buffer's size."
+    (editor :editing ten-lines :after [:resize [12 15] \G])
+     => (looks-like
+          "One            "
+          "Two            "
+          "Three          "
+          "Four           "
+          "Five           "
+          "Six            "
+          "Seven          "
+          "Eight          "
+          "Nine           "
+          "Ten            "
+          "test/test.txt  " [:black :on :white]
+          "               ")))

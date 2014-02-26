@@ -1,6 +1,7 @@
 (ns avi.core
   (:import [avi.terminal Screen])
   (:require [avi.buffer :as b]
+            [avi.editor :as e]
             [avi.normal :as normal]
             [avi.render :as render])
   (:gen-class))
@@ -22,7 +23,9 @@
 
 (defmethod process :resize
   [editor [_ size]]
-  (assoc editor :size size))
+  (-> editor
+      (assoc :size size)
+      (e/update-current-buffer #(b/resize % (- (first size) 2)))))
 
 (defn- update-screen
   [editor]
