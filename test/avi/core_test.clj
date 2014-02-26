@@ -54,7 +54,20 @@
             "Eight          "
             "test/test.txt  " [:black :on :white]
             "               ")
-      (cursor :when-editing ten-lines :after-typing "7jk") => [4 0])))
+      (cursor :when-editing ten-lines :after-typing "7jk") => [4 0])
+
+    (fact "can scroll up some lines"
+      (editor :when-editing ten-lines :after-typing "7j6k")
+       => (looks-like
+            "Two            "
+            "Three          "
+            "Four           "
+            "Five           "
+            "Six            "
+            "Seven          "
+            "test/test.txt  " [:black :on :white]
+            "               ")
+      (cursor :when-editing ten-lines :after-typing "7j6k") => [0 0])))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."

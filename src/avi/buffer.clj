@@ -25,6 +25,9 @@
           j
           (assoc :last-explicit-j j)
 
+          (< cursor-i viewport-offset-i)
+          (assoc :viewport-offset [cursor-i 0])
+
           (> cursor-i bottom-line)
           (assoc :viewport-offset [(inc (- cursor-i height)) 0])))))
 
