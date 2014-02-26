@@ -16,14 +16,16 @@
 
 (defn with-cursor
   [buffer [cursor-i cursor-j :as cursor] & [j]]
-  (let [[height] (:viewport-size buffer)]
+  (let [[height] (:viewport-size buffer)
+        [viewport-offset-i] (:viewport-offset buffer)
+        bottom-line (dec (+ viewport-offset-i height))]
     (-> buffer
         (assoc :cursor cursor)
         (cond->
           j
           (assoc :last-explicit-j j)
 
-          (>= cursor-i height)
+          (> cursor-i bottom-line)
           (assoc :viewport-offset [(inc (- cursor-i height)) 0])))))
 
 (defn last-explicit-j

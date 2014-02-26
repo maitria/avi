@@ -30,20 +30,7 @@
 
 (facts "regarding scrolling"
   (fact "line-wise cursor movement will keep the cursor in the viewport"
-    (fact "can scroll down one line"
-      (editor :when-editing ten-lines :after-typing "6j")
-       => (looks-like
-            "Two            "
-            "Three          "
-            "Four           "
-            "Five           "
-            "Six            "
-            "Seven          "
-            "test/test.txt  " [:black :on :white]
-            "               ")
-      (cursor :when-editing ten-lines :after-typing "6j") => [5 0])
-
-    (fact "can scroll down two lines"
+    (fact "can scroll down some lines"
       (editor :when-editing ten-lines :after-typing "7j")
        => (looks-like
             "Three          "
@@ -54,7 +41,20 @@
             "Eight          "
             "test/test.txt  " [:black :on :white]
             "               ")
-      (cursor :when-editing ten-lines :after-typing "7j") => [5 0])))
+      (cursor :when-editing ten-lines :after-typing "7j") => [5 0])
+        
+    (fact "viewport stays when moving back up"
+      (editor :when-editing ten-lines :after-typing "7jk")
+       => (looks-like
+            "Three          "
+            "Four           "
+            "Five           "
+            "Six            "
+            "Seven          "
+            "Eight          "
+            "test/test.txt  " [:black :on :white]
+            "               ")
+      (cursor :when-editing ten-lines :after-typing "7jk") => [4 0])))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."
