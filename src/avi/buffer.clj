@@ -2,11 +2,11 @@
   (:require [clojure.string :as string]))
 
 (defn open
-  [filename size]
+  [filename height]
   {:name filename,
    :lines (string/split (slurp filename) #"\n"),
    :viewport-top 0
-   :viewport-size size
+   :viewport-height height
    :cursor [0 0],
    :last-explicit-j 0})
 
@@ -16,7 +16,7 @@
 
 (defn- adjust-viewport-to-contain-cursor
   [buffer]
-  (let [[height] (:viewport-size buffer)
+  (let [height (:viewport-height buffer)
         viewport-top (:viewport-top buffer)
         viewport-bottom (dec (+ viewport-top height))
         [cursor-i] (:cursor buffer)]

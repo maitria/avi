@@ -8,7 +8,7 @@
 (defn start
   [[lines columns] filename]
   {:mode :normal
-   :buffer (b/open filename [(- lines 2) columns])
+   :buffer (b/open filename (- lines 2))
    :lines lines
    :columns columns
    :count nil
