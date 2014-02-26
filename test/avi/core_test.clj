@@ -94,4 +94,6 @@
           "Nine           "
           "Ten            "
           "test/test.txt  " [:black :on :white]
-          "               ")))
+          "               "))
+  (fact "It adjusts the viewport for the cursor."
+    (cursor :editing ten-lines :after [\G :resize [5 15]]) => [2 0]))

@@ -48,4 +48,6 @@
 
 (defn resize
   [buffer height]
-  (assoc buffer :viewport-height height))
+  (-> buffer
+      (assoc :viewport-height height)
+      (adjust-viewport-to-contain-cursor)))
