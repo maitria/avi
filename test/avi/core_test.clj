@@ -7,26 +7,28 @@
        "Seven\nEight\nNine\nTen"))
 
 (facts "regarding being started with a file"
-  (editor)
-   => (looks-like
-        "One            "
-        "Two            "
-        "Three          "
-        ".              "
-        "~              " [:blue]
-        "~              " [:blue]
-        "test/test.txt  " [:black :on :white]
-        "               ")
-  (editor :editing ten-lines)
-   => (looks-like
-        "One            "
-        "Two            "
-        "Three          "
-        "Four           "
-        "Five           "
-        "Six            "
-        "test/test.txt  " [:black :on :white]
-        "               "))
+  (fact "It starts with a named buffer with the file's contents."
+    (editor)
+     => (looks-like
+          "One            "
+          "Two            "
+          "Three          "
+          ".              "
+          "~              " [:blue]
+          "~              " [:blue]
+          "test/test.txt  " [:black :on :white]
+          "               "))
+  (fact "It can display files longer than the screen."
+    (editor :editing ten-lines)
+     => (looks-like
+          "One            "
+          "Two            "
+          "Three          "
+          "Four           "
+          "Five           "
+          "Six            "
+          "test/test.txt  " [:black :on :white]
+          "               ")))
 
 (facts "regarding being started with no file"
   (fact "It starts with an empty, unnamed buffer."
