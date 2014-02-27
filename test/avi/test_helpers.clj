@@ -73,9 +73,9 @@
   (let [events (make-events-from-specification event-spec)
         start-args (if (= :nothing file-contents)
                      []
-                     ["test/test.txt"])
+                     ["test.txt"])
         initial-editor (with-redefs [slurp (constantly file-contents)]
-                         (apply core/start [8 15] start-args))]
+                         (apply core/start [8 20] start-args))]
     (reduce
       core/process
       initial-editor
