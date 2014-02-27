@@ -1,11 +1,16 @@
 (ns avi.buffer
+  (:import [java.io FileNotFoundException])
   (:require [clojure.string :as string]))
 
 (defn open
   [filename height]
   {:name filename,
    :lines (if filename
-            (string/split (slurp filename) #"\n")
+            (try
+              (string/split (slurp filename) #"\n")
+              (catch FileNotFoundException e
+                [""]
+                ))
             [""]),
    :viewport-top 0
    :viewport-height height

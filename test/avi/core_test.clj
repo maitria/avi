@@ -43,6 +43,19 @@
           "[No Name]           " [:black :on :white]
           "                    ")))
 
+(facts "regarding being started with a non-existant file"
+  (fact "It starts with an empty, named buffer."
+    (editor :editing :not-found)
+     => (looks-like
+          "                    "
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "test.txt            " [:black :on :white]
+          "                    ")))
+
 (facts "regarding scrolling"
   (fact "line-wise cursor movement will keep the cursor in the viewport"
     (fact "can scroll down some lines"
