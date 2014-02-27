@@ -7,7 +7,7 @@
   (:gen-class))
 
 (defn start
-  [[lines columns] filename]
+  [[lines columns] & [filename]]
   {:mode :normal
    :buffer (b/open filename (- lines 2))
    :size [lines columns]
@@ -41,10 +41,10 @@
     [(get size 0) (get size 1)]))
 
 (defn -main
-  [filename]
+  [& args]
   (Screen/start)
   (loop [[height width] (screen-size)
-         editor (start [height width] filename)]
+         editor (apply start [height width] args)]
     (if (:beep? editor)
       (Screen/beep))
     (let [editor (if (or (not= width (:columns editor))

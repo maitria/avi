@@ -6,7 +6,7 @@
   (str "One\nTwo\nThree\nFour\nFive\nSix\n"
        "Seven\nEight\nNine\nTen"))
 
-(facts "regarding displaying of a loaded file"
+(facts "regarding being started with a file"
   (editor)
    => (looks-like
         "One            "
@@ -27,6 +27,19 @@
         "Six            "
         "test/test.txt  " [:black :on :white]
         "               "))
+
+(facts "regarding being started with no file"
+  (fact "It starts with an empty, unnamed buffer."
+    (editor :editing :nothing)
+     => (looks-like
+          "               "
+          "~              " [:blue]
+          "~              " [:blue]
+          "~              " [:blue]
+          "~              " [:blue]
+          "~              " [:blue]
+          "[No Name]      " [:black :on :white]
+          "               ")))
 
 (facts "regarding scrolling"
   (fact "line-wise cursor movement will keep the cursor in the viewport"

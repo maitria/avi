@@ -4,7 +4,9 @@
 (defn open
   [filename height]
   {:name filename,
-   :lines (string/split (slurp filename) #"\n"),
+   :lines (if filename
+            (string/split (slurp filename) #"\n")
+            [""]),
    :viewport-top 0
    :viewport-height height
    :cursor [0 0],

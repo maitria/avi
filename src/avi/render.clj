@@ -34,7 +34,7 @@
       [:white :black ""]
 
       (= status-line i)
-      [:black :white (:name buffer)]
+      [:black :white (or (:name buffer) "[No Name]")]
 
       (< buffer-line buffer-line-count)
       [:white :black (b/line buffer buffer-line)]
