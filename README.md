@@ -32,14 +32,6 @@ $ cd avi
 $ lein install
 ```
 
-## Running
-
-After you lein install, you can run but you have to give it a filename:
-
-```
-avi README.md
-```
-
 ## License
 
 Copyright 2014 Maitria
