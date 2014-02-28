@@ -52,14 +52,16 @@
 (defn render
   [editor]
   (let [[height width] (:size editor)
+        default-attrs (make-attrs :white :black)
         rendered-chars (char-array (* height width) \space)
-        rendered-attrs (byte-array (* height width) (make-attrs :white :black))]
+        rendered-attrs (byte-array (* height width) default-attrs)]
     (doseq [i (range height)]
-      (let [[color background text] (render-line editor i)]
+      (let [[color background text] (render-line editor i)
+            attrs (make-attrs color background)]
         (.getChars text 0 (count text) rendered-chars (* i width))
-        (doseq [j (range width)]
-          (let [index (+ j (* i width))]
-            (aset rendered-attrs index (make-attrs color background))))))
+        (if (not= attrs default-attrs)
+          (doseq [j (range width)]
+            (aset rendered-attrs (+ j (* i width)) attrs)))))
     {:width width
      :chars rendered-chars
      :attrs rendered-attrs
