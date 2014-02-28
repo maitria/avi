@@ -54,13 +54,12 @@
   (let [[height width] (:size editor)
         rendered-chars (char-array (* height width) \space)
         rendered-attrs (byte-array (* height width) (make-attrs :white :black))]
-    (doseq [i (range height)
-            j (range width)]
-      (let [index (+ j (* i width))
-            [color background text] (render-line editor i)
-            c (or (get text j) \space)]
-        (aset rendered-chars index c)
-        (aset rendered-attrs index (make-attrs color background))))
+    (doseq [i (range height)]
+      (let [[color background text] (render-line editor i)]
+        (.getChars text 0 (count text) rendered-chars (* i width))
+        (doseq [j (range width)]
+          (let [index (+ j (* i width))]
+            (aset rendered-attrs index (make-attrs color background))))))
     {:width width
      :chars rendered-chars
      :attrs rendered-attrs
