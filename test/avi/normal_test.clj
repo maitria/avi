@@ -86,3 +86,45 @@
       (cursor :editing ".\n.\nThree" :after "G") => [2 0])
     (fact "`G` moves to the line in the count register."
       (cursor :editing ".\n.\nThree" :after "2G") => [1 0])))
+
+(facts "regarding scrolling"
+  (fact "line-wise cursor movement will keep the cursor in the viewport"
+    (fact "can scroll down some lines"
+      (editor :editing ten-lines :after "7j")
+       => (looks-like
+            "Three               "
+            "Four                "
+            "Five                "
+            "Six                 "
+            "Seven               "
+            "Eight               "
+            "test.txt            " [:black :on :white]
+            "                    ")
+      (cursor :editing ten-lines :after "7j") => [5 0])
+        
+    (fact "viewport stays when moving back up"
+      (editor :editing ten-lines :after "7jk")
+       => (looks-like
+            "Three               "
+            "Four                "
+            "Five                "
+            "Six                 "
+            "Seven               "
+            "Eight               "
+            "test.txt            " [:black :on :white]
+            "                    ")
+      (cursor :editing ten-lines :after "7jk") => [4 0])
+
+    (fact "can scroll up some lines"
+      (editor :editing ten-lines :after "7j6k")
+       => (looks-like
+            "Two                 "
+            "Three               "
+            "Four                "
+            "Five                "
+            "Six                 "
+            "Seven               "
+            "test.txt            " [:black :on :white]
+            "                    ")
+      (cursor :editing ten-lines :after "7j6k") => [0 0])))
+

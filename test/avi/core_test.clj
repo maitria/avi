@@ -2,10 +2,6 @@
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 
-(def ten-lines
-  (str "One\nTwo\nThree\nFour\nFive\nSix\n"
-       "Seven\nEight\nNine\nTen"))
-
 (facts "regarding being started with a file"
   (fact "It starts with a named buffer with the file's contents."
     (editor)
@@ -55,47 +51,6 @@
           "~                   " [:blue]
           "test.txt            " [:black :on :white]
           "                    ")))
-
-(facts "regarding scrolling"
-  (fact "line-wise cursor movement will keep the cursor in the viewport"
-    (fact "can scroll down some lines"
-      (editor :editing ten-lines :after "7j")
-       => (looks-like
-            "Three               "
-            "Four                "
-            "Five                "
-            "Six                 "
-            "Seven               "
-            "Eight               "
-            "test.txt            " [:black :on :white]
-            "                    ")
-      (cursor :editing ten-lines :after "7j") => [5 0])
-        
-    (fact "viewport stays when moving back up"
-      (editor :editing ten-lines :after "7jk")
-       => (looks-like
-            "Three               "
-            "Four                "
-            "Five                "
-            "Six                 "
-            "Seven               "
-            "Eight               "
-            "test.txt            " [:black :on :white]
-            "                    ")
-      (cursor :editing ten-lines :after "7jk") => [4 0])
-
-    (fact "can scroll up some lines"
-      (editor :editing ten-lines :after "7j6k")
-       => (looks-like
-            "Two                 "
-            "Three               "
-            "Four                "
-            "Five                "
-            "Six                 "
-            "Seven               "
-            "test.txt            " [:black :on :white]
-            "                    ")
-      (cursor :editing ten-lines :after "7j6k") => [0 0])))
 
 (facts "regarding quitting"
   (fact "It doesn't start in the 'finished' state."

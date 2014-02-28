@@ -3,6 +3,10 @@
   (:require [avi.core :as core]
             [avi.render :as render]))
 
+(def ten-lines
+  (str "One\nTwo\nThree\nFour\nFive\nSix\n"
+       "Seven\nEight\nNine\nTen"))
+
 (defn- text-matches-rendering?
   [rendering i text]
   (let [{:keys [chars width]} rendering 
