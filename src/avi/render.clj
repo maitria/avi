@@ -1,4 +1,5 @@
 (ns avi.render
+  (:import [java.util Arrays])
   (:require [avi.editor :as e]
             [avi.buffer :as b]))
 
@@ -60,8 +61,7 @@
             attrs (make-attrs color background)]
         (.getChars text 0 (count text) rendered-chars (* i width))
         (if (not= attrs default-attrs)
-          (doseq [j (range width)]
-            (aset rendered-attrs (+ j (* i width)) attrs)))))
+          (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))))
     {:width width
      :chars rendered-chars
      :attrs rendered-attrs
