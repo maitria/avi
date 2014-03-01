@@ -1,5 +1,6 @@
 (ns avi.normal-test
   (:require [midje.sweet :refer :all]
+            [avi.normal :refer [ctrl]]
             [avi.test-helpers :refer :all]))
 
 (facts "regarding repeating commands"
@@ -126,5 +127,15 @@
             "Seven               "
             "test.txt            " [:black :on :white]
             "                    ")
-      (cursor :editing ten-lines :after "7j6k") => [0 0])))
-
+      (cursor :editing ten-lines :after "7j6k") => [0 0]))
+  (fact "^E scrolls the buffer down one line"
+    (editor :editing ten-lines :after [(ctrl \E)])
+     => (looks-like
+          "Two                 "
+          "Three               "
+          "Four                "
+          "Five                "
+          "Six                 "
+          "Seven               "
+          "test.txt            " [:black :on :white]
+          "                    ")))

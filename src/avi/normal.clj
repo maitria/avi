@@ -2,6 +2,10 @@
   (:require [avi.buffer :as b]
             [avi.editor :as e]))
 
+(defn ctrl
+  [c]
+  (char (- (int c) 0x40)))
+
 (defn- beep
   [editor]
   (assoc editor :beep? true))
@@ -93,6 +97,10 @@
   (let [position (index-of-first-non-blank (current-line editor))]
     (change-column editor (constantly position))))
 
+(defn scroll
+  [editor]
+  (e/update-current-buffer editor #(b/scroll % inc)))
+
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}
    \0 {:handler handle-0, :keep-count? true, :no-repeat? true}
@@ -111,7 +119,8 @@
    \j {:handler #(change-line % inc)}
    \k {:handler #(change-line % dec)}
    \l {:handler #(change-column % inc)}
-   \G {:handler handle-G, :no-repeat? true}})
+   \G {:handler handle-G, :no-repeat? true}
+   (ctrl \E) {:handler #(scroll %)}})
 
 (defn- wrap-handler-with-beep-reset
   [handler]
