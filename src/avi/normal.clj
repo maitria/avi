@@ -98,8 +98,8 @@
     (change-column editor (constantly position))))
 
 (defn scroll
-  [editor]
-  (e/update-current-buffer editor #(b/scroll % inc)))
+  [editor update-fn]
+  (e/update-current-buffer editor #(b/scroll % update-fn)))
 
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}
@@ -120,7 +120,8 @@
    \k {:handler #(change-line % dec)}
    \l {:handler #(change-column % inc)}
    \G {:handler handle-G, :no-repeat? true}
-   (ctrl \E) {:handler #(scroll %)}})
+   (ctrl \E) {:handler #(scroll % inc)}
+   (ctrl \Y) {:handler #(scroll % dec)}})
 
 (defn- wrap-handler-with-beep-reset
   [handler]

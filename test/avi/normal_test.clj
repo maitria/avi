@@ -143,4 +143,16 @@
     (fact "`^E` moves the cursor down if necessary"
       (cursor :editing ten-lines :after [(ctrl \E)]) => [0 0])
     (fact "`^E` doesn't move the cursor when unnecessary"
-      (cursor :editing ten-lines :after [\j \j (ctrl \E)]) => [1 0])))
+      (cursor :editing ten-lines :after [\j \j (ctrl \E)]) => [1 0]))
+   (facts "about `^Y`"
+     (fact "`^Y` scrolls the buffer up one line"
+       (editor :editing ten-lines :after [(ctrl \E) (ctrl \Y)])
+        => (looks-like
+              "One                 "
+              "Two                 "
+              "Three               "
+              "Four                "
+              "Five                "
+              "Six                 "
+              "test.txt            " [:black :on :white]
+              "                    "))))
