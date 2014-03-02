@@ -47,8 +47,7 @@
          editor (apply start [height width] args)]
     (if (:beep? editor)
       (Screen/beep))
-    (let [editor (if (or (not= width (:columns editor))
-                         (not= height (:lines editor)))
+    (let [editor (if (not= [height width] (:size editor))
                    (process editor [:resize [height width]])
                    editor)]
       (update-screen editor)
