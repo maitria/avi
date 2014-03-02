@@ -6,4 +6,4 @@
 
 (defn update-current-buffer
   [editor buffer-fn]
-  (assoc editor :buffer (buffer-fn (current-buffer editor))))
+  (update-in editor [:buffer] buffer-fn))
