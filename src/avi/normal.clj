@@ -30,14 +30,14 @@
 
 (defn- valid-line?
   [editor i]
-  (or (< i 0)
-      (>= i (b/lines (e/current-buffer editor)))))
+  (and (>= i 0)
+       (< i (b/lines (e/current-buffer editor)))))
 
 (defn- change-line
   [editor i-fn]
   (let [[i] (b/cursor (e/current-buffer editor))
         i (i-fn i)]
-    (if (valid-line? editor i)
+    (if-not (valid-line? editor i)
       (beep editor)
       (e/update-current-buffer editor #(b/move-to-line % i)))))
 
