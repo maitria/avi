@@ -128,15 +128,19 @@
             "test.txt            " [:black :on :white]
             "                    ")
       (cursor :editing ten-lines :after "7j6k") => [0 0]))
-  (fact "^E scrolls the buffer down one line"
-    (editor :editing ten-lines :after [(ctrl \E)])
-     => (looks-like
-          "Two                 "
-          "Three               "
-          "Four                "
-          "Five                "
-          "Six                 "
-          "Seven               "
-          "test.txt            " [:black :on :white]
-          "                    ")
-    (cursor :editing ten-lines :after [(ctrl \E)]) => [0 0]))
+  (facts "about `^E`"
+    (fact "`^E` scrolls the buffer down one line"
+      (editor :editing ten-lines :after [(ctrl \E)])
+       => (looks-like
+            "Two                 "
+            "Three               "
+            "Four                "
+            "Five                "
+            "Six                 "
+            "Seven               "
+            "test.txt            " [:black :on :white]
+            "                    "))
+    (fact "`^E` moves the cursor down if necessary"
+      (cursor :editing ten-lines :after [(ctrl \E)]) => [0 0])
+    (fact "`^E` doesn't move the cursor when unnecessary"
+      (cursor :editing ten-lines :after [\j \j (ctrl \E)]) => [1 0])))
