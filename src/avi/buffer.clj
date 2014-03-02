@@ -57,7 +57,7 @@
       (assoc :cursor [viewport-top (j-within-line buffer viewport-top)])
 
       (> cursor-i viewport-bottom)
-      (assoc-in [:cursor 0] viewport-bottom))))
+      (assoc :cursor [viewport-bottom (j-within-line buffer viewport-bottom)]))))
 
 (defn with-cursor
   [buffer cursor & [j]]

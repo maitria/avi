@@ -161,4 +161,6 @@
      (fact "`^Y` moves the cursor up to keep it in the viewport"
        (cursor :editing ten-lines :after [\7 \G (ctrl \Y)]) => [5 0])
      (fact "`^Y` doesn't move the cursor when unnecessary"
-       (cursor :editing ten-lines :after [(ctrl \E) (ctrl \Y)]) => [1 0])))
+       (cursor :editing ten-lines :after [(ctrl \E) (ctrl \Y)]) => [1 0])
+     (fact "`^Y` won't put the cursor past end-of-line"
+       (cursor :editing ten-lines :after [\7 \G \$ (ctrl \Y)]) => [5 2])))
