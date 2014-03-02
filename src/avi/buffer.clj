@@ -34,6 +34,19 @@
       (> cursor-i viewport-bottom)
       (assoc :viewport-top (inc (- cursor-i height))))))
 
+(defn- adjust-cursor-to-viewport
+  [buffer]
+  (let [height (:viewport-height buffer)
+        viewport-top (:viewport-top buffer)
+        viewport-bottom (dec (+ viewport-top height))
+        [cursor-i] (:cursor buffer)]
+    (cond-> buffer
+      (< cursor-i viewport-top)
+      (assoc-in [:cursor 0] viewport-top)
+
+      #_ (> cursor-i viewport-bottom)
+      #_ (assoc-in [:cursor 0] viewport-bottom))))
+
 (defn with-cursor
   [buffer cursor & [j]]
   (-> buffer
@@ -61,4 +74,6 @@
 
 (defn scroll
   [buffer scroll-fn]
-  (update-in buffer [:viewport-top] scroll-fn))
+  (-> buffer
+      (update-in [:viewport-top] scroll-fn)
+      (adjust-cursor-to-viewport)))

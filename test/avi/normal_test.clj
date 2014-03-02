@@ -138,4 +138,5 @@
           "Six                 "
           "Seven               "
           "test.txt            " [:black :on :white]
-          "                    ")))
+          "                    ")
+    (cursor :editing ten-lines :after [(ctrl \E)]) => [0 0]))
