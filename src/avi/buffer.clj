@@ -46,9 +46,11 @@
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
 
-(defn- move-to-line
+(defn move-to-line
   [buffer i]
-  (assoc buffer :cursor [i (j-within-line buffer i)]))
+  (-> buffer
+      (assoc :cursor [i (j-within-line buffer i)])
+      (adjust-viewport-to-contain-cursor)))
 
 (defn- adjust-cursor-to-viewport
   [buffer]

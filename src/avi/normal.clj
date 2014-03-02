@@ -35,13 +35,11 @@
 
 (defn- change-line
   [editor i-fn]
-  (let [buffer (e/current-buffer editor)
-        [i j] (b/cursor buffer)
-        i (i-fn i)
-        j (b/j-within-line buffer i)]
+  (let [[i] (b/cursor (e/current-buffer editor))
+        i (i-fn i)]
     (if (valid-line? editor i)
       (beep editor)
-      (e/update-current-buffer editor #(b/with-cursor % [i j])))))
+      (e/update-current-buffer editor #(b/move-to-line % i)))))
 
 (defn- move-to-end-of-line
   [editor]
