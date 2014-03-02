@@ -143,7 +143,9 @@
     (fact "`^E` moves the cursor down to keep it in the viewport"
       (cursor :editing ten-lines :after [(ctrl \E)]) => [0 0])
     (fact "`^E` doesn't move the cursor when unnecessary"
-      (cursor :editing ten-lines :after [\j \j (ctrl \E)]) => [1 0]))
+      (cursor :editing ten-lines :after [\j \j (ctrl \E)]) => [1 0])
+    (fact "`^E` won't put the cursor past end-of-line"
+      (cursor :editing ten-lines :after [\3 \G \$ \3 (ctrl \E)]) => [0 3]))
    (facts "about `^Y`"
      (fact "`^Y` scrolls the buffer up one line"
        (editor :editing ten-lines :after [(ctrl \E) (ctrl \Y)])

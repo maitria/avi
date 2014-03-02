@@ -34,6 +34,18 @@
       (> cursor-i viewport-bottom)
       (assoc :viewport-top (inc (- cursor-i height))))))
 
+(defn line
+  [buffer i]
+  (get-in buffer [:lines i]))
+
+(defn j-within-line
+  [buffer i]
+  (let [j (:last-explicit-j buffer)
+        line-length (count (line buffer i))
+        j-not-after-end (min (dec line-length) j)
+        j-within-line (max 0 j-not-after-end)]
+    j-within-line))
+
 (defn- adjust-cursor-to-viewport
   [buffer]
   (let [height (:viewport-height buffer)
@@ -42,7 +54,7 @@
         [cursor-i] (:cursor buffer)]
     (cond-> buffer
       (< cursor-i viewport-top)
-      (assoc-in [:cursor 0] viewport-top)
+      (assoc :cursor [viewport-top (j-within-line buffer viewport-top)])
 
       (> cursor-i viewport-bottom)
       (assoc-in [:cursor 0] viewport-bottom))))
@@ -57,10 +69,6 @@
 (defn last-explicit-j
   [buffer]
   (:last-explicit-j buffer))
-
-(defn line
-  [buffer i]
-  (get-in buffer [:lines i]))
 
 (defn lines
   [buffer]
