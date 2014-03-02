@@ -33,20 +33,12 @@
   (or (< i 0)
       (>= i (b/lines (e/current-buffer editor)))))
 
-(defn- j-within-line
-  [editor [i j]]
-  (let [b (e/current-buffer editor)
-        j (b/last-explicit-j b)
-        line-length (count (b/line b i))
-        j-not-after-end (min (dec line-length) j)
-        j-within-line (max 0 j-not-after-end)]
-    j-within-line))
-
 (defn- change-line
   [editor i-fn]
-  (let [[i j] (b/cursor (e/current-buffer editor))
+  (let [buffer (e/current-buffer editor)
+        [i j] (b/cursor buffer)
         i (i-fn i)
-        j (j-within-line editor [i j])]
+        j (b/j-within-line buffer i)]
     (if (valid-line? editor i)
       (beep editor)
       (e/update-current-buffer editor #(b/with-cursor % [i j])))))
