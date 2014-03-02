@@ -140,7 +140,7 @@
             "Seven               "
             "test.txt            " [:black :on :white]
             "                    "))
-    (fact "`^E` moves the cursor down if necessary"
+    (fact "`^E` moves the cursor down to keep it in the viewport"
       (cursor :editing ten-lines :after [(ctrl \E)]) => [0 0])
     (fact "`^E` doesn't move the cursor when unnecessary"
       (cursor :editing ten-lines :after [\j \j (ctrl \E)]) => [1 0]))
@@ -156,5 +156,7 @@
               "Six                 "
               "test.txt            " [:black :on :white]
               "                    "))
-     (fact "`^Y` moves the cursor up if necessary"
-       (cursor :editing ten-lines :after [\7 \G (ctrl \Y)]) => [5 0])))
+     (fact "`^Y` moves the cursor up to keep it in the viewport"
+       (cursor :editing ten-lines :after [\7 \G (ctrl \Y)]) => [5 0])
+     (fact "`^Y` doesn't move the cursor when unnecessary"
+       (cursor :editing ten-lines :after [(ctrl \E) (ctrl \Y)]) => [1 0])))
