@@ -60,5 +60,5 @@
       (adjust-viewport-to-contain-cursor)))
 
 (defn scroll
-  [{top :viewport-top, :as buffer} scroll-fn]
-  (assoc buffer :viewport-top (scroll-fn top)))
+  [buffer scroll-fn]
+  (update-in buffer [:viewport-top] scroll-fn))
