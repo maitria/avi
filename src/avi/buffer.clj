@@ -44,8 +44,8 @@
       (< cursor-i viewport-top)
       (assoc-in [:cursor 0] viewport-top)
 
-      #_ (> cursor-i viewport-bottom)
-      #_ (assoc-in [:cursor 0] viewport-bottom))))
+      (> cursor-i viewport-bottom)
+      (assoc-in [:cursor 0] viewport-bottom))))
 
 (defn with-cursor
   [buffer cursor & [j]]

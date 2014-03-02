@@ -155,4 +155,6 @@
               "Five                "
               "Six                 "
               "test.txt            " [:black :on :white]
-              "                    "))))
+              "                    "))
+     (fact "`^Y` moves the cursor up if necessary"
+       (cursor :editing ten-lines :after [\7 \G (ctrl \Y)]) => [5 0])))
