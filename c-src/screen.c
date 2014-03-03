@@ -17,11 +17,13 @@ const int SCREEN_COLOR_COUNT = sizeof(SCREEN_COLORS)/sizeof(SCREEN_COLORS[0]);
 JNIEXPORT void JNICALL
 Java_avi_terminal_Screen_nativeStart(JNIEnv *env, jclass k)
 {
+	int i, j;
+
 	initscr();
 	start_color();
 
-	for (int i = 0; i < SCREEN_COLOR_COUNT; ++i)
-		for (int j = 0; j < SCREEN_COLOR_COUNT; ++j)
+	for (i = 0; i < SCREEN_COLOR_COUNT; ++i)
+		for (j = 0; j < SCREEN_COLOR_COUNT; ++j)
 			init_pair(i*SCREEN_COLOR_COUNT+j, SCREEN_COLORS[i], SCREEN_COLORS[j]);
 	
 	cbreak();
@@ -54,12 +56,13 @@ JNIEXPORT void JNICALL
 Java_avi_terminal_Screen_refresh(JNIEnv *env, jclass k, jint cursorI, jint cursorJ, jint width, jcharArray charsArray, jbyteArray attrsArray)
 {
 	chtype ch;
+	jint i, j, offset;
 	jsize size = (*env)->GetArrayLength(env, charsArray);
 	jchar *chars = (*env)->GetCharArrayElements(env, charsArray, NULL);
 	jbyte *attrs = (*env)->GetByteArrayElements(env, attrsArray, NULL);
 
-	for (jint i = 0, offset = 0; offset < size; ++i, offset += width) {
-		for (jint j = 0; j < width; ++j) {
+	for (i = 0, offset = 0; offset < size; ++i, offset += width) {
+		for (j = 0; j < width; ++j) {
 			ch = chars[offset+j] | COLOR_PAIR(attrs[offset+j]);
 			mvaddch(i, j, ch);
 		}
