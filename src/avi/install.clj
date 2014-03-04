@@ -25,6 +25,9 @@
         dll-suffix (if (= os-name "Mac OS X")
                      ".dylib"
                      ".so")
+        java-arch-name (if (= os-name "Mac OS X")
+                         "darwin"
+                         "linux")
         avi-Screen-path (str avi-lib-dir "libavi_jni" dll-suffix)]
     [["install" "-d" avi-jar-dir]
      ["install" "-m" "0755" "bin/avi" avi-bin-path]
@@ -36,7 +39,7 @@
          ["-fPIC"])
        ["-shared"
         (str "-I" include-path)
-        (str "-I" (str include-path "/darwin"))
+        (str "-I" (str include-path "/" java-arch-name))
         "-o" avi-Screen-path
         "c-src/screen.c"
         "-lcurses"] 

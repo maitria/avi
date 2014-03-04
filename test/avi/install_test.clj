@@ -34,4 +34,5 @@
     (fact "the build command has -fPIC"
       (build-command "Linux") => (contains ["-fPIC"]))
     (fact "the build command contains headers from the java.home property"
-      (build-command "Linux") => (contains ["-I/java-home/jre/../include"]))))
+      (build-command "Linux") => (contains ["-I/java-home/jre/../include"])
+      (build-command "Linux") => (contains ["-I/java-home/jre/../include/linux"]))))
