@@ -11,4 +11,6 @@
 (facts "about installing avi"
   (facts "about installing on Mac OS X"
     (fact "the JNI library name is libavi.dylib"
-      (build-command "Mac OS X") => (contains ["-o" "/foo/lib/libavi_jni.dylib"]))))
+      (build-command "Mac OS X") => (contains ["-o" "/foo/lib/libavi_jni.dylib"]))
+    (fact "the build command has -lcurses"
+      (build-command "Mac OS X") => (contains ["-lcurses"]))))
