@@ -10,7 +10,7 @@
 
 (facts "about installing avi"
   (facts "about installing on Mac OS X"
-    (fact "the JNI library name is libavi.dylib"
+    (fact "the JNI library name is libavi_jni.dylib"
       (build-command "Mac OS X") => (contains ["-o" "/foo/lib/libavi_jni.dylib"]))
     (fact "the build command has -lcurses"
       (build-command "Mac OS X") => (contains ["-lcurses"]))
@@ -18,4 +18,7 @@
       (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers"])
       (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/darwin"]))
     (fact "the build command specifies -dynamiclib"
-      (build-command "Mac OS X") => (contains "-dynamiclib"))))
+      (build-command "Mac OS X") => (contains ["-dynamiclib"])))
+  (facts "about installing on Linux"
+    (fact "the JNI library name is libavi_jni.so"
+      (build-command "Linux") => (contains ["-o" "/foo/lib/libavi_jni.so"]))))

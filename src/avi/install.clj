@@ -25,7 +25,10 @@
         avi-jar-dir (str prefix "/share/avi/")
         avi-jar-path (str avi-jar-dir "/avi.jar")
         avi-lib-dir (str prefix "/lib/")
-        avi-Screen-path (str avi-lib-dir "libavi_jni.dylib")]
+        dll-suffix (if (= os-name "Mac OS X")
+                     ".dylib"
+                     ".so")
+        avi-Screen-path (str avi-lib-dir "libavi_jni" dll-suffix)]
     [["install" "-d" avi-jar-dir]
      ["install" "-m" "0755" "bin/avi" avi-bin-path]
      ["install" "-m" "0644" (str "target/avi-" (version) "-standalone.jar") avi-jar-path]
