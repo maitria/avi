@@ -16,4 +16,6 @@
       (build-command "Mac OS X") => (contains ["-lcurses"]))
     (fact "the build command includes headers from JavaVM.framework"
       (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers"])
-      (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/darwin"]))))
+      (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/darwin"]))
+    (fact "the build command specifies -dynamiclib"
+      (build-command "Mac OS X") => (contains "-dynamiclib"))))
