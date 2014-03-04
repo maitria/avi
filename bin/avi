@@ -7,6 +7,6 @@ fi
 
 avi_prefix="/usr/local"
 avi_classpath="$avi_prefix/share/avi/avi.jar"
-avi_library_path="$avi_prefix/lib/avi"
+avi_library_path="$avi_prefix/lib"
 
 exec "$JAVA_CMD" -Dapple.awt.UIElement=true -Djava.library.path="$avi_library_path" -jar "$avi_classpath" "$@"

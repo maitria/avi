@@ -3,7 +3,7 @@ package avi.terminal;
 public class Screen {
 
     public static void start() {
-        System.loadLibrary("avi_terminal_Screen");
+        System.loadLibrary("avi_jni");
         nativeStart();
     }
 
