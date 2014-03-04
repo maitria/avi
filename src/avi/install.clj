@@ -15,7 +15,9 @@
 (defn install-commands
   [prefix get-property]
   (let [os-name (get-property "os.name")
-        include-path "/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers" 
+        include-path (if (= os-name "Mac OS X")
+                       "/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers"
+                       (str (get-property "java.home") "/../include"))
         avi-bin-path (str prefix "/bin/avi")
         avi-jar-dir (str prefix "/share/avi/")
         avi-jar-path (str avi-jar-dir "/avi.jar")

@@ -6,7 +6,8 @@
 
 (defn build-command
   [os-name]
-  (last (install-commands test-prefix {"os.name" os-name})))
+  (last (install-commands test-prefix {"os.name" os-name,
+                                       "java.home" "/java-home/jre"})))
 
 (facts "about installing avi"
   (facts "about installing on Mac OS X"
@@ -31,4 +32,6 @@
     (fact "the build command specifies -ltinfo"
       (build-command "Linux") => (contains ["-ltinfo"]))
     (fact "the build command has -fPIC"
-      (build-command "Linux") => (contains ["-fPIC"]))))
+      (build-command "Linux") => (contains ["-fPIC"]))
+    (fact "the build command contains headers from the java.home property"
+      (build-command "Linux") => (contains ["-I/java-home/jre/../include"]))))
