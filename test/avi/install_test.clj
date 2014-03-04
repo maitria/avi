@@ -17,8 +17,8 @@
     (fact "the build command includes headers from JavaVM.framework"
       (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers"])
       (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/darwin"]))
-    (fact "the build command specifies -dynamiclib"
-      (build-command "Mac OS X") => (contains ["-dynamiclib"])))
+    (fact "the build command specifies -shared"
+      (build-command "Mac OS X") => (contains ["-shared"])))
   (facts "about installing on Linux"
     (fact "the JNI library name is libavi_jni.so"
       (build-command "Linux") => (contains ["-o" "/foo/lib/libavi_jni.so"]))))
