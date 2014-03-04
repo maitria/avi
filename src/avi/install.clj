@@ -12,12 +12,6 @@
   []
   (nth (read-string (slurp "project.clj")) 2))
 
-(defn- header-location
-  []
-  (->> possible-header-locations
-       (filter #(.exists (io/as-file (str % "/jni.h"))))
-       first))
-
 (defn install-commands
   [prefix os-name]
   (let [include-path "/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers" 
