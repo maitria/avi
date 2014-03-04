@@ -2,10 +2,6 @@
   (:require [clojure.java.io :as io]
             [clojure.java.shell]))
 
-(def possible-header-locations
-  ["/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers"
-   (str (System/getProperty "java.home") "/../include")])
-
 (defn- sh
   [& args]
   (let [result (apply clojure.java.shell/sh args)]
@@ -24,7 +20,7 @@
 
 (defn install-commands
   [prefix os-name]
-  (let [include-path (header-location)
+  (let [include-path "/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers" 
         avi-bin-path (str prefix "/bin/avi")
         avi-jar-dir (str prefix "/share/avi/")
         avi-jar-path (str avi-jar-dir "/avi.jar")
