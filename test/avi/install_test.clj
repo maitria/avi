@@ -14,6 +14,8 @@
       (build-command "Mac OS X") => (contains ["-o" "/foo/lib/libavi_jni.dylib"]))
     (fact "the build command has -lcurses"
       (build-command "Mac OS X") => (contains ["-lcurses"]))
+    (fact "the build command does not have -ltinfo"
+      (build-command "Mac OS X") =not=> (contains ["-ltinfo"]))
     (fact "the build command includes headers from JavaVM.framework"
       (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers"])
       (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/darwin"]))

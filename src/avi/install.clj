@@ -28,8 +28,8 @@
      ["install" "-m" "0644" (str "target/avi-" (version) "-standalone.jar") avi-jar-path]
      ["install" "-d" avi-lib-dir]
      (concat
-       ["cc"
-        "-shared"
+       ["cc"]
+       ["-shared"
         (str "-I" include-path)
         (str "-I" (str include-path "/darwin"))
         "-o" avi-Screen-path
