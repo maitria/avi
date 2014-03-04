@@ -32,6 +32,9 @@ $ cd avi
 $ lein install
 ```
 
+On Linux, you'll likely not have access to `/usr/local`.  In that case you'll need to use
+`sudo lein install` instead.
+
 ## License
 
 Copyright 2014 Maitria
