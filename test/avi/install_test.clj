@@ -6,7 +6,7 @@
 
 (defn build-command
   [os-name]
-  (last (install-commands test-prefix os-name)))
+  (last (install-commands test-prefix {"os.name" os-name})))
 
 (facts "about installing avi"
   (facts "about installing on Mac OS X"

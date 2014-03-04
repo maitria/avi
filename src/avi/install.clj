@@ -13,8 +13,9 @@
   (nth (read-string (slurp "project.clj")) 2))
 
 (defn install-commands
-  [prefix os-name]
-  (let [include-path "/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers" 
+  [prefix get-property]
+  (let [os-name (get-property "os.name")
+        include-path "/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers" 
         avi-bin-path (str prefix "/bin/avi")
         avi-jar-dir (str prefix "/share/avi/")
         avi-jar-path (str avi-jar-dir "/avi.jar")
@@ -42,5 +43,5 @@
 
 (defn install
   []
-  (doseq [cmd (install-commands "/usr/local" (System/getProperty "os.name"))]
+  (doseq [cmd (install-commands "/usr/local" #(System/getProperty %))]
     (apply sh cmd)))
