@@ -20,11 +20,15 @@
       (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers"])
       (build-command "Mac OS X") => (contains ["-I/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/darwin"]))
     (fact "the build command specifies -shared"
-      (build-command "Mac OS X") => (contains ["-shared"])))
+      (build-command "Mac OS X") => (contains ["-shared"]))
+    (fact "the build command does not have -fPIC"
+      (build-command "Mac OS X") =not=> (contains ["-fPIC"])))
   (facts "about installing on Linux"
     (fact "the JNI library name is libavi_jni.so"
       (build-command "Linux") => (contains ["-o" "/foo/lib/libavi_jni.so"]))
     (fact "the build command specifies -shared"
       (build-command "Linux") => (contains ["-shared"]))
     (fact "the build command specifies -ltinfo"
-      (build-command "Linux") => (contains ["-ltinfo"]))))
+      (build-command "Linux") => (contains ["-ltinfo"]))
+    (fact "the build command has -fPIC"
+      (build-command "Linux") => (contains ["-fPIC"]))))

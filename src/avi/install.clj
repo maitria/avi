@@ -29,6 +29,8 @@
      ["install" "-d" avi-lib-dir]
      (concat
        ["cc"]
+       (if (= os-name "Linux")
+         ["-fPIC"])
        ["-shared"
         (str "-I" include-path)
         (str "-I" (str include-path "/darwin"))
