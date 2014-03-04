@@ -21,4 +21,8 @@
       (build-command "Mac OS X") => (contains ["-shared"])))
   (facts "about installing on Linux"
     (fact "the JNI library name is libavi_jni.so"
-      (build-command "Linux") => (contains ["-o" "/foo/lib/libavi_jni.so"]))))
+      (build-command "Linux") => (contains ["-o" "/foo/lib/libavi_jni.so"]))
+    (fact "the build command specifies -shared"
+      (build-command "Linux") => (contains ["-shared"]))
+    (fact "the build command specifies -ltinfo"
+      (build-command "Linux") => (contains ["-ltinfo"]))))
