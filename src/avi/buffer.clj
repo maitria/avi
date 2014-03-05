@@ -98,3 +98,9 @@
     :as buffer}]
   (let [new-top (+ top (quot height 2))]
     (scroll buffer (constantly new-top))))
+
+(defn on-last-line?
+  [buffer]
+  (let [[i] (cursor buffer)
+        line-count (lines buffer)]
+    (= i (dec line-count))))

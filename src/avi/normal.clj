@@ -93,10 +93,8 @@
 
 (defn- scroll-half-page
   [editor]
-  (let [buffer (e/current-buffer editor)
-        [i] (b/cursor buffer)
-        line-count (b/lines buffer)]
-    (if (= i (dec line-count))
+  (let [buffer (e/current-buffer editor)]
+    (if (b/on-last-line? buffer)
       (beep editor)
       (e/update-current-buffer editor b/scroll-half-page))))
 
