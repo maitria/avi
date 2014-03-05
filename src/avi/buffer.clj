@@ -91,3 +91,10 @@
   (-> buffer
       (update-in [:viewport-top] scroll-fn)
       (adjust-cursor-to-viewport)))
+
+(defn scroll-half-page
+  [{top :viewport-top,
+    height :viewport-height,
+    :as buffer}]
+  (let [new-top (+ top (quot height 2))]
+    (scroll buffer (constantly new-top))))

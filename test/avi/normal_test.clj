@@ -163,4 +163,16 @@
      (fact "`^Y` doesn't move the cursor when unnecessary"
        (cursor :editing ten-lines :after [(ctrl \E) (ctrl \Y)]) => [1 0])
      (fact "`^Y` won't put the cursor past end-of-line"
-       (cursor :editing ten-lines :after [\7 \G \$ (ctrl \Y)]) => [5 2])))
+       (cursor :editing ten-lines :after [\7 \G \$ (ctrl \Y)]) => [5 2]))
+   (facts "about `^D`"
+     (fact "`^D` scrolls down half a page"
+       (editor :editing ten-lines :after [(ctrl \D)])
+        => (looks-like
+              "Four                "
+              "Five                "
+              "Six                 "
+              "Seven               "
+              "Eight               "
+              "Nine                "
+              "test.txt            " [:black :on :white]
+              "                    "))))

@@ -87,9 +87,13 @@
   (let [position (index-of-first-non-blank (current-line editor))]
     (change-column editor (constantly position))))
 
-(defn scroll
+(defn- scroll
   [editor update-fn]
   (e/update-current-buffer editor #(b/scroll % update-fn)))
+
+(defn- scroll-half-page
+  [editor]
+  (e/update-current-buffer editor b/scroll-half-page))
 
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}
@@ -110,6 +114,7 @@
    \k {:handler #(change-line % dec)}
    \l {:handler #(change-column % inc)}
    \G {:handler handle-G, :no-repeat? true}
+   (ctrl \D) {:handler scroll-half-page}
    (ctrl \E) {:handler #(scroll % inc)}
    (ctrl \Y) {:handler #(scroll % dec)}})
 
