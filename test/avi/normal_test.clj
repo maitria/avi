@@ -175,4 +175,6 @@
               "Eight               "
               "Nine                "
               "test.txt            " [:black :on :white]
-              "                    "))))
+              "                    "))
+     (fact "`^D` on last line beeps"
+       (editor :editing ten-lines :after [\G (ctrl \D)]) => beeped)))

@@ -93,7 +93,12 @@
 
 (defn- scroll-half-page
   [editor]
-  (e/update-current-buffer editor b/scroll-half-page))
+  (let [buffer (e/current-buffer editor)
+        [i] (b/cursor buffer)
+        line-count (b/lines buffer)]
+    (if (= i (dec line-count))
+      (beep editor)
+      (e/update-current-buffer editor b/scroll-half-page))))
 
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}
