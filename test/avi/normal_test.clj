@@ -189,7 +189,18 @@
               "Ten                 "
               "test.txt            " [:black :on :white]
               "                    "))
-     (fact "`^D` won't move the cursor past end-of-file"
+     (fact "`^D` near end-of-file moves the cursor to last line (and not past)"
        (cursor :editing ten-lines :after [\G \k (ctrl \D)]) => [5 0])
      (fact "`^D` on last line beeps"
-       (editor :editing ten-lines :after [\G (ctrl \D)]) => beeped)))
+       (editor :editing ten-lines :after [\G (ctrl \D)]) => beeped)
+     (fact "`^D` won't scroll when file is shorter than screen"
+       (editor :after [(ctrl \D)])
+        => (looks-like
+              "One                 "
+              "Two                 "
+              "Three               "
+              ".                   "
+              "~                   " [:blue]
+              "~                   " [:blue]
+              "test.txt            " [:black :on :white]
+              "                    "))))
