@@ -203,4 +203,6 @@
               "~                   " [:blue]
               "~                   " [:blue]
               "test.txt            " [:black :on :white]
-              "                    "))))
+              "                    "))
+     (fact "`^D` won't move cursor past end-of-file when file is shorter than screen"
+       (cursor :editing "One\nTwo" :after [(ctrl \D)]) => [1 0])))

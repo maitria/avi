@@ -101,7 +101,7 @@
         line-count (lines buffer)
         max-top (max 0 (- line-count height))
         new-top (min max-top (+ top distance))
-        new-i (+ i distance)]
+        new-i (min (+ i distance) (dec line-count))]
     (-> buffer
         (move-to-line new-i)
         (scroll (constantly new-top)))))
