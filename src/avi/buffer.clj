@@ -98,7 +98,9 @@
     [i] :cursor,
     :as buffer}]
   (let [distance (quot height 2)
-        new-top (+ top distance)
+        line-count (lines buffer)
+        max-top (- line-count height)
+        new-top (min max-top (+ top distance))
         new-i (+ i distance)]
     (-> buffer
         (move-to-line new-i)
