@@ -95,9 +95,14 @@
 (defn scroll-half-page
   [{top :viewport-top,
     height :viewport-height,
+    [i] :cursor,
     :as buffer}]
-  (let [new-top (+ top (quot height 2))]
-    (scroll buffer (constantly new-top))))
+  (let [distance (quot height 2)
+        new-top (+ top distance)
+        new-i (+ i distance)]
+    (-> buffer
+        (move-to-line new-i)
+        (scroll (constantly new-top)))))
 
 (defn on-last-line?
   [buffer]

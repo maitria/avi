@@ -176,5 +176,7 @@
               "Nine                "
               "test.txt            " [:black :on :white]
               "                    "))
+     (fact "`^D` moves the cursor down half a page"
+       (cursor :editing ten-lines :after [\j \j (ctrl \D)]) => [2 0])
      (fact "`^D` on last line beeps"
        (editor :editing ten-lines :after [\G (ctrl \D)]) => beeped)))
