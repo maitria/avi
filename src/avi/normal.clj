@@ -91,12 +91,12 @@
   [editor update-fn]
   (e/update-current-buffer editor #(b/scroll % update-fn)))
 
-(defn- scroll-half-page
+(defn- scroll-down-half-page
   [editor]
   (let [buffer (e/current-buffer editor)]
     (if (b/on-last-line? buffer)
       (beep editor)
-      (e/update-current-buffer editor b/scroll-half-page))))
+      (e/update-current-buffer editor b/scroll-down-half-page))))
 
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}
@@ -117,7 +117,7 @@
    \k {:handler #(change-line % dec)}
    \l {:handler #(change-column % inc)}
    \G {:handler handle-G, :no-repeat? true}
-   (ctrl \D) {:handler scroll-half-page}
+   (ctrl \D) {:handler scroll-down-half-page}
    (ctrl \E) {:handler #(scroll % inc)}
    (ctrl \Y) {:handler #(scroll % dec)}})
 

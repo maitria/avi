@@ -92,7 +92,7 @@
       (update-in [:viewport-top] scroll-fn)
       (adjust-cursor-to-viewport)))
 
-(defn scroll-half-page
+(defn scroll-down-half-page
   [{top :viewport-top,
     height :viewport-height,
     [i] :cursor,
