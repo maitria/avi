@@ -176,6 +176,8 @@
               "Nine                "
               "test.txt            " [:black :on :white]
               "                    "))
+     (fact "`^D` moves the cursor down half a page"
+       (cursor :editing ten-lines :after [\j \j (ctrl \D)]) => [2 0])
      (fact "`^D` won't scroll past end-of-file"
        (editor :editing ten-lines :after [(ctrl \D) (ctrl \D) (ctrl \D)])
         => (looks-like
@@ -187,7 +189,7 @@
               "Ten                 "
               "test.txt            " [:black :on :white]
               "                    "))
-     (fact "`^D` moves the cursor down half a page"
-       (cursor :editing ten-lines :after [\j \j (ctrl \D)]) => [2 0])
+     (fact "`^D` won't move the cursor past end-of-file"
+       (cursor :editing ten-lines :after [\G \k (ctrl \D)]) => [5 0])
      (fact "`^D` on last line beeps"
        (editor :editing ten-lines :after [\G (ctrl \D)]) => beeped)))
