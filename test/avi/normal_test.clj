@@ -205,4 +205,7 @@
               "test.txt            " [:black :on :white]
               "                    "))
      (fact "`^D` won't move cursor past end-of-file when file is shorter than screen"
-       (cursor :editing "One\nTwo" :after [(ctrl \D)]) => [1 0])))
+       (cursor :editing "One\nTwo" :after [(ctrl \D)]) => [1 0]))
+  (facts "about `^U`"
+    (fact "`^U` on first line beeps"
+      (editor :after [(ctrl \U)]) => beeped)))
