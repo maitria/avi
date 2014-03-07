@@ -117,5 +117,5 @@
     height :viewport-height,
    :as buffer}]
   (let [distance (quot height 2)
-        new-top (- top distance)]
+        new-top (max 0 (- top distance))]
     (scroll buffer (constantly new-top))))

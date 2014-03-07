@@ -219,4 +219,15 @@
              "Five                "
              "Six                 "
              "test.txt            " [:black :on :white]
+             "                    "))
+    (fact "`^U` does not scroll to before first line of file"
+      (editor :editing ten-lines :after [(ctrl \E) (ctrl \U)])
+       => (looks-like
+             "One                 "
+             "Two                 "
+             "Three               "
+             "Four                "
+             "Five                "
+             "Six                 "
+             "test.txt            " [:black :on :white]
              "                    "))))
