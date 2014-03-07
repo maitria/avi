@@ -220,6 +220,8 @@
              "Six                 "
              "test.txt            " [:black :on :white]
              "                    "))
+    (fact "`^U` moves the cursor up half a page"
+      (cursor :editing ten-lines :after [\G \k (ctrl \U)]) => [4 0])
     (fact "`^U` does not scroll to before first line of file"
       (editor :editing ten-lines :after [(ctrl \E) (ctrl \U)])
        => (looks-like
@@ -230,4 +232,6 @@
              "Five                "
              "Six                 "
              "test.txt            " [:black :on :white]
-             "                    "))))
+             "                    "))
+    (fact "`^U` does not move cursor before beginning of file"
+      (cursor :editing ten-lines :after [\j (ctrl \U)]) => [0 0])))

@@ -115,7 +115,11 @@
 (defn scroll-up-half-page
   [{top :viewport-top,
     height :viewport-height,
+    [i] :cursor,
    :as buffer}]
   (let [distance (quot height 2)
-        new-top (max 0 (- top distance))]
-    (scroll buffer (constantly new-top))))
+        new-top (max 0 (- top distance))
+        new-i (- i distance)]
+    (-> buffer
+        (move-to-line new-i)
+        (scroll (constantly new-top)))))
