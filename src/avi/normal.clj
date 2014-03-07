@@ -98,6 +98,14 @@
       (beep editor)
       (e/update-current-buffer editor b/scroll-down-half-page))))
 
+(defn- scroll-up-half-page
+  [editor]
+  (let [buffer (e/current-buffer editor)
+        [i] (b/cursor buffer)]
+    (if (zero? i)
+      (beep editor)
+      (e/update-current-buffer editor b/scroll-up-half-page))))
+
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}
    \0 {:handler handle-0, :keep-count? true, :no-repeat? true}
@@ -119,6 +127,7 @@
    \G {:handler handle-G, :no-repeat? true}
    (ctrl \D) {:handler scroll-down-half-page}
    (ctrl \E) {:handler #(scroll % inc)}
+   (ctrl \U) {:handler scroll-up-half-page}
    (ctrl \Y) {:handler #(scroll % dec)}})
 
 (defn- wrap-handler-with-beep-reset

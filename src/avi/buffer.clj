@@ -111,3 +111,11 @@
   (let [[i] (cursor buffer)
         line-count (lines buffer)]
     (= i (dec line-count))))
+
+(defn scroll-up-half-page
+  [{top :viewport-top,
+    height :viewport-height,
+   :as buffer}]
+  (let [distance (quot height 2)
+        new-top (- top distance)]
+    (scroll buffer (constantly new-top))))
