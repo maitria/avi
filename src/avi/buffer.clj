@@ -46,8 +46,13 @@
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
 
+(defn line-count
+  [buffer]
+  (count (:lines buffer)))
+
 (defn move-to-line
   [buffer i]
+  {:pre [(>= i 0) (< i (line-count buffer))]}
   (-> buffer
       (assoc :cursor [i (j-within-line buffer i)])
       (adjust-viewport-to-contain-cursor)))
@@ -75,10 +80,6 @@
 (defn last-explicit-j
   [buffer]
   (:last-explicit-j buffer))
-
-(defn line-count
-  [buffer]
-  (count (:lines buffer)))
 
 (defn resize
   [buffer height]
