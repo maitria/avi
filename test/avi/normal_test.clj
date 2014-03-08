@@ -1,6 +1,6 @@
 (ns avi.normal-test
   (:require [midje.sweet :refer :all]
-            [avi.normal :refer [ctrl]]
+            [avi.keymap :refer [ctrl]]
             [avi.test-helpers :refer :all]))
 
 (facts "regarding repeating commands"

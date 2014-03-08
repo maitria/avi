@@ -1,10 +1,7 @@
 (ns avi.normal
   (:require [avi.buffer :as b]
-            [avi.editor :as e]))
-
-(defn ctrl
-  [c]
-  (char (- (int c) 0x40)))
+            [avi.editor :as e]
+            [avi.keymap :refer :all]))
 
 (defn- beep
   [editor]
@@ -65,38 +62,6 @@
 (defn- scroll
   [editor update-fn]
   (e/update-current-buffer editor #(b/scroll % update-fn)))
-
-(defn- wrap-handler-with-beep-reset
-  [handler]
-  (fn [editor]
-    (handler (assoc editor :beep? false))))
-
-(defn- wrap-handler-with-repeat-loop
-  [handler]
-  (fn [editor]
-    (let [repeat-count (or (:count editor) 1)]
-      (nth (iterate handler editor) repeat-count))))
-
-(defn- wrap-handler-with-count-reset
-  [handler]
-  (fn [editor]
-    (assoc (handler editor) :count nil)))
-
-(defn- make-handler
-  [& args]
-  (let [tags (into #{} (take-while keyword? args))
-        [handler] (drop-while keyword? args)]
-    (cond-> handler
-      true                      wrap-handler-with-beep-reset
-      (not (:no-repeat? tags))  wrap-handler-with-repeat-loop
-      (not (:keep-count? tags)) wrap-handler-with-count-reset)))
-
-(defmacro defhandler
-  [& args]
-  (let [tags (take-while keyword? args)
-        [keystroke handler-args & handler-body] (drop-while keyword? args)
-        handler-name (with-meta (gensym) {:handles keystroke})]
-    `(def ~handler-name (make-handler ~@tags (fn ~handler-args ~@handler-body)))))
 
 (defhandler \return
   [editor]
@@ -194,17 +159,7 @@
   [editor]
   (scroll editor dec))
 
-(defn default-key-map
-  []
-  (reduce
-    (fn [the-key-map a-fn]
-      (if-let [keystroke (:handles (meta a-fn))]
-        (assoc the-key-map keystroke a-fn)
-        the-key-map))
-    {}
-    (vals (ns-interns 'avi.normal))))
-
-(def key-map (default-key-map))
+(def key-map (ns->keymap 'avi.normal))
 
 (defn- key-handler
   [key]
