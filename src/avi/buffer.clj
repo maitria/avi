@@ -115,7 +115,7 @@
    new-top]
   (max 0 (min (dec (line-count buffer)) new-top)))
 
-(defn scroll-half-page
+(defn move-and-scroll-half-page
   [{top :viewport-top,
     height :viewport-height,
     [i] :cursor,
