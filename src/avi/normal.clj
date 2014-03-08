@@ -106,30 +106,6 @@
       (beep editor)
       (e/update-current-buffer editor #(b/move-and-scroll-half-page % :up)))))
 
-(def ^:private key-map
-  {\return {:handler #(assoc % :mode :finished)}
-   \0 {:handler handle-0, :keep-count? true, :no-repeat? true}
-   \1 {:handler #(update-count % 1), :keep-count? true, :no-repeat? true}
-   \2 {:handler #(update-count % 2), :keep-count? true, :no-repeat? true}
-   \3 {:handler #(update-count % 3), :keep-count? true, :no-repeat? true}
-   \4 {:handler #(update-count % 4), :keep-count? true, :no-repeat? true}
-   \5 {:handler #(update-count % 5), :keep-count? true, :no-repeat? true}
-   \6 {:handler #(update-count % 6), :keep-count? true, :no-repeat? true}
-   \7 {:handler #(update-count % 7), :keep-count? true, :no-repeat? true}
-   \8 {:handler #(update-count % 8), :keep-count? true, :no-repeat? true}
-   \9 {:handler #(update-count % 9), :keep-count? true, :no-repeat? true}
-   \^ {:handler move-to-first-non-blank-column}
-   \$ {:handler move-to-end-of-line}
-   \h {:handler #(change-column % dec)}
-   \j {:handler #(change-line % inc)}
-   \k {:handler #(change-line % dec)}
-   \l {:handler #(change-column % inc)}
-   \G {:handler handle-G, :no-repeat? true}
-   (ctrl \D) {:handler scroll-down-half-page}
-   (ctrl \E) {:handler #(scroll % inc)}
-   (ctrl \U) {:handler scroll-up-half-page}
-   (ctrl \Y) {:handler #(scroll % dec)}})
-
 (defn- wrap-handler-with-beep-reset
   [handler]
   (fn [editor]
@@ -146,15 +122,44 @@
   (fn [editor]
     (assoc (handler editor) :count nil)))
 
-(defn- key-handler
-  [editor key]
-  (let [{:keys [handler keep-count? no-repeat?]} (or (get key-map key)
-                                                     {:handler beep})]
+(defn make-handler
+  [& args]
+  (let [tags (into #{} (take-while keyword? args))
+        handler (last args)]
     (cond-> handler
-      true              wrap-handler-with-beep-reset
-      (not no-repeat?)  wrap-handler-with-repeat-loop
-      (not keep-count?) wrap-handler-with-count-reset)))
+      true                      wrap-handler-with-beep-reset
+      (not (:no-repeat? tags))  wrap-handler-with-repeat-loop
+      (not (:keep-count? tags)) wrap-handler-with-count-reset)))
+
+(def ^:private key-map
+  {\return (make-handler #(assoc % :mode :finished))
+   \0 (make-handler :keep-count? :no-repeat? handle-0)
+   \1 (make-handler :keep-count? :no-repeat? #(update-count % 1))
+   \2 (make-handler :keep-count? :no-repeat? #(update-count % 2))
+   \3 (make-handler :keep-count? :no-repeat? #(update-count % 3))
+   \4 (make-handler :keep-count? :no-repeat? #(update-count % 4))
+   \5 (make-handler :keep-count? :no-repeat? #(update-count % 5))
+   \6 (make-handler :keep-count? :no-repeat? #(update-count % 6))
+   \7 (make-handler :keep-count? :no-repeat? #(update-count % 7))
+   \8 (make-handler :keep-count? :no-repeat? #(update-count % 8))
+   \9 (make-handler :keep-count? :no-repeat? #(update-count % 9))
+   \^ (make-handler move-to-first-non-blank-column)
+   \$ (make-handler move-to-end-of-line)
+   \h (make-handler #(change-column % dec))
+   \j (make-handler #(change-line % inc))
+   \k (make-handler #(change-line % dec))
+   \l (make-handler #(change-column % inc))
+   \G (make-handler :no-repeat? handle-G)
+   (ctrl \D) (make-handler scroll-down-half-page)
+   (ctrl \E) (make-handler #(scroll % inc))
+   (ctrl \U) (make-handler scroll-up-half-page)
+   (ctrl \Y) (make-handler #(scroll % dec))})
+
+(defn- key-handler
+  [key]
+  (or (get key-map key)
+      {:handler beep}))
 
 (defn process
   [editor key]
-  ((key-handler editor key) editor))
+  ((key-handler key) editor))
