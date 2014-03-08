@@ -16,6 +16,13 @@
   (fn [editor]
     (assoc (handler editor) :count nil)))
 
+(defn- make-handler-name
+  [keystroke]
+  (let [name (->> (pr-str keystroke)
+                  (str "handle-")
+                  symbol)]
+    (with-meta name {:handles keystroke})))
+
 (defn make-handler
   [& args]
   (let [tags (into #{} (take-while keyword? args))
@@ -29,7 +36,7 @@
   [& args]
   (let [tags (take-while keyword? args)
         [keystroke handler-args & handler-body] (drop-while keyword? args)
-        handler-name (with-meta (gensym) {:handles keystroke})]
+        handler-name (make-handler-name keystroke)]
     `(def ~handler-name (make-handler ~@tags (fn ~handler-args ~@handler-body)))))
 
 (defn ns->keymap
