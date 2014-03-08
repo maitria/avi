@@ -96,7 +96,7 @@
   (let [buffer (e/current-buffer editor)]
     (if (b/on-last-line? buffer)
       (beep editor)
-      (e/update-current-buffer editor b/scroll-down-half-page))))
+      (e/update-current-buffer editor #(b/scroll-half-page % :down)))))
 
 (defn- scroll-up-half-page
   [editor]
@@ -104,7 +104,7 @@
         [i] (b/cursor buffer)]
     (if (zero? i)
       (beep editor)
-      (e/update-current-buffer editor b/scroll-up-half-page))))
+      (e/update-current-buffer editor #(b/scroll-half-page % :up)))))
 
 (def ^:private key-map
   {\return {:handler #(assoc % :mode :finished)}

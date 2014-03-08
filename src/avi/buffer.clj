@@ -92,34 +92,26 @@
       (update-in [:viewport-top] scroll-fn)
       (adjust-cursor-to-viewport)))
 
-(defn scroll-down-half-page
-  [{top :viewport-top,
-    height :viewport-height,
-    [i] :cursor,
-    :as buffer}]
-  (let [distance (quot height 2)
-        line-count (line-count buffer)
-        max-top (max 0 (- line-count height))
-        new-top (min max-top (+ top distance))
-        new-i (min (+ i distance) (dec line-count))]
-    (-> buffer
-        (move-to-line new-i)
-        (scroll (constantly new-top)))))
-
 (defn on-last-line?
   [buffer]
   (let [[i] (cursor buffer)
         line-count (line-count buffer)]
     (= i (dec line-count))))
 
-(defn scroll-up-half-page
+(defn scroll-half-page
   [{top :viewport-top,
     height :viewport-height,
     [i] :cursor,
-   :as buffer}]
+    :as buffer}
+   which-way]
   (let [distance (quot height 2)
-        new-top (max 0 (- top distance))
-        new-i (- i distance)]
-    (-> buffer
-        (move-to-line new-i)
-        (scroll (constantly new-top)))))
+        direction (case which-way
+                    :down +1
+                    :up -1)]
+      (let [line-count (line-count buffer)
+            max-top (max 0 (- line-count height))
+            new-top (min max-top (max 0 (+ top (* direction distance))))
+            new-i (min (+ i (* direction distance)) (dec line-count))]
+        (-> buffer
+            (move-to-line new-i)
+            (scroll (constantly new-top))))))
