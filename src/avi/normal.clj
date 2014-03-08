@@ -41,36 +41,16 @@
       (beep editor)
       (e/update-current-buffer editor #(b/move-to-line % i)))))
 
-(defn- move-to-end-of-line
-  [editor]
-  (let [b (e/current-buffer editor)
-        [i j] (b/cursor b)
-        line-length (count (b/line b i))
-        j (max 0 (dec line-length))]
-    (change-column editor (constantly j))))
-
 (defn- update-count
   [editor digit]
   (let [old-count (or (:count editor) 0)
         new-count (+ (* 10 old-count) digit)]
     (assoc editor :count new-count)))
 
-(defn- handle-0
-  [editor]
-  (if (:count editor)
-    (update-count editor 0)
-    (change-column editor (constantly 0))))
-
-(defn- handle-G
-  [editor]
-  (let [last-line (b/line-count (e/current-buffer editor))
-        target-line (or (:count editor) last-line)]
-    (change-line editor (constantly (dec target-line)))))
-
 (defn- current-line 
   [editor] 
   (let [buffer (e/current-buffer editor)
-        [row column] (b/cursor buffer)]
+        [row] (b/cursor buffer)]
     (b/line buffer row)))
 
 (defn- index-of-first-non-blank
@@ -82,29 +62,9 @@
       (dec leading-space-count)
       leading-space-count)))
 
-(defn- move-to-first-non-blank-column
-  [editor]
-  (let [position (index-of-first-non-blank (current-line editor))]
-    (change-column editor (constantly position))))
-
 (defn- scroll
   [editor update-fn]
   (e/update-current-buffer editor #(b/scroll % update-fn)))
-
-(defn- scroll-down-half-page
-  [editor]
-  (let [buffer (e/current-buffer editor)]
-    (if (b/on-last-line? buffer)
-      (beep editor)
-      (e/update-current-buffer editor #(b/move-and-scroll-half-page % :down)))))
-
-(defn- scroll-up-half-page
-  [editor]
-  (let [buffer (e/current-buffer editor)
-        [i] (b/cursor buffer)]
-    (if (zero? i)
-      (beep editor)
-      (e/update-current-buffer editor #(b/move-and-scroll-half-page % :up)))))
 
 (defn- wrap-handler-with-beep-reset
   [handler]
@@ -122,38 +82,129 @@
   (fn [editor]
     (assoc (handler editor) :count nil)))
 
-(defn make-handler
+(defn- make-handler
   [& args]
   (let [tags (into #{} (take-while keyword? args))
-        handler (last args)]
+        [handler] (drop-while keyword? args)]
     (cond-> handler
       true                      wrap-handler-with-beep-reset
       (not (:no-repeat? tags))  wrap-handler-with-repeat-loop
       (not (:keep-count? tags)) wrap-handler-with-count-reset)))
 
-(def ^:private key-map
-  {\return (make-handler #(assoc % :mode :finished))
-   \0 (make-handler :keep-count? :no-repeat? handle-0)
-   \1 (make-handler :keep-count? :no-repeat? #(update-count % 1))
-   \2 (make-handler :keep-count? :no-repeat? #(update-count % 2))
-   \3 (make-handler :keep-count? :no-repeat? #(update-count % 3))
-   \4 (make-handler :keep-count? :no-repeat? #(update-count % 4))
-   \5 (make-handler :keep-count? :no-repeat? #(update-count % 5))
-   \6 (make-handler :keep-count? :no-repeat? #(update-count % 6))
-   \7 (make-handler :keep-count? :no-repeat? #(update-count % 7))
-   \8 (make-handler :keep-count? :no-repeat? #(update-count % 8))
-   \9 (make-handler :keep-count? :no-repeat? #(update-count % 9))
-   \^ (make-handler move-to-first-non-blank-column)
-   \$ (make-handler move-to-end-of-line)
-   \h (make-handler #(change-column % dec))
-   \j (make-handler #(change-line % inc))
-   \k (make-handler #(change-line % dec))
-   \l (make-handler #(change-column % inc))
-   \G (make-handler :no-repeat? handle-G)
-   (ctrl \D) (make-handler scroll-down-half-page)
-   (ctrl \E) (make-handler #(scroll % inc))
-   (ctrl \U) (make-handler scroll-up-half-page)
-   (ctrl \Y) (make-handler #(scroll % dec))})
+(defmacro defhandler
+  [& args]
+  (let [tags (take-while keyword? args)
+        [keystroke handler-args & handler-body] (drop-while keyword? args)
+        handler-name (with-meta (gensym) {:handles keystroke})]
+    `(def ~handler-name (make-handler ~@tags (fn ~handler-args ~@handler-body)))))
+
+(defhandler \return
+  [editor]
+  (assoc editor :mode :finished))
+
+(defhandler :keep-count? :no-repeat? \0
+  [editor]
+  (if (:count editor)
+    (update-count editor 0)
+    (change-column editor (constantly 0))))
+
+(defhandler :keep-count? :no-repeat? \1
+  [editor]
+  (update-count editor 1))
+(defhandler :keep-count? :no-repeat? \2
+  [editor]
+  (update-count editor 2))
+(defhandler :keep-count? :no-repeat? \3
+  [editor]
+  (update-count editor 3))
+(defhandler :keep-count? :no-repeat? \4
+  [editor]
+  (update-count editor 4))
+(defhandler :keep-count? :no-repeat? \5
+  [editor]
+  (update-count editor 5))
+(defhandler :keep-count? :no-repeat? \6
+  [editor]
+  (update-count editor 6))
+(defhandler :keep-count? :no-repeat? \7
+  [editor]
+  (update-count editor 7))
+(defhandler :keep-count? :no-repeat? \8
+  [editor]
+  (update-count editor 8))
+(defhandler :keep-count? :no-repeat? \9
+  [editor]
+  (update-count editor 9))
+
+(defhandler \^
+  [editor]
+  (let [position (index-of-first-non-blank (current-line editor))]
+    (change-column editor (constantly position))))
+
+(defhandler \$
+  [editor]
+  (let [b (e/current-buffer editor)
+        [i j] (b/cursor b)
+        line-length (count (b/line b i))
+        j (max 0 (dec line-length))]
+    (change-column editor (constantly j))))
+
+(defhandler \h
+  [editor]
+  (change-column editor dec))
+
+(defhandler \j
+  [editor]
+  (change-line editor inc))
+
+(defhandler \k
+  [editor]
+  (change-line editor dec))
+
+(defhandler \l
+  [editor]
+  (change-column editor inc))
+
+(defhandler :no-repeat? \G
+  [editor]
+  (let [last-line (b/line-count (e/current-buffer editor))
+        target-line (or (:count editor) last-line)]
+    (change-line editor (constantly (dec target-line)))))
+
+(defhandler (ctrl \D)
+  [editor]
+  (let [buffer (e/current-buffer editor)]
+    (if (b/on-last-line? buffer)
+      (beep editor)
+      (e/update-current-buffer editor #(b/move-and-scroll-half-page % :down)))))
+
+(defhandler (ctrl \E)
+  [editor]
+  (scroll editor inc))
+
+(defhandler (ctrl \U)
+  [editor]
+  (let [buffer (e/current-buffer editor)
+        [i] (b/cursor buffer)]
+    (if (zero? i)
+      (beep editor)
+      (e/update-current-buffer editor #(b/move-and-scroll-half-page % :up)))))
+
+(defhandler (ctrl \Y)
+  [editor]
+  (scroll editor dec))
+
+(defn default-key-map
+  []
+  (reduce
+    (fn [the-key-map a-fn]
+      (if-let [keystroke (:handles (meta a-fn))]
+        (assoc the-key-map keystroke a-fn)
+        the-key-map))
+    {}
+    (vals (ns-interns 'avi.normal))))
+
+(def key-map (default-key-map))
 
 (defn- key-handler
   [key]
