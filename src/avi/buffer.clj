@@ -9,8 +9,7 @@
             (try
               (string/split (slurp filename) #"\n")
               (catch FileNotFoundException e
-                [""]
-                ))
+                [""]))
             [""]),
    :viewport-top 0
    :viewport-height height
@@ -70,7 +69,7 @@
       (> cursor-i viewport-bottom)
       (move-to-line viewport-bottom))))
 
-(defn with-cursor
+(defn move-cursor
   [buffer cursor & [j]]
   (-> buffer
       (assoc :cursor cursor)
