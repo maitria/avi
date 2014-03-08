@@ -29,7 +29,7 @@
         status-line (dec prompt-line)
         last-edit-line (dec status-line)
         buffer-line (+ i top)
-        buffer-line-count (b/lines buffer)]
+        buffer-line-count (b/line-count buffer)]
     (cond
       (= prompt-line i)
       [:white :black ""]

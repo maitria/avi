@@ -31,7 +31,7 @@
 (defn- valid-line?
   [editor i]
   (and (>= i 0)
-       (< i (b/lines (e/current-buffer editor)))))
+       (< i (b/line-count (e/current-buffer editor)))))
 
 (defn- change-line
   [editor i-fn]
@@ -63,7 +63,7 @@
 
 (defn- handle-G
   [editor]
-  (let [last-line (b/lines (e/current-buffer editor))
+  (let [last-line (b/line-count (e/current-buffer editor))
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 

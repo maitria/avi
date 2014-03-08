@@ -76,7 +76,7 @@
   [buffer]
   (:last-explicit-j buffer))
 
-(defn lines
+(defn line-count
   [buffer]
   (count (:lines buffer)))
 
@@ -98,7 +98,7 @@
     [i] :cursor,
     :as buffer}]
   (let [distance (quot height 2)
-        line-count (lines buffer)
+        line-count (line-count buffer)
         max-top (max 0 (- line-count height))
         new-top (min max-top (+ top distance))
         new-i (min (+ i distance) (dec line-count))]
@@ -109,7 +109,7 @@
 (defn on-last-line?
   [buffer]
   (let [[i] (cursor buffer)
-        line-count (lines buffer)]
+        line-count (line-count buffer)]
     (= i (dec line-count))))
 
 (defn scroll-up-half-page
