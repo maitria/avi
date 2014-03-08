@@ -98,6 +98,22 @@
         line-count (line-count buffer)]
     (= i (dec line-count))))
 
+(defn- clamp-viewport-top
+  [{top :viewport-top,
+    height :viewport-height,
+    :as buffer}
+   new-top]
+  (let [line-count (line-count buffer)
+        max-top (max 0 (- line-count height))]
+    (min max-top (max 0 new-top))))
+
+(defn- clamp-cursor-row
+  [{top :viewport-top,
+    height :viewport-height,
+    :as buffer}
+   new-top]
+  (max 0 (min (dec (line-count buffer)) new-top)))
+
 (defn scroll-half-page
   [{top :viewport-top,
     height :viewport-height,
@@ -107,11 +123,8 @@
   (let [distance (quot height 2)
         direction (case which-way
                     :down +1
-                    :up -1)]
-      (let [line-count (line-count buffer)
-            max-top (max 0 (- line-count height))
-            new-top (min max-top (max 0 (+ top (* direction distance))))
-            new-i (min (+ i (* direction distance)) (dec line-count))]
-        (-> buffer
-            (move-to-line new-i)
-            (scroll (constantly new-top))))))
+                    :up -1)
+        scroll-adjust (* direction distance)]
+    (-> buffer
+        (move-to-line (clamp-cursor-row buffer (+ i scroll-adjust)))
+        (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
