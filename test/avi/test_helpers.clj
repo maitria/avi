@@ -63,16 +63,20 @@
       events
 
       (= \< (first spec-left))
-      (recur (drop 1 (drop-while #(not= % \>) spec-left))
-             (conj events [:keystroke (apply str (concat (take-while #(not= % \>) spec-left) [\>]))]))
+      (let [event-name (apply str (concat (take-while #(not= % \>) spec-left) [\>]))
+            spec-left (drop 1 (drop-while #(not= % \>) spec-left))
+            event-type (if (.startsWith event-name "<Resize ")
+                         :resize
+                         :keystroke)
+            event-data (if (= :resize event-type)
+                         (read-string (apply str (drop 1 (drop-while #(not= % \space) event-name))))
+                         event-name)
+            event [event-type event-data]]
+        (recur spec-left (conj events event)))
 
       (char? (first spec-left))
       (recur (rest spec-left)
-             (conj events [:keystroke (str (first spec-left))]))
-
-      (keyword? (first spec-left))
-      (recur (rest (rest spec-left))
-             (conj events [(first spec-left) (second spec-left)])))))
+             (conj events [:keystroke (str (first spec-left))])))))
 
 (defn editor
   [& {file-contents :editing,
