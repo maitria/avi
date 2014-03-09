@@ -18,9 +18,7 @@
 
 (defn- make-handler-name
   [keystroke]
-  (let [name (->> (pr-str keystroke)
-                  (str "handle-")
-                  symbol)]
+  (let [name (symbol (str "handle-" keystroke))]
     (with-meta name {:handles keystroke})))
 
 (defn make-handler
