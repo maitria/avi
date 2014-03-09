@@ -62,22 +62,9 @@
       (not (seq spec-left))
       events
 
-      (and (= \< (first spec-left))
-           (= \C (second spec-left))
-           (= \- (nth spec-left 2))
-           (= \> (nth spec-left 4)))
-      (recur (drop 5 spec-left)
-             (conj events [:keystroke (apply str (take 5 spec-left))]))
-
-      (and (= \< (nth spec-left 0))
-           (= \E (nth spec-left 1))
-           (= \n (nth spec-left 2))
-           (= \t (nth spec-left 3))
-           (= \e (nth spec-left 4))
-           (= \r (nth spec-left 5))
-           (= \> (nth spec-left 6)))
-      (recur (drop 7 spec-left)
-             (conj events [:keystroke (apply str (take 7 spec-left))]))
+      (= \< (first spec-left))
+      (recur (drop 1 (drop-while #(not= % \>) spec-left))
+             (conj events [:keystroke (apply str (concat (take-while #(not= % \>) spec-left) [\>]))]))
 
       (char? (first spec-left))
       (recur (rest spec-left)
