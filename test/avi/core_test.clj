@@ -57,8 +57,8 @@
     (:mode (editor)) =not=> :finished
     (:mode (editor :after ":")) =not=> :finished
     (:mode (editor :after ":q")) =not=> :finished)
-  (fact "It exits after `:q<CR>`."
-    (:mode (editor :after ":q\r")) => :finished))
+  (fact "It exits after `:q<Enter>`."
+    (:mode (editor :after ":q<Enter>")) => :finished))
 
 (facts "regarding screen resizes"
   (fact "It updates the editor size."

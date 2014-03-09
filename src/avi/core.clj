@@ -54,5 +54,5 @@
       (if-not (= (:mode editor) :finished)
         (recur
           (screen-size)
-          (process editor [:keystroke (Screen/getch)])))))
+          (process editor [:keystroke (Screen/getKey)])))))
   (Screen/stop))

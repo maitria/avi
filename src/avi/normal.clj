@@ -63,50 +63,50 @@
   [editor update-fn]
   (e/update-current-buffer editor #(b/scroll % update-fn)))
 
-(defhandler \return
+(defhandler "<Enter>"
   [editor]
   (assoc editor :mode :finished))
 
-(defhandler :keep-count? :no-repeat? \0
+(defhandler :keep-count? :no-repeat? "0"
   [editor]
   (if (:count editor)
     (update-count editor 0)
     (change-column editor (constantly 0))))
 
-(defhandler :keep-count? :no-repeat? \1
+(defhandler :keep-count? :no-repeat? "1"
   [editor]
   (update-count editor 1))
-(defhandler :keep-count? :no-repeat? \2
+(defhandler :keep-count? :no-repeat? "2"
   [editor]
   (update-count editor 2))
-(defhandler :keep-count? :no-repeat? \3
+(defhandler :keep-count? :no-repeat? "3"
   [editor]
   (update-count editor 3))
-(defhandler :keep-count? :no-repeat? \4
+(defhandler :keep-count? :no-repeat? "4"
   [editor]
   (update-count editor 4))
-(defhandler :keep-count? :no-repeat? \5
+(defhandler :keep-count? :no-repeat? "5"
   [editor]
   (update-count editor 5))
-(defhandler :keep-count? :no-repeat? \6
+(defhandler :keep-count? :no-repeat? "6"
   [editor]
   (update-count editor 6))
-(defhandler :keep-count? :no-repeat? \7
+(defhandler :keep-count? :no-repeat? "7"
   [editor]
   (update-count editor 7))
-(defhandler :keep-count? :no-repeat? \8
+(defhandler :keep-count? :no-repeat? "8"
   [editor]
   (update-count editor 8))
-(defhandler :keep-count? :no-repeat? \9
+(defhandler :keep-count? :no-repeat? "9"
   [editor]
   (update-count editor 9))
 
-(defhandler \^
+(defhandler "^"
   [editor]
   (let [position (index-of-first-non-blank (current-line editor))]
     (change-column editor (constantly position))))
 
-(defhandler \$
+(defhandler "$"
   [editor]
   (let [b (e/current-buffer editor)
         [i j] (b/cursor b)
@@ -114,40 +114,40 @@
         j (max 0 (dec line-length))]
     (change-column editor (constantly j))))
 
-(defhandler \h
+(defhandler "h"
   [editor]
   (change-column editor dec))
 
-(defhandler \j
+(defhandler "j"
   [editor]
   (change-line editor inc))
 
-(defhandler \k
+(defhandler "k"
   [editor]
   (change-line editor dec))
 
-(defhandler \l
+(defhandler "l"
   [editor]
   (change-column editor inc))
 
-(defhandler :no-repeat? \G
+(defhandler :no-repeat? "G"
   [editor]
   (let [last-line (b/line-count (e/current-buffer editor))
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
-(defhandler (ctrl \D)
+(defhandler "<C-D>"
   [editor]
   (let [buffer (e/current-buffer editor)]
     (if (b/on-last-line? buffer)
       (beep editor)
       (e/update-current-buffer editor #(b/move-and-scroll-half-page % :down)))))
 
-(defhandler (ctrl \E)
+(defhandler "<C-E>"
   [editor]
   (scroll editor inc))
 
-(defhandler (ctrl \U)
+(defhandler "<C-U>"
   [editor]
   (let [buffer (e/current-buffer editor)
         [i] (b/cursor buffer)]
@@ -155,7 +155,7 @@
       (beep editor)
       (e/update-current-buffer editor #(b/move-and-scroll-half-page % :up)))))
 
-(defhandler (ctrl \Y)
+(defhandler "<C-Y>"
   [editor]
   (scroll editor dec))
 
@@ -163,8 +163,7 @@
 
 (defn- key-handler
   [key]
-  (or (get key-map key)
-      {:handler beep}))
+  (or (get key-map key) beep))
 
 (defn process
   [editor key]

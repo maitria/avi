@@ -48,7 +48,3 @@
         the-key-map))
     {}
     (vals (ns-interns a-namespace))))
-
-(defn ctrl
-  [c]
-  (char (- (int c) 0x40)))

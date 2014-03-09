@@ -42,14 +42,24 @@ static jboolean is_enter_key(jchar character)
 	return character == KEY_ENTER || character == '\n';
 }
 
-JNIEXPORT jchar JNICALL
-Java_avi_terminal_Screen_getch(JNIEnv *env, jclass k)
+static jstring make_ctrl_key(JNIEnv *env, jchar ch)
+{
+	jchar ctrl[] = {'<', 'C', '-', ch + 0x40, '>'};
+	return (*env)->NewString(env, ctrl, 5);
+}
+
+JNIEXPORT jstring JNICALL
+Java_avi_terminal_Screen_getKey(JNIEnv *env, jclass k)
 {
 	jchar character = getch();
-	if (is_enter_key(character)) 
-		character = '\r';
 
-	return character;
+	if (is_enter_key(character)) 
+		return (*env)->NewStringUTF(env, "<Enter>");
+
+	if (character >= 0 && character < 0x20)
+		return make_ctrl_key(env, character);
+
+	return (*env)->NewString(env, &character, 1);
 }
 
 JNIEXPORT void JNICALL

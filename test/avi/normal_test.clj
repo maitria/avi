@@ -1,6 +1,5 @@
 (ns avi.normal-test
-  (:require [midje.sweet :refer :all]
-            [avi.keymap :refer [ctrl]]
+  (:require [midje.sweet :refer :all] 
             [avi.test-helpers :refer :all]))
 
 (facts "regarding repeating commands"
@@ -130,7 +129,7 @@
       (cursor :editing ten-lines :after "7j6k") => [0 0]))
   (facts "about `^E`"
     (fact "`^E` scrolls the buffer down one line"
-      (editor :editing ten-lines :after [(ctrl \E)])
+      (editor :editing ten-lines :after "<C-E>")
        => (looks-like
             "Two                 "
             "Three               "
@@ -141,14 +140,14 @@
             "test.txt            " [:black :on :white]
             "                    "))
     (fact "`^E` moves the cursor down to keep it in the viewport"
-      (cursor :editing ten-lines :after [(ctrl \E)]) => [0 0])
+      (cursor :editing ten-lines :after "<C-E>") => [0 0])
     (fact "`^E` doesn't move the cursor when unnecessary"
-      (cursor :editing ten-lines :after [\j \j (ctrl \E)]) => [1 0])
+      (cursor :editing ten-lines :after "jj<C-E>") => [1 0])
     (fact "`^E` won't put the cursor past end-of-line"
-      (cursor :editing ten-lines :after [\3 \G \$ \3 (ctrl \E)]) => [0 3]))
+      (cursor :editing ten-lines :after "3G$3<C-E>") => [0 3]))
   (facts "about `^Y`"
     (fact "`^Y` scrolls the buffer up one line"
-      (editor :editing ten-lines :after [(ctrl \E) (ctrl \Y)])
+      (editor :editing ten-lines :after "<C-E><C-Y>")
        => (looks-like
              "One                 "
              "Two                 "
@@ -159,14 +158,14 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`^Y` moves the cursor up to keep it in the viewport"
-      (cursor :editing ten-lines :after [\7 \G (ctrl \Y)]) => [5 0])
+      (cursor :editing ten-lines :after "7G<C-Y>") => [5 0])
     (fact "`^Y` doesn't move the cursor when unnecessary"
-      (cursor :editing ten-lines :after [(ctrl \E) (ctrl \Y)]) => [1 0])
+      (cursor :editing ten-lines :after "<C-E><C-Y>") => [1 0])
     (fact "`^Y` won't put the cursor past end-of-line"
-      (cursor :editing ten-lines :after [\7 \G \$ (ctrl \Y)]) => [5 2]))
+      (cursor :editing ten-lines :after "7G$<C-Y>") => [5 2]))
   (facts "about `^D`"
     (fact "`^D` scrolls down half a page"
-      (editor :editing ten-lines :after [(ctrl \D)])
+      (editor :editing ten-lines :after "<C-D>")
        => (looks-like
              "Four                "
              "Five                "
@@ -177,9 +176,9 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`^D` moves the cursor down half a page"
-      (cursor :editing ten-lines :after [\j \j (ctrl \D)]) => [2 0])
+      (cursor :editing ten-lines :after "jj<C-D>") => [2 0])
     (fact "`^D` won't scroll past end-of-file"
-      (editor :editing ten-lines :after [(ctrl \D) (ctrl \D) (ctrl \D)])
+      (editor :editing ten-lines :after "<C-D><C-D><C-D>")
        => (looks-like
              "Five                "
              "Six                 "
@@ -190,11 +189,11 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`^D` near end-of-file moves the cursor to last line (and not past)"
-      (cursor :editing ten-lines :after [\G \k (ctrl \D)]) => [5 0])
+      (cursor :editing ten-lines :after "Gk<C-D>") => [5 0])
     (fact "`^D` on last line beeps"
-      (editor :editing ten-lines :after [\G (ctrl \D)]) => beeped)
+      (editor :editing ten-lines :after "G<C-D>") => beeped)
     (fact "`^D` won't scroll when file is shorter than screen"
-      (editor :after [(ctrl \D)])
+      (editor :after "<C-D>")
        => (looks-like
              "One                 "
              "Two                 "
@@ -205,12 +204,12 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`^D` won't move cursor past end-of-file when file is shorter than screen"
-      (cursor :editing "One\nTwo" :after [(ctrl \D)]) => [1 0]))
+      (cursor :editing "One\nTwo" :after "<C-D>") => [1 0]))
   (facts "about `^U`"
     (fact "`^U` on first line beeps"
-      (editor :after [(ctrl \U)]) => beeped)
+      (editor :after "<C-U>") => beeped)
     (fact "`^U` scrolls up a half page"
-      (editor :editing ten-lines :after [(ctrl \D) (ctrl \U)])
+      (editor :editing ten-lines :after "<C-D><C-U>")
        => (looks-like
              "One                 "
              "Two                 "
@@ -221,9 +220,9 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`^U` moves the cursor up half a page"
-      (cursor :editing ten-lines :after [\G \k (ctrl \U)]) => [4 0])
+      (cursor :editing ten-lines :after "Gk<C-U>") => [4 0])
     (fact "`^U` does not scroll to before first line of file"
-      (editor :editing ten-lines :after [(ctrl \E) (ctrl \U)])
+      (editor :editing ten-lines :after "<C-E><C-U>")
        => (looks-like
              "One                 "
              "Two                 "
@@ -234,4 +233,4 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`^U` does not move cursor before beginning of file"
-      (cursor :editing ten-lines :after [\j (ctrl \U)]) => [0 0])))
+      (cursor :editing ten-lines :after "j<C-U>") => [0 0])))
