@@ -205,6 +205,7 @@
              "                    "))
     (fact "`^D` won't move cursor past end-of-file when file is shorter than screen"
       (cursor :editing "One\nTwo" :after "<C-D>") => [1 0]))
+
   (facts "about `^U`"
     (fact "`^U` on first line beeps"
       (editor :after "<C-U>") => beeped)
@@ -233,4 +234,8 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`^U` does not move cursor before beginning of file"
-      (cursor :editing ten-lines :after "j<C-U>") => [0 0])))
+      (cursor :editing ten-lines :after "j<C-U>") => [0 0]))
+
+  (facts "about L"
+    (fact "`L` moves to the last line of a file shorter than the screen"
+      (cursor :editing "One\nTwo\nThree" :after "L") => [2 0])))

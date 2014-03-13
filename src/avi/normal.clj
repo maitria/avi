@@ -136,6 +136,12 @@
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
+(defhandler "L"
+  [editor]
+  (let [last-line (b/line-count (e/current-buffer editor))
+        target-line (or (:count editor) last-line)]
+    (change-line editor (constantly (dec target-line)))))
+
 (defhandler "<C-D>"
   [editor]
   (let [buffer (e/current-buffer editor)]
