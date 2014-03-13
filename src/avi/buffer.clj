@@ -137,3 +137,8 @@
         bottom-of-file (dec (line-count buffer))
         new-line (min bottom-of-file bottom-of-viewport)]
     (move-to-line buffer new-line)))
+
+(defn cursor-to-top-of-viewport
+  [{top :viewport-top,
+    :as buffer}]
+  (move-to-line buffer top))

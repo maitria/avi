@@ -250,4 +250,7 @@
              "Five                "
              "Six                 "
              "test.txt            " [:black :on :white]
-             "                    "))))
+             "                    ")))
+  (facts "about `H`"
+    (fact "`H` moves to the first line on the screen"
+      (cursor :editing ten-lines :after "GH") => [0 0])))
