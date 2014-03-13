@@ -128,3 +128,12 @@
     (-> buffer
         (move-to-line (clamp-cursor-row buffer (+ i scroll-adjust)))
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
+
+(defn cursor-to-bottom-of-viewport
+  [{top :viewport-top,
+    height :viewport-height,
+    :as buffer}]
+  (let [bottom-of-viewport (dec (+ top height))
+        bottom-of-file (dec (line-count buffer))
+        new-line (min bottom-of-file bottom-of-viewport)]
+    (move-to-line buffer new-line)))

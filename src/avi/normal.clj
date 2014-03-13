@@ -138,9 +138,7 @@
 
 (defhandler "L"
   [editor]
-  (let [last-line (b/line-count (e/current-buffer editor))
-        target-line (or (:count editor) last-line)]
-    (change-line editor (constantly (dec target-line)))))
+  (e/update-current-buffer editor b/cursor-to-bottom-of-viewport))
 
 (defhandler "<C-D>"
   [editor]

@@ -236,6 +236,18 @@
     (fact "`^U` does not move cursor before beginning of file"
       (cursor :editing ten-lines :after "j<C-U>") => [0 0]))
 
-  (facts "about L"
+  (facts "about `L`"
     (fact "`L` moves to the last line of a file shorter than the screen"
-      (cursor :editing "One\nTwo\nThree" :after "L") => [2 0])))
+      (cursor :editing "One\nTwo\nThree" :after "L") => [2 0])
+    (fact "`L` moves to the last line on the screen when the file is longer"
+      (cursor :editing ten-lines :after "L") => [5 0]
+      (editor :editing ten-lines :after "L")
+       => (looks-like
+             "One                 "
+             "Two                 "
+             "Three               "
+             "Four                "
+             "Five                "
+             "Six                 "
+             "test.txt            " [:black :on :white]
+             "                    "))))
