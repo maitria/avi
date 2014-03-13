@@ -253,4 +253,14 @@
              "                    ")))
   (facts "about `H`"
     (fact "`H` moves to the first line on the screen"
-      (cursor :editing ten-lines :after "GH") => [0 0])))
+      (cursor :editing ten-lines :after "GH") => [0 0]
+      (editor :editing ten-lines :after "GH")
+       => (looks-like
+             "Five                "
+             "Six                 "
+             "Seven               "
+             "Eight               "
+             "Nine                "
+             "Ten                 "
+             "test.txt            " [:black :on :white]
+             "                    "))))
