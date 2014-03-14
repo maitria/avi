@@ -251,6 +251,7 @@
              "Six                 "
              "test.txt            " [:black :on :white]
              "                    ")))
+
   (facts "about `H`"
     (fact "`H` moves to the first line on the screen"
       (cursor :editing ten-lines :after "GH") => [0 0]
@@ -262,5 +263,19 @@
              "Eight               "
              "Nine                "
              "Ten                 "
+             "test.txt            " [:black :on :white]
+             "                    ")))
+
+  (facts "about `M`"
+    (fact "`M` moves to the middle line of the viewport when file is longer than screen"
+      (cursor :editing ten-lines :after "M") => [2 0]
+      (editor :editing ten-lines :after "M")
+       => (looks-like
+             "One                 "
+             "Two                 "
+             "Three               "
+             "Four                "
+             "Five                "
+             "Six                 "
              "test.txt            " [:black :on :white]
              "                    "))))

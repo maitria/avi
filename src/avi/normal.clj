@@ -144,6 +144,10 @@
   [editor]
   (e/update-current-buffer editor b/cursor-to-bottom-of-viewport))
 
+(defhandler "M"
+  [editor]
+  (e/update-current-buffer editor b/cursor-to-middle-of-viewport))
+
 (defhandler "<C-D>"
   [editor]
   (let [buffer (e/current-buffer editor)]

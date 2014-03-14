@@ -142,3 +142,10 @@
   [{top :viewport-top,
     :as buffer}]
   (move-to-line buffer top))
+
+(defn cursor-to-middle-of-viewport
+  [{top :viewport-top,
+    height :viewport-height,
+    :as buffer}]
+  (let [middle-of-viewport (dec (+ top (quot height 2)))]
+    (move-to-line buffer middle-of-viewport)))
