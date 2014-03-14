@@ -278,4 +278,6 @@
              "Five                "
              "Six                 "
              "test.txt            " [:black :on :white]
-             "                    "))))
+             "                    "))
+    (fact "`M` moves to the middle of the file when shorter than the screen"
+      (cursor :editing "One\nTwo\nThree" :after "M") => [1 0])))

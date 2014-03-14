@@ -147,5 +147,7 @@
   [{top :viewport-top,
     height :viewport-height,
     :as buffer}]
-  (let [middle-of-viewport (dec (+ top (quot height 2)))]
-    (move-to-line buffer middle-of-viewport)))
+  (let [middle-of-viewport (dec (+ top (quot height 2)))
+        middle-of-file (quot (dec (line-count buffer)) 2)
+        new-line (min middle-of-viewport middle-of-file)]
+    (move-to-line buffer new-line)))
