@@ -254,7 +254,19 @@
     (fact "`L` will move to count line from bottom of viewport"
       (cursor :editing ten-lines :after "<C-E>2L") => [4 0])
     (fact "`L` will move to count line from bottom of file when file is shorter"
-      (cursor :editing "One\nTwo\nThree" :after "2L") => [1 0]))
+      (cursor :editing "One\nTwo\nThree" :after "2L") => [1 0])
+    (fact "`L` will not move above top of viewport"
+      (cursor :editing ten-lines :after "G8L") => [0 0]
+      (editor :editing ten-lines :after "G8L")
+       => (looks-like
+             "Five                "
+             "Six                 "
+             "Seven               "
+             "Eight               "
+             "Nine                "
+             "Ten                 "
+             "test.txt            " [:black :on :white]
+             "                    ")))
 
   (facts "about `H`"
     (fact "`H` moves to the first line on the screen"

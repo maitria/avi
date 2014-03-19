@@ -138,8 +138,7 @@
         bottom-of-file (dec (line-count buffer))
         count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
         count-from-bottom-of-file (- bottom-of-file count-from-bottom)
-        new-line (min count-from-bottom-of-viewport
-                      count-from-bottom-of-file)]
+        new-line (max top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
     (move-to-line buffer new-line)))
 
 (defn cursor-to-top-of-viewport
