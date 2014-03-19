@@ -30,7 +30,7 @@
       (not (:no-repeat? tags))  wrap-handler-with-repeat-loop
       (not (:keep-count? tags)) wrap-handler-with-count-reset)))
 
-(defmacro defhandler
+(defmacro mapkey
   [& args]
   (let [tags (take-while keyword? args)
         [keystroke handler-args & handler-body] (drop-while keyword? args)

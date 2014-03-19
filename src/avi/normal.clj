@@ -63,50 +63,50 @@
   [editor update-fn]
   (e/update-current-buffer editor #(b/scroll % update-fn)))
 
-(defhandler "<Enter>"
+(mapkey "<Enter>"
   [editor]
   (assoc editor :mode :finished))
 
-(defhandler :keep-count? :no-repeat? "0"
+(mapkey :keep-count? :no-repeat? "0"
   [editor]
   (if (:count editor)
     (update-count editor 0)
     (change-column editor (constantly 0))))
 
-(defhandler :keep-count? :no-repeat? "1"
+(mapkey :keep-count? :no-repeat? "1"
   [editor]
   (update-count editor 1))
-(defhandler :keep-count? :no-repeat? "2"
+(mapkey :keep-count? :no-repeat? "2"
   [editor]
   (update-count editor 2))
-(defhandler :keep-count? :no-repeat? "3"
+(mapkey :keep-count? :no-repeat? "3"
   [editor]
   (update-count editor 3))
-(defhandler :keep-count? :no-repeat? "4"
+(mapkey :keep-count? :no-repeat? "4"
   [editor]
   (update-count editor 4))
-(defhandler :keep-count? :no-repeat? "5"
+(mapkey :keep-count? :no-repeat? "5"
   [editor]
   (update-count editor 5))
-(defhandler :keep-count? :no-repeat? "6"
+(mapkey :keep-count? :no-repeat? "6"
   [editor]
   (update-count editor 6))
-(defhandler :keep-count? :no-repeat? "7"
+(mapkey :keep-count? :no-repeat? "7"
   [editor]
   (update-count editor 7))
-(defhandler :keep-count? :no-repeat? "8"
+(mapkey :keep-count? :no-repeat? "8"
   [editor]
   (update-count editor 8))
-(defhandler :keep-count? :no-repeat? "9"
+(mapkey :keep-count? :no-repeat? "9"
   [editor]
   (update-count editor 9))
 
-(defhandler "^"
+(mapkey "^"
   [editor]
   (let [position (index-of-first-non-blank (current-line editor))]
     (change-column editor (constantly position))))
 
-(defhandler "$"
+(mapkey "$"
   [editor]
   (let [b (e/current-buffer editor)
         [i j] (b/cursor b)
@@ -114,54 +114,54 @@
         j (max 0 (dec line-length))]
     (change-column editor (constantly j))))
 
-(defhandler "h"
+(mapkey "h"
   [editor]
   (change-column editor dec))
 
-(defhandler "j"
+(mapkey "j"
   [editor]
   (change-line editor inc))
 
-(defhandler "k"
+(mapkey "k"
   [editor]
   (change-line editor dec))
 
-(defhandler "l"
+(mapkey "l"
   [editor]
   (change-column editor inc))
 
-(defhandler :no-repeat? "G"
+(mapkey :no-repeat? "G"
   [editor]
   (let [last-line (b/line-count (e/current-buffer editor))
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
-(defhandler :no-repeat? "H"
+(mapkey :no-repeat? "H"
   [editor]
   (let [count (dec (or (:count editor) 1))]
     (e/update-current-buffer editor #(b/cursor-to-top-of-viewport % count))))
 
-(defhandler :no-repeat? "L"
+(mapkey :no-repeat? "L"
   [editor]
   (let [count (dec (or (:count editor) 1))]
     (e/update-current-buffer editor #(b/cursor-to-bottom-of-viewport % count))))
 
-(defhandler "M"
+(mapkey "M"
   [editor]
   (e/update-current-buffer editor b/cursor-to-middle-of-viewport))
 
-(defhandler "<C-D>"
+(mapkey "<C-D>"
   [editor]
   (let [buffer (e/current-buffer editor)]
     (if (b/on-last-line? buffer)
       (beep editor)
       (e/update-current-buffer editor #(b/move-and-scroll-half-page % :down)))))
 
-(defhandler "<C-E>"
+(mapkey "<C-E>"
   [editor]
   (scroll editor inc))
 
-(defhandler "<C-U>"
+(mapkey "<C-U>"
   [editor]
   (let [buffer (e/current-buffer editor)
         [i] (b/cursor buffer)]
@@ -169,7 +169,7 @@
       (beep editor)
       (e/update-current-buffer editor #(b/move-and-scroll-half-page % :up)))))
 
-(defhandler "<C-Y>"
+(mapkey "<C-Y>"
   [editor]
   (scroll editor dec))
 
