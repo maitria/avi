@@ -67,37 +67,37 @@
   [editor]
   (assoc editor :mode :finished))
 
-(mapkey :keep-count? :no-repeat? "0"
+(mapkey :keep-count :no-repeat "0"
   [editor]
   (if (:count editor)
     (update-count editor 0)
     (change-column editor (constantly 0))))
 
-(mapkey :keep-count? :no-repeat? "1"
+(mapkey :keep-count :no-repeat "1"
   [editor]
   (update-count editor 1))
-(mapkey :keep-count? :no-repeat? "2"
+(mapkey :keep-count :no-repeat "2"
   [editor]
   (update-count editor 2))
-(mapkey :keep-count? :no-repeat? "3"
+(mapkey :keep-count :no-repeat "3"
   [editor]
   (update-count editor 3))
-(mapkey :keep-count? :no-repeat? "4"
+(mapkey :keep-count :no-repeat "4"
   [editor]
   (update-count editor 4))
-(mapkey :keep-count? :no-repeat? "5"
+(mapkey :keep-count :no-repeat "5"
   [editor]
   (update-count editor 5))
-(mapkey :keep-count? :no-repeat? "6"
+(mapkey :keep-count :no-repeat "6"
   [editor]
   (update-count editor 6))
-(mapkey :keep-count? :no-repeat? "7"
+(mapkey :keep-count :no-repeat "7"
   [editor]
   (update-count editor 7))
-(mapkey :keep-count? :no-repeat? "8"
+(mapkey :keep-count :no-repeat "8"
   [editor]
   (update-count editor 8))
-(mapkey :keep-count? :no-repeat? "9"
+(mapkey :keep-count :no-repeat "9"
   [editor]
   (update-count editor 9))
 
@@ -130,18 +130,18 @@
   [editor]
   (change-column editor inc))
 
-(mapkey :no-repeat? "G"
+(mapkey :no-repeat "G"
   [editor]
   (let [last-line (b/line-count (e/current-buffer editor))
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
-(mapkey :no-repeat? "H"
+(mapkey :no-repeat "H"
   [editor]
   (let [count (dec (or (:count editor) 1))]
     (e/update-current-buffer editor #(b/cursor-to-top-of-viewport % count))))
 
-(mapkey :no-repeat? "L"
+(mapkey :no-repeat "L"
   [editor]
   (let [count (dec (or (:count editor) 1))]
     (e/update-current-buffer editor #(b/cursor-to-bottom-of-viewport % count))))

@@ -26,9 +26,9 @@
   (let [tags (into #{} (take-while keyword? args))
         [handler] (drop-while keyword? args)]
     (cond-> handler
-      true                      wrap-handler-with-beep-reset
-      (not (:no-repeat? tags))  wrap-handler-with-repeat-loop
-      (not (:keep-count? tags)) wrap-handler-with-count-reset)))
+      true                     wrap-handler-with-beep-reset
+      (not (:no-repeat tags))  wrap-handler-with-repeat-loop
+      (not (:keep-count tags)) wrap-handler-with-count-reset)))
 
 (defmacro mapkey
   [& args]
