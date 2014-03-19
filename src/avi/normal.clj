@@ -67,38 +67,38 @@
   [editor]
   (assoc editor :mode :finished))
 
-(mapkey :keep-count :no-repeat "0"
-  [editor]
-  (if (:count editor)
+(mapkey :keep-count "0"
+  [editor repeat-count]
+  (if repeat-count
     (update-count editor 0)
     (change-column editor (constantly 0))))
 
-(mapkey :keep-count :no-repeat "1"
-  [editor]
+(mapkey :keep-count "1"
+  [editor repeat-count]
   (update-count editor 1))
-(mapkey :keep-count :no-repeat "2"
-  [editor]
+(mapkey :keep-count "2"
+  [editor repeat-count]
   (update-count editor 2))
-(mapkey :keep-count :no-repeat "3"
-  [editor]
+(mapkey :keep-count "3"
+  [editor repeat-count]
   (update-count editor 3))
-(mapkey :keep-count :no-repeat "4"
-  [editor]
+(mapkey :keep-count "4"
+  [editor repeat-count]
   (update-count editor 4))
-(mapkey :keep-count :no-repeat "5"
-  [editor]
+(mapkey :keep-count "5"
+  [editor repeat-count]
   (update-count editor 5))
-(mapkey :keep-count :no-repeat "6"
-  [editor]
+(mapkey :keep-count "6"
+  [editor repeat-count]
   (update-count editor 6))
-(mapkey :keep-count :no-repeat "7"
-  [editor]
+(mapkey :keep-count "7"
+  [editor repeat-count]
   (update-count editor 7))
-(mapkey :keep-count :no-repeat "8"
-  [editor]
+(mapkey :keep-count "8"
+  [editor repeat-count]
   (update-count editor 8))
-(mapkey :keep-count :no-repeat "9"
-  [editor]
+(mapkey :keep-count "9"
+  [editor repeat-count]
   (update-count editor 9))
 
 (mapkey "^"
@@ -130,20 +130,20 @@
   [editor]
   (change-column editor inc))
 
-(mapkey :no-repeat "G"
-  [editor]
+(mapkey "G"
+  [editor repeat-count]
   (let [last-line (b/line-count (e/current-buffer editor))
-        target-line (or (:count editor) last-line)]
+        target-line (or repeat-count last-line)]
     (change-line editor (constantly (dec target-line)))))
 
-(mapkey :no-repeat "H"
-  [editor]
-  (let [count (dec (or (:count editor) 1))]
+(mapkey "H"
+  [editor repeat-count]
+  (let [count (dec (or repeat-count 1))]
     (e/update-current-buffer editor #(b/cursor-to-top-of-viewport % count))))
 
-(mapkey :no-repeat "L"
-  [editor]
-  (let [count (dec (or (:count editor) 1))]
+(mapkey "L"
+  [editor repeat-count]
+  (let [count (dec (or repeat-count 1))]
     (e/update-current-buffer editor #(b/cursor-to-bottom-of-viewport % count))))
 
 (mapkey "M"

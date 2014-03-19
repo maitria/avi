@@ -30,12 +30,27 @@
       (not (:no-repeat tags))  wrap-handler-with-repeat-loop
       (not (:keep-count tags)) wrap-handler-with-count-reset)))
 
+(defn- handler-fn
+  [handler-args handler-body]
+  (let [editor-arg (first handler-args)
+        repeat-arg (second handler-args)
+        let-args (if-not repeat-arg
+                   []
+                   [repeat-arg `(:count ~editor-arg)])]
+    `(fn [~editor-arg]
+       (let [~@let-args]
+         ~@handler-body))))
+
 (defmacro mapkey
   [& args]
   (let [tags (take-while keyword? args)
         [keystroke handler-args & handler-body] (drop-while keyword? args)
-        handler-name (make-handler-name keystroke)]
-    `(def ~handler-name (make-handler ~@tags (fn ~handler-args ~@handler-body)))))
+        handler-name (make-handler-name keystroke)
+
+        tags (case (count handler-args)
+               1 tags
+               2 (conj tags :no-repeat))]
+    `(def ~handler-name (make-handler ~@tags ~(handler-fn handler-args handler-body)))))
 
 (defn ns->keymap
   [a-namespace]
