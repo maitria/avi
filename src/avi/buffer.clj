@@ -132,10 +132,12 @@
 (defn cursor-to-bottom-of-viewport
   [{top :viewport-top,
     height :viewport-height,
-    :as buffer}]
+    :as buffer}
+   count-from-bottom]
   (let [bottom-of-viewport (dec (+ top height))
         bottom-of-file (dec (line-count buffer))
-        new-line (min bottom-of-file bottom-of-viewport)]
+        count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
+        new-line (min count-from-bottom-of-viewport bottom-of-file)]
     (move-to-line buffer new-line)))
 
 (defn cursor-to-top-of-viewport

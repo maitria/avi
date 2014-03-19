@@ -250,7 +250,9 @@
              "Five                "
              "Six                 "
              "test.txt            " [:black :on :white]
-             "                    ")))
+             "                    "))
+    (fact "`L` will move to count line from bottom of viewport"
+      (cursor :editing ten-lines :after "<C-E>2L") => [4 0]))
 
   (facts "about `H`"
     (fact "`H` moves to the first line on the screen"

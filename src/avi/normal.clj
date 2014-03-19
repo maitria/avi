@@ -140,9 +140,10 @@
   [editor]
   (e/update-current-buffer editor b/cursor-to-top-of-viewport))
 
-(defhandler "L"
+(defhandler :no-repeat? "L"
   [editor]
-  (e/update-current-buffer editor b/cursor-to-bottom-of-viewport))
+  (let [count (dec (or (:count editor) 1))]
+    (e/update-current-buffer editor #(b/cursor-to-bottom-of-viewport % count))))
 
 (defhandler "M"
   [editor]
