@@ -280,7 +280,9 @@
              "Nine                "
              "Ten                 "
              "test.txt            " [:black :on :white]
-             "                    ")))
+             "                    "))
+    (fact "`H` moves to the count line on the screen"
+      (cursor :editing ten-lines :after "G3H") => [2 0]))
 
   (facts "about `M`"
     (fact "`M` moves to the middle line of the viewport when file is longer than screen"

@@ -143,8 +143,9 @@
 
 (defn cursor-to-top-of-viewport
   [{top :viewport-top,
-    :as buffer}]
-  (move-to-line buffer top))
+    :as buffer}
+   count-from-top]
+  (move-to-line buffer (+ top count-from-top)))
 
 (defn cursor-to-middle-of-viewport
   [{top :viewport-top,

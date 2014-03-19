@@ -136,9 +136,10 @@
         target-line (or (:count editor) last-line)]
     (change-line editor (constantly (dec target-line)))))
 
-(defhandler "H"
+(defhandler :no-repeat? "H"
   [editor]
-  (e/update-current-buffer editor b/cursor-to-top-of-viewport))
+  (let [count (dec (or (:count editor) 1))]
+    (e/update-current-buffer editor #(b/cursor-to-top-of-viewport % count))))
 
 (defhandler :no-repeat? "L"
   [editor]
