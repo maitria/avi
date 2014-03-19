@@ -282,7 +282,18 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`H` moves to the count line on the screen"
-      (cursor :editing ten-lines :after "G3H") => [2 0]))
+      (cursor :editing ten-lines :after "G3H") => [2 0])
+    (fact "`H` will not move below the bottom of the viewport"
+      (cursor :editing ten-lines :after "10H") => [5 0]
+      (editor :editing ten-lines :after "10H")
+             "One                 "
+             "Two                 "
+             "Three               "
+             "Four                "
+             "Five                "
+             "Six                 "
+             "test.txt            " [:black :on :white]
+             "                    "))
 
   (facts "about `M`"
     (fact "`M` moves to the middle line of the viewport when file is longer than screen"
