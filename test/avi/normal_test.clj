@@ -309,4 +309,6 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`M` moves to the middle of the file when shorter than the screen"
-      (cursor :editing "One\nTwo\nThree" :after "M") => [1 0])))
+      (cursor :editing "One\nTwo\nThree" :after "M") => [1 0]))
+  (fact "`gg` moves to the first line in the file"
+    (cursor :editing ten-lines :after "Ggg") => [0 0]))

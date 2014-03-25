@@ -114,6 +114,10 @@
         j (max 0 (dec line-length))]
     (change-column editor (constantly j))))
 
+(mapkey "g"
+  [editor]
+  (change-line editor (constantly 0)))
+
 (mapkey "h"
   [editor]
   (change-column editor dec))
