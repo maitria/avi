@@ -43,7 +43,7 @@
 
 (defn split-key-sequence
   [key-sequence]
-  [key-sequence])
+  (map str key-sequence))
 
 (defmacro mapkey
   [& args]
