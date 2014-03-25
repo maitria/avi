@@ -4,4 +4,5 @@
 
 (facts "about splitting a key sequences"
   (k/split-key-sequence "g") => ["g"]
-  (k/split-key-sequence "gg") => ["g" "g"])
+  (k/split-key-sequence "gg") => ["g" "g"]
+  (k/split-key-sequence "<C-U>") => ["<C-U>"])

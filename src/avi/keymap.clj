@@ -43,7 +43,21 @@
 
 (defn split-key-sequence
   [key-sequence]
-  (map str key-sequence))
+  (loop [remaining key-sequence
+         result []]
+    (cond
+      (not (seq remaining))
+      result
+
+      (= \< (first remaining))
+      (let [key-name (apply str (concat (take-while #(not= % \>) remaining) [\>]))
+            remaining (->> remaining
+                           (drop-while #(not= % \>))
+                           rest)]
+        (recur remaining (conj result key-name)))
+
+      :else
+      (recur (rest remaining) (conj result (str (first remaining)))))))
 
 (defmacro mapkey
   [& args]
