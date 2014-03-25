@@ -41,6 +41,10 @@
        (let [~@let-args]
          ~@handler-body))))
 
+(defn split-key-sequence
+  [key-sequence]
+  [key-sequence])
+
 (defmacro mapkey
   [& args]
   (let [tags (take-while keyword? args)
