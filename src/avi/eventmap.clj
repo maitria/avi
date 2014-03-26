@@ -55,18 +55,21 @@
       :else
       (recur (rest remaining) (conj result (str (first remaining)))))))
 
+(defn- events
+  [event-spec]
+  (->> (split-event-spec event-spec)
+       (map #(vector :keystroke %))
+       vec))
+
 (defmacro on-events
   [& args]
   (let [[tags [event-spec handler-args & handler-body]] (split-with keyword? args)
-        events (->> (split-event-spec event-spec)
-                    (map #(vector :keystroke %))
-                    vec)
-        handler-name (with-meta (symbol (str "on-" event-spec)) {:on-events events})
-
+        handler-symbol (symbol (str "on-" event-spec))
+        handler-symbol (with-meta handler-symbol {:on-events (events event-spec)})
         tags (case (count handler-args)
                1 tags
                2 (conj tags :no-repeat))]
-    `(def ~handler-name (make-handler ~@tags ~(handler-fn handler-args handler-body)))))
+    `(def ~handler-symbol (make-handler ~@tags ~(handler-fn handler-args handler-body)))))
 
 (defmacro on-unhandled-event
   [& args]
