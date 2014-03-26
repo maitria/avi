@@ -60,21 +60,33 @@
        (map #(vector :keystroke %))
        vec))
 
+(defn- tag?
+  [tag]
+  (and (keyword? tag)
+       (not= :else tag)))
+
+(defn- parse-eventmap-entry
+  [entry-form]
+  (let [[tags [event-spec args & body]] (split-with tag? entry-form)]
+    {:event-spec event-spec,
+     :args args,
+     :body body
+     :tags (into #{} tags)}))
+
 (defmacro eventmap
   [& mappings]
   (reduce
     (fn [eventmap args]
-      (let [tag? #(and (keyword? %)
-                       (not= :else %))
-            [tags [event-spec handler-args & handler-body]] (split-with tag? args)
-            tags (case (count handler-args)
-                   1 tags
-                   2 (conj tags :no-repeat))
+      (let [entry (parse-eventmap-entry args)
+            tags (case (count (:args entry))
+                   1 (:tags entry)
+                   2 (conj (:tags entry) :no-repeat))
             tags (vec tags)
-            events (if (= :else event-spec)
-                     :else
-                     (first (events event-spec)))]
-        (assoc eventmap events `(make-handler ~tags ~(handler-fn handler-args handler-body)))))
+            eventmap-key (if (= :else (:event-spec entry))
+                           :else
+                           (first (events (:event-spec entry))))
+            handler-fn (handler-fn (:args entry) (:body entry))]
+        (assoc eventmap eventmap-key `(make-handler ~tags ~handler-fn))))
     {}
     mappings))
 
