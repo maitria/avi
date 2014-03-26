@@ -1,4 +1,4 @@
-(ns avi.keymap)
+(ns avi.eventmap)
 
 (defn- wrap-handler-with-beep-reset
   [handler]

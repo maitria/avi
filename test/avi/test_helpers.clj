@@ -1,7 +1,7 @@
 (ns avi.test-helpers
   (:import [java.io FileNotFoundException])
   (:require [avi.core :as core]
-            [avi.keymap :as k]
+            [avi.eventmap :as em]
             [avi.render :as render]))
 
 (def ten-lines
@@ -68,7 +68,7 @@
 (defn- make-events-from-specification
   [spec]
   (->> spec
-       (k/split-event-spec)
+       (em/split-event-spec)
        (map event)))
 
 (defn editor
