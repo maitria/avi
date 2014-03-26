@@ -16,14 +16,6 @@
   (fn [editor]
     (assoc (handler editor) :count nil)))
 
-(defn make-handler
-  [tags handler]
-  (let [tags (into #{} tags)]
-    (cond-> handler
-      true                     wrap-handler-with-beep-reset
-      (not (:no-repeat tags))  wrap-handler-with-repeat-loop
-      (not (:keep-count tags)) wrap-handler-with-count-reset)))
-
 (defn split-event-spec
   [key-sequence]
   (loop [remaining key-sequence
@@ -73,6 +65,13 @@
     `(fn [~editor-arg]
        ~body)))
 
+(defn make-handler
+  [tags handler]
+  (cond-> handler
+    true                     wrap-handler-with-beep-reset
+    (not (:no-repeat tags))  wrap-handler-with-repeat-loop
+    (not (:keep-count tags)) wrap-handler-with-count-reset))
+
 (defmacro eventmap
   [& mappings]
   (reduce
@@ -81,7 +80,6 @@
             tags (case (count (:args entry))
                    1 (:tags entry)
                    2 (conj (:tags entry) :no-repeat))
-            tags (vec tags)
             eventmap-key (if (= :else (:event-spec entry))
                            :else
                            (first (events (:event-spec entry))))]
