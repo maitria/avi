@@ -17,9 +17,8 @@
     (assoc (handler editor) :count nil)))
 
 (defn make-handler
-  [& args]
-  (let [tags (into #{} (take-while keyword? args))
-        [handler] (drop-while keyword? args)]
+  [tags handler]
+  (let [tags (into #{} tags)]
     (cond-> handler
       true                     wrap-handler-with-beep-reset
       (not (:no-repeat tags))  wrap-handler-with-repeat-loop
@@ -61,35 +60,33 @@
        (map #(vector :keystroke %))
        vec))
 
-(defmacro on-events
-  [& args]
-  (let [[tags [event-spec handler-args & handler-body]] (split-with keyword? args)
-        handler-symbol (symbol (str "on-" event-spec))
-        handler-symbol (with-meta handler-symbol {:on-events (events event-spec)})
-        tags (case (count handler-args)
-               1 tags
-               2 (conj tags :no-repeat))]
-    `(def ~handler-symbol (make-handler ~@tags ~(handler-fn handler-args handler-body)))))
-
 (defmacro on-unhandled-event
   [& args]
   (let [tags (take-while keyword? args)
         after-tags (drop-while keyword? args)]
     `(on-events ~@tags "<Default>" ~@after-tags)))
 
-(defn eventmap
-  [a-namespace]
+(defmacro eventmap
+  [& mappings]
   (reduce
-    (fn [the-key-map a-fn]
-      (if-let [[event & more-events] (:on-events (meta a-fn))]
-        (assoc the-key-map event a-fn)
-        the-key-map))
+    (fn [eventmap args]
+      (let [tag? #(and (keyword? %)
+                       (not= :else %))
+            [tags [event-spec handler-args & handler-body]] (split-with tag? args)
+            tags (case (count handler-args)
+                   1 tags
+                   2 (conj tags :no-repeat))
+            tags (vec tags)
+            events (if (= :else event-spec)
+                     :else
+                     (first (events event-spec)))]
+        (assoc eventmap events `(make-handler ~tags ~(handler-fn handler-args handler-body)))))
     {}
-    (vals (ns-interns a-namespace))))
+    mappings))
 
 (defn invoke-event-handler
   [eventmap editor event]
   (let [event-handler-fn (or (get eventmap event)
-                             (get eventmap [:keystroke "<Default>"])
+                             (get eventmap :else)
                              identity)]
     (event-handler-fn editor)))
