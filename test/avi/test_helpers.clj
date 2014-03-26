@@ -68,7 +68,7 @@
 (defn- make-events-from-specification
   [spec]
   (->> spec
-       (k/split-key-sequence)
+       (k/split-event-spec)
        (map event)))
 
 (defn editor

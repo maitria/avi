@@ -41,7 +41,7 @@
        (let [~@let-args]
          ~@handler-body))))
 
-(defn split-key-sequence
+(defn split-event-spec
   [key-sequence]
   (loop [remaining key-sequence
          result []]

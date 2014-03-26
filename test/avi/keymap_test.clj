@@ -3,7 +3,7 @@
             [avi.keymap :as k]))
 
 (facts "about splitting a key sequences"
-  (k/split-key-sequence "g") => ["g"]
-  (k/split-key-sequence "gg") => ["g" "g"]
-  (k/split-key-sequence "<C-U>") => ["<C-U>"]
-  (k/split-key-sequence "<C-G>j<C-D>") => ["<C-G>" "j" "<C-D>"])
+  (k/split-event-spec "g") => ["g"]
+  (k/split-event-spec "gg") => ["g" "g"]
+  (k/split-event-spec "<C-U>") => ["<C-U>"]
+  (k/split-event-spec "<C-G>j<C-D>") => ["<C-G>" "j" "<C-D>"])
