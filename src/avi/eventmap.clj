@@ -59,7 +59,7 @@
       :else
       (recur (rest remaining) (conj result (str (first remaining)))))))
 
-(defmacro mapkey
+(defmacro on-events
   [& args]
   (let [tags (take-while keyword? args)
         [keystroke handler-args & handler-body] (drop-while keyword? args)

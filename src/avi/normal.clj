@@ -63,50 +63,50 @@
   [editor update-fn]
   (e/update-current-buffer editor #(b/scroll % update-fn)))
 
-(em/mapkey "<Enter>"
+(em/on-events "<Enter>"
   [editor]
   (assoc editor :mode :finished))
 
-(em/mapkey :keep-count "0"
+(em/on-events :keep-count "0"
   [editor repeat-count]
   (if repeat-count
     (update-count editor 0)
     (change-column editor (constantly 0))))
 
-(em/mapkey :keep-count "1"
+(em/on-events :keep-count "1"
   [editor repeat-count]
   (update-count editor 1))
-(em/mapkey :keep-count "2"
+(em/on-events :keep-count "2"
   [editor repeat-count]
   (update-count editor 2))
-(em/mapkey :keep-count "3"
+(em/on-events :keep-count "3"
   [editor repeat-count]
   (update-count editor 3))
-(em/mapkey :keep-count "4"
+(em/on-events :keep-count "4"
   [editor repeat-count]
   (update-count editor 4))
-(em/mapkey :keep-count "5"
+(em/on-events :keep-count "5"
   [editor repeat-count]
   (update-count editor 5))
-(em/mapkey :keep-count "6"
+(em/on-events :keep-count "6"
   [editor repeat-count]
   (update-count editor 6))
-(em/mapkey :keep-count "7"
+(em/on-events :keep-count "7"
   [editor repeat-count]
   (update-count editor 7))
-(em/mapkey :keep-count "8"
+(em/on-events :keep-count "8"
   [editor repeat-count]
   (update-count editor 8))
-(em/mapkey :keep-count "9"
+(em/on-events :keep-count "9"
   [editor repeat-count]
   (update-count editor 9))
 
-(em/mapkey "^"
+(em/on-events "^"
   [editor]
   (let [position (index-of-first-non-blank (current-line editor))]
     (change-column editor (constantly position))))
 
-(em/mapkey "$"
+(em/on-events "$"
   [editor]
   (let [b (e/current-buffer editor)
         [i j] (b/cursor b)
@@ -114,58 +114,58 @@
         j (max 0 (dec line-length))]
     (change-column editor (constantly j))))
 
-(em/mapkey "g"
+(em/on-events "g"
   [editor]
   (change-line editor (constantly 0)))
 
-(em/mapkey "h"
+(em/on-events "h"
   [editor]
   (change-column editor dec))
 
-(em/mapkey "j"
+(em/on-events "j"
   [editor]
   (change-line editor inc))
 
-(em/mapkey "k"
+(em/on-events "k"
   [editor]
   (change-line editor dec))
 
-(em/mapkey "l"
+(em/on-events "l"
   [editor]
   (change-column editor inc))
 
-(em/mapkey "G"
+(em/on-events "G"
   [editor repeat-count]
   (let [last-line (b/line-count (e/current-buffer editor))
         target-line (or repeat-count last-line)]
     (change-line editor (constantly (dec target-line)))))
 
-(em/mapkey "H"
+(em/on-events "H"
   [editor repeat-count]
   (let [count (dec (or repeat-count 1))]
     (e/update-current-buffer editor #(b/cursor-to-top-of-viewport % count))))
 
-(em/mapkey "L"
+(em/on-events "L"
   [editor repeat-count]
   (let [count (dec (or repeat-count 1))]
     (e/update-current-buffer editor #(b/cursor-to-bottom-of-viewport % count))))
 
-(em/mapkey "M"
+(em/on-events "M"
   [editor]
   (e/update-current-buffer editor b/cursor-to-middle-of-viewport))
 
-(em/mapkey "<C-D>"
+(em/on-events "<C-D>"
   [editor]
   (let [buffer (e/current-buffer editor)]
     (if (b/on-last-line? buffer)
       (beep editor)
       (e/update-current-buffer editor #(b/move-and-scroll-half-page % :down)))))
 
-(em/mapkey "<C-E>"
+(em/on-events "<C-E>"
   [editor]
   (scroll editor inc))
 
-(em/mapkey "<C-U>"
+(em/on-events "<C-U>"
   [editor]
   (let [buffer (e/current-buffer editor)
         [i] (b/cursor buffer)]
@@ -173,7 +173,7 @@
       (beep editor)
       (e/update-current-buffer editor #(b/move-and-scroll-half-page % :up)))))
 
-(em/mapkey "<C-Y>"
+(em/on-events "<C-Y>"
   [editor]
   (scroll editor dec))
 
