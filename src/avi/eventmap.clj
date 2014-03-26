@@ -70,7 +70,7 @@
                2 (conj tags :no-repeat))]
     `(def ~handler-name (make-handler ~@tags ~(handler-fn handler-args handler-body)))))
 
-(defn ns->keymap
+(defn eventmap
   [a-namespace]
   (reduce
     (fn [the-key-map a-fn]

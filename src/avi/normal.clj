@@ -177,11 +177,11 @@
   [editor]
   (scroll editor dec))
 
-(def key-map (em/ns->keymap 'avi.normal))
+(def eventmap (em/eventmap 'avi.normal))
 
 (defn- key-handler
   [key]
-  (or (get key-map key) beep))
+  (or (get eventmap key) beep))
 
 (defn process
   [editor key]
