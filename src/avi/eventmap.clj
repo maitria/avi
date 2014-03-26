@@ -24,18 +24,6 @@
       (not (:no-repeat tags))  wrap-handler-with-repeat-loop
       (not (:keep-count tags)) wrap-handler-with-count-reset)))
 
-(defn- handler-fn
-  [handler-args body]
-  (let [editor-arg (first handler-args)
-        repeat-arg (second handler-args)
-
-        body (if-not repeat-arg
-               `(do ~@body)
-               `(let [~repeat-arg (:count ~editor-arg)]
-                  ~@body))]
-    `(fn [~editor-arg]
-       ~body)))
-
 (defn split-event-spec
   [key-sequence]
   (loop [remaining key-sequence
@@ -73,6 +61,18 @@
      :body body
      :tags (into #{} tags)}))
 
+(defn- entry-handler-fn
+  [{:keys [args body]}]
+  (let [editor-arg (first args)
+        repeat-arg (second args)
+
+        body (if-not repeat-arg
+               `(do ~@body)
+               `(let [~repeat-arg (:count ~editor-arg)]
+                  ~@body))]
+    `(fn [~editor-arg]
+       ~body)))
+
 (defmacro eventmap
   [& mappings]
   (reduce
@@ -84,9 +84,8 @@
             tags (vec tags)
             eventmap-key (if (= :else (:event-spec entry))
                            :else
-                           (first (events (:event-spec entry))))
-            handler-fn (handler-fn (:args entry) (:body entry))]
-        (assoc eventmap eventmap-key `(make-handler ~tags ~handler-fn))))
+                           (first (events (:event-spec entry))))]
+        (assoc eventmap eventmap-key `(make-handler ~tags ~(entry-handler-fn entry)))))
     {}
     mappings))
 
