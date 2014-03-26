@@ -16,11 +16,6 @@
   (fn [editor]
     (assoc (handler editor) :count nil)))
 
-(defn- make-handler-name
-  [keystroke]
-  (let [name (symbol (str "handle-" keystroke))]
-    (with-meta name {:handles keystroke})))
-
 (defn make-handler
   [& args]
   (let [tags (into #{} (take-while keyword? args))
@@ -60,6 +55,11 @@
       :else
       (recur (rest remaining) (conj result (str (first remaining)))))))
 
+(defn- make-handler-name
+  [event-spec]
+  (let [name (symbol (str "on-" event-spec))]
+    (with-meta name {:on-events event-spec})))
+
 (defmacro on-events
   [& args]
   (let [tags (take-while keyword? args)
@@ -81,7 +81,7 @@
   [a-namespace]
   (reduce
     (fn [the-key-map a-fn]
-      (if-let [keystroke (:handles (meta a-fn))]
+      (if-let [keystroke (:on-events (meta a-fn))]
         (assoc the-key-map keystroke a-fn)
         the-key-map))
     {}
