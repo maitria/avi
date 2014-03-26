@@ -55,19 +55,13 @@
       :else
       (recur (rest remaining) (conj result (str (first remaining)))))))
 
-(defn- make-handler-name
-  [event-spec]
-  (let [name (symbol (str "on-" event-spec))
-        events (->> (split-event-spec event-spec)
-                    (map #(vector :keystroke %))
-                    vec)]
-    (with-meta name {:on-events events})))
-
 (defmacro on-events
   [& args]
-  (let [tags (take-while keyword? args)
-        [keystroke handler-args & handler-body] (drop-while keyword? args)
-        handler-name (make-handler-name keystroke)
+  (let [[tags [event-spec handler-args & handler-body]] (split-with keyword? args)
+        events (->> (split-event-spec event-spec)
+                    (map #(vector :keystroke %))
+                    vec)
+        handler-name (with-meta (symbol (str "on-" event-spec)) {:on-events events})
 
         tags (case (count handler-args)
                1 tags
