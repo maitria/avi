@@ -1,6 +1,7 @@
 (ns avi.test-helpers
   (:import [java.io FileNotFoundException])
   (:require [avi.core :as core]
+            [avi.keymap :as k]
             [avi.render :as render]))
 
 (def ten-lines
@@ -54,29 +55,21 @@
                     (color-matches-rendering? rendering i color))))
            (every? identity)))))
 
+(defn- key-name->event
+  [event-name]
+  (let [event-type (if (.startsWith event-name "<Resize ")
+                     :resize
+                     :keystroke)
+        event-data (if (= :resize event-type)
+                     (read-string (apply str (drop 1 (drop-while #(not= % \space) event-name))))
+                     event-name)]
+    [event-type event-data]))
+
 (defn- make-events-from-specification
   [spec]
-  (loop [spec-left spec
-         events []]
-    (cond
-      (not (seq spec-left))
-      events
-
-      (= \< (first spec-left))
-      (let [event-name (apply str (concat (take-while #(not= % \>) spec-left) [\>]))
-            spec-left (drop 1 (drop-while #(not= % \>) spec-left))
-            event-type (if (.startsWith event-name "<Resize ")
-                         :resize
-                         :keystroke)
-            event-data (if (= :resize event-type)
-                         (read-string (apply str (drop 1 (drop-while #(not= % \space) event-name))))
-                         event-name)
-            event [event-type event-data]]
-        (recur spec-left (conj events event)))
-
-      (char? (first spec-left))
-      (recur (rest spec-left)
-             (conj events [:keystroke (str (first spec-left))])))))
+  (->> spec
+       (k/split-key-sequence)
+       (map key-name->event)))
 
 (defn editor
   [& {file-contents :editing,
