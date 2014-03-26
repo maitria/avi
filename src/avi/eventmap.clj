@@ -60,12 +60,6 @@
        (map #(vector :keystroke %))
        vec))
 
-(defmacro on-unhandled-event
-  [& args]
-  (let [tags (take-while keyword? args)
-        after-tags (drop-while keyword? args)]
-    `(on-events ~@tags "<Default>" ~@after-tags)))
-
 (defmacro eventmap
   [& mappings]
   (reduce
