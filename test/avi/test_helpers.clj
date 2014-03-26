@@ -55,7 +55,7 @@
                     (color-matches-rendering? rendering i color))))
            (every? identity)))))
 
-(defn- key-name->event
+(defn- event-spec->event
   [event-name]
   (let [event-type (if (.startsWith event-name "<Resize ")
                      :resize
@@ -69,7 +69,7 @@
   [spec]
   (->> spec
        (k/split-key-sequence)
-       (map key-name->event)))
+       (map event-spec->event)))
 
 (defn editor
   [& {file-contents :editing,
