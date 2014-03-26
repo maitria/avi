@@ -184,5 +184,5 @@
 (def eventmap (em/eventmap 'avi.normal))
 
 (defn process
-  [editor key]
-  (em/invoke-event-handler eventmap editor key))
+  [editor event]
+  (em/invoke-event-handler eventmap editor event))

@@ -58,7 +58,9 @@
 (defn- make-handler-name
   [event-spec]
   (let [name (symbol (str "on-" event-spec))
-        events (split-event-spec event-spec)]
+        events (->> (split-event-spec event-spec)
+                    (map #(vector :keystroke %))
+                    vec)]
     (with-meta name {:on-events events})))
 
 (defmacro on-events
@@ -91,6 +93,6 @@
 (defn invoke-event-handler
   [eventmap editor event]
   (let [event-handler-fn (or (get eventmap event)
-                             (get eventmap "<Default>")
+                             (get eventmap [:keystroke "<Default>"])
                              identity)]
     (event-handler-fn editor)))

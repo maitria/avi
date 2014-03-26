@@ -18,8 +18,8 @@
                     event-kind))
 
 (defmethod process :keystroke
-  [editor [_ event-data]]
-  (normal/process editor event-data))
+  [editor event]
+  (normal/process editor event))
 
 (defmethod process :resize
   [editor [_ size]]
