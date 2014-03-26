@@ -76,7 +76,7 @@
   [& args]
   (let [tags (take-while keyword? args)
         after-tags (drop-while keyword? args)]
-    `(on-events ~@tags "" ~@after-tags)))
+    `(on-events ~@tags "<Default>" ~@after-tags)))
 
 (defn eventmap
   [a-namespace]
@@ -91,6 +91,6 @@
 (defn invoke-event-handler
   [eventmap editor event]
   (let [event-handler-fn (or (get eventmap event)
-                             (get eventmap "")
+                             (get eventmap "<Default>")
                              identity)]
     (event-handler-fn editor)))
