@@ -31,15 +31,16 @@
       (not (:keep-count tags)) wrap-handler-with-count-reset)))
 
 (defn- handler-fn
-  [handler-args handler-body]
+  [handler-args body]
   (let [editor-arg (first handler-args)
         repeat-arg (second handler-args)
-        let-args (if-not repeat-arg
-                   []
-                   [repeat-arg `(:count ~editor-arg)])]
+
+        body (if-not repeat-arg
+               `(do ~@body)
+               `(let [~repeat-arg (:count ~editor-arg)]
+                  ~@body))]
     `(fn [~editor-arg]
-       (let [~@let-args]
-         ~@handler-body))))
+       ~body)))
 
 (defn split-event-spec
   [key-sequence]
