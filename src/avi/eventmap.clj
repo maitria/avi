@@ -70,6 +70,12 @@
                2 (conj tags :no-repeat))]
     `(def ~handler-name (make-handler ~@tags ~(handler-fn handler-args handler-body)))))
 
+(defmacro on-unhandled-event
+  [& args]
+  (let [tags (take-while keyword? args)
+        after-tags (drop-while keyword? args)]
+    `(on-events ~@tags "" ~@after-tags)))
+
 (defn eventmap
   [a-namespace]
   (reduce
@@ -79,3 +85,10 @@
         the-key-map))
     {}
     (vals (ns-interns a-namespace))))
+
+(defn invoke-event-handler
+  [eventmap editor event]
+  (let [event-handler-fn (or (get eventmap event)
+                             (get eventmap "")
+                             identity)]
+    (event-handler-fn editor)))
