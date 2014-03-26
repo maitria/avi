@@ -57,8 +57,9 @@
 
 (defn- make-handler-name
   [event-spec]
-  (let [name (symbol (str "on-" event-spec))]
-    (with-meta name {:on-events event-spec})))
+  (let [name (symbol (str "on-" event-spec))
+        events (split-event-spec event-spec)]
+    (with-meta name {:on-events events})))
 
 (defmacro on-events
   [& args]
@@ -81,8 +82,8 @@
   [a-namespace]
   (reduce
     (fn [the-key-map a-fn]
-      (if-let [keystroke (:on-events (meta a-fn))]
-        (assoc the-key-map keystroke a-fn)
+      (if-let [[event & more-events] (:on-events (meta a-fn))]
+        (assoc the-key-map event a-fn)
         the-key-map))
     {}
     (vals (ns-interns a-namespace))))
