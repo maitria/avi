@@ -78,16 +78,21 @@
   (reduce
     (fn [eventmap args]
       (let [entry (parse-eventmap-entry args)
-            eventmap-key (if (= :else (:event-spec entry))
-                           :else
-                           (first (events (:event-spec entry))))]
-        (assoc eventmap eventmap-key (entry-handler-fn entry))))
+            event-path (if (= :else (:event-spec entry))
+                         [:else]
+                         (events (:event-spec entry)))]
+        (assoc-in eventmap event-path (entry-handler-fn entry))))
     {}
     mappings))
 
 (defn invoke-event-handler
   [eventmap editor event]
-  (let [event-handler-fn (or (get eventmap event)
-                             (get eventmap :else)
+  (let [event-path (conj (or (:pending-events editor) []) event)
+        event-handler-fn (or (get-in eventmap event-path)
+                             (:else eventmap)
                              identity)]
-    (event-handler-fn editor)))
+    (if (map? event-handler-fn)
+      (assoc editor :pending-events event-path)
+      (-> editor
+          event-handler-fn
+          (assoc :pending-events [])))))

@@ -115,7 +115,7 @@
             j (max 0 (dec line-length))]
         (change-column editor (constantly j))))
 
-    ("g"
+    ("gg"
       [editor]
       (change-line editor (constantly 0)))
 
