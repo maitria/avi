@@ -310,5 +310,8 @@
              "                    "))
     (fact "`M` moves to the middle of the file when shorter than the screen"
       (cursor :editing "One\nTwo\nThree" :after "M") => [1 0]))
-  (fact "`gg` moves to the first line in the file"
-    (cursor :editing ten-lines :after "Ggg") => [0 0]))
+  (facts "about `gg`"
+    (fact "`gg` moves to the first line in the file"
+      (cursor :editing ten-lines :after "Ggg") => [0 0])
+    (fact "`gg` moves to the counth line in the file"
+      (cursor :editing ten-lines :after "3gg") => [2 0])))

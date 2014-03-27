@@ -116,8 +116,8 @@
         (change-column editor (constantly j))))
 
     ("gg"
-      [editor]
-      (change-line editor (constantly 0)))
+      [editor repeat-count]
+      (change-line editor (constantly (dec (or repeat-count 1)))))
 
     ("h"
       [editor]
