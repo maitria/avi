@@ -141,9 +141,11 @@
 
     ("G"
       [editor repeat-count]
-      (let [last-line (b/line-count (e/current-buffer editor))
-            target-line (or repeat-count last-line)]
-        (change-line editor (constantly (dec target-line)))))
+      (let [last-line (dec (b/line-count (e/current-buffer editor)))
+            target-line (if repeat-count
+                          (dec repeat-count)
+                          last-line)]
+        (change-line editor (constantly target-line))))
 
     ("H"
       [editor repeat-count]
