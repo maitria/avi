@@ -117,7 +117,11 @@
 
     ("gg"
       [editor repeat-count]
-      (change-line editor (constantly (dec (or repeat-count 1)))))
+      (let [b (e/current-buffer editor)
+            specified-line (dec (or repeat-count 1))
+            last-line (dec (b/line-count b))
+            target-line (min specified-line last-line)]
+        (change-line editor (constantly target-line))))
 
     ("h"
       [editor]

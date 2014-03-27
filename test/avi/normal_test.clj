@@ -314,4 +314,16 @@
     (fact "`gg` moves to the first line in the file"
       (cursor :editing ten-lines :after "Ggg") => [0 0])
     (fact "`gg` moves to the counth line in the file"
-      (cursor :editing ten-lines :after "3gg") => [2 0])))
+      (cursor :editing ten-lines :after "3gg") => [2 0])
+    (fact "`gg` won't move past end-of-file"
+      (cursor :editing ten-lines :after "99gg") => [5 0]
+      (editor :editing ten-lines :after "99gg")
+       => (looks-like
+             "Five                "
+             "Six                 "
+             "Seven               "
+             "Eight               "
+             "Nine                "
+             "Ten                 "
+             "test.txt            " [:black :on :white]
+             "                    "))))
