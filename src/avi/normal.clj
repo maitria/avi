@@ -109,17 +109,17 @@
 
     ("$"
       [editor]
-      (let [b (e/current-buffer editor)
-            [i j] (b/cursor b)
-            line-length (count (b/line b i))
+      (let [buffer (e/current-buffer editor)
+            [i j] (b/cursor buffer)
+            line-length (count (b/line buffer i))
             j (max 0 (dec line-length))]
         (change-column editor (constantly j))))
 
     ("gg"
       [editor repeat-count]
-      (let [b (e/current-buffer editor)
+      (let [buffer (e/current-buffer editor)
             specified-line (dec (or repeat-count 1))
-            last-line (dec (b/line-count b))
+            last-line (dec (b/line-count buffer))
             target-line (min specified-line last-line)]
         (change-line editor (constantly target-line))))
 
@@ -141,7 +141,8 @@
 
     ("G"
       [editor repeat-count]
-      (let [last-line (dec (b/line-count (e/current-buffer editor)))
+      (let [buffer (e/current-buffer editor)
+            last-line (dec (b/line-count buffer))
             target-line (if repeat-count
                           (dec repeat-count)
                           last-line)]
