@@ -78,9 +78,6 @@
   (reduce
     (fn [eventmap args]
       (let [entry (parse-eventmap-entry args)
-            tags (case (count (:args entry))
-                   1 (:tags entry)
-                   2 (conj (:tags entry) :no-repeat))
             eventmap-key (if (= :else (:event-spec entry))
                            :else
                            (first (events (:event-spec entry))))]
