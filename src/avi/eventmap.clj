@@ -1,17 +1,17 @@
 (ns avi.eventmap)
 
-(defn- wrap-handler-with-beep-reset
+(defn wrap-handler-with-beep-reset
   [handler]
   (fn [editor]
     (handler (assoc editor :beep? false))))
 
-(defn- wrap-handler-with-repeat-loop
+(defn wrap-handler-with-repeat-loop
   [handler]
   (fn [editor]
     (let [repeat-count (or (:count editor) 1)]
       (nth (iterate handler editor) repeat-count))))
 
-(defn- wrap-handler-with-count-reset
+(defn wrap-handler-with-count-reset
   [handler]
   (fn [editor]
     (assoc (handler editor) :count nil)))
@@ -54,23 +54,28 @@
      :tags (into #{} tags)}))
 
 (defn- entry-handler-fn
-  [{:keys [args body]}]
+  [{:keys [tags args body]}]
   (let [editor-arg (first args)
         repeat-arg (second args)
 
         body (if-not repeat-arg
                `(do ~@body)
                `(let [~repeat-arg (:count ~editor-arg)]
-                  ~@body))]
-    `(fn [~editor-arg]
-       ~body)))
+                  ~@body))
+
+        repeat-loop? (and (not (:no-repeat tags)) (not repeat-arg))
+        reset-count? (not (:keep-count tags))
+
+        wrappers (cond-> `[wrap-handler-with-beep-reset]
+                   repeat-loop? (conj `wrap-handler-with-repeat-loop)
+                   reset-count? (conj `wrap-handler-with-count-reset))]
+    `(-> (fn [~editor-arg]
+           ~body)
+         ~@wrappers)))
 
 (defn make-handler
   [tags handler]
-  (cond-> handler
-    true                     wrap-handler-with-beep-reset
-    (not (:no-repeat tags))  wrap-handler-with-repeat-loop
-    (not (:keep-count tags)) wrap-handler-with-count-reset))
+  handler)
 
 (defmacro eventmap
   [& mappings]
