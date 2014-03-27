@@ -73,10 +73,6 @@
            ~body)
          ~@wrappers)))
 
-(defn make-handler
-  [tags handler]
-  handler)
-
 (defmacro eventmap
   [& mappings]
   (reduce
@@ -88,7 +84,7 @@
             eventmap-key (if (= :else (:event-spec entry))
                            :else
                            (first (events (:event-spec entry))))]
-        (assoc eventmap eventmap-key `(make-handler ~tags ~(entry-handler-fn entry)))))
+        (assoc eventmap eventmap-key (entry-handler-fn entry))))
     {}
     mappings))
 
