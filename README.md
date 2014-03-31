@@ -24,7 +24,7 @@ $ lein midje :print-facts
 
 ## Installing
 
-* Works with Leiningen 2.3.
+* Works with Leiningen 2.3.4
 * On Linux, `ncurses-dev` or `curses-dev` or equivalent must be installed.
 
 ```
