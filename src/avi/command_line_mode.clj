@@ -14,9 +14,10 @@
     
     (:else
       [editor event]
-      (if-not (= (first event) :keystroke)
-        (e/beep editor)
-        (append-to-command-line editor (second event))))))
+      (let [[event-type event-data] event]
+        (if-not (= event-type :keystroke)
+          (e/beep editor)
+          (append-to-command-line editor event-data))))))
 
 (defn process
   [editor event]
