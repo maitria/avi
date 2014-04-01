@@ -50,20 +50,19 @@
       :else
       [:blue :black "~"])))
 
-(defn- command-line-cursor-position
+(defmulti ^:private cursor-position :mode)
+
+(defmethod cursor-position :normal
+  [editor]
+  (let [buffer (e/current-buffer editor)
+        [buffer-cursor-i buffer-cursor-j] (:cursor buffer)
+        viewport-top (:viewport-top buffer)]
+    [(- buffer-cursor-i viewport-top) buffer-cursor-j]))
+
+(defmethod cursor-position :command-line
   [editor]
   (let [[height] (:size editor)]
     [(dec height) (inc (count (:command-line editor)))]))
-
-(defn- cursor-position
-  [editor]
-  (let [command-line? (= (:mode editor) :command-line)
-        buffer (e/current-buffer editor)
-        [buffer-cursor-i buffer-cursor-j] (:cursor buffer)
-        viewport-top (:viewport-top buffer)]
-    (if command-line?
-      (command-line-cursor-position editor)
-      [(- buffer-cursor-i viewport-top) buffer-cursor-j])))
 
 (defn render
   [editor]
