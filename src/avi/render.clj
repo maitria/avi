@@ -50,7 +50,7 @@
 (defn- command-line-cursor-position
   [editor]
   (let [[height] (:size editor)]
-    [(dec height) 1]))
+    [(dec height) (inc (count (:command-line editor)))]))
 
 (defn- cursor-position
   [editor]

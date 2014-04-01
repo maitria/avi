@@ -26,4 +26,7 @@
           "~                   " [:blue]
           "~                   " [:blue]
           "test.txt            " [:black :on :white]
-          ":abc                ")))
+          ":abc                "))
+  (fact "characters typed after `:` move the cursor"
+    (cursor :after ":a") => [7 2]
+    (cursor :after ":abc") => [7 4]))
