@@ -2,19 +2,23 @@
 
 (defn wrap-handler-with-beep-reset
   [handler]
-  (fn [editor]
-    (handler (assoc editor :beep? false))))
+  (fn [editor event]
+    (-> editor
+        (assoc :beep? false)
+        (handler event))))
 
 (defn wrap-handler-with-repeat-loop
   [handler]
-  (fn [editor]
+  (fn [editor event]
     (let [repeat-count (or (:count editor) 1)]
-      (nth (iterate handler editor) repeat-count))))
+      (nth (iterate #(handler % event) editor) repeat-count))))
 
 (defn wrap-handler-with-count-reset
   [handler]
-  (fn [editor]
-    (assoc (handler editor) :count nil)))
+  (fn [editor event]
+    (-> editor
+        (handler event)
+        (assoc :count nil))))
 
 (defn split-event-spec
   [key-sequence]
@@ -55,8 +59,16 @@
 
 (defn- entry-handler-fn
   [{:keys [tags args body]}]
-  (let [editor-arg (first args)
-        repeat-arg (second args)
+  (let [editor-arg (some->> args
+                     (filter #(= (name %) "editor"))
+                     first)
+        repeat-arg (some->> args
+                     (filter #(= (name %) "repeat-count"))
+                     first)
+        event-arg (or (some->> args
+                        (filter #(= (name %) "event"))
+                        first)
+                      `event#)
 
         body (if-not repeat-arg
                `(do ~@body)
@@ -69,7 +81,7 @@
         wrappers (cond-> `[wrap-handler-with-beep-reset]
                    repeat-loop? (conj `wrap-handler-with-repeat-loop)
                    reset-count? (conj `wrap-handler-with-count-reset))]
-    `(-> (fn [~editor-arg]
+    `(-> (fn [~editor-arg ~event-arg]
            ~body)
          ~@wrappers)))
 
@@ -85,14 +97,18 @@
     {}
     mappings))
 
+(defn- null-handler
+  [editor event]
+  editor)
+
 (defn invoke-event-handler
   [eventmap editor event]
   (let [event-path (conj (or (:pending-events editor) []) event)
         event-handler-fn (or (get-in eventmap event-path)
                              (:else eventmap)
-                             identity)]
+                             null-handler)]
     (if (map? event-handler-fn)
       (assoc editor :pending-events event-path)
       (-> editor
-          event-handler-fn
+          (event-handler-fn event)
           (assoc :pending-events [])))))
