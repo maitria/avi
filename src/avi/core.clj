@@ -2,7 +2,7 @@
   (:import [avi.terminal Screen])
   (:require [avi.buffer :as b]
             [avi.editor :as e]
-            [avi.normal :as normal]
+            [avi.normal-mode :as normal-mode]
             [avi.render :as render])
   (:gen-class))
 
@@ -19,7 +19,7 @@
 
 (defmethod process :keystroke
   [editor event]
-  (normal/process editor event))
+  (normal-mode/process editor event))
 
 (defmethod process :resize
   [editor [_ size]]

@@ -1,4 +1,4 @@
-(ns avi.normal
+(ns avi.normal-mode
   (:require [avi.buffer :as b]
             [avi.editor :as e]
             [avi.eventmap :as em]))
