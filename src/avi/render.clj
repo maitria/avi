@@ -20,6 +20,13 @@
   (byte (bit-or (bit-shift-left (color-number color) 3)
                 (color-number background))))
 
+(defn- prompt-line-text
+  [editor]
+  (let [command-line? (= (:mode editor) :command-line)]
+    (if command-line?
+      (str ":" (:command-line editor))
+      "")))
+
 (defn- render-line
   [editor i]
   (let [[height] (:size editor)
@@ -32,11 +39,7 @@
         buffer-line-count (b/line-count buffer)]
     (cond
       (= prompt-line i)
-      (let [command-line? (= (:mode editor) :command-line)
-            text (if command-line?
-                   (str ":" (:command-line editor))
-                   "")]
-        [:white :black text])
+      [:white :black (prompt-line-text editor)]
 
       (= status-line i)
       [:black :white (or (:name buffer) "[No Name]")]
