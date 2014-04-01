@@ -104,7 +104,7 @@
 
     (":"
       [editor]
-      (assoc editor :mode :command-line))
+      (assoc editor :mode :command-line, :command-line ""))
 
     ("^"
       [editor]

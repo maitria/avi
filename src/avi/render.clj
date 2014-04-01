@@ -34,7 +34,7 @@
       (= prompt-line i)
       (let [command-line? (= (:mode editor) :command-line)
             text (if command-line?
-                   ":"
+                   (str ":" (:command-line editor))
                    "")]
         [:white :black text])
 
