@@ -59,16 +59,13 @@
 
 (defn- entry-handler-fn
   [{:keys [tags args body]}]
-  (let [editor-arg (some->> args
-                     (filter #(= (name %) "editor"))
-                     first)
-        repeat-arg (some->> args
-                     (filter #(= (name %) "repeat-count"))
-                     first)
-        event-arg (or (some->> args
-                        (filter #(= (name %) "event"))
-                        first)
-                      `event#)
+  (let [arg-named (fn [the-name]
+                    (some->> args
+                      (filter #(= (name %) the-name))
+                      first))
+        editor-arg (arg-named "editor")
+        repeat-arg (arg-named "repeat-count")
+        event-arg (or (arg-named "event") `event#)
 
         body (if-not repeat-arg
                `(do ~@body)
