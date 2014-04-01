@@ -47,12 +47,20 @@
       :else
       [:blue :black "~"])))
 
+(defn- command-line-cursor-position
+  [editor]
+  (let [[height] (:size editor)]
+    [(dec height) 1]))
+
 (defn- cursor-position
   [editor]
-  (let [buffer (e/current-buffer editor)
+  (let [command-line? (= (:mode editor) :command-line)
+        buffer (e/current-buffer editor)
         [buffer-cursor-i buffer-cursor-j] (:cursor buffer)
         viewport-top (:viewport-top buffer)]
-    [(- buffer-cursor-i viewport-top) buffer-cursor-j]))
+    (if command-line?
+      (command-line-cursor-position editor)
+      [(- buffer-cursor-i viewport-top) buffer-cursor-j])))
 
 (defn render
   [editor]
