@@ -2,10 +2,6 @@
   (:require [avi.eventmap :as em]
             [avi.editor :as e]))
 
-(defn- beep
-  [editor]
-  (assoc editor :beep? true))
-
 (defn- append-to-command-line
   [editor s]
   (assoc editor :command-line (str (:command-line editor) s)))
@@ -19,7 +15,7 @@
     (:else
       [editor event]
       (if-not (= (first event) :keystroke)
-        (beep editor)
+        (e/beep editor)
         (append-to-command-line editor (second event))))))
 
 (defn process

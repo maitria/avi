@@ -1,5 +1,9 @@
 (ns avi.editor)
 
+(defn beep
+  [editor]
+  (assoc editor :beep? true))
+
 (defn current-buffer
   [editor]
   (:buffer editor))

@@ -3,10 +3,6 @@
             [avi.editor :as e]
             [avi.eventmap :as em]))
 
-(defn- beep
-  [editor]
-  (assoc editor :beep? true))
-
 (defn- cursor-can-move-to-column?
   [editor [i j]]
   (let [line-length (count (b/line (e/current-buffer editor) i))
@@ -23,7 +19,7 @@
         new-position [i j]]
     (if (cursor-can-move-to-column? editor new-position)
       (e/update-current-buffer editor #(b/move-cursor % new-position j))
-      (beep editor))))
+      (e/beep editor))))
 
 (defn- valid-line?
   [editor i]
@@ -35,7 +31,7 @@
   (let [[i] (b/cursor (e/current-buffer editor))
         i (i-fn i)]
     (if-not (valid-line? editor i)
-      (beep editor)
+      (e/beep editor)
       (e/update-current-buffer editor #(b/move-to-line % i)))))
 
 (defn- update-count
@@ -170,7 +166,7 @@
       [editor]
       (let [buffer (e/current-buffer editor)]
         (if (b/on-last-line? buffer)
-          (beep editor)
+          (e/beep editor)
           (e/update-current-buffer editor #(b/move-and-scroll-half-page % :down)))))
 
     ("<C-E>"
@@ -182,7 +178,7 @@
       (let [buffer (e/current-buffer editor)
             [i] (b/cursor buffer)]
         (if (zero? i)
-          (beep editor)
+          (e/beep editor)
           (e/update-current-buffer editor #(b/move-and-scroll-half-page % :up)))))
 
     ("<C-Y>"
@@ -191,7 +187,7 @@
 
     (:else
       [editor]
-      (beep editor))))
+      (e/beep editor))))
 
 (defn process
   [editor event]
