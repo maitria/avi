@@ -1,6 +1,7 @@
 (ns avi.test-helpers
   (:import [java.io FileNotFoundException])
   (:require [avi.core :as core]
+            [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.render :as render]))
 
@@ -86,7 +87,7 @@
         initial-editor (with-redefs [slurp slurp-redef]
                          (apply core/start [8 20] start-args))]
     (reduce
-      core/process
+      e/process
       initial-editor
       events)))
 

@@ -15,16 +15,7 @@
    :count nil
    :beep? false})
 
-(defmulti process (fn [_ [event-kind]]
-                    event-kind))
-
-(defmethod process :keystroke
-  [editor event]
-  (case (:mode editor)
-    :normal (normal-mode/process editor event)
-    :command-line (command-line-mode/process editor event)))
-
-(defmethod process :resize
+(defmethod e/process :resize
   [editor [_ size]]
   (-> editor
       (assoc :size size)
@@ -51,11 +42,11 @@
     (if (:beep? editor)
       (Screen/beep))
     (let [editor (if (not= [height width] (:size editor))
-                   (process editor [:resize [height width]])
+                   (e/process editor [:resize [height width]])
                    editor)]
       (update-screen editor)
       (if-not (= (:mode editor) :finished)
         (recur
           (screen-size)
-          (process editor [:keystroke (Screen/getKey)])))))
+          (e/process editor [:keystroke (Screen/getKey)])))))
   (Screen/stop))

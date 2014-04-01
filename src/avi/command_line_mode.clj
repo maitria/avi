@@ -23,6 +23,6 @@
   [editor]
   (assoc editor :mode :command-line, :command-line ""))
 
-(defn process
+(defmethod e/process :command-line
   [editor event]
   (em/invoke-event-handler eventmap editor event))
