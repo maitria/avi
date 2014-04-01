@@ -102,6 +102,10 @@
       [editor repeat-count]
       (update-count editor 9))
 
+    (":"
+      [editor]
+      (assoc editor :mode :command-line))
+
     ("^"
       [editor]
       (let [position (index-of-first-non-blank (current-line editor))]

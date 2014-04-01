@@ -32,7 +32,11 @@
         buffer-line-count (b/line-count buffer)]
     (cond
       (= prompt-line i)
-      [:white :black ""]
+      (let [command-line? (= (:mode editor) :command-line)
+            text (if command-line?
+                   ":"
+                   "")]
+        [:white :black text])
 
       (= status-line i)
       [:black :white (or (:name buffer) "[No Name]")]
