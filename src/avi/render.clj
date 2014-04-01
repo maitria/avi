@@ -52,7 +52,7 @@
 
 (defmulti ^:private cursor-position :mode)
 
-(defmethod cursor-position :normal
+(defmethod cursor-position :default
   [editor]
   (let [buffer (e/current-buffer editor)
         [buffer-cursor-i buffer-cursor-j] (:cursor buffer)
