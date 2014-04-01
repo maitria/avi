@@ -14,7 +14,7 @@
           "~                   " [:blue]
           "test.txt            " [:black :on :white]
           ":                   "))
-  (fact "`:abc` echos `:abc` on the command-line"
+  (fact "characters typed after `:` echo on the command-line"
     (editor :after ":abc")
      => (looks-like
           "One                 "
