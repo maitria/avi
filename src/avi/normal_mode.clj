@@ -1,7 +1,8 @@
 (ns avi.normal-mode
   (:require [avi.buffer :as b]
             [avi.editor :as e]
-            [avi.eventmap :as em]))
+            [avi.eventmap :as em]
+            [avi.command-line-mode :as command-line-mode]))
 
 (defn- cursor-can-move-to-column?
   [editor [i j]]
@@ -100,7 +101,7 @@
 
     (":"
       [editor]
-      (assoc editor :mode :command-line, :command-line ""))
+      (command-line-mode/enter editor))
 
     ("^"
       [editor]

@@ -19,6 +19,10 @@
           (e/beep editor)
           (append-to-command-line editor event-data))))))
 
+(defn enter
+  [editor]
+  (assoc editor :mode :command-line, :command-line ""))
+
 (defn process
   [editor event]
   (em/invoke-event-handler eventmap editor event))
