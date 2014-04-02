@@ -149,8 +149,11 @@
             last-line (dec (b/line-count buffer))
             target-line (if repeat-count
                           (dec repeat-count)
-                          last-line)]
-        (change-line editor (constantly target-line))))
+                          last-line)
+            target-column (index-of-first-non-blank (b/line buffer target-line))]
+        (-> editor
+            (change-line (constantly target-line))
+            (change-column (constantly target-column)))))
 
     ("H"
       [editor repeat-count]

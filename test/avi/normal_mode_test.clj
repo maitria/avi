@@ -82,10 +82,10 @@
       (cursor :editing "   " :after "0^") => [0 2]))
 
   (facts "about `G`"
-    (fact "`G` moves to the last line."
-      (cursor :editing ".\n.\nThree" :after "G") => [2 0])
-    (fact "`G` moves to the line in the count register."
-      (cursor :editing ".\n.\nThree" :after "2G") => [1 0])))
+    (fact "`G` moves to the first non-blank character on the last line"
+      (cursor :editing "...\n...\n Three" :after "llG") => [2 1])
+    (fact "`G` moves to the first non-blank character on the line in the count register."
+      (cursor :editing "...\n ...\nThree" :after "ll2G") => [1 1])))
 
 (facts "regarding scrolling"
   (fact "line-wise cursor movement will keep the cursor in the viewport"
