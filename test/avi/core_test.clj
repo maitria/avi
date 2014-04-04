@@ -52,14 +52,6 @@
           "test.txt            " [:black :on :white]
           "                    ")))
 
-(facts "regarding quitting"
-  (fact "It doesn't start in the 'finished' state."
-    (:mode (editor)) =not=> :finished
-    (:mode (editor :after ":")) =not=> :finished
-    (:mode (editor :after ":q")) =not=> :finished)
-  (fact "It exits after `:q<Enter>`."
-    (:mode (editor :after ":q<Enter>")) => :finished))
-
 (facts "regarding screen resizes"
   (fact "It updates the editor size."
     (:size (editor :after "<Resize [17 42]>")) => [17 42])
