@@ -18,6 +18,9 @@
       (= "q" command-line)
       (assoc editor :mode :finished)
 
+      (= "" command-line)
+      editor
+
       (line-number? command-line)
       (e/change-line editor (constantly (dec (Long/parseLong command-line)))))))
 

@@ -41,5 +41,9 @@
     (:mode (editor :after ":q<Enter>")) => :finished))
 
 (facts "regarding `:<N>`"
-  (fact "`:3` moves to line 3"
+  (fact "`:<N><Enter>` moves to line N"
     (cursor :after ":3<Enter>") => [2 0]))
+
+(facts "regarding `:<Enter>`"
+  (fact "`:<Enter>` does nothing"
+    (cursor :after ":<Enter>") => [0 0]))
