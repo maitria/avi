@@ -6,11 +6,21 @@
   [editor s]
   (assoc editor :command-line (str (:command-line editor) s)))
 
+(defn- process-command
+  [editor]
+  (cond-> (assoc editor :mode :normal)
+    (= "q" (:command-line editor))
+    (assoc :mode :finished)
+
+    (and (every? #(Character/isDigit %) (:command-line editor))
+         (< 0 (count (:command-line editor))))
+    (e/change-line (constantly (dec (Long/parseLong (:command-line editor)))))))
+
 (def eventmap
   (em/eventmap
     ("<Enter>"
       [editor]
-      (assoc editor :mode :finished))
+      (process-command editor))
     
     (:else
       [editor event]

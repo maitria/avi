@@ -22,19 +22,6 @@
       (e/update-current-buffer editor #(b/move-cursor % new-position j))
       (e/beep editor))))
 
-(defn- valid-line?
-  [editor i]
-  (and (>= i 0)
-       (< i (b/line-count (e/current-buffer editor)))))
-
-(defn- change-line
-  [editor i-fn]
-  (let [[i] (b/cursor (e/current-buffer editor))
-        i (i-fn i)]
-    (if-not (valid-line? editor i)
-      (e/beep editor)
-      (e/update-current-buffer editor #(b/move-to-line % i)))))
-
 (defn- update-count
   [editor digit]
   (let [old-count (or (:count editor) 0)
@@ -122,7 +109,7 @@
             specified-line (dec (or repeat-count 1))
             last-line (dec (b/line-count buffer))
             target-line (min specified-line last-line)]
-        (change-line editor (constantly target-line))))
+        (e/change-line editor (constantly target-line))))
 
     ("h"
       [editor]
@@ -130,11 +117,11 @@
 
     ("j"
       [editor]
-      (change-line editor inc))
+      (e/change-line editor inc))
 
     ("k"
       [editor]
-      (change-line editor dec))
+      (e/change-line editor dec))
 
     ("l"
       [editor]
@@ -147,7 +134,7 @@
             target-line (if repeat-count
                           (dec repeat-count)
                           last-line)]
-        (change-line editor (constantly target-line))))
+        (e/change-line editor (constantly target-line))))
 
     ("H"
       [editor repeat-count]

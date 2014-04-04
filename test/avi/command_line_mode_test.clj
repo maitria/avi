@@ -39,3 +39,7 @@
     (:mode (editor :after ":q")) =not=> :finished)
   (fact "`:q<Enter>` exits Avi."
     (:mode (editor :after ":q<Enter>")) => :finished))
+
+(facts "regarding `:<N>`"
+  (fact "`:3` moves to line 3"
+    (cursor :after ":3<Enter>") => [2 0]))
