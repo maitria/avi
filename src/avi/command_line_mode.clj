@@ -22,7 +22,10 @@
       editor
 
       (line-number? command-line)
-      (e/change-line editor (constantly (dec (Long/parseLong command-line)))))))
+      (e/change-line editor (constantly (dec (Long/parseLong command-line))))
+
+      :else
+      editor)))
 
 (def eventmap
   (em/eventmap

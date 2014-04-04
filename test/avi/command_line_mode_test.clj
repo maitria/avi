@@ -47,3 +47,7 @@
 (facts "regarding `:<Enter>`"
   (fact "`:<Enter>` does nothing"
     (cursor :after ":<Enter>") => [0 0]))
+
+(facts "regarding bad commands"
+  (fact "`:badcommand<Enter>` doesn't change cursor position"
+    (cursor :after ":badcommand<Enter>") => [0 0]))
