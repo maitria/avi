@@ -12,15 +12,14 @@
 
 (defn- process-command
   [editor]
-  (let [command-line (:command-line editor)]
-    (-> editor
-        (assoc :mode :normal)
-        (cond-> 
-          (= "q" command-line)
-          (assoc :mode :finished)
+  (let [command-line (:command-line editor)
+        editor (assoc editor :mode :normal)]
+    (cond
+      (= "q" command-line)
+      (assoc editor :mode :finished)
 
-          (line-number? command-line)
-          (e/change-line (constantly (dec (Long/parseLong command-line))))))))
+      (line-number? command-line)
+      (e/change-line editor (constantly (dec (Long/parseLong command-line)))))))
 
 (def eventmap
   (em/eventmap
