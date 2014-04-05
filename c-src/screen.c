@@ -55,7 +55,7 @@ Java_avi_terminal_Screen_getKey(JNIEnv *env, jclass k)
 
 	if (is_enter_key(character)) 
 		return (*env)->NewStringUTF(env, "<Enter>");
-	if (KEY_BACKSPACE == character)
+	if (KEY_BACKSPACE == character || 127 == character)
 		return (*env)->NewStringUTF(env, "<BS>");
 
 	if (character >= 0 && character < 0x20)
