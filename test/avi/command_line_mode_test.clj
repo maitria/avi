@@ -29,7 +29,9 @@
           ":abc                "))
   (fact "characters typed after `:` move the cursor"
     (cursor :after ":a") => [7 2]
-    (cursor :after ":abc") => [7 4]))
+    (cursor :after ":abc") => [7 4])
+  (fact "characters typed after `:` can be deleted with backspace"
+    (cursor :after ":abc<BS><BS>") => [7 2]))
 
 (facts "regarding `:q`"
   (fact "Avi doesn't start in the 'finished' state"

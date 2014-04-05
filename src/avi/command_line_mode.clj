@@ -32,6 +32,11 @@
     ("<Enter>"
       [editor]
       (process-command editor))
+
+    ("<BS>"
+      [editor]
+      (let [command-line (:command-line editor)]
+        (assoc editor :command-line (.substring command-line 0 (dec (count command-line))))))
     
     (:else
       [editor event]
