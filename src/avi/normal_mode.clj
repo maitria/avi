@@ -108,8 +108,11 @@
       (let [buffer (e/current-buffer editor)
             specified-line (dec (or repeat-count 1))
             last-line (dec (b/line-count buffer))
-            target-line (min specified-line last-line)]
-        (e/change-line editor (constantly target-line))))
+            target-line (min specified-line last-line)
+            target-column (index-of-first-non-blank (b/line buffer target-line))]
+        (-> editor
+            (e/change-line (constantly target-line))
+            (change-column (constantly target-column)))))
 
     ("h"
       [editor]
@@ -133,8 +136,11 @@
             last-line (dec (b/line-count buffer))
             target-line (if repeat-count
                           (dec repeat-count)
-                          last-line)]
-        (e/change-line editor (constantly target-line))))
+                          last-line)
+            target-column (index-of-first-non-blank (b/line buffer target-line))]
+        (-> editor
+            (e/change-line (constantly target-line))
+            (change-column (constantly target-column)))))
 
     ("H"
       [editor repeat-count]

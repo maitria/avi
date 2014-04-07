@@ -82,10 +82,10 @@
       (cursor :editing "   " :after "0^") => [0 2]))
 
   (facts "about `G`"
-    (fact "`G` moves to the last line."
-      (cursor :editing ".\n.\nThree" :after "G") => [2 0])
-    (fact "`G` moves to the line in the count register."
-      (cursor :editing ".\n.\nThree" :after "2G") => [1 0])))
+    (fact "`G` moves to the first non-blank character on the last line"
+      (cursor :editing "...\n...\n Three" :after "llG") => [2 1])
+    (fact "`G` moves to the first non-blank character on the line in the count register."
+      (cursor :editing "...\n ...\nThree" :after "ll2G") => [1 1])))
 
 (facts "regarding scrolling"
   (fact "line-wise cursor movement will keep the cursor in the viewport"
@@ -310,11 +310,12 @@
              "                    "))
     (fact "`M` moves to the middle of the file when shorter than the screen"
       (cursor :editing "One\nTwo\nThree" :after "M") => [1 0]))
+
   (facts "about `gg`"
-    (fact "`gg` moves to the first line in the file"
-      (cursor :editing ten-lines :after "Ggg") => [0 0])
-    (fact "`gg` moves to the counth line in the file"
-      (cursor :editing ten-lines :after "3gg") => [2 0])
+    (fact "`gg` moves to the first non-blank character on the first line"
+      (cursor :editing " ...\n...\nThree" :after "Gllgg") => [0 1])
+    (fact "`gg` moves to the firts non-blank character on the counth line"
+      (cursor :editing "...\n ...\nThree" :after "ll2gg") => [1 1])
     (fact "`gg` won't move past end-of-file"
       (cursor :editing ten-lines :after "99gg") => [5 0]
       (editor :editing ten-lines :after "99gg")
