@@ -339,4 +339,15 @@
              "~                   " [:blue]
              "~                   " [:blue]
              "test.txt            " [:black :on :white]
+             "                    "))
+    (fact "`x` does not fail on zero-character line"
+      (editor :editing "a\nb\nc" :after "xx")
+       => (looks-like
+             "                    "
+             "b                   "
+             "c                   "
+             "~                   " [:blue]
+             "~                   " [:blue]
+             "~                   " [:blue]
+             "test.txt            " [:black :on :white]
              "                    "))))

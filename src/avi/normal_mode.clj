@@ -139,9 +139,11 @@
       (let [buffer (e/current-buffer editor)
             [i j] (b/cursor buffer)
             before-line (b/line buffer i)
-            after-line (str
-                         (.substring before-line 0 j)
-                         (.substring before-line (inc j)))]
+            after-line (if (zero? (count before-line))
+                         ""
+                         (str
+                           (.substring before-line 0 j)
+                           (.substring before-line (inc j))))]
         (e/update-current-buffer editor
                                  (fn [buffer]
                                    (assoc-in buffer [:lines i] after-line)))))
