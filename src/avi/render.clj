@@ -22,10 +22,15 @@
 
 (defn- prompt-line-text
   [editor]
-  (let [command-line? (= (:mode editor) :command-line)]
-    (if command-line?
-      (str ":" (:command-line editor))
-      "")))
+  (cond
+    (= (:mode editor) :command-line)
+    (str ":" (:command-line editor))
+
+    (= (:mode editor) :insert)
+    "--INSERT--"
+
+    :else
+    ""))
 
 (defn- render-line
   [editor i]

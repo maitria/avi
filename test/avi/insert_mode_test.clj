@@ -26,4 +26,15 @@
           "test.txt            " [:black :on :white]
           "                    "))
   (fact "`<Esc>` in insert mode returns to normal mode"
-    (:mode (editor :after "i<Esc>")) => :normal))
+    (:mode (editor :after "i<Esc>")) => :normal)
+  (fact "Avi `--INSERT--` on the prompt mode when in insert mode"
+    (editor :editing "One\nTwo\nThree..." :after "i")
+     => (looks-like
+          "One                 "
+          "Two                 "
+          "Three...            "
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "test.txt            " [:black :on :white]
+          "--INSERT--          ")))
