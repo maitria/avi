@@ -155,3 +155,15 @@
         middle-of-file (quot (dec (line-count buffer)) 2)
         new-line (min middle-of-viewport middle-of-file)]
     (move-to-line buffer new-line)))
+
+(defn insert-text
+  [{[i j] :cursor,
+    :as buffer} text]
+  (let [current-line (line buffer i)
+        new-line (str
+                   (.substring current-line 0 j)
+                   text
+                   (.substring current-line j))]
+    (-> buffer
+        (assoc-in [:lines i] new-line)
+        (assoc :cursor [i (inc j)]))))
