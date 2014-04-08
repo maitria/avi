@@ -7,7 +7,7 @@
   (em/eventmap
     ("<Esc>"
       [editor]
-      editor)
+      (assoc editor :mode :normal))
 
     (:else
       [editor event]

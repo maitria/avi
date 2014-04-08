@@ -24,4 +24,6 @@
           "~                   " [:blue]
           "~                   " [:blue]
           "test.txt            " [:black :on :white]
-          "                    ")))
+          "                    "))
+  (fact "`<Esc>` in insert mode returns to normal mode"
+    (:mode (editor :after "i<Esc>")) => :normal))
