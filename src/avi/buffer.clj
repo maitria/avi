@@ -156,7 +156,7 @@
         new-line (min middle-of-viewport middle-of-file)]
     (move-to-line buffer new-line)))
 
-(defn insert-text
+(defn insert
   [{[i j] :cursor,
     :as buffer} text]
   (let [before-line (line buffer i)
