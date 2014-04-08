@@ -2,8 +2,9 @@
   (:import [avi.terminal Screen])
   (:require [avi.buffer :as b]
             [avi.editor :as e]
-            [avi.command-line-mode :as command-line-mode]
-            [avi.normal-mode :as normal-mode]
+            [avi.command-line-mode]
+            [avi.normal-mode]
+            [avi.insert-mode]
             [avi.render :as render])
   (:gen-class))
 

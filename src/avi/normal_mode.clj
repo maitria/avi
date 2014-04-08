@@ -118,6 +118,10 @@
       [editor]
       (change-column editor dec))
 
+    ("i"
+      [editor]
+      (assoc editor :mode :insert))
+
     ("j"
       [editor]
       (e/change-line editor inc))
