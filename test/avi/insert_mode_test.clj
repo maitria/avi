@@ -13,4 +13,15 @@
           "~                   " [:blue]
           "~                   " [:blue]
           "test.txt            " [:black :on :white]
+          "                    "))
+  (fact "`ixyz<Esc>` inserts `xyz`"
+    (editor :editing "One\nTwo\nThree..." :after "ixyz<Esc>")
+     => (looks-like
+          "xyzOne              "
+          "Two                 "
+          "Three...            "
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "test.txt            " [:black :on :white]
           "                    ")))

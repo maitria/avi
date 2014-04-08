@@ -14,7 +14,9 @@
                    (.substring current-line j))]
     (e/update-current-buffer editor
                              (fn [buffer]
-                               (assoc-in buffer [:lines i] new-line)))))
+                               (-> buffer
+                                   (assoc-in [:lines i] new-line)
+                                   (assoc :cursor [i (inc j)]))))))
 
 (def eventmap
   (em/eventmap
