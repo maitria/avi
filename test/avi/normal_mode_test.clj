@@ -327,4 +327,16 @@
              "Nine                "
              "Ten                 "
              "test.txt            " [:black :on :white]
+             "                    ")))
+  (facts "about `x`"
+    (fact "`x` deletes the current character"
+      (editor :editing "One\nTwo\nThree..." :after "x")
+       => (looks-like
+             "ne                  "
+             "Two                 "
+             "Three...            "
+             "~                   " [:blue]
+             "~                   " [:blue]
+             "~                   " [:blue]
+             "test.txt            " [:black :on :white]
              "                    "))))
