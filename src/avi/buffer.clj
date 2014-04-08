@@ -167,3 +167,14 @@
     (-> buffer
         (assoc-in [:lines i] new-line)
         (assoc :cursor [i (inc j)]))))
+
+(defn delete-char-under-cursor
+  [{[i j] :cursor,
+    :as buffer}]
+  (let [before-line (line buffer i)
+        after-line (if (zero? (count before-line))
+                     ""
+                     (str
+                       (.substring before-line 0 j)
+                       (.substring before-line (inc j))))]
+    (assoc-in buffer [:lines i] after-line)))

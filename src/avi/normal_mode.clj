@@ -136,17 +136,7 @@
 
     ("x"
       [editor]
-      (let [buffer (e/current-buffer editor)
-            [i j] (b/cursor buffer)
-            before-line (b/line buffer i)
-            after-line (if (zero? (count before-line))
-                         ""
-                         (str
-                           (.substring before-line 0 j)
-                           (.substring before-line (inc j))))]
-        (e/update-current-buffer editor
-                                 (fn [buffer]
-                                   (assoc-in buffer [:lines i] after-line)))))
+      (e/update-current-buffer editor b/delete-char-under-cursor))
 
     ("G"
       [editor repeat-count]
