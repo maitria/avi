@@ -31,8 +31,9 @@
     (cursor :after ":a") => [7 2]
     (cursor :after ":abc") => [7 4])
   (fact "characters typed after `:` can be deleted with backspace"
-    (cursor :after ":abc<BS><BS>") => [7 2]))
-
+    (cursor :after ":abc<BS><BS>") => [7 2])
+  (fact "<BS> at position zero on the command-line cancels"
+    (:mode (editor :after ":<BS>")) => :normal))
 (facts "regarding `:q`"
   (fact "Avi doesn't start in the 'finished' state"
     (:mode (editor)) =not=> :finished)
