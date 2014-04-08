@@ -159,11 +159,11 @@
 (defn insert-text
   [{[i j] :cursor,
     :as buffer} text]
-  (let [current-line (line buffer i)
+  (let [before-line (line buffer i)
         new-line (str
-                   (.substring current-line 0 j)
+                   (.substring before-line 0 j)
                    text
-                   (.substring current-line j))]
+                   (.substring before-line j))]
     (-> buffer
         (assoc-in [:lines i] new-line)
         (assoc :cursor [i (inc j)]))))
