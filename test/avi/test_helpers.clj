@@ -81,10 +81,10 @@
         start-args (if (= :nothing file-contents)
                      []
                      ["test.txt"])
-        slurp-redef (if (= :not-found file-contents)
-                      (fn [_] (throw (FileNotFoundException. "not found")))
-                      {"test.txt" file-contents})
-        initial-editor (with-redefs [slurp slurp-redef]
+        test-slurp (if (= :not-found file-contents)
+                     (fn [_] (throw (FileNotFoundException. "not found")))
+                     {"test.txt" file-contents})
+        initial-editor (with-redefs [slurp test-slurp]
                          (apply core/start [8 20] start-args))]
     (reduce
       e/process
