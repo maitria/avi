@@ -3,7 +3,7 @@
             [avi.test-helpers :refer :all]))
 
 (facts "regarding starting the editor"
-  (fact "When given a file, it shows the contents and the name"
+  (fact "When given the name of an existing file, it shows the contents and the name"
     (editor)
      => (looks-like
           "One                 "
