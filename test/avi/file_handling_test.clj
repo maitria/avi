@@ -2,8 +2,8 @@
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 
-(facts "regarding being started with a file"
-  (fact "It starts with a named buffer with the file's contents."
+(facts "regarding starting the editor"
+  (fact "When given a file, it shows the contents and the name"
     (editor)
      => (looks-like
           "One                 "
@@ -13,10 +13,9 @@
           "~                   " [:blue]
           "~                   " [:blue]
           "test.txt            " [:black :on :white]
-          "                    ")))
+          "                    "))
 
-(facts "regarding being started with no file"
-  (fact "It starts with an empty, unnamed buffer."
+  (fact "When started without a file, it starts with an empty, unnamed buffer."
     (editor :editing :nothing)
      => (looks-like
           "                    "
@@ -26,10 +25,9 @@
           "~                   " [:blue]
           "~                   " [:blue]
           "[No Name]           " [:black :on :white]
-          "                    ")))
+          "                    "))
 
-(facts "regarding being started with a non-existant file"
-  (fact "It starts with an empty, named buffer."
+  (fact "When started with a non-existent file, it start with an empty, named buffer."
     (editor :editing :not-found)
      => (looks-like
           "                    "
