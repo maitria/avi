@@ -20,7 +20,7 @@
         (handler event)
         (assoc :count nil))))
 
-(defn split-event-spec
+(defn split-string-of-commands
   [key-sequence]
   (loop [remaining key-sequence
          result []]
@@ -40,7 +40,7 @@
 
 (defn- events
   [event-spec]
-  (->> (split-event-spec event-spec)
+  (->> (split-string-of-commands event-spec)
        (map #(vector :keystroke %))
        vec))
 

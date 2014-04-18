@@ -2,8 +2,8 @@
   (:require [midje.sweet :refer :all]
             [avi.eventmap :as em]))
 
-(facts "about splitting a key sequences"
-  (em/split-event-spec "g") => ["g"]
-  (em/split-event-spec "gg") => ["g" "g"]
-  (em/split-event-spec "<C-U>") => ["<C-U>"]
-  (em/split-event-spec "<C-G>j<C-D>") => ["<C-G>" "j" "<C-D>"])
+(facts "about splitting a string of commands"
+  (em/split-string-of-commands "g") => ["g"]
+  (em/split-string-of-commands "gg") => ["g" "g"]
+  (em/split-string-of-commands "<C-U>") => ["<C-U>"]
+  (em/split-string-of-commands "<C-G>j<C-D>") => ["<C-G>" "j" "<C-D>"])

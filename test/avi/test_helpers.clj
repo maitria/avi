@@ -69,7 +69,7 @@
 (defn- make-events
   [string-of-commands]
   (->> string-of-commands
-       (em/split-event-spec)
+       (em/split-string-of-commands)
        (map event)))
 
 (defn editor
