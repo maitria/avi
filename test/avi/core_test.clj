@@ -2,8 +2,8 @@
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 
-(facts "regarding displaying on-screen"
-  (fact "It can display files longer than the screen."
+(facts "regarding displaying in the terminal"
+  (fact "It can display buffer content longer than will fit in buffer viewport."
     (editor :editing ten-lines)
      => (looks-like
           "One                 "
@@ -15,10 +15,10 @@
           "test.txt            " [:black :on :white]
           "                    ")))
 
-(facts "regarding screen resizes"
-  (fact "It updates the editor size."
+(facts "regarding resizing of terminal window"
+  (fact "When the terminal window is resized, it updates the editor viewport size."
     (:size (editor :after "<Resize [17 42]>")) => [17 42])
-  (fact "It updates the buffer's size."
+  (fact "When the terminal window is resized, it updates the buffer viewport size."
     (editor :editing ten-lines :after "<Resize [12 20]>G")
      => (looks-like
           "One                 "
@@ -33,5 +33,5 @@
           "Ten                 "
           "test.txt            " [:black :on :white]
           "                    "))
-  (fact "It adjusts the viewport for the cursor."
+  (fact "When the terminal window is resized, the cursor stays inside the buffer viewport."
     (cursor :editing ten-lines :after "G<Resize [5 20]>") => [2 0]))
