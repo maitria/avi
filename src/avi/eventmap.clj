@@ -39,8 +39,8 @@
       (recur (rest remaining) (conj result (str (first remaining)))))))
 
 (defn- events
-  [event-spec]
-  (->> (split-string-of-commands event-spec)
+  [string-of-commands]
+  (->> (split-string-of-commands string-of-commands)
        (map #(vector :keystroke %))
        vec))
 
