@@ -66,18 +66,18 @@
                      event-name)]
     [event-type event-data]))
 
-(defn- make-events-from-specification
-  [spec]
-  (->> spec
+(defn- make-events
+  [string-of-commands]
+  (->> string-of-commands
        (em/split-event-spec)
        (map event)))
 
 (defn editor
   [& {file-contents :editing,
-      event-spec :after
+      string-of-commands :after
       :or {file-contents "One\nTwo\nThree\n."
            keystrokes ""}}]
-  (let [events (make-events-from-specification event-spec)
+  (let [events (make-events string-of-commands)
         start-args (if (= :nothing file-contents)
                      []
                      ["test.txt"])
