@@ -192,7 +192,7 @@
       (cursor :editing ten-lines :after "Gk<C-D>") => [5 0])
     (fact "`^D` on last line beeps"
       (editor :editing ten-lines :after "G<C-D>") => beeped)
-    (fact "`^D` won't scroll when file is shorter than screen"
+    (fact "`^D` won't scroll when file is shorter than buffer viewport"
       (editor :after "<C-D>")
        => (looks-like
              "One                 "
@@ -203,7 +203,7 @@
              "~                   " [:blue]
              "test.txt            " [:black :on :white]
              "                    "))
-    (fact "`^D` won't move cursor past end-of-file when file is shorter than screen"
+    (fact "`^D` won't move cursor past end-of-file when file is shorter than buffer viewport"
       (cursor :editing "One\nTwo" :after "<C-D>") => [1 0]))
 
   (facts "about `^U`"
@@ -237,9 +237,9 @@
       (cursor :editing ten-lines :after "j<C-U>") => [0 0]))
 
   (facts "about `L`"
-    (fact "`L` moves to the last line of a file shorter than the screen"
+    (fact "`L` moves to the last line when buffer has fewer lines than the buffer viewport"
       (cursor :editing "One\nTwo\nThree" :after "L") => [2 0])
-    (fact "`L` moves to the last line on the screen when the file is longer"
+    (fact "`L` moves to the last line on the buffer viewport when the file is longer"
       (cursor :editing ten-lines :after "L") => [5 0]
       (editor :editing ten-lines :after "L")
        => (looks-like
@@ -269,7 +269,7 @@
              "                    ")))
 
   (facts "about `H`"
-    (fact "`H` moves to the first line on the screen"
+    (fact "`H` moves to the first line in the buffer viewport"
       (cursor :editing ten-lines :after "GH") => [0 0]
       (editor :editing ten-lines :after "GH")
        => (looks-like
@@ -281,9 +281,9 @@
              "Ten                 "
              "test.txt            " [:black :on :white]
              "                    "))
-    (fact "`H` moves to the count line on the screen"
+    (fact "`H` moves to the count line in the buffer viewport"
       (cursor :editing ten-lines :after "G3H") => [2 0])
-    (fact "`H` will not move below the bottom of the viewport"
+    (fact "`H` will not move below the bottom of the buffer viewport"
       (cursor :editing ten-lines :after "10H") => [5 0]
       (editor :editing ten-lines :after "10H")
              "One                 "
@@ -296,7 +296,7 @@
              "                    "))
 
   (facts "about `M`"
-    (fact "`M` moves to the middle line of the viewport when file is longer than screen"
+    (fact "`M` moves to the middle line of the viewport when buffer has more lines than the buffer viewport"
       (cursor :editing ten-lines :after "M") => [2 0]
       (editor :editing ten-lines :after "M")
        => (looks-like
@@ -308,7 +308,7 @@
              "Six                 "
              "test.txt            " [:black :on :white]
              "                    "))
-    (fact "`M` moves to the middle of the file when shorter than the screen"
+    (fact "`M` moves to the middle line of buffer text when buffer contains fewer lines than the buffer viewport"
       (cursor :editing "One\nTwo\nThree" :after "M") => [1 0]))
 
   (facts "about `gg`"
