@@ -20,6 +20,18 @@
          ~(splice-form value-symbol then-form)
          ~(splice-form value-symbol else-form)))))
 
+(defn- splice-cond-form
+  [value form]
+  (let [value-symbol (gensym)
+        [_ & clauses] form
+        clauses (->> clauses
+                     (partition 2)
+                     (map (fn [[test-form form]]
+                            [test-form (splice-form value-symbol form)]))
+                     (apply concat))]
+    `(let [~value-symbol ~value]
+       (cond ~@clauses))))
+
 (defn- splice-form
   [value form]
   (let [form (if (list? form)
@@ -29,6 +41,9 @@
     (cond
       ('#{if if-not if-let} position-1)
       (splice-if-form value form)
+
+      (= 'cond position-1)
+      (splice-cond-form value form)
 
       :else
       (splice-normal-form value form))))
