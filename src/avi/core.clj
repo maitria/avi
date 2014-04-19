@@ -8,7 +8,7 @@
             [avi.render :as render])
   (:gen-class))
 
-(defmethod e/process :resize
+(defmethod e/respond :resize
   [editor [_ size]]
   (-> editor
       (assoc-in [:viewport :size] size)
@@ -35,11 +35,11 @@
     (if (:beep? editor)
       (Terminal/beep))
     (let [editor (if (not= [height width] (:size (:viewport editor)))
-                   (e/process editor [:resize [height width]])
+                   (e/respond editor [:resize [height width]])
                    editor)]
       (update-screen editor)
       (if-not (= (:mode editor) :finished)
         (recur
           (screen-size)
-          (e/process editor [:keystroke (Terminal/getKey)])))))
+          (e/respond editor [:keystroke (Terminal/getKey)])))))
   (Terminal/stop))

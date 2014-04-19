@@ -16,6 +16,6 @@
           (e/beep editor)
           (e/update-current-buffer editor #(b/insert % event-data)))))))
 
-(defmethod e/process :insert
+(defmethod e/respond :insert
   [editor event]
   (em/invoke-event-handler eventmap editor event))

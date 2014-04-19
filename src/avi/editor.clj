@@ -34,7 +34,7 @@
       (beep editor)
       (update-current-buffer editor #(b/move-to-line % i)))))
 
-(defmulti process
+(defmulti respond
   (fn [editor [event-kind]]
     (if (= :resize event-kind)
       :resize

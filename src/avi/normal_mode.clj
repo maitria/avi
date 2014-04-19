@@ -191,6 +191,6 @@
       [editor]
       (e/beep editor))))
 
-(defmethod e/process :normal
+(defmethod e/respond :normal
   [editor event]
   (em/invoke-event-handler eventmap editor event))
