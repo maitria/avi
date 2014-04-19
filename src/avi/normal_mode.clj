@@ -1,6 +1,6 @@
 (ns avi.normal-mode
   (:require [avi.buffer :as b]
-            [avi.compose :refer [in->]]
+            [avi.compose :refer :all]
             [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.command-line-mode :as command-line-mode]))
@@ -19,10 +19,11 @@
   (let [[i j] (b/cursor (e/current-buffer editor))
         j (j-fn j)
         new-position [i j]]
-    (if (cursor-can-move-to-column? editor new-position)
-      (in-> editor e/current-buffer
-            (b/move-cursor new-position j))
-      (e/beep editor))))
+    (->' editor
+         (if (cursor-can-move-to-column? editor new-position)
+           (in-> e/current-buffer
+                 (b/move-cursor new-position j))
+           e/beep))))
 
 (defn- update-count
   [editor digit]
@@ -174,10 +175,11 @@
     ("<C-D>"
       [editor]
       (let [buffer (e/current-buffer editor)]
-        (if (b/on-last-line? buffer)
-          (e/beep editor)
-          (in-> editor e/current-buffer
-                (b/move-and-scroll-half-page :down)))))
+        (->' editor
+             (if (b/on-last-line? buffer)
+               e/beep
+               (in-> e/current-buffer
+                     (b/move-and-scroll-half-page :down))))))
 
     ("<C-E>"
       [editor]
@@ -187,10 +189,11 @@
       [editor]
       (let [buffer (e/current-buffer editor)
             [i] (b/cursor buffer)]
-        (if (zero? i)
-          (e/beep editor)
-          (in-> editor e/current-buffer
-                (b/move-and-scroll-half-page :up)))))
+        (->' editor
+             (if (zero? i)
+               e/beep
+               (in-> e/current-buffer
+                     (b/move-and-scroll-half-page :up))))))
 
     ("<C-Y>"
       [editor]

@@ -1,5 +1,5 @@
 (ns avi.editor
-  (:require [avi.compose :refer [in->]]
+  (:require [avi.compose :refer :all]
             [avi.buffer :as b]))
 
 (defn initial-editor
@@ -29,10 +29,11 @@
   [editor i-fn]
   (let [[i] (b/cursor (current-buffer editor))
         i (i-fn i)]
-    (if-not (valid-line? editor i)
-      (beep editor)
-      (in-> editor current-buffer
-            (b/move-to-line i)))))
+    (->' editor
+         (if-not (valid-line? editor i)
+           (beep)
+           (in-> current-buffer
+                 (b/move-to-line i))))))
 
 (defmulti respond
   (fn [editor [event-kind]]
