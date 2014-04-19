@@ -1,17 +1,21 @@
 (ns avi.compose)
 
+(defn- splice-form
+  [value form]
+  (let [form (if (list? form)
+               form
+               (list form))
+        spliced-form (apply list (first form) value (rest form))]
+    spliced-form))
+
 (defmacro ->'
   [initial-value & forms]
   (loop [result initial-value
          forms forms]
     (if-not (seq forms)
       result
-      (let [[form & forms] forms
-            form (if (list? form)
-                   form
-                   (list form))
-            combined-result (apply list (first form) result (rest form))]
-        (recur combined-result forms)))))
+      (let [[form & forms] forms]
+        (recur (splice-form result form) forms)))))
 
 (defmacro in->
   "Thread a view of state through forms.
