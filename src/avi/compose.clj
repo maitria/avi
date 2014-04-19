@@ -39,6 +39,11 @@
       (splice-normal-form value form))))
 
 (defmacro ->'
+  "Threading macro like `->`, except that some forms are treated specially.
+  
+  `if` and `if-not` forms within the body are treated specially, in that
+  the value is threaded through the then and else clauses separately (instead
+  of being inserted as the condition)."
   [initial-value & forms]
   (loop [result initial-value
          forms forms]
