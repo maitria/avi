@@ -1,6 +1,6 @@
 (ns avi.compose)
 
-(declare splice-form)
+(declare ^:private splice-form)
 
 (defn- splice-normal-form
   [value form]
