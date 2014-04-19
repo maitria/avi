@@ -28,7 +28,14 @@
                      (partition 2)
                      (map (fn [[test-form form]]
                             [test-form (splice-form value-symbol form)]))
-                     (apply concat))]
+                     (apply concat))
+        has-else? (->> clauses
+                       (partition 2)
+                       (map first)
+                       #{:else})
+        clauses (if has-else?
+                  clauses
+                  (concat clauses [:else value-symbol]))]
     `(let [~value-symbol ~value]
        (cond ~@clauses))))
 
