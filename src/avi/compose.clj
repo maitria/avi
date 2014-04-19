@@ -1,12 +1,30 @@
 (ns avi.compose)
 
+(defn- splice-normal-form
+  [value form]
+  (apply list (first form) value (rest form)))
+
 (defn- splice-form
   [value form]
   (let [form (if (list? form)
                form
                (list form))
-        spliced-form (apply list (first form) value (rest form))]
-    spliced-form))
+        position-1 (first form)]
+    (cond
+      (= 'if position-1)
+      (let [value-symbol (gensym)
+            condition (second form)
+            then-form (nth form 2)
+            else-form (if (= 4 (count form))
+                        (nth form 3)
+                        '(identity))]
+        `(let [~value-symbol ~value]
+           (if ~condition 
+             ~(splice-form value-symbol then-form)
+             ~(splice-form value-symbol else-form))))
+
+      :else
+      (splice-normal-form value form))))
 
 (defmacro ->'
   [initial-value & forms]
