@@ -34,7 +34,7 @@
 
 (defn- render-line
   [editor i]
-  (let [[height] (:size editor)
+  (let [[height] (:size (:viewport editor))
         buffer (e/current-buffer editor)
         top (:viewport-top buffer)
         prompt-line (dec height)
@@ -66,12 +66,12 @@
 
 (defmethod cursor-position :command-line
   [editor]
-  (let [[height] (:size editor)]
+  (let [[height] (:size (:viewport editor))]
     [(dec height) (inc (count (:command-line editor)))]))
 
 (defn render
   [editor]
-  (let [[height width] (:size editor)
+  (let [[height width] (:size (:viewport editor))
         default-attrs (make-attrs :white :black)
         rendered-chars (char-array (* height width) \space)
         rendered-attrs (byte-array (* height width) default-attrs)]

@@ -1,6 +1,7 @@
 (ns avi.test-helpers
   (:import [java.io FileNotFoundException])
-  (:require [avi.editor :as e]
+  (:require [avi.core]
+            [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.render :as render]))
 

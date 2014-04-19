@@ -5,7 +5,7 @@
   [[lines columns] & [filename]]
   {:mode :normal
    :buffer (b/open filename (- lines 2))
-   :size [lines columns]
+   :viewport {:size [lines columns]}
    :count nil
    :beep? false})
 

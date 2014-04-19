@@ -11,7 +11,7 @@
 (defmethod e/process :resize
   [editor [_ size]]
   (-> editor
-      (assoc :size size)
+      (assoc-in [:viewport :size] size)
       (e/update-current-buffer #(b/resize % (- (first size) 2)))))
 
 (defn- update-screen
@@ -34,7 +34,7 @@
          editor (apply e/initial-editor [height width] args)]
     (if (:beep? editor)
       (Screen/beep))
-    (let [editor (if (not= [height width] (:size editor))
+    (let [editor (if (not= [height width] (:size (:viewport editor)))
                    (e/process editor [:resize [height width]])
                    editor)]
       (update-screen editor)
