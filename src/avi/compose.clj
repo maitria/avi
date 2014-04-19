@@ -1,8 +1,24 @@
 (ns avi.compose)
 
+(declare splice-form)
+
 (defn- splice-normal-form
   [value form]
   (apply list (first form) value (rest form)))
+
+(defn- splice-if-form
+  [value form]
+  (let [value-symbol (gensym)
+        if-type (first form)
+        condition (second form)
+        then-form (nth form 2)
+        else-form (if (= 4 (count form))
+                    (nth form 3)
+                    '(identity))]
+    `(let [~value-symbol ~value]
+       (~if-type ~condition 
+         ~(splice-form value-symbol then-form)
+         ~(splice-form value-symbol else-form)))))
 
 (defn- splice-form
   [value form]
@@ -11,29 +27,8 @@
                (list form))
         position-1 (first form)]
     (cond
-      (= 'if position-1)
-      (let [value-symbol (gensym)
-            condition (second form)
-            then-form (nth form 2)
-            else-form (if (= 4 (count form))
-                        (nth form 3)
-                        '(identity))]
-        `(let [~value-symbol ~value]
-           (if ~condition 
-             ~(splice-form value-symbol then-form)
-             ~(splice-form value-symbol else-form))))
-
-      (= 'if-not position-1)
-      (let [value-symbol (gensym)
-            condition (second form)
-            then-form (nth form 2)
-            else-form (if (= 4 (count form))
-                        (nth form 3)
-                        '(identity))]
-        `(let [~value-symbol ~value]
-           (if-not ~condition
-             ~(splice-form value-symbol then-form)
-             ~(splice-form value-symbol else-form))))
+      ('#{if if-not} position-1)
+      (splice-if-form value form)
 
       :else
       (splice-normal-form value form))))
