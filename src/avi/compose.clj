@@ -3,4 +3,7 @@
 (defmacro ->*
   "Thread a subset of (or view of) state through forms."
   [state path & forms]
-  state)
+  (let [inner-fn `(fn [sub-state#]
+                    (-> sub-state#
+                        ~@forms))]
+    `(update-in ~state [~path] ~inner-fn)))
