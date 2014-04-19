@@ -1,5 +1,18 @@
 (ns avi.compose)
 
+(defmacro ->'
+  [initial-value & forms]
+  (loop [result initial-value
+         forms forms]
+    (if-not (seq forms)
+      result
+      (let [[form & forms] forms
+            form (if (list? form)
+                   form
+                   (list form))
+            combined-result (apply list (first form) result (rest form))]
+        (recur combined-result forms)))))
+
 (defmacro in->
   "Thread a view of state through forms.
 
