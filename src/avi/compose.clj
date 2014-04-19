@@ -6,4 +6,8 @@
   (let [inner-fn `(fn [sub-state#]
                     (-> sub-state#
                         ~@forms))]
-    `(update-in ~state [~path] ~inner-fn)))
+    `(let [state# ~state
+           path# ~path]
+       (if (keyword? path#)
+         (update-in state# [path#] ~inner-fn)
+         (path# state# ~inner-fn)))))
