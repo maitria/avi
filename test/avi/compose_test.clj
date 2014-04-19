@@ -22,4 +22,5 @@
   (->' 1 (if-let [x 2] (+ x))) => 3
   (->' 1 (cond true (+ 3))) => 4
   (->' 1 (cond false (+ 3) true (+ 2))) => 3
-  (->' 1 (cond false (+ 3))) => 1)
+  (->' 1 (cond false (+ 3))) => 1
+  (->' 1 (cond :else (+ 9))) => 10)
