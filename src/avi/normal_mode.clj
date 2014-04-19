@@ -1,5 +1,6 @@
 (ns avi.normal-mode
   (:require [avi.buffer :as b]
+            [avi.compose :refer [->*]]
             [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.command-line-mode :as command-line-mode]))
@@ -19,7 +20,8 @@
         j (j-fn j)
         new-position [i j]]
     (if (cursor-can-move-to-column? editor new-position)
-      (e/update-current-buffer editor #(b/move-cursor % new-position j))
+      (->* editor e/update-current-buffer
+           (b/move-cursor new-position j))
       (e/beep editor))))
 
 (defn- update-count
@@ -45,7 +47,8 @@
 
 (defn- scroll
   [editor update-fn]
-  (e/update-current-buffer editor #(b/scroll % update-fn)))
+  (->* editor e/update-current-buffer
+       (b/scroll update-fn)))
 
 (def eventmap
   (em/eventmap
@@ -136,7 +139,8 @@
 
     ("x"
       [editor]
-      (e/update-current-buffer editor b/delete-char-under-cursor))
+      (->* editor e/update-current-buffer
+           b/delete-char-under-cursor))
 
     ("G"
       [editor repeat-count]
@@ -153,23 +157,27 @@
     ("H"
       [editor repeat-count]
       (let [count (dec (or repeat-count 1))]
-        (e/update-current-buffer editor #(b/cursor-to-top-of-viewport % count))))
+        (->* editor e/update-current-buffer
+             (b/cursor-to-top-of-viewport count))))
 
     ("L"
       [editor repeat-count]
       (let [count (dec (or repeat-count 1))]
-        (e/update-current-buffer editor #(b/cursor-to-bottom-of-viewport % count))))
+        (->* editor e/update-current-buffer
+             (b/cursor-to-bottom-of-viewport count))))
 
     ("M"
       [editor]
-      (e/update-current-buffer editor b/cursor-to-middle-of-viewport))
+      (->* editor e/update-current-buffer
+           b/cursor-to-middle-of-viewport))
 
     ("<C-D>"
       [editor]
       (let [buffer (e/current-buffer editor)]
         (if (b/on-last-line? buffer)
           (e/beep editor)
-          (e/update-current-buffer editor #(b/move-and-scroll-half-page % :down)))))
+          (->* editor e/update-current-buffer
+               (b/move-and-scroll-half-page :down)))))
 
     ("<C-E>"
       [editor]
@@ -181,7 +189,8 @@
             [i] (b/cursor buffer)]
         (if (zero? i)
           (e/beep editor)
-          (e/update-current-buffer editor #(b/move-and-scroll-half-page % :up)))))
+          (->* editor e/update-current-buffer
+               (b/move-and-scroll-half-page :up)))))
 
     ("<C-Y>"
       [editor]
