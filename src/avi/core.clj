@@ -13,7 +13,7 @@
   [editor [_ size]]
   (-> editor
       (assoc-in [:viewport :size] size)
-      (->* e/update-current-buffer
+      (->* e/current-buffer
            (b/resize (- (first size) 2)))))
 
 (defn- update-screen

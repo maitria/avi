@@ -15,7 +15,7 @@
       (let [[event-type event-data] event]
         (if-not (= event-type :keystroke)
           (e/beep editor)
-          (->* editor e/update-current-buffer
+          (->* editor e/current-buffer
                (b/insert event-data)))))))
 
 (defmethod e/respond :insert

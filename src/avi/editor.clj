@@ -15,12 +15,10 @@
   (assoc editor :beep? true))
 
 (defn current-buffer
-  [editor]
-  (:buffer editor))
-
-(defn update-current-buffer
-  [editor buffer-fn]
-  (update-in editor [:buffer] buffer-fn))
+  ([editor]
+   (:buffer editor))
+  ([editor buffer-fn]
+   (update-in editor [:buffer] buffer-fn)))
 
 (defn- valid-line?
   [editor i]
@@ -33,7 +31,7 @@
         i (i-fn i)]
     (if-not (valid-line? editor i)
       (beep editor)
-      (->* editor update-current-buffer
+      (->* editor current-buffer
            (b/move-to-line i)))))
 
 (defmulti respond
