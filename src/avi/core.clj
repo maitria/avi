@@ -8,14 +8,6 @@
             [avi.render :as render])
   (:gen-class))
 
-(defn start
-  [[lines columns] & [filename]]
-  {:mode :normal
-   :buffer (b/open filename (- lines 2))
-   :size [lines columns]
-   :count nil
-   :beep? false})
-
 (defmethod e/process :resize
   [editor [_ size]]
   (-> editor
@@ -39,7 +31,7 @@
   [& args]
   (Screen/start)
   (loop [[height width] (screen-size)
-         editor (apply start [height width] args)]
+         editor (apply e/initial-editor [height width] args)]
     (if (:beep? editor)
       (Screen/beep))
     (let [editor (if (not= [height width] (:size editor))

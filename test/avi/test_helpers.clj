@@ -1,7 +1,6 @@
 (ns avi.test-helpers
   (:import [java.io FileNotFoundException])
-  (:require [avi.core :as core]
-            [avi.editor :as e]
+  (:require [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.render :as render]))
 
@@ -85,7 +84,7 @@
                      (fn [_] (throw (FileNotFoundException. "not found")))
                      {"test.txt" file-contents})
         initial-editor (with-redefs [slurp test-slurp]
-                         (apply core/start [8 20] start-args))]
+                         (apply e/initial-editor [8 20] start-args))]
     (reduce
       e/process
       initial-editor

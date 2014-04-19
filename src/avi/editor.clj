@@ -1,6 +1,14 @@
 (ns avi.editor
   (:require [avi.buffer :as b]))
 
+(defn initial-editor
+  [[lines columns] & [filename]]
+  {:mode :normal
+   :buffer (b/open filename (- lines 2))
+   :size [lines columns]
+   :count nil
+   :beep? false})
+
 (defn beep
   [editor]
   (assoc editor :beep? true))
