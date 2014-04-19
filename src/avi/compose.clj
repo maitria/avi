@@ -23,6 +23,18 @@
              ~(splice-form value-symbol then-form)
              ~(splice-form value-symbol else-form))))
 
+      (= 'if-not position-1)
+      (let [value-symbol (gensym)
+            condition (second form)
+            then-form (nth form 2)
+            else-form (if (= 4 (count form))
+                        (nth form 3)
+                        '(identity))]
+        `(let [~value-symbol ~value]
+           (if-not ~condition
+             ~(splice-form value-symbol then-form)
+             ~(splice-form value-symbol else-form))))
+
       :else
       (splice-normal-form value form))))
 
