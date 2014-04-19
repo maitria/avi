@@ -1,5 +1,5 @@
 (ns avi.core
-  (:import [avi.terminal Screen])
+  (:import [avi.terminal Terminal])
   (:require [avi.buffer :as b]
             [avi.editor :as e]
             [avi.command-line-mode]
@@ -20,20 +20,20 @@
          attrs :attrs,
          width :width,
          [i j] :cursor} (render/render editor)]
-    (Screen/refresh i j width chars attrs)))
+    (Terminal/refresh i j width chars attrs)))
 
 (defn- screen-size
   []
-  (let [size (Screen/size)]
+  (let [size (Terminal/size)]
     [(get size 0) (get size 1)]))
 
 (defn -main
   [& args]
-  (Screen/start)
+  (Terminal/start)
   (loop [[height width] (screen-size)
          editor (apply e/initial-editor [height width] args)]
     (if (:beep? editor)
-      (Screen/beep))
+      (Terminal/beep))
     (let [editor (if (not= [height width] (:size (:viewport editor)))
                    (e/process editor [:resize [height width]])
                    editor)]
@@ -41,5 +41,5 @@
       (if-not (= (:mode editor) :finished)
         (recur
           (screen-size)
-          (e/process editor [:keystroke (Screen/getKey)])))))
-  (Screen/stop))
+          (e/process editor [:keystroke (Terminal/getKey)])))))
+  (Terminal/stop))

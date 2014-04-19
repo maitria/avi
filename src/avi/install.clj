@@ -28,7 +28,7 @@
         java-arch-name (if (= os-name "Mac OS X")
                          "darwin"
                          "linux")
-        avi-Screen-path (str avi-lib-dir "libavi_jni" dll-suffix)]
+        avi-Terminal-path (str avi-lib-dir "libavi_jni" dll-suffix)]
     [["install" "-d" avi-jar-dir]
      ["install" "-m" "0755" "bin/avi" avi-bin-path]
      ["install" "-m" "0644" (str "target/avi-" (version) "-standalone.jar") avi-jar-path]
@@ -40,8 +40,8 @@
        ["-shared"
         (str "-I" include-path)
         (str "-I" (str include-path "/" java-arch-name))
-        "-o" avi-Screen-path
-        "c-src/screen.c"
+        "-o" avi-Terminal-path
+        "c-src/terminal.c"
         "-lcurses"] 
        (if (= os-name "Linux")
          ["-ltinfo"]))]))

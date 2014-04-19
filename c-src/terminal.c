@@ -1,7 +1,7 @@
 #include <jni.h>
 #include <curses.h>
 
-static const int SCREEN_COLORS[] = {
+static const int TERMINAL_COLORS[] = {
 	COLOR_BLACK,
 	COLOR_RED,
 	COLOR_GREEN,
@@ -12,19 +12,19 @@ static const int SCREEN_COLORS[] = {
 	COLOR_WHITE
 };
 
-const int SCREEN_COLOR_COUNT = sizeof(SCREEN_COLORS)/sizeof(SCREEN_COLORS[0]);
+const int TERMINAL_COLOR_COUNT = sizeof(TERMINAL_COLORS)/sizeof(TERMINAL_COLORS[0]);
 
 JNIEXPORT void JNICALL
-Java_avi_terminal_Screen_nativeStart(JNIEnv *env, jclass k)
+Java_avi_terminal_Terminal_nativeStart(JNIEnv *env, jclass k)
 {
 	int i, j;
 
 	initscr();
 	start_color();
 
-	for (i = 0; i < SCREEN_COLOR_COUNT; ++i)
-		for (j = 0; j < SCREEN_COLOR_COUNT; ++j)
-			init_pair(i*SCREEN_COLOR_COUNT+j, SCREEN_COLORS[i], SCREEN_COLORS[j]);
+	for (i = 0; i < TERMINAL_COLOR_COUNT; ++i)
+		for (j = 0; j < TERMINAL_COLOR_COUNT; ++j)
+			init_pair(i*TERMINAL_COLOR_COUNT+j, TERMINAL_COLORS[i], TERMINAL_COLORS[j]);
 	
 	cbreak();
 	noecho();
@@ -32,7 +32,7 @@ Java_avi_terminal_Screen_nativeStart(JNIEnv *env, jclass k)
 }
 
 JNIEXPORT void JNICALL
-Java_avi_terminal_Screen_stop(JNIEnv *env, jclass k)
+Java_avi_terminal_Terminal_stop(JNIEnv *env, jclass k)
 {
 	endwin();
 }
@@ -49,7 +49,7 @@ static jstring make_ctrl_key(JNIEnv *env, jchar ch)
 }
 
 JNIEXPORT jstring JNICALL
-Java_avi_terminal_Screen_getKey(JNIEnv *env, jclass k)
+Java_avi_terminal_Terminal_getKey(JNIEnv *env, jclass k)
 {
 	jchar character = getch();
 
@@ -67,7 +67,7 @@ Java_avi_terminal_Screen_getKey(JNIEnv *env, jclass k)
 }
 
 JNIEXPORT void JNICALL
-Java_avi_terminal_Screen_refresh(JNIEnv *env, jclass k, jint cursorI, jint cursorJ, jint width, jcharArray charsArray, jbyteArray attrsArray)
+Java_avi_terminal_Terminal_refresh(JNIEnv *env, jclass k, jint cursorI, jint cursorJ, jint width, jcharArray charsArray, jbyteArray attrsArray)
 {
 	chtype ch;
 	jint i, j, offset;
@@ -90,7 +90,7 @@ Java_avi_terminal_Screen_refresh(JNIEnv *env, jclass k, jint cursorI, jint curso
 }
 
 JNIEXPORT jintArray JNICALL
-Java_avi_terminal_Screen_size(JNIEnv *env, jclass k)
+Java_avi_terminal_Terminal_size(JNIEnv *env, jclass k)
 {
 	jintArray sizeArray;
 	jint *size;
@@ -105,7 +105,7 @@ Java_avi_terminal_Screen_size(JNIEnv *env, jclass k)
 }
 
 JNIEXPORT void JNICALL
-Java_avi_terminal_Screen_beep(JNIEnv *env, jclass k)
+Java_avi_terminal_Terminal_beep(JNIEnv *env, jclass k)
 {
 	beep();
 }

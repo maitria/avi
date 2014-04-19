@@ -1,6 +1,6 @@
 package avi.terminal;
 
-public class Screen {
+public class Terminal {
 
     public static void start() {
         System.loadLibrary("avi_jni");
