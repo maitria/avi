@@ -27,7 +27,7 @@
                (list form))
         position-1 (first form)]
     (cond
-      ('#{if if-not} position-1)
+      ('#{if if-not if-let} position-1)
       (splice-if-form value form)
 
       :else
