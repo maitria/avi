@@ -1,6 +1,7 @@
 (ns avi.buffer
   (:import [java.io FileNotFoundException])
-  (:require [clojure.string :as string]))
+  (:require [packthread.core :refer :all]
+            [clojure.string :as string]))
 
 (defn open
   [filename height]
@@ -26,12 +27,13 @@
         viewport-top (:viewport-top buffer)
         viewport-bottom (dec (+ viewport-top height))
         [cursor-i] (:cursor buffer)]
-    (cond-> buffer
-      (< cursor-i viewport-top)
-      (assoc :viewport-top cursor-i)
+    (+> buffer
+        (cond
+          (< cursor-i viewport-top)
+          (assoc :viewport-top cursor-i)
 
-      (> cursor-i viewport-bottom)
-      (assoc :viewport-top (inc (- cursor-i height))))))
+          (> cursor-i viewport-bottom)
+          (assoc :viewport-top (inc (- cursor-i height)))))))
 
 (defn line
   [buffer i]
@@ -62,19 +64,21 @@
         viewport-top (:viewport-top buffer)
         viewport-bottom (dec (+ viewport-top height))
         [cursor-i] (:cursor buffer)]
-    (cond-> buffer
-      (< cursor-i viewport-top)
-      (move-to-line viewport-top)
+    (+> buffer
+        (cond
+          (< cursor-i viewport-top)
+          (move-to-line viewport-top)
 
-      (> cursor-i viewport-bottom)
-      (move-to-line viewport-bottom))))
+          (> cursor-i viewport-bottom)
+          (move-to-line viewport-bottom)))))
 
 (defn move-cursor
   [buffer cursor & [j]]
-  (-> buffer
+  (+> buffer
       (assoc :cursor cursor)
-      (cond-> j (assoc :last-explicit-j j))
-      (adjust-viewport-to-contain-cursor)))
+      (if j
+        (assoc :last-explicit-j j))
+      adjust-viewport-to-contain-cursor))
 
 (defn last-explicit-j
   [buffer]
@@ -82,13 +86,13 @@
 
 (defn resize
   [buffer height]
-  (-> buffer
+  (+> buffer
       (assoc :viewport-height height)
       (adjust-viewport-to-contain-cursor)))
 
 (defn scroll
   [buffer scroll-fn]
-  (-> buffer
+  (+> buffer
       (update-in [:viewport-top] scroll-fn)
       (adjust-cursor-to-viewport)))
 
@@ -125,7 +129,7 @@
                     :down +1
                     :up -1)
         scroll-adjust (* direction distance)]
-    (-> buffer
+    (+> buffer
         (move-to-line (clamp-cursor-row buffer (+ i scroll-adjust)))
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
@@ -165,7 +169,7 @@
 (defn insert
   [{[i j] :cursor,
     :as buffer} text]
-  (-> buffer
+  (+> buffer
       (modify-line i #(str (.substring % 0 j) text (.substring % j)))
       (assoc :cursor [i (inc j)])))
 
