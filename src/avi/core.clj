@@ -16,7 +16,7 @@
       (in e/current-buffer
           (b/resize (- (first size) 2)))))
 
-(defn- update-screen
+(defn- update-terminal
   [editor]
   (let [{chars :chars,
          attrs :attrs,
@@ -39,7 +39,7 @@
     (let [editor (if (not= [height width] (:size (:viewport editor)))
                    (e/respond editor [:resize [height width]])
                    editor)]
-      (update-screen editor)
+      (update-terminal editor)
       (if-not (= (:mode editor) :finished)
         (recur
           (screen-size)
