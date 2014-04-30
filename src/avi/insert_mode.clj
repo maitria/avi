@@ -12,8 +12,8 @@
 
     (:else
       [editor event]
-      (let [[event-type event-data] event]
-        (+> editor
+      (+> editor
+          (let [[event-type event-data] event]
             (if-not (= event-type :keystroke)
               e/beep
               (in e/current-buffer

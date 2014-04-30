@@ -16,10 +16,10 @@
 
 (defn- change-column
   [editor j-fn]
-  (let [[i j] (b/cursor (e/current-buffer editor))
+  (+> editor
+      (let [[i j] (b/cursor (e/current-buffer editor))
         j (j-fn j)
         new-position [i j]]
-    (+> editor
         (if (cursor-can-move-to-column? editor new-position)
           (in e/current-buffer
               (b/move-cursor new-position j))
@@ -147,29 +147,29 @@
 
     ("G"
       [editor repeat-count]
-      (let [buffer (e/current-buffer editor)
-            last-line (dec (b/line-count buffer))
-            target-line (if repeat-count
-                          (dec repeat-count)
-                          last-line)
-            target-column (index-of-first-non-blank (b/line buffer target-line))]
-        (+> editor
+      (+> editor
+          (let [buffer (e/current-buffer editor)
+                last-line (dec (b/line-count buffer))
+                target-line (if repeat-count
+                              (dec repeat-count)
+                              last-line)
+                target-column (index-of-first-non-blank (b/line buffer target-line))]
             (e/change-line (constantly target-line))
             (change-column (constantly target-column)))))
 
     ("H"
       [editor repeat-count]
-      (let [count (dec (or repeat-count 1))]
-        (+> editor
-          (in e/current-buffer
-              (b/cursor-to-top-of-viewport count)))))
+      (+> editor
+          (let [count (dec (or repeat-count 1))]
+            (in e/current-buffer
+                (b/cursor-to-top-of-viewport count)))))
 
     ("L"
       [editor repeat-count]
-      (let [count (dec (or repeat-count 1))]
-        (+> editor
-          (in e/current-buffer
-              (b/cursor-to-bottom-of-viewport count)))))
+      (+> editor
+          (let [count (dec (or repeat-count 1))]
+            (in e/current-buffer
+                (b/cursor-to-bottom-of-viewport count)))))
 
     ("M"
       [editor]
@@ -179,8 +179,8 @@
 
     ("<C-D>"
       [editor]
-      (let [buffer (e/current-buffer editor)]
-        (+> editor
+      (+> editor
+          (let [buffer (e/current-buffer editor)]
             (if (b/on-last-line? buffer)
               e/beep
               (in e/current-buffer
@@ -192,9 +192,9 @@
 
     ("<C-U>"
       [editor]
-      (let [buffer (e/current-buffer editor)
-            [i] (b/cursor buffer)]
-        (+> editor
+      (+> editor
+          (let [buffer (e/current-buffer editor)
+                [i] (b/cursor buffer)]
             (if (zero? i)
               e/beep
               (in e/current-buffer

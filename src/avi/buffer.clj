@@ -23,11 +23,11 @@
 
 (defn- adjust-viewport-to-contain-cursor
   [buffer]
-  (let [height (:viewport-height buffer)
-        viewport-top (:viewport-top buffer)
-        viewport-bottom (dec (+ viewport-top height))
-        [cursor-i] (:cursor buffer)]
-    (+> buffer
+  (+> buffer
+    (let [height (:viewport-height buffer)
+          viewport-top (:viewport-top buffer)
+          viewport-bottom (dec (+ viewport-top height))
+          [cursor-i] (:cursor buffer)]
         (cond
           (< cursor-i viewport-top)
           (assoc :viewport-top cursor-i)
@@ -54,17 +54,17 @@
 (defn move-to-line
   [buffer i]
   {:pre [(>= i 0) (< i (line-count buffer))]}
-  (-> buffer
+  (+> buffer
       (assoc :cursor [i (j-within-line buffer i)])
       (adjust-viewport-to-contain-cursor)))
 
 (defn- adjust-cursor-to-viewport
   [buffer]
-  (let [height (:viewport-height buffer)
-        viewport-top (:viewport-top buffer)
-        viewport-bottom (dec (+ viewport-top height))
-        [cursor-i] (:cursor buffer)]
-    (+> buffer
+  (+> buffer
+      (let [height (:viewport-height buffer)
+            viewport-top (:viewport-top buffer)
+            viewport-bottom (dec (+ viewport-top height))
+            [cursor-i] (:cursor buffer)]
         (cond
           (< cursor-i viewport-top)
           (move-to-line viewport-top)
@@ -124,12 +124,12 @@
     [i] :cursor,
     :as buffer}
    which-way]
-  (let [distance (quot height 2)
-        direction (case which-way
-                    :down +1
-                    :up -1)
-        scroll-adjust (* direction distance)]
-    (+> buffer
+  (+> buffer
+      (let [distance (quot height 2)
+            direction (case which-way
+                        :down +1
+                        :up -1)
+            scroll-adjust (* direction distance)]
         (move-to-line (clamp-cursor-row buffer (+ i scroll-adjust)))
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
@@ -138,12 +138,13 @@
     height :viewport-height,
     :as buffer}
    count-from-bottom]
-  (let [bottom-of-viewport (dec (+ top height))
-        bottom-of-file (dec (line-count buffer))
-        count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
-        count-from-bottom-of-file (- bottom-of-file count-from-bottom)
-        new-line (max top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
-    (move-to-line buffer new-line)))
+  (+> buffer
+      (let [bottom-of-viewport (dec (+ top height))
+            bottom-of-file (dec (line-count buffer))
+            count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
+            count-from-bottom-of-file (- bottom-of-file count-from-bottom)
+            new-line (max top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
+        (move-to-line new-line))))
 
 (defn cursor-to-top-of-viewport
   [{top :viewport-top,
@@ -155,16 +156,18 @@
   [{top :viewport-top,
     height :viewport-height,
     :as buffer}]
-  (let [middle-of-viewport (dec (+ top (quot height 2)))
-        middle-of-file (quot (dec (line-count buffer)) 2)
-        new-line (min middle-of-viewport middle-of-file)]
-    (move-to-line buffer new-line)))
+  (+> buffer
+      (let [middle-of-viewport (dec (+ top (quot height 2)))
+            middle-of-file (quot (dec (line-count buffer)) 2)
+            new-line (min middle-of-viewport middle-of-file)]
+        (move-to-line new-line))))
 
 (defn- modify-line
   [buffer i modify-fn]
-  (let [before-line (line buffer i)
-        after-line (modify-fn before-line)]
-    (assoc-in buffer [:lines i] after-line)))
+  (+> buffer
+      (let [before-line (line buffer i)
+            after-line (modify-fn before-line)]
+        (assoc-in [:lines i] after-line))))
 
 (defn insert
   [{[i j] :cursor,
@@ -176,9 +179,10 @@
 (defn delete-char-under-cursor
   [{[i j] :cursor,
     :as buffer}]
-  (modify-line buffer i (fn [before-line]
-                          (if (zero? (count before-line))
-                            ""
-                            (str
-                              (.substring before-line 0 j)
-                              (.substring before-line (inc j)))))))
+  (+> buffer
+      (modify-line i (fn [before-line]
+                       (if (zero? (count before-line))
+                         ""
+                         (str
+                           (.substring before-line 0 j)
+                           (.substring before-line (inc j))))))))

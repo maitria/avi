@@ -13,8 +13,8 @@
 
 (defn- process-command
   [editor]
-  (let [command-line (:command-line editor)]
-    (+> editor
+  (+> editor
+      (let [command-line (:command-line editor)]
         (assoc :mode :normal)
         (cond
           (= "q" command-line)
@@ -34,16 +34,16 @@
 
     ("<BS>"
       [editor]
-      (let [command-line (:command-line editor)]
-        (+> editor
+      (+> editor
+          (let [command-line (:command-line editor)]
             (if (zero? (count command-line))
               (assoc :mode :normal)
               (assoc :command-line (.substring command-line 0 (dec (count command-line))))))))
     
     (:else
       [editor event]
-      (let [[event-type event-data] event]
-        (+> editor
+      (+> editor
+          (let [[event-type event-data] event]
             (if-not (= event-type :keystroke)
               e/beep
               (append-to-command-line event-data)))))))

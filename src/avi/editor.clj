@@ -27,9 +27,9 @@
 
 (defn change-line
   [editor i-fn]
-  (let [[i] (b/cursor (current-buffer editor))
+  (+> editor
+      (let [[i] (b/cursor (current-buffer editor))
         i (i-fn i)]
-    (+> editor
         (if-not (valid-line? editor i)
           (beep)
           (in current-buffer
