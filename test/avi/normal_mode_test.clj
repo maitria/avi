@@ -369,4 +369,15 @@
   (fact "`dd` moves the cursor to the first non-space"
     (cursor :editing "One\nTwo\n  Three..." :after "jdd") => [1 2])
   (fact "`dd` moves the cursor up when deleting the last line"
-    (cursor :editing "One\nTwo\nThree" :after "Gdd") => [1 0]))
+    (cursor :editing "One\nTwo\nThree" :after "Gdd") => [1 0])
+  (fact "`dd` can delete the only line in a file"
+    (editor :editing "One" :after "dd")
+     => (looks-like
+           "                    "
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "test.txt            " [:black :on :white]
+           "                    ")))

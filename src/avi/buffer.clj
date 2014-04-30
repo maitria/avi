@@ -201,13 +201,17 @@
     lines :lines,
     :as buffer}]
   (+> buffer
-      (let [new-lines (vec (concat
-                             (subvec lines 0 i)
-                             (subvec lines (inc i))))
-            i (if (= i (dec (line-count buffer)))
-                (dec i)
-                i)
-            target-line (get new-lines i)
-            j (index-of-first-non-blank target-line)]
-        (assoc :lines new-lines)
-        (move-cursor [i j]))))
+      (if (= 1 (line-count buffer))
+        (do
+          (assoc :lines [""])
+          (move-cursor [0 0] 0))
+        (let [new-lines (vec (concat
+                               (subvec lines 0 i)
+                               (subvec lines (inc i))))
+              i (if (= i (dec (line-count buffer)))
+                  (dec i)
+                  i)
+              target-line (get new-lines i)
+              j (index-of-first-non-blank target-line)]
+          (assoc :lines new-lines)
+          (move-cursor [i j])))))
