@@ -365,4 +365,6 @@
            "~                   " [:blue]
            "~                   " [:blue]
            "test.txt            " [:black :on :white]
-           "                    ")))
+           "                    "))
+  (fact "`dd` moves the cursor to the first non-space"
+    (cursor :editing "One\nTwo\n  Three..." :after "jdd") => [1 2]))

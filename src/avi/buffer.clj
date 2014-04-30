@@ -187,11 +187,24 @@
                            (.substring before-line 0 j)
                            (.substring before-line (inc j))))))))
 
+(defn- index-of-first-non-blank
+  [line]
+  (let [leading-space-count (count (re-find #"^\s*" line))
+        all-spaces? (and (> leading-space-count 0)
+                         (= leading-space-count (count line)))]
+    (if all-spaces?
+      (dec leading-space-count)
+      leading-space-count)))
+
 (defn delete-current-line
   [{[i] :cursor,
     lines :lines,
     :as buffer}]
   (+> buffer
-      (assoc :lines (vec (concat
-                           (subvec lines 0 i)
-                           (subvec lines (inc i)))))))
+      (let [new-lines (vec (concat
+                             (subvec lines 0 i)
+                             (subvec lines (inc i))))
+            target-line (get new-lines i)
+            j (index-of-first-non-blank target-line)]
+        (assoc :lines new-lines)
+        (move-cursor [i j]))))
