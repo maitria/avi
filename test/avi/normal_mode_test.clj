@@ -234,8 +234,9 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`^U` does not move cursor before beginning of file"
-      (cursor :editing ten-lines :after "j<C-U>") => [0 0]))
+      (cursor :editing ten-lines :after "j<C-U>") => [0 0])))
 
+(facts "about navigating within the viewport"
   (facts "about `L`"
     (fact "`L` moves to the last line when buffer has fewer lines than the buffer viewport"
       (cursor :editing "One\nTwo\nThree" :after "L") => [2 0])
@@ -309,45 +310,59 @@
              "test.txt            " [:black :on :white]
              "                    "))
     (fact "`M` moves to the middle line of buffer text when buffer contains fewer lines than the buffer viewport"
-      (cursor :editing "One\nTwo\nThree" :after "M") => [1 0]))
+      (cursor :editing "One\nTwo\nThree" :after "M") => [1 0])))
 
-  (facts "about `gg`"
-    (fact "`gg` moves to the first non-blank character on the first line"
-      (cursor :editing " ...\n...\nThree" :after "Gllgg") => [0 1])
-    (fact "`gg` moves to the firts non-blank character on the counth line"
-      (cursor :editing "...\n ...\nThree" :after "ll2gg") => [1 1])
-    (fact "`gg` won't move past end-of-file"
-      (cursor :editing ten-lines :after "99gg") => [5 0]
-      (editor :editing ten-lines :after "99gg")
-       => (looks-like
-             "Five                "
-             "Six                 "
-             "Seven               "
-             "Eight               "
-             "Nine                "
-             "Ten                 "
-             "test.txt            " [:black :on :white]
-             "                    ")))
-  (facts "about `x`"
-    (fact "`x` deletes the current character"
-      (editor :editing "One\nTwo\nThree..." :after "x")
-       => (looks-like
-             "ne                  "
-             "Two                 "
-             "Three...            "
-             "~                   " [:blue]
-             "~                   " [:blue]
-             "~                   " [:blue]
-             "test.txt            " [:black :on :white]
-             "                    "))
-    (fact "`x` does not fail on zero-character line"
-      (editor :editing "a\nb\nc" :after "xx")
-       => (looks-like
-             "                    "
-             "b                   "
-             "c                   "
-             "~                   " [:blue]
-             "~                   " [:blue]
-             "~                   " [:blue]
-             "test.txt            " [:black :on :white]
-             "                    "))))
+(facts "about `gg`"
+  (fact "`gg` moves to the first non-blank character on the first line"
+    (cursor :editing " ...\n...\nThree" :after "Gllgg") => [0 1])
+  (fact "`gg` moves to the firts non-blank character on the counth line"
+    (cursor :editing "...\n ...\nThree" :after "ll2gg") => [1 1])
+  (fact "`gg` won't move past end-of-file"
+    (cursor :editing ten-lines :after "99gg") => [5 0]
+    (editor :editing ten-lines :after "99gg")
+     => (looks-like
+           "Five                "
+           "Six                 "
+           "Seven               "
+           "Eight               "
+           "Nine                "
+           "Ten                 "
+           "test.txt            " [:black :on :white]
+           "                    ")))
+
+(facts "about `x`"
+  (fact "`x` deletes the current character"
+    (editor :editing "One\nTwo\nThree..." :after "x")
+     => (looks-like
+           "ne                  "
+           "Two                 "
+           "Three...            "
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "test.txt            " [:black :on :white]
+           "                    "))
+  (fact "`x` does not fail on zero-character line"
+    (editor :editing "a\nb\nc" :after "xx")
+     => (looks-like
+           "                    "
+           "b                   "
+           "c                   "
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "test.txt            " [:black :on :white]
+           "                    ")))
+
+(facts "about `dd`"
+  (fact "`dd` deletes the current line"
+    (editor :editing "One\nTwo\nThree..." :after "jdd")
+     => (looks-like
+           "One                 "
+           "Three...            "
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "~                   " [:blue]
+           "test.txt            " [:black :on :white]
+           "                    ")))

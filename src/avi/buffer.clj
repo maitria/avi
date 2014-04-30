@@ -186,3 +186,12 @@
                          (str
                            (.substring before-line 0 j)
                            (.substring before-line (inc j))))))))
+
+(defn delete-current-line
+  [{[i] :cursor,
+    lines :lines,
+    :as buffer}]
+  (+> buffer
+      (assoc :lines (vec (concat
+                           (subvec lines 0 i)
+                           (subvec lines (inc i)))))))

@@ -108,6 +108,12 @@
             j (max 0 (dec line-length))]
         (change-column editor (constantly j))))
 
+    ("dd"
+      [editor]
+      (+> editor
+          (in e/current-buffer
+              b/delete-current-line)))
+
     ("gg"
       [editor repeat-count]
       (let [buffer (e/current-buffer editor)
