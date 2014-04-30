@@ -24,7 +24,7 @@
          [i j] :cursor} (render/render editor)]
     (Terminal/refresh i j width chars attrs)))
 
-(defn- screen-size
+(defn- terminal-size
   []
   (let [size (Terminal/size)]
     [(get size 0) (get size 1)]))
@@ -32,7 +32,7 @@
 (defn -main
   [& args]
   (Terminal/start)
-  (loop [[height width] (screen-size)
+  (loop [[height width] (terminal-size)
          editor (apply e/initial-editor [height width] args)]
     (if (:beep? editor)
       (Terminal/beep))
@@ -42,6 +42,6 @@
       (update-terminal editor)
       (if-not (= (:mode editor) :finished)
         (recur
-          (screen-size)
+          (terminal-size)
           (e/respond editor [:keystroke (Terminal/getKey)])))))
   (Terminal/stop))
