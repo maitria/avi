@@ -367,4 +367,6 @@
            "test.txt            " [:black :on :white]
            "                    "))
   (fact "`dd` moves the cursor to the first non-space"
-    (cursor :editing "One\nTwo\n  Three..." :after "jdd") => [1 2]))
+    (cursor :editing "One\nTwo\n  Three..." :after "jdd") => [1 2])
+  (fact "`dd` moves the cursor up when deleting the last line"
+    (cursor :editing "One\nTwo\nThree" :after "Gdd") => [1 0]))
