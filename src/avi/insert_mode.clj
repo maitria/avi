@@ -1,5 +1,5 @@
 (ns avi.insert-mode
-  (:require [avi.compose :refer :all]
+  (:require [packthread.core :refer :all]
             [avi.editor :as e]
             [avi.buffer :as b]
             [avi.eventmap :as em]))
@@ -13,11 +13,11 @@
     (:else
       [editor event]
       (let [[event-type event-data] event]
-        (->' editor
-             (if-not (= event-type :keystroke)
-               e/beep
-               (in-> e/current-buffer
-                     (b/insert event-data))))))))
+        (+> editor
+            (if-not (= event-type :keystroke)
+              e/beep
+              (in e/current-buffer
+                  (b/insert event-data))))))))
 
 (defmethod e/respond :insert
   [editor event]

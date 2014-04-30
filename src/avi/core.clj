@@ -1,6 +1,6 @@
 (ns avi.core
   (:import [avi.terminal Terminal])
-  (:require [avi.compose :refer [in->]]
+  (:require [packthread.core :refer :all]
             [avi.buffer :as b]
             [avi.editor :as e]
             [avi.command-line-mode]
@@ -11,10 +11,10 @@
 
 (defmethod e/respond :resize
   [editor [_ size]]
-  (-> editor
+  (+> editor
       (assoc-in [:viewport :size] size)
-      (in-> e/current-buffer
-            (b/resize (- (first size) 2)))))
+      (in e/current-buffer
+          (b/resize (- (first size) 2)))))
 
 (defn- update-screen
   [editor]

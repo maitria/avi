@@ -1,6 +1,6 @@
 (ns avi.normal-mode
-  (:require [avi.buffer :as b]
-            [avi.compose :refer :all]
+  (:require [packthread.core :refer :all]
+            [avi.buffer :as b]
             [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.command-line-mode :as command-line-mode]))
@@ -19,11 +19,11 @@
   (let [[i j] (b/cursor (e/current-buffer editor))
         j (j-fn j)
         new-position [i j]]
-    (->' editor
-         (if (cursor-can-move-to-column? editor new-position)
-           (in-> e/current-buffer
-                 (b/move-cursor new-position j))
-           e/beep))))
+    (+> editor
+        (if (cursor-can-move-to-column? editor new-position)
+          (in e/current-buffer
+              (b/move-cursor new-position j))
+          e/beep))))
 
 (defn- update-count
   [editor digit]
@@ -48,8 +48,9 @@
 
 (defn- scroll
   [editor update-fn]
-  (in-> editor e/current-buffer
-        (b/scroll update-fn)))
+  (+> editor
+    (in e/current-buffer
+        (b/scroll update-fn))))
 
 (def eventmap
   (em/eventmap
@@ -140,8 +141,9 @@
 
     ("x"
       [editor]
-      (in-> editor e/current-buffer
-            b/delete-char-under-cursor))
+      (+> editor
+          (in e/current-buffer
+              b/delete-char-under-cursor)))
 
     ("G"
       [editor repeat-count]
@@ -158,28 +160,31 @@
     ("H"
       [editor repeat-count]
       (let [count (dec (or repeat-count 1))]
-        (in-> editor e/current-buffer
-              (b/cursor-to-top-of-viewport count))))
+        (+> editor
+          (in e/current-buffer
+              (b/cursor-to-top-of-viewport count)))))
 
     ("L"
       [editor repeat-count]
       (let [count (dec (or repeat-count 1))]
-        (in-> editor e/current-buffer
-              (b/cursor-to-bottom-of-viewport count))))
+        (+> editor
+          (in e/current-buffer
+              (b/cursor-to-bottom-of-viewport count)))))
 
     ("M"
       [editor]
-      (in-> editor e/current-buffer
-            b/cursor-to-middle-of-viewport))
+      (+> editor
+          (in e/current-buffer
+              b/cursor-to-middle-of-viewport)))
 
     ("<C-D>"
       [editor]
       (let [buffer (e/current-buffer editor)]
-        (->' editor
-             (if (b/on-last-line? buffer)
-               e/beep
-               (in-> e/current-buffer
-                     (b/move-and-scroll-half-page :down))))))
+        (+> editor
+            (if (b/on-last-line? buffer)
+              e/beep
+              (in e/current-buffer
+                  (b/move-and-scroll-half-page :down))))))
 
     ("<C-E>"
       [editor]
@@ -189,11 +194,11 @@
       [editor]
       (let [buffer (e/current-buffer editor)
             [i] (b/cursor buffer)]
-        (->' editor
-             (if (zero? i)
-               e/beep
-               (in-> e/current-buffer
-                     (b/move-and-scroll-half-page :up))))))
+        (+> editor
+            (if (zero? i)
+              e/beep
+              (in e/current-buffer
+                  (b/move-and-scroll-half-page :up))))))
 
     ("<C-Y>"
       [editor]

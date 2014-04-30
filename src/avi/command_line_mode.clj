@@ -1,5 +1,5 @@
 (ns avi.command-line-mode
-  (:require [avi.compose :refer :all]
+  (:require [packthread.core :refer :all]
             [avi.eventmap :as em]
             [avi.editor :as e]))
 
@@ -44,10 +44,10 @@
     (:else
       [editor event]
       (let [[event-type event-data] event]
-        (->' editor
-             (if-not (= event-type :keystroke)
-               e/beep
-               (append-to-command-line event-data)))))))
+        (+> editor
+            (if-not (= event-type :keystroke)
+              e/beep
+              (append-to-command-line event-data)))))))
 
 (defn enter
   [editor]
