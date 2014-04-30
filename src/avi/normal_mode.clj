@@ -153,7 +153,7 @@
                           (dec repeat-count)
                           last-line)
             target-column (index-of-first-non-blank (b/line buffer target-line))]
-        (-> editor
+        (+> editor
             (e/change-line (constantly target-line))
             (change-column (constantly target-column)))))
 

@@ -37,9 +37,10 @@
     ("<BS>"
       [editor]
       (let [command-line (:command-line editor)]
-        (if (zero? (count command-line))
-          (assoc editor :mode :normal)
-          (assoc editor :command-line (.substring command-line 0 (dec (count command-line)))))))
+        (+> editor
+            (if (zero? (count command-line))
+              (assoc :mode :normal)
+              (assoc :command-line (.substring command-line 0 (dec (count command-line))))))))
     
     (:else
       [editor event]
