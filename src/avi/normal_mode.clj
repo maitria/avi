@@ -37,15 +37,6 @@
         [row] (b/cursor buffer)]
     (b/line buffer row)))
 
-(defn- index-of-first-non-blank
-  [line]
-  (let [leading-space-count (count (re-find #"^\s*" line))
-        all-spaces? (and (> leading-space-count 0)
-                         (= leading-space-count (count line)))]
-    (if all-spaces?
-      (dec leading-space-count)
-      leading-space-count)))
-
 (defn- scroll
   [editor update-fn]
   (+> editor
@@ -97,7 +88,7 @@
 
     ("^"
       [editor]
-      (let [position (index-of-first-non-blank (current-line editor))]
+      (let [position (b/index-of-first-non-blank (current-line editor))]
         (change-column editor (constantly position))))
 
     ("$"
@@ -120,7 +111,7 @@
             specified-line (dec (or repeat-count 1))
             last-line (dec (b/line-count buffer))
             target-line (min specified-line last-line)
-            target-column (index-of-first-non-blank (b/line buffer target-line))]
+            target-column (b/index-of-first-non-blank (b/line buffer target-line))]
         (-> editor
             (e/change-line (constantly target-line))
             (change-column (constantly target-column)))))
@@ -159,7 +150,7 @@
                 target-line (if repeat-count
                               (dec repeat-count)
                               last-line)
-                target-column (index-of-first-non-blank (b/line buffer target-line))]
+                target-column (b/index-of-first-non-blank (b/line buffer target-line))]
             (e/change-line (constantly target-line))
             (change-column (constantly target-column)))))
 
