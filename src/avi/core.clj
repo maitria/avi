@@ -39,12 +39,17 @@
          (not= current-size new-size)
          (cons [:resize new-size]))))))
 
+(defn- editor-stream
+  [world args]
+  (let [initial-editor (apply e/initial-editor (terminal-size world) args)]
+    (->> (event-stream world)
+         (reductions e/respond initial-editor)
+         (take-while #(not (= :finished (:mode %)))))))
+
 (defn- run
-  [world & args]
+  [world args]
   (setup world)
-  (doseq [editor (->> (event-stream world)
-                      (reductions e/respond (apply e/initial-editor (terminal-size world) args))
-                      (take-while #(not (= :finished (:mode %)))))]
+  (doseq [editor (editor-stream)]
     (when (:beep? editor)
       (beep world))
     (update-terminal world (render/render editor)))
@@ -66,4 +71,4 @@
                                      width :width,
                                      [i j] :cursor}]
                   (Terminal/refresh i j width chars attrs)))]
-    (apply run world args)))
+    (run world args)))
