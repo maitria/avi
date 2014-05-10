@@ -13,6 +13,7 @@
   "Avi's interface to the world."
   (setup [this])
   (cleanup [this])
+  (read-key [this])
   (beep [this])
   (terminal-size [this])
   (update-terminal [this rendering]))
@@ -38,7 +39,7 @@
       (if-not (= (:mode editor) :finished)
         (recur
           (terminal-size world)
-          (e/respond editor [:keystroke (Terminal/getKey)])))))
+          (e/respond editor [:keystroke (read-key world)])))))
   (cleanup world))
 
 (defn -main
@@ -47,6 +48,7 @@
                 World
                 (setup [_] (Terminal/start))
                 (cleanup [_] (Terminal/stop))
+                (read-key [_] (Terminal/getKey))
                 (beep [_] (Terminal/beep))
                 (terminal-size [_]
                   (let [size (Terminal/size)]
