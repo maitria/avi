@@ -9,6 +9,14 @@
             [avi.render :as render])
   (:gen-class))
 
+(defprotocol World
+  "Avi's interface to the world."
+  (setup [this])
+  (cleanup [this])
+  (beep [this])
+  (terminal-size [this])
+  (update-terminal [this rendering]))
+
 (defmethod e/respond :resize
   [editor [_ size]]
   (+> editor
@@ -16,32 +24,36 @@
       (in e/current-buffer
           (b/resize (- (first size) 2)))))
 
-(defn- update-terminal
-  [editor]
-  (let [{chars :chars,
-         attrs :attrs,
-         width :width,
-         [i j] :cursor} (render/render editor)]
-    (Terminal/refresh i j width chars attrs)))
-
-(defn- terminal-size
-  []
-  (let [size (Terminal/size)]
-    [(get size 0) (get size 1)]))
-
-(defn -main
-  [& args]
-  (Terminal/start)
-  (loop [[height width] (terminal-size)
+(defn- run
+  [world & args]
+  (setup world)
+  (loop [[height width] (terminal-size world)
          editor (apply e/initial-editor [height width] args)]
-    (if (:beep? editor)
-      (Terminal/beep))
+    (when (:beep? editor)
+      (beep world))
     (let [editor (if (not= [height width] (:size (:viewport editor)))
                    (e/respond editor [:resize [height width]])
                    editor)]
-      (update-terminal editor)
+      (update-terminal world (render/render editor))
       (if-not (= (:mode editor) :finished)
         (recur
-          (terminal-size)
+          (terminal-size world)
           (e/respond editor [:keystroke (Terminal/getKey)])))))
-  (Terminal/stop))
+  (cleanup world))
+
+(defn -main
+  [& args]
+  (let [world (reify
+                World
+                (setup [_] (Terminal/start))
+                (cleanup [_] (Terminal/stop))
+                (beep [_] (Terminal/beep))
+                (terminal-size [_]
+                  (let [size (Terminal/size)]
+                    [(get size 0) (get size 1)]))
+                (update-terminal [_ {chars :chars,
+                                     attrs :attrs,
+                                     width :width,
+                                     [i j] :cursor}]
+                  (Terminal/refresh i j width chars attrs)))]
+    (apply run world args)))
