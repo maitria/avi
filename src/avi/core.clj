@@ -25,21 +25,29 @@
       (in e/current-buffer
           (b/resize (- (first size) 2)))))
 
+(defn- event-stream
+  ([world]
+   (event-stream world (terminal-size world)))
+  ([world current-size]
+   (lazy-seq
+     (let [keystroke (read-key world)
+           new-size (terminal-size world)]
+       (cond->> (event-stream world new-size)
+         true
+         (cons [:keystroke keystroke])
+
+         (not= current-size new-size)
+         (cons [:resize new-size]))))))
+
 (defn- run
   [world & args]
   (setup world)
-  (loop [[height width] (terminal-size world)
-         editor (apply e/initial-editor [height width] args)]
+  (doseq [editor (->> (event-stream world)
+                      (reductions e/respond (apply e/initial-editor (terminal-size world) args))
+                      (take-while #(not (= :finished (:mode %)))))]
     (when (:beep? editor)
       (beep world))
-    (let [editor (if (not= [height width] (:size (:viewport editor)))
-                   (e/respond editor [:resize [height width]])
-                   editor)]
-      (update-terminal world (render/render editor))
-      (if-not (= (:mode editor) :finished)
-        (recur
-          (terminal-size world)
-          (e/respond editor [:keystroke (read-key world)])))))
+    (update-terminal world (render/render editor)))
   (cleanup world))
 
 (defn -main
