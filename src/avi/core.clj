@@ -1,7 +1,6 @@
 (ns avi.core
   (:import [avi.terminal Terminal])
   (:require [packthread.core :refer :all]
-            [avi.buffer :as b]
             [avi.editor :as e]
             [avi.command-line-mode]
             [avi.normal-mode]
@@ -17,13 +16,6 @@
   (beep [this])
   (terminal-size [this])
   (update-terminal [this rendering]))
-
-(defmethod e/respond :resize
-  [editor [_ size]]
-  (+> editor
-      (assoc-in [:viewport :size] size)
-      (in e/current-buffer
-          (b/resize (- (first size) 2)))))
 
 (defn- event-stream
   ([world]
@@ -49,7 +41,7 @@
 (defn- run
   [world args]
   (setup world)
-  (doseq [editor (editor-stream)]
+  (doseq [editor (editor-stream world args)]
     (when (:beep? editor)
       (beep world))
     (update-terminal world (render/render editor)))

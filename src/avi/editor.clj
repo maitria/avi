@@ -40,3 +40,10 @@
     (if (= :resize event-kind)
       :resize
       (:mode editor))))
+
+(defmethod respond :resize
+  [editor [_ size]]
+  (+> editor
+      (assoc-in [:viewport :size] size)
+      (in current-buffer
+          (b/resize (- (first size) 2)))))
