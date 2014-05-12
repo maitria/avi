@@ -10,6 +10,10 @@
    :count nil
    :beep? false})
 
+(defn finished?
+  [editor]
+  (= :finished (:mode editor)))
+
 (defn beep
   [editor]
   (assoc editor :beep? true))

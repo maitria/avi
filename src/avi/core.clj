@@ -36,7 +36,7 @@
   (let [initial-editor (apply e/initial-editor (terminal-size world) args)]
     (->> (event-stream world)
          (reductions e/respond initial-editor)
-         (take-while #(not (= :finished (:mode %)))))))
+         (take-while (complement e/finished?)))))
 
 (defn- run
   [world args]
