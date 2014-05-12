@@ -33,7 +33,7 @@
 
 (defn- editor-stream
   [world args]
-  (let [initial-editor (apply e/initial-editor (terminal-size world) args)]
+  (let [initial-editor (e/initial-editor (terminal-size world) args)]
     (->> (event-stream world)
          (reductions e/respond initial-editor)
          (take-while (complement e/finished?)))))

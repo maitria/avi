@@ -85,7 +85,7 @@
                      (fn [_] (throw (FileNotFoundException. "not found")))
                      {"test.txt" file-contents})
         initial-editor (with-redefs [slurp test-slurp]
-                         (apply e/initial-editor [8 20] start-args))]
+                         (e/initial-editor [8 20] start-args))]
     (reduce
       e/respond
       initial-editor

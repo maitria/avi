@@ -3,7 +3,7 @@
             [avi.buffer :as b]))
 
 (defn initial-editor
-  [[lines columns] & [filename]]
+  [[lines columns] [filename]]
   {:mode :normal
    :buffer (b/open filename (- lines 2))
    :viewport {:size [lines columns]}
