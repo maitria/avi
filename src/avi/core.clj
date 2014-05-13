@@ -38,13 +38,17 @@
          (reductions e/respond initial-editor)
          (take-while (complement e/finished?)))))
 
+(defn- perform-effects!
+  [editor world]
+  (when (:beep? editor)
+    (beep world))
+  (update-terminal world (render/render editor)))
+
 (defn- run
   [world args]
   (setup world)
   (doseq [editor (editor-stream world args)]
-    (when (:beep? editor)
-      (beep world))
-    (update-terminal world (render/render editor)))
+    (perform-effects! editor world))
   (cleanup world))
 
 (defn -main
