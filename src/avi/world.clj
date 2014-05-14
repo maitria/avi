@@ -7,6 +7,7 @@
   (read-key [this])
   (beep [this])
   (terminal-size [this])
-  (update-terminal [this rendering]))
+  (update-terminal [this rendering])
+  (read-file [this filename]))
 
 (def ^:dynamic *world*)

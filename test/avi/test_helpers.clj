@@ -3,7 +3,8 @@
   (:require [avi.core]
             [avi.editor :as e]
             [avi.eventmap :as em]
-            [avi.render :as render]))
+            [avi.render :as render]
+            [avi.world :refer :all]))
 
 (def ten-lines
   (str "One\nTwo\nThree\nFour\nFive\nSix\n"
@@ -81,10 +82,16 @@
         start-args (if (= :nothing file-contents)
                      []
                      ["test.txt"])
-        test-slurp (if (= :not-found file-contents)
-                     (fn [_] (throw (FileNotFoundException. "not found")))
-                     {"test.txt" file-contents})
-        initial-editor (with-redefs [slurp test-slurp]
+        test-world (reify
+                     World
+                     (read-file [_ filename]
+                       (cond
+                         (= :not-found file-contents)
+                         (throw (FileNotFoundException. "not found"))
+
+                         (= "test.txt" filename)
+                         file-contents)))
+        initial-editor (binding [*world* test-world]
                          (e/initial-editor [8 20] start-args))]
     (reduce
       e/respond

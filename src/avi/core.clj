@@ -59,5 +59,7 @@
                                      attrs :attrs,
                                      width :width,
                                      [i j] :cursor}]
-                  (Terminal/refresh i j width chars attrs)))]
+                  (Terminal/refresh i j width chars attrs))
+                (read-file [this filename]
+                  (slurp filename)))]
     (run world args)))

@@ -1,14 +1,15 @@
 (ns avi.buffer
   (:import [java.io FileNotFoundException])
   (:require [packthread.core :refer :all]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [avi.world :refer :all]))
 
 (defn open
   [filename height]
   {:name filename,
    :lines (if filename
             (try
-              (string/split (slurp filename) #"\n")
+              (string/split (read-file *world* filename) #"\n")
               (catch FileNotFoundException e
                 [""]))
             [""]),
