@@ -17,6 +17,8 @@
   (terminal-size [this])
   (update-terminal [this rendering]))
 
+(def ^:dynamic *world*)
+
 (defn- event-stream
   ([world]
    (event-stream world (terminal-size world)))
@@ -39,17 +41,18 @@
          (take-while (complement e/finished?)))))
 
 (defn- perform-effects!
-  [editor world]
+  [editor]
   (when (:beep? editor)
-    (beep world))
-  (update-terminal world (render/render editor)))
+    (beep *world*))
+  (update-terminal *world* (render/render editor)))
 
 (defn- run
   [world args]
-  (setup world)
-  (doseq [editor (editor-stream world args)]
-    (perform-effects! editor world))
-  (cleanup world))
+  (binding [*world* world]
+    (setup *world*)
+    (doseq [editor (editor-stream *world* args)]
+      (perform-effects! editor))
+    (cleanup *world*)))
 
 (defn -main
   [& args]
