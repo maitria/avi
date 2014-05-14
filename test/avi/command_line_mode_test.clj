@@ -54,3 +54,7 @@
 (facts "regarding bad commands"
   (fact "`:badcommand<Enter>` doesn't change cursor position"
     (cursor :after ":badcommand<Enter>") => [0 0]))
+
+(facts "regarding `:w<Enter>`"
+  (fact "`:w<Enter>` writes the file"
+    (file-written :editing "ABC\nDEF\nGHI" :after ":w<Enter>") => ["test.txt" "ABC\nDEF\nGHI"]))

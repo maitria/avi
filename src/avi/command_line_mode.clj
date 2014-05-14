@@ -1,6 +1,7 @@
 (ns avi.command-line-mode
   (:require [packthread.core :refer :all]
             [avi.eventmap :as em]
+            [avi.buffer :as b]
             [avi.editor :as e]))
 
 (defn- append-to-command-line
@@ -19,6 +20,10 @@
         (cond
           (= "q" command-line)
           (assoc :mode :finished)
+
+          (= "w" command-line)
+          (in e/current-buffer
+              (b/write))
 
           (= "" command-line)
           identity

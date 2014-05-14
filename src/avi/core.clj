@@ -60,6 +60,8 @@
                                      width :width,
                                      [i j] :cursor}]
                   (Terminal/refresh i j width chars attrs))
-                (read-file [this filename]
-                  (slurp filename)))]
+                (read-file [_ filename]
+                  (slurp filename))
+                (write-file [_ filename contents]
+                  (spit filename contents)))]
     (run world args)))

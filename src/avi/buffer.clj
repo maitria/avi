@@ -18,6 +18,11 @@
    :cursor [0 0],
    :last-explicit-j 0})
 
+(defn write
+  [{lines :lines,
+    filename :name}]
+  (write-file *world* filename (string/join "\n" lines)))
+
 (defn cursor
   [buffer]
   (:cursor buffer))

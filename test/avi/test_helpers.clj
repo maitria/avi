@@ -73,7 +73,7 @@
        (em/split-string-of-commands)
        (map event)))
 
-(defn editor
+(defn- simulate
   [& {file-contents :editing,
       string-of-commands :after
       :or {file-contents "One\nTwo\nThree\n."
@@ -82,6 +82,7 @@
         start-args (if (= :nothing file-contents)
                      []
                      ["test.txt"])
+        file-written (atom nil)
         test-world (reify
                      World
                      (read-file [_ filename]
@@ -90,13 +91,27 @@
                          (throw (FileNotFoundException. "not found"))
 
                          (= "test.txt" filename)
-                         file-contents)))
+                         file-contents))
+                     (write-file [_ filename content]
+                       (swap! file-written (constantly [filename content]))
+                       nil))
         initial-editor (binding [*world* test-world]
-                         (e/initial-editor [8 20] start-args))]
-    (reduce
-      e/respond
-      initial-editor
-      events)))
+                         (e/initial-editor [8 20] start-args))
+        final-editor (binding [*world* test-world]
+                       (reduce
+                         e/respond
+                         initial-editor
+                         events))]
+    {:editor final-editor
+     :file-written @file-written}))
+
+(defn file-written
+  [& args]
+  (:file-written (apply simulate args)))
+
+(defn editor
+  [& args]
+  (:editor (apply simulate args)))
 
 (defn cursor
   [& args]

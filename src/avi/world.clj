@@ -8,6 +8,7 @@
   (beep [this])
   (terminal-size [this])
   (update-terminal [this rendering])
-  (read-file [this filename]))
+  (read-file [this filename])
+  (write-file [this filename contents]))
 
 (def ^:dynamic *world*)
