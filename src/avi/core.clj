@@ -5,19 +5,9 @@
             [avi.command-line-mode]
             [avi.normal-mode]
             [avi.insert-mode]
-            [avi.render :as render])
+            [avi.render :as render]
+            [avi.world :refer :all])
   (:gen-class))
-
-(defprotocol World
-  "Avi's interface to the world."
-  (setup [this])
-  (cleanup [this])
-  (read-key [this])
-  (beep [this])
-  (terminal-size [this])
-  (update-terminal [this rendering]))
-
-(def ^:dynamic *world*)
 
 (defn- event-stream
   ([world]
