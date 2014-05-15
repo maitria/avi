@@ -185,7 +185,7 @@
                 lines-to-insert
                 (subvec original-lines i)))))
 
-(defn insert
+(defn insert-text
   [{[i j] :cursor,
     :as buffer} text]
   (+> buffer

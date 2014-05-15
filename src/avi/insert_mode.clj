@@ -14,7 +14,7 @@
       [editor]
       (+> editor
           (in e/current-buffer
-              (b/insert "\n"))))
+              (b/insert-text "\n"))))
 
     (:else
       [editor event]
@@ -23,7 +23,7 @@
             (if-not (= event-type :keystroke)
               e/beep
               (in e/current-buffer
-                  (b/insert event-data))))))))
+                  (b/insert-text event-data))))))))
 
 (defmethod e/respond :insert
   [editor event]
