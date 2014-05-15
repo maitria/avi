@@ -200,7 +200,7 @@
                           0)]
         (modify-line i (constantly line-to-modify))
         (insert-lines (inc i) rest-of-lines)
-        (assoc :cursor [resulting-i resulting-j]))))
+        (move-cursor [resulting-i resulting-j] resulting-j))))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,
