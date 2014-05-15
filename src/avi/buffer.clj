@@ -193,10 +193,14 @@
             resulting-text (str (.substring original-line 0 j)
                                 text
                                 (.substring original-line j))
-            [line-to-modify & rest-of-lines] (string/split resulting-text #"\n")]
+            [line-to-modify & rest-of-lines] (string/split resulting-text #"\n")
+            resulting-i (+ i (count rest-of-lines))
+            resulting-j (if (zero? (count rest-of-lines))
+                          (+ j (count text))
+                          0)]
         (modify-line i (constantly line-to-modify))
         (insert-lines (inc i) rest-of-lines)
-        (assoc :cursor [i (inc j)]))))
+        (assoc :cursor [resulting-i resulting-j]))))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,

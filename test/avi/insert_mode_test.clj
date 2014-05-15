@@ -48,4 +48,5 @@
           "~                   " [:blue]
           "~                   " [:blue]
           "test.txt            " [:black :on :white]
-          "                    ")))
+          "                    ")
+    (cursor :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>") => [1 0]))
