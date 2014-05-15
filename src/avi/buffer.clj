@@ -175,12 +175,28 @@
             after-line (modify-fn before-line)]
         (assoc-in [:lines i] after-line))))
 
+(defn- insert-lines
+  [{original-lines :lines,
+    :as buffer} i lines-to-insert]
+  (assoc buffer
+         :lines
+         (vec (concat
+                (subvec original-lines 0 i)
+                lines-to-insert
+                (subvec original-lines i)))))
+
 (defn insert
   [{[i j] :cursor,
     :as buffer} text]
   (+> buffer
-      (modify-line i #(str (.substring % 0 j) text (.substring % j)))
-      (assoc :cursor [i (inc j)])))
+      (let [original-line (get-in buffer [:lines i])
+            resulting-text (str (.substring original-line 0 j)
+                                text
+                                (.substring original-line j))
+            [line-to-modify & rest-of-lines] (string/split resulting-text #"\n")]
+        (modify-line i (constantly line-to-modify))
+        (insert-lines (inc i) rest-of-lines)
+        (assoc :cursor [i (inc j)]))))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,

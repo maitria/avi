@@ -10,6 +10,12 @@
       [editor]
       (assoc editor :mode :normal))
 
+    ("<Enter>"
+      [editor]
+      (+> editor
+          (in e/current-buffer
+              (b/insert "\n"))))
+
     (:else
       [editor event]
       (+> editor

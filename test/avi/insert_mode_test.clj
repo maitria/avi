@@ -37,4 +37,15 @@
           "~                   " [:blue]
           "~                   " [:blue]
           "test.txt            " [:black :on :white]
-          "--INSERT--          ")))
+          "--INSERT--          "))
+  (fact "`i<Enter>` inserts a new line"
+    (editor :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>")
+     => (looks-like
+          "x                   "
+          "One                 "
+          "Two                 "
+          "Three...            "
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "test.txt            " [:black :on :white]
+          "                    ")))
