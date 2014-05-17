@@ -8,7 +8,13 @@
   (em/eventmap
     ("<Esc>"
       [editor]
-      (assoc editor :mode :normal))
+      (+> editor
+          (let [b (e/current-buffer editor)
+                [i j] (b/cursor b)
+                new-j (max (dec j) 0)]
+            (in e/current-buffer
+                (b/move-cursor [i new-j] new-j)))
+          (assoc :mode :normal)))
 
     ("<BS>"
       [editor]

@@ -23,6 +23,8 @@
          "~                   " :blue
          "test.txt            " :black :on :white
          "                    "])
+  (fact "`ixyz<Esc>` leaves the cursor on `z`"
+    (cursor :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => [0 2])
   (fact "`ixy<BS>z<Esc>` inserts `xz`"
     (terminal :editing "One\nTwo\nThree..." :after "ixy<BS>z<Esc>")
         => ["xzOne               "
