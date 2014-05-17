@@ -10,53 +10,6 @@
   (str "One\nTwo\nThree\nFour\nFive\nSix\n"
        "Seven\nEight\nNine\nTen"))
 
-(defn- text-matches-rendering?
-  [rendering i text]
-  (let [{:keys [chars width]} rendering 
-        actual-text (String. chars (* i width) width)]
-    (= text actual-text)))
-
-(defn- color-matches-rendering?
-  [rendering i expected-attrs]
-  (let [{:keys [attrs width]} rendering
-        offset (* i width)
-        line-attrs (subvec (into [] attrs) offset (+ offset width))]
-    (->> line-attrs
-         (filter (partial not= expected-attrs))
-         empty?)))
-
-(defn- partition-looks-like-lines
-  [lines]
-  (loop [[text maybe-attributes & lines] lines
-         result []]
-    (cond
-      (not text)
-      result
-
-      (vector? maybe-attributes)
-      (let [[specified-foreground on specified-background] maybe-attributes
-            foreground (or specified-foreground :white)
-            background (or specified-background :black)
-            attrs (render/make-attrs foreground background)]
-        (recur lines
-               (conj result [text attrs])))
-
-      :else
-      (recur (cons maybe-attributes lines)
-             (conj result [text (render/make-attrs :white :black)])))))
-
-(defn looks-like
-  [& args]
-  (fn [editor]
-    (let [rendering (render/render editor)]
-      (->> args
-           partition-looks-like-lines
-           (map-indexed 
-             (fn [i [text color]]
-               (and (text-matches-rendering? rendering i text)
-                    (color-matches-rendering? rendering i color))))
-           (every? identity)))))
-
 (defn- event
   [event-name]
   (let [event-type (if (.startsWith event-name "<Resize ")

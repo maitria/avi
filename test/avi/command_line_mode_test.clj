@@ -4,29 +4,27 @@
 
 (facts "regarding command-line mode"
   (fact "`:` echos on the command-line"
-    (editor :after ":")
-     => (looks-like
-          "One                 "
+    (terminal :after ":")
+      => ["One                 "
           "Two                 "
           "Three               "
           ".                   "
-          "~                   " [:blue]
-          "~                   " [:blue]
-          "test.txt            " [:black :on :white]
-          ":                   "))
+          "~                   " :blue
+          "~                   " :blue
+          "test.txt            " :black :on :white
+          ":                   "])
   (fact "`:` places the cursor after the colon prompt"
     (cursor :after ":") => [7 1])
   (fact "characters typed after `:` echo on the command-line"
-    (editor :after ":abc")
-     => (looks-like
-          "One                 "
-          "Two                 "
-          "Three               "
-          ".                   "
-          "~                   " [:blue]
-          "~                   " [:blue]
-          "test.txt            " [:black :on :white]
-          ":abc                "))
+    (terminal :after ":abc")
+     => ["One                 "
+         "Two                 "
+         "Three               "
+         ".                   "
+         "~                   " :blue
+         "~                   " :blue
+         "test.txt            " :black :on :white
+         ":abc                "])
   (fact "characters typed after `:` move the cursor"
     (cursor :after ":a") => [7 2]
     (cursor :after ":abc") => [7 4])
