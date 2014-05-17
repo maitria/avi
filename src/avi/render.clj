@@ -1,44 +1,34 @@
 (ns avi.render
   (:import [java.util Arrays])
-  (:require [avi.editor :as e]
+  (:require [clojure.set :refer [map-invert]]
+            [avi.editor :as e]
             [avi.buffer :as b]))
 
-(defn- color-number
-  [color]
-  (case color
-    :black 0
-    :red 1
-    :green 2
-    :yellow 3
-    :blue 4
-    :magenta 5
-    :cyan 6
-    :white 7))
+(def ^:private color->number
+  {:black 0
+   :red 1
+   :green 2
+   :yellow 3
+   :blue 4
+   :magenta 5
+   :cyan 6
+   :white 7})
 
-(defn- color-keyword
-  [n]
-  (case n
-    0 :black
-    1 :red
-    2 :green
-    3 :yellow
-    4 :blue
-    5 :magenta
-    6 :cyan
-    7 :white))
+(def ^:private number->color
+  (map-invert color->number))
 
 (defn make-attrs
   [color background]
-  (byte (bit-or (bit-shift-left (color-number color) 3)
-                (color-number background))))
+  (byte (bit-or (bit-shift-left (color->number color) 3)
+                (color->number background))))
 
 (defn- attr-foreground
   [attrs]
-  (color-keyword (bit-and 7 (bit-shift-right attrs 3))))
+  (number->color (bit-and 7 (bit-shift-right attrs 3))))
 
 (defn- attr-background
   [attrs]
-  (color-keyword (bit-and 7 attrs)))
+  (number->color (bit-and 7 attrs)))
 
 (defn attr-description
   [attrs]
