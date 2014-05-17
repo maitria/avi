@@ -15,10 +15,44 @@
     :cyan 6
     :white 7))
 
+(defn- color-keyword
+  [n]
+  (case n
+    0 :black
+    1 :red
+    2 :green
+    3 :yellow
+    4 :blue
+    5 :magenta
+    6 :cyan
+    7 :white))
+
 (defn make-attrs
   [color background]
   (byte (bit-or (bit-shift-left (color-number color) 3)
                 (color-number background))))
+
+(defn- attr-foreground
+  [attrs]
+  (color-keyword (bit-and 7 (bit-shift-right attrs 3))))
+
+(defn- attr-background
+  [attrs]
+  (color-keyword (bit-and 7 attrs)))
+
+(defn attr-description
+  [attrs]
+  (let [fg-keyword (attr-foreground attrs)
+        bg-keyword (attr-background attrs)]
+    (cond
+      (= [:white :black] [fg-keyword bg-keyword])
+      []
+
+      (= :black bg-keyword)
+      [fg-keyword]
+
+      :else
+      [fg-keyword :on bg-keyword])))
 
 (defn- prompt-line-text
   [editor]

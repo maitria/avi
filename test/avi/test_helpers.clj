@@ -113,6 +113,22 @@
   [& args]
   (:editor (apply simulate args)))
 
+(defn terminal
+  [& args]
+  (let [{width :width,
+         chars :chars,
+         attrs :attrs} (render/render (apply editor args))
+        height (quot (count chars) width)
+        lines (map
+                #(String. chars (* % width) width)
+                (range height))
+        line-annotations (->> (range height)
+                              (map (fn [i]
+                                     (get attrs (* i width))))
+                              (map render/attr-description))]
+    (->> (interleave lines line-annotations)
+         flatten)))
+
 (defn cursor
   [& args]
   (:cursor (render/render (apply editor args))))
