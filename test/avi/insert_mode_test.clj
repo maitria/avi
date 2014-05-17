@@ -25,6 +25,17 @@
           "~                   " [:blue]
           "test.txt            " [:black :on :white]
           "                    "))
+  (fact "`ixy<BS>z<Esc>` inserts `xz`"
+    (editor :editing "One\nTwo\nThree..." :after "ixy<BS>z<Esc>")
+     => (looks-like
+          "xzOne               "
+          "Two                 "
+          "Three...            "
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "~                   " [:blue]
+          "test.txt            " [:black :on :white]
+          "                    "))
   (fact "`<Esc>` in insert mode returns to normal mode"
     (:mode (editor :after "i<Esc>")) => :normal)
   (fact "Avi displays `--INSERT--` on the prompt mode when in insert mode"

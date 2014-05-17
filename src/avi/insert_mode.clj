@@ -10,6 +10,12 @@
       [editor]
       (assoc editor :mode :normal))
 
+    ("<BS>"
+      [editor]
+      (+> editor
+          (in e/current-buffer
+              (b/backspace))))
+
     ("<Enter>"
       [editor]
       (+> editor

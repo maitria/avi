@@ -241,3 +241,14 @@
               new-j (index-of-first-non-blank target-line)]
           (assoc :lines new-lines)
           (move-cursor [new-i new-j])))))
+
+(defn backspace
+  [{[i j] :cursor,
+    lines :lines,
+    :as buffer}]
+  (+> buffer
+      (let [line (get lines i)
+            new-line (str (.substring line 0 (dec j))
+                          (.substring line j))]
+        (move-cursor [i (dec j)])
+        (assoc-in [:lines i] new-line))))
