@@ -86,10 +86,6 @@
         (assoc :last-explicit-j j))
       adjust-viewport-to-contain-cursor))
 
-(defn last-explicit-j
-  [buffer]
-  (:last-explicit-j buffer))
-
 (defn resize
   [buffer height]
   (+> buffer
