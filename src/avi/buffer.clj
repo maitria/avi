@@ -191,10 +191,7 @@
   [{[i j] :cursor,
     :as buffer}]
   (+> buffer
-      (update-line i (fn [before-line]
-                       (if (zero? (count before-line))
-                         ""
-                         (splice before-line j (inc j)))))))
+      (update-line i #(splice % j (inc j)))))
 
 (defn delete-current-line
   [{[i] :cursor,
