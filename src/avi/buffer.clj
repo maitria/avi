@@ -233,8 +233,6 @@
     lines :lines,
     :as buffer}]
   (+> buffer
-      (let [line (get lines i)
-            new-line (str (.substring line 0 (dec j))
-                          (.substring line j))]
-        (move-cursor [i (dec j)])
-        (update-line i (constantly new-line)))))
+      (move-cursor [i (dec j)])
+      (update-line i #(str (.substring % 0 (dec j))
+                           (.substring % j)))))
