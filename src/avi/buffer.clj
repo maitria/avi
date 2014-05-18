@@ -172,11 +172,6 @@
   [buffer i modify-fn]
   (update-in buffer [:lines i] modify-fn))
 
-(defn- insert-lines
-  [{original-lines :lines,
-    :as buffer} i lines-to-insert]
-  (assoc buffer :lines (splice original-lines i i lines-to-insert)))
-
 (defn insert-text
   [{[i j] :cursor,
     lines :lines,
