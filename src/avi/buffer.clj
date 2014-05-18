@@ -2,6 +2,7 @@
   (:import [java.io FileNotFoundException])
   (:require [packthread.core :refer :all]
             [clojure.string :as string]
+            [avi.string :as s]
             [avi.world :refer :all]))
 
 (defn open
@@ -164,6 +165,8 @@
             new-line (min middle-of-viewport middle-of-file)]
         (move-to-line new-line))))
 
+;; -- changing buffer contents --
+
 (defn- modify-line
   [buffer i modify-fn]
   (+> buffer
@@ -209,15 +212,6 @@
                            (.substring before-line 0 j)
                            (.substring before-line (inc j))))))))
 
-(defn index-of-first-non-blank
-  [line]
-  (let [leading-space-count (count (re-find #"^\s*" line))
-        all-spaces? (and (> leading-space-count 0)
-                         (= leading-space-count (count line)))]
-    (if all-spaces?
-      (dec leading-space-count)
-      leading-space-count)))
-
 (defn delete-current-line
   [{[i] :cursor,
     lines :lines,
@@ -234,7 +228,7 @@
                       (dec i)
                       i)
               target-line (get new-lines new-i)
-              new-j (index-of-first-non-blank target-line)]
+              new-j (s/index-of-first-non-blank target-line)]
           (assoc :lines new-lines)
           (move-cursor [new-i new-j])))))
 

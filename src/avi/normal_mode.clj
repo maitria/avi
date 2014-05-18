@@ -1,9 +1,10 @@
 (ns avi.normal-mode
   (:require [packthread.core :refer :all]
             [avi.buffer :as b]
+            [avi.command-line-mode :as command-line-mode]
             [avi.editor :as e]
             [avi.eventmap :as em]
-            [avi.command-line-mode :as command-line-mode]))
+            [avi.string :as s]))
 
 (defn- cursor-can-move-to-column?
   [editor [i j]]
@@ -88,7 +89,7 @@
 
     ("^"
       [editor]
-      (let [position (b/index-of-first-non-blank (current-line editor))]
+      (let [position (s/index-of-first-non-blank (current-line editor))]
         (change-column editor (constantly position))))
 
     ("$"
@@ -111,7 +112,7 @@
             specified-line (dec (or repeat-count 1))
             last-line (dec (b/line-count buffer))
             target-line (min specified-line last-line)
-            target-column (b/index-of-first-non-blank (b/line buffer target-line))]
+            target-column (s/index-of-first-non-blank (b/line buffer target-line))]
         (-> editor
             (e/change-line (constantly target-line))
             (change-column (constantly target-column)))))
@@ -150,7 +151,7 @@
                 target-line (if repeat-count
                               (dec repeat-count)
                               last-line)
-                target-column (b/index-of-first-non-blank (b/line buffer target-line))]
+                target-column (s/index-of-first-non-blank (b/line buffer target-line))]
             (e/change-line (constantly target-line))
             (change-column (constantly target-column)))))
 
