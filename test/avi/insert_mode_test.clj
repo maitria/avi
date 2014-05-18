@@ -47,7 +47,7 @@
          "~                   " :blue
          "test.txt            " :black :on :white
          "--INSERT--          "])
-  (fact "`i<Enter>` inserts a new line"
+  (fact "`ix<Enter>` inserts a new line"
     (terminal :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>")
      => ["x                   "
          "One                 "

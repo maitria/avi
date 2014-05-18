@@ -172,9 +172,10 @@
   (update-in buffer [:lines i] modify-fn))
 
 (defn- splicev
-  [coll start end & [elements-to-insert]]
+  "Replaces range from start (inclusive) to end (exclusive) with elements."
+  [coll start end & [elements]]
   (vec (concat (subvec coll 0 start)
-               elements-to-insert
+               elements
                (subvec coll end))))
 
 (defn- insert-lines
@@ -184,19 +185,19 @@
 
 (defn insert-text
   [{[i j] :cursor,
+    lines :lines,
     :as buffer} text]
   (+> buffer
       (let [original-line (get-in buffer [:lines i])
             resulting-text (str (.substring original-line 0 j)
                                 text
                                 (.substring original-line j))
-            [line-to-modify & rest-of-lines] (string/split resulting-text #"\n")
-            resulting-i (+ i (count rest-of-lines))
-            resulting-j (if (zero? (count rest-of-lines))
+            new-lines (string/split resulting-text #"\n")
+            resulting-i (+ i (dec (count new-lines)))
+            resulting-j (if (= 1 (count new-lines))
                           (+ j (count text))
                           0)]
-        (update-line i (constantly line-to-modify))
-        (insert-lines (inc i) rest-of-lines)
+        (assoc :lines (splicev lines i (inc i) new-lines))
         (move-cursor [resulting-i resulting-j] resulting-j))))
 
 (defn delete-char-under-cursor
