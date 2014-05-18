@@ -167,12 +167,9 @@
 
 ;; -- changing buffer contents --
 
-(defn- modify-line
+(defn- update-line
   [buffer i modify-fn]
-  (+> buffer
-      (let [before-line (line buffer i)
-            after-line (modify-fn before-line)]
-        (assoc-in [:lines i] after-line))))
+  (update-in buffer [:lines i] modify-fn))
 
 (defn- insert-lines
   [{original-lines :lines,
@@ -197,7 +194,7 @@
             resulting-j (if (zero? (count rest-of-lines))
                           (+ j (count text))
                           0)]
-        (modify-line i (constantly line-to-modify))
+        (update-line i (constantly line-to-modify))
         (insert-lines (inc i) rest-of-lines)
         (move-cursor [resulting-i resulting-j] resulting-j))))
 
@@ -205,7 +202,7 @@
   [{[i j] :cursor,
     :as buffer}]
   (+> buffer
-      (modify-line i (fn [before-line]
+      (update-line i (fn [before-line]
                        (if (zero? (count before-line))
                          ""
                          (str
