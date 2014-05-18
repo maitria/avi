@@ -1,16 +1,14 @@
 (ns avi.pervasive)
 
-(defprotocol Spliceable
-  (splice [coll start end] [coll start end replacements]
-    "Replace elements in coll from start (inclusive) to end (exclusive)."))
-
-(extend-protocol Spliceable
-  String
-  (splice
-    ([s start end]
-     (str (.substring s 0 start)
-          (.substring s end)))
-    ([s start end substr]
-     (str (.substring s 0 start)
-          substr
-          (.substring s end)))))
+(defn splice
+  "Replace or delete elements from start (inclusive) through end (exclusive)."
+  ([coll start end]
+   (splice coll start end (empty coll)))
+  ([coll start end replacements]
+   (if (string? coll)
+     (str (.substring coll 0 start)
+          replacements
+          (.substring coll end))
+     (vec (concat (subvec coll 0 start)
+                  replacements
+                  (subvec coll end))))))
