@@ -2,6 +2,7 @@
   (:import [java.io FileNotFoundException])
   (:require [packthread.core :refer :all]
             [clojure.string :as string]
+            [avi.pervasive :refer :all]
             [avi.string :as s]
             [avi.world :refer :all]))
 
@@ -189,9 +190,7 @@
     :as buffer} text]
   (+> buffer
       (let [original-line (get-in buffer [:lines i])
-            resulting-text (str (.substring original-line 0 j)
-                                text
-                                (.substring original-line j))
+            resulting-text (splice original-line j j text)
             new-lines (string/split resulting-text #"\n")
             resulting-i (+ i (dec (count new-lines)))
             resulting-j (if (= 1 (count new-lines))
@@ -207,9 +206,7 @@
       (update-line i (fn [before-line]
                        (if (zero? (count before-line))
                          ""
-                         (str
-                           (.substring before-line 0 j)
-                           (.substring before-line (inc j))))))))
+                         (splice before-line j (inc j)))))))
 
 (defn delete-current-line
   [{[i] :cursor,
@@ -235,5 +232,4 @@
     :as buffer}]
   (+> buffer
       (move-cursor [i (dec j)])
-      (update-line i #(str (.substring % 0 (dec j))
-                           (.substring % j)))))
+      (update-line i #(splice % (dec j) j))))
