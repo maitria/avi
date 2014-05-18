@@ -219,9 +219,7 @@
         (do
           (assoc :lines [""])
           (move-cursor [0 0] 0))
-        (let [new-lines (vec (concat
-                               (subvec lines 0 i)
-                               (subvec lines (inc i))))
+        (let [new-lines (splicev lines i (inc i))
               new-i (if (= i (dec (line-count buffer)))
                       (dec i)
                       i)
