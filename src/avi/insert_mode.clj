@@ -19,8 +19,11 @@
     ("<BS>"
       [editor]
       (+> editor
-          (in e/current-buffer
-              (b/backspace))))
+          (let [cursor-pos (b/cursor (e/current-buffer editor))]
+            (if (= [0 0] cursor-pos)
+              e/beep
+              (in e/current-buffer
+                  (b/backspace))))))
 
     ("<Enter>"
       [editor]

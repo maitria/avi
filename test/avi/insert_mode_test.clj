@@ -25,16 +25,21 @@
          "                    "])
   (fact "`ixyz<Esc>` leaves the cursor on `z`"
     (cursor :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => [0 2])
-  (fact "`ixy<BS>z<Esc>` inserts `xz`"
-    (terminal :editing "One\nTwo\nThree..." :after "ixy<BS>z<Esc>")
-        => ["xzOne               "
-            "Two                 "
-            "Three...            "
-            "~                   " :blue
-            "~                   " :blue
-            "~                   " :blue
-            "test.txt            " :black :on :white
-            "                    "])
+
+  (facts "about `<BS>` in insert mode"
+    (fact "`ixy<BS>z<Esc>` inserts `xz`"
+      (terminal :editing "One\nTwo\nThree..." :after "ixy<BS>z<Esc>")
+          => ["xzOne               "
+              "Two                 "
+              "Three...            "
+              "~                   " :blue
+              "~                   " :blue
+              "~                   " :blue
+              "test.txt            " :black :on :white
+              "                    "])
+    (fact "`i<BS>` on line zero beeps"
+      (editor :editing "xx" :after "i<BS>") => beeped))
+
   (fact "`<Esc>` in insert mode returns to normal mode"
     (:mode (editor :after "i<Esc>")) => :normal)
   (fact "Avi displays `--INSERT--` on the prompt mode when in insert mode"
