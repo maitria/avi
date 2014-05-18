@@ -171,15 +171,16 @@
   [buffer i modify-fn]
   (update-in buffer [:lines i] modify-fn))
 
+(defn- splicev
+  [coll start end & [elements-to-insert]]
+  (vec (concat (subvec coll 0 start)
+               elements-to-insert
+               (subvec coll end))))
+
 (defn- insert-lines
   [{original-lines :lines,
     :as buffer} i lines-to-insert]
-  (assoc buffer
-         :lines
-         (vec (concat
-                (subvec original-lines 0 i)
-                lines-to-insert
-                (subvec original-lines i)))))
+  (assoc buffer :lines (splicev original-lines i i lines-to-insert)))
 
 (defn insert-text
   [{[i j] :cursor,
