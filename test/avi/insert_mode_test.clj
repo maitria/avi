@@ -37,8 +37,18 @@
               "~                   " :blue
               "test.txt            " :black :on :white
               "                    "])
-    (fact "`i<BS>` on line zero beeps"
-      (editor :editing "xx" :after "i<BS>") => beeped))
+    (fact "`i<BS>` at 0,0 zero beeps"
+      (editor :editing "xx" :after "i<BS>") => beeped)
+    (fact "`i<BS>` at 1,0 joins lines"
+      (terminal :editing "One\nTwo\nThree..." :after "ji<BS><Esc>")
+        => ["OneTwo              "
+            "Three...            "
+            "~                   " :blue
+            "~                   " :blue
+            "~                   " :blue
+            "~                   " :blue
+            "test.txt            " :black :on :white
+            "                    "]))
 
   (fact "`<Esc>` in insert mode returns to normal mode"
     (:mode (editor :after "i<Esc>")) => :normal)
