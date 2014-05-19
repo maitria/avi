@@ -25,10 +25,6 @@
     filename :name}]
   (write-file *world* filename (string/join "\n" lines)))
 
-(defn cursor
-  [buffer]
-  (:cursor buffer))
-
 (defn- adjust-viewport-to-contain-cursor
   [buffer]
   (+> buffer
@@ -102,7 +98,7 @@
 
 (defn on-last-line?
   [buffer]
-  (let [[i] (cursor buffer)
+  (let [[i] (:cursor buffer)
         line-count (line-count buffer)]
     (= i (dec line-count))))
 

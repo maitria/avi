@@ -18,7 +18,7 @@
 (defn- change-column
   [editor j-fn]
   (+> editor
-      (let [[i j] (b/cursor (e/current-buffer editor))
+      (let [[i j] (:cursor (e/current-buffer editor))
         j (j-fn j)
         new-position [i j]]
         (if (cursor-can-move-to-column? editor new-position)
@@ -35,7 +35,7 @@
 (defn- current-line 
   [editor] 
   (let [buffer (e/current-buffer editor)
-        [row] (b/cursor buffer)]
+        [row] (:cursor buffer)]
     (b/line buffer row)))
 
 (defn- scroll
@@ -95,7 +95,7 @@
     ("$"
       [editor]
       (let [buffer (e/current-buffer editor)
-            [i j] (b/cursor buffer)
+            [i j] (:cursor buffer)
             line-length (count (b/line buffer i))
             j (max 0 (dec line-length))]
         (change-column editor (constantly j))))
@@ -192,7 +192,7 @@
       [editor]
       (+> editor
           (let [buffer (e/current-buffer editor)
-                [i] (b/cursor buffer)]
+                [i] (:cursor buffer)]
             (if (zero? i)
               e/beep
               (in e/current-buffer

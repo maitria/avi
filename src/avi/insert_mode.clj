@@ -10,7 +10,7 @@
       [editor]
       (+> editor
           (let [b (e/current-buffer editor)
-                [i j] (b/cursor b)
+                [i j] (:cursor b)
                 new-j (max (dec j) 0)]
             (in e/current-buffer
                 (b/move-cursor [i new-j] new-j)))
@@ -19,7 +19,7 @@
     ("<BS>"
       [editor]
       (+> editor
-          (let [[i j] (b/cursor (e/current-buffer editor))]
+          (let [[i j] (:cursor (e/current-buffer editor))]
             (if (= [0 0] [i j])
               e/beep
               (in e/current-buffer
