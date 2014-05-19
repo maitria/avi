@@ -216,5 +216,10 @@
     lines :lines,
     :as buffer}]
   (+> buffer
-      (move-cursor [i (dec j)])
-      (update-line i #(splice % (dec j) j))))
+      (if (= 0 j)
+        (let [new-line (str (get lines (dec i)) (get lines i))
+              new-lines (splice lines (dec i) (inc i) [new-line])]
+          (assoc :lines new-lines))
+        (do
+          (move-cursor [i (dec j)])
+          (update-line i #(splice % (dec j) j))))))

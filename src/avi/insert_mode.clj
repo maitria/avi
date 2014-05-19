@@ -21,19 +21,8 @@
       [editor]
       (+> editor
           (let [[i j] (b/cursor (e/current-buffer editor))]
-            (cond
-              (= [0 0] [i j])
+            (if (= [0 0] [i j])
               e/beep
-
-              (= 0 j)
-              (in e/current-buffer
-                (let [{lines :lines,
-                       :as buffer} (e/current-buffer editor)
-                      new-line (str (get lines (dec i)) (get lines i))
-                      new-lines (splice lines (dec i) (inc i) [new-line])]
-                  (assoc :lines new-lines)))
-
-              :else
               (in e/current-buffer
                   (b/backspace))))))
 
