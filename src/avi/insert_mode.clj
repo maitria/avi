@@ -2,8 +2,7 @@
   (:require [packthread.core :refer :all]
             [avi.editor :as e]
             [avi.buffer :as b]
-            [avi.eventmap :as em]
-            [avi.pervasive :refer :all]))
+            [avi.eventmap :as em]))
 
 (def eventmap
   (em/eventmap
