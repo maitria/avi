@@ -82,6 +82,10 @@
     (->> (interleave lines line-annotations)
          flatten)))
 
+(defn status-line
+  [& arguments]
+  (last (apply terminal arguments)))
+
 (defn cursor
   [& args]
   (:cursor (render/render (apply editor args))))

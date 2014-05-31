@@ -55,15 +55,8 @@
   (fact "`:badcommand<Enter>` doesn't change cursor position"
     (cursor :after ":badcommand<Enter>") => [0 0])
   (fact "`:blrg<Enter>` produces error message" 
-    (terminal :after ":blrg<Enter>")
-     => ["One                 "
-         "Two                 "
-         "Three               "
-         ".                   "
-         "~                   " :blue
-         "~                   " :blue
-         "test.txt            " :black :on :white
-         ":blrg is not a thing"]))
+    (status-line :after ":blrg<Enter>")
+     => ":blrg is not a thing"))
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"
