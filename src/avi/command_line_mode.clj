@@ -53,7 +53,7 @@
           (let [command-line (:command-line editor)]
             (if (zero? (count command-line))
               (assoc :mode :normal)
-              (assoc :command-line (substring command-line 0 (dec (count command-line))))))))
+              (assoc :command-line (subs command-line 0 (dec (count command-line))))))))
     
     (:else
       [editor event]

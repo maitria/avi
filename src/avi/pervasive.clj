@@ -1,11 +1,5 @@
 (ns avi.pervasive)
 
-(defn substring
-  ([s start]
-   (.substring s start))
-  ([s start end]
-   (.substring s start end)))
-
 (defn splice
   "Replace or delete elements from the start index (inclusive) through the
   end index (exclusive).
@@ -16,7 +10,7 @@
    (splice coll start end (empty coll)))
   ([coll start end replacements]
    (let [is-string? (string? coll)
-         sub (if is-string? substring subvec)
+         sub (if is-string? subs subvec)
          con (if is-string? str (comp vec concat))]
      (con (sub coll 0 start)
           replacements
