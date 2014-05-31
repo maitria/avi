@@ -63,8 +63,7 @@
          "~                   " :blue
          "~                   " :blue
          "test.txt            " :black :on :white
-         ":blrg is not a thing"])
-)
+         ":blrg is not a thing"]))
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"
