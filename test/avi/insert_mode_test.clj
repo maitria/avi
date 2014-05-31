@@ -83,4 +83,24 @@
           "~                   " :blue
           "~                   " :blue
           "test.txt            " :black :on :white
+          "                    "])
+  (fact "`oxy<Esc>` inserts a line below"
+    (terminal :editing "One\nTwo\nThree..." :after "oxy<Esc>")
+      => ["One                 "
+          "xy                  "
+          "Two                 "
+          "Three...            "
+          "~                   " :blue
+          "~                   " :blue
+          "test.txt            " :black :on :white
+          "                    "])
+  (fact "`Oxy<Esc>` inserts a line here"
+    (terminal :editing "One\nTwo\nThree..." :after "Oxy<Esc>")
+      => ["xy                  "
+          "One                 "
+          "Two                 "
+          "Three...            "
+          "~                   " :blue
+          "~                   " :blue
+          "test.txt            " :black :on :white
           "                    "]))

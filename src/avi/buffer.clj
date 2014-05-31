@@ -183,6 +183,13 @@
         (assoc :lines (splice lines i (inc i) new-lines))
         (move-cursor [resulting-i resulting-j] resulting-j))))
 
+(defn insert-blank-line
+  [{[i] :cursor,
+    lines :lines,
+    :as buffer} new-line-i]
+  (+> buffer
+      (assoc :lines (splice lines new-line-i new-line-i [""]))))
+
 (defn delete-char-under-cursor
   [{[i j] :cursor,
     :as buffer}]

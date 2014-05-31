@@ -137,6 +137,15 @@
       [editor]
       (change-column editor inc))
 
+    ("o"
+      [editor]
+      (+> editor
+          (let [{[i] :cursor} (e/current-buffer editor)]
+            (in e/current-buffer
+                (b/insert-blank-line (inc i)))
+            (e/change-line inc)
+            (assoc :mode :insert))))
+
     ("x"
       [editor]
       (+> editor
@@ -174,6 +183,14 @@
       (+> editor
           (in e/current-buffer
               b/cursor-to-middle-of-viewport)))
+
+    ("O"
+      [editor]
+      (+> editor
+          (let [{[i] :cursor} (e/current-buffer editor)]
+            (in e/current-buffer
+                (b/insert-blank-line i))
+            (assoc :mode :insert))))
 
     ("<C-D>"
       [editor]
