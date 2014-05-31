@@ -55,15 +55,7 @@
   (fact "`<Esc>` in insert mode returns to normal mode"
     (:mode (editor :after "i<Esc>")) => :normal)
   (fact "Avi displays `--INSERT--` on the prompt mode when in insert mode"
-    (terminal :editing "One\nTwo\nThree..." :after "i")
-     => ["One                 "
-         "Two                 "
-         "Three...            "
-         "~                   " :blue
-         "~                   " :blue
-         "~                   " :blue
-         "test.txt            " :black :on :white
-         "--INSERT--          "])
+    (status-line :editing "One\nTwo\nThree..." :after "i") => "--INSERT--          ")
   (fact "`ix<Enter>` inserts a new line"
     (terminal :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>")
      => ["x                   "
