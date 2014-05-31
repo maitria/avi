@@ -54,7 +54,10 @@
     "--INSERT--"
 
     (:status-line editor)
-    (str ":" (:status-line editor) " is not a thing")
+    (if (> (count (str ":" (:status-line editor) " is not a thing")) 20) 
+      (subs (str ":" (:status-line editor) " is not a thing") 0 20)
+      (str ":" (:status-line editor) " is not a thing")
+      ) 
 
     :else
     ""))

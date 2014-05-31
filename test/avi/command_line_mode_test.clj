@@ -43,7 +43,9 @@
      => ":blrg is not a thing")
   (fact "':foo<Enter> produces specific error message"
     (status-line :after ":foo<Enter>")
-     => ":foo is not a thing "))
+     => ":foo is not a thing ")
+  (fact "error message longer than terminal width gets clipped"
+    (status-line :after ":holycrapbatmanwhatdoido<Enter>") =>  ":holycrapbatmanwhatd"))
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"
