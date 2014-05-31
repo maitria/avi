@@ -16,15 +16,7 @@
   (fact "`:` places the cursor after the colon prompt"
     (cursor :after ":") => [7 1])
   (fact "characters typed after `:` echo on the command-line"
-    (terminal :after ":abc")
-     => ["One                 "
-         "Two                 "
-         "Three               "
-         ".                   "
-         "~                   " :blue
-         "~                   " :blue
-         "test.txt            " :black :on :white
-         ":abc                "])
+    (status-line :after ":abc") =>":abc                ")
   (fact "characters typed after `:` move the cursor"
     (cursor :after ":a") => [7 2]
     (cursor :after ":abc") => [7 4])
