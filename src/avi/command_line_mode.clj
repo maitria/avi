@@ -19,7 +19,7 @@
       (let [command-line (:command-line editor)]
         (assoc :mode :normal)
         (cond
-          (= "q" command-line)
+          (#{"q" "q!"} command-line)
           (assoc :mode :finished)
 
           (= "w" command-line)
