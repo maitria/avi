@@ -175,7 +175,7 @@
   (+> buffer
       (let [original-line (get-in buffer [:lines i])
             resulting-text (splice original-line j j text)
-            new-lines (string/split resulting-text #"\n")
+            new-lines (string/split resulting-text #"\n" -1)
             resulting-i (+ i (dec (count new-lines)))
             resulting-j (if (= 1 (count new-lines))
                           (+ j (count text))
