@@ -53,6 +53,9 @@
     (= (:mode editor) :insert)
     "--INSERT--"
 
+    (:status-line editor)
+    ":blrg no workie"
+
     :else
     ""))
 

@@ -36,7 +36,10 @@
           identity
 
           (line-number? command-line)
-          (e/change-line (constantly (dec (Long/parseLong command-line))))))))
+          (e/change-line (constantly (dec (Long/parseLong command-line))))
+          
+          :else
+          (assoc :status-line "xxx")))))
 
 (def eventmap
   (em/eventmap
