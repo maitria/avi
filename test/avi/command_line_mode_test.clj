@@ -4,15 +4,7 @@
 
 (facts "regarding command-line mode"
   (fact "`:` echos on the command-line"
-    (terminal :after ":")
-      => ["One                 "
-          "Two                 "
-          "Three               "
-          ".                   "
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          ":                   "])
+    (status-line :after ":") => ":                   ")
   (fact "`:` places the cursor after the colon prompt"
     (cursor :after ":") => [7 1])
   (fact "characters typed after `:` echo on the command-line"
