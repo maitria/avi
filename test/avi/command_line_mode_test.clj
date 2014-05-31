@@ -58,3 +58,7 @@
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"
     (file-written :editing "ABC\nDEF\nGHI" :after ":w<Enter>") => ["test.txt" "ABC\nDEF\nGHI"]))
+
+(facts "regarding `:wq`"
+  (fact "`:wq` writes the file"
+    (file-written :editing "ABC" :after ":wq<Enter>") => ["test.txt" "ABC"]))

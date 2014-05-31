@@ -26,6 +26,10 @@
           (in e/current-buffer
               (b/write))
 
+          (= "wq" command-line)
+          (in e/current-buffer
+              (b/write))
+
           (= "" command-line)
           identity
 
