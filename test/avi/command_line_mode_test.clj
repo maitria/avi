@@ -63,7 +63,7 @@
          "~                   " :blue
          "~                   " :blue
          "test.txt            " :black :on :white
-         ":blrg no workie     "])
+         ":blrg is not a thing"])
 )
 
 (facts "regarding `:w<Enter>`"

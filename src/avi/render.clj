@@ -54,7 +54,7 @@
     "--INSERT--"
 
     (:status-line editor)
-    ":blrg no workie"
+    ":blrg is not a thing"
 
     :else
     ""))
