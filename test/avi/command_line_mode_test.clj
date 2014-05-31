@@ -40,8 +40,8 @@
     (:mode (editor :after ":q")) =not=> :finished)
   (fact "`:q<Enter>` exits Avi."
     (:mode (editor :after ":q<Enter>")) => :finished)
-  (fact "`:q!<Enter>` exits Avi."
-    (:mode (editor :after ":q!<Enter>")) => :finished))
+  (fact "`:q!<Enter>` does not exit Avi."
+    (:mode (editor :after ":q!<Enter>")) =not=> :finished))
 
 (facts "regarding `:<N>`"
   (fact "`:<N><Enter>` moves to line N"
