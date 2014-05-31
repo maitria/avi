@@ -49,8 +49,8 @@
             "~                   " :blue
             "test.txt            " :black :on :white
             "                    "])
-    (fact "`i<BS>` at 1,0 leaves the cursor at join"
-       (cursor :editing "One\nTwo\nThree..." :after "ji<BS><Esc>") => [0 3]))
+    (fact "`i<BS>` at beginning of line leaves the cursor at join"
+       (cursor :editing "One\nTwo\nThree..." :after "ji<BS>") => [0 3]))
 
   (fact "`<Esc>` in insert mode returns to normal mode"
     (:mode (editor :after "i<Esc>")) => :normal)

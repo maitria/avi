@@ -215,7 +215,7 @@
       (let [new-line (str (get lines (dec i)) (get lines i))
             new-lines (splice lines (dec i) (inc i) [new-line])
             i (dec i)
-            j (inc (count (get lines i)))]
+            j (count (get lines i))]
         (move-cursor [i j] j)
         (assoc :lines new-lines))))
 
