@@ -1,4 +1,5 @@
-(ns avi.pervasive)
+(ns avi.pervasive
+  (:require [midje.sweet :refer [facts fact]]))
 
 (defn splice
   "Replace or delete elements from the start index (inclusive) through the
@@ -18,10 +19,7 @@
             (empty coll)
             (sub coll end))))))
 
-(comment
-
-  (= "xa" (splice "a" 0 0 "x"))
-  (= "a" (splice "a" 1 42))
-  (= [1] (splice [1] 1 42))
-
-  )
+(facts "about `splice`"
+  (splice "a" 0 0 "x") => "xa"
+  (splice "a" 1 42) => "a"
+  (splice [1] 1 42) => [1])
