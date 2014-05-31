@@ -44,6 +44,11 @@
       :else
       [fg-keyword :on bg-keyword])))
 
+(defn- limit-width [error-message width]
+  (if (> (count error-message) width) 
+    (subs error-message 0 width)
+    error-message)) 
+
 (defn- prompt-line-text
   [editor]
   (cond
@@ -54,10 +59,8 @@
     "--INSERT--"
 
     (:status-line editor)
-    (if (> (count (str ":" (:status-line editor) " is not a thing")) 20) 
-      (subs (str ":" (:status-line editor) " is not a thing") 0 20)
-      (str ":" (:status-line editor) " is not a thing")
-      ) 
+    (let [error-message (str ":" (:status-line editor) " is not a thing")]
+      (limit-width error-message 20))
 
     :else
     ""))
