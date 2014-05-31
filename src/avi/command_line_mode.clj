@@ -27,8 +27,10 @@
               (b/write))
 
           (= "wq" command-line)
-          (in e/current-buffer
-              (b/write))
+          (do
+            (in e/current-buffer
+                (b/write))
+            (assoc :mode :finished))
 
           (= "" command-line)
           identity

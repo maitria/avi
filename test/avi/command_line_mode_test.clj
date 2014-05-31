@@ -61,4 +61,6 @@
 
 (facts "regarding `:wq`"
   (fact "`:wq` writes the file"
-    (file-written :editing "ABC" :after ":wq<Enter>") => ["test.txt" "ABC"]))
+    (file-written :editing "ABC" :after ":wq<Enter>") => ["test.txt" "ABC"])
+  (fact "`:wq` exits avi"
+    (:mode (editor :after ":wq<Enter>")) => :finished))
