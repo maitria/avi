@@ -39,7 +39,7 @@
           (e/change-line (constantly (dec (Long/parseLong command-line))))
           
           :else
-          (assoc :status-line "xxx")))))
+          (assoc :status-line command-line)))))
 
 (def eventmap
   (em/eventmap

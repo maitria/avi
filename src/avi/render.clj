@@ -54,7 +54,7 @@
     "--INSERT--"
 
     (:status-line editor)
-    ":blrg is not a thing"
+    (str ":" (:status-line editor) " is not a thing")
 
     :else
     ""))

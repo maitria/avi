@@ -36,11 +36,14 @@
     (cursor :after ":<Enter>") => [0 0]))
 
 (facts "regarding bad commands"
-  (fact "`:badcommand<Enter>` doesn't change cursor position"
-    (cursor :after ":badcommand<Enter>") => [0 0])
+  (fact "`:zrbl<Enter>` doesn't change cursor position"
+    (cursor :after ":zrbl<Enter>") => [0 0])
   (fact "`:blrg<Enter>` produces error message" 
     (status-line :after ":blrg<Enter>")
-     => ":blrg is not a thing"))
+     => ":blrg is not a thing")
+  (fact "':foo<Enter> produces specific error message"
+    (status-line :after ":foo<Enter>")
+     => ":foo is not a thing "))
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"
