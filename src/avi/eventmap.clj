@@ -1,5 +1,4 @@
-(ns avi.eventmap
-  (:require [midje.sweet :refer [facts]]))
+(ns avi.eventmap)
 
 (defn wrap-handler-with-beep-reset
   [handler]
@@ -38,12 +37,6 @@
 
       :else
       (recur (rest remaining) (conj result (str (first remaining)))))))
-
-(facts "about splitting a string of commands"
-  (split-string-of-commands "g") => ["g"]
-  (split-string-of-commands "gg") => ["g" "g"]
-  (split-string-of-commands "<C-U>") => ["<C-U>"]
-  (split-string-of-commands "<C-G>j<C-D>") => ["<C-G>" "j" "<C-D>"])
 
 (defn- events
   [string-of-commands]
