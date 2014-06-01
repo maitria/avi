@@ -95,4 +95,14 @@
           "~                   " :blue
           "~                   " :blue
           "test.txt            " :black :on :white
+          "                    "])
+  (fact "`axy<Esc>` inserts after current character"
+    (terminal :editing "One\nTwo\nThree..." :after "axy<Esc>")
+      => ["Oxyne               "
+          "Two                 "
+          "Three...            "
+          "~                   " :blue
+          "~                   " :blue
+          "~                   " :blue
+          "test.txt            " :black :on :white
           "                    "]))

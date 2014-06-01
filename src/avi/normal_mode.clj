@@ -100,6 +100,14 @@
             j (max 0 (dec line-length))]
         (change-column editor (constantly j))))
 
+    ("a"
+      [editor]
+      (+> editor
+          (assoc :mode :insert)
+          (in e/current-buffer
+            (let [{[i j] :cursor} (e/current-buffer editor)]
+              (assoc :cursor [i (inc j)])))))
+
     ("dd"
       [editor]
       (+> editor
