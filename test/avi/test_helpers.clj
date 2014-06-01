@@ -4,7 +4,8 @@
             [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.render :as render]
-            [avi.world :refer :all]))
+            [avi.world :refer :all]
+            [clojure.string :as string]))
 
 (def ten-lines
   (str "One\nTwo\nThree\nFour\nFive\nSix\n"
@@ -84,7 +85,9 @@
 
 (defn status-line
   [& arguments]
-  (last (apply terminal arguments)))
+  (-> (apply terminal arguments)
+      last
+      string/trimr))
 
 (defn cursor
   [& args]

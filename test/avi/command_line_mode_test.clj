@@ -4,11 +4,11 @@
 
 (facts "regarding command-line mode"
   (fact "`:` echos on the command-line"
-    (status-line :after ":") => ":                   ")
+    (status-line :after ":") => ":")
   (fact "`:` places the cursor after the colon prompt"
     (cursor :after ":") => [7 1])
   (fact "characters typed after `:` echo on the command-line"
-    (status-line :after ":abc") =>":abc                ")
+    (status-line :after ":abc") =>":abc")
   (fact "characters typed after `:` move the cursor"
     (cursor :after ":a") => [7 2]
     (cursor :after ":abc") => [7 4])
@@ -39,11 +39,9 @@
   (fact "`:zrbl<Enter>` doesn't change cursor position"
     (cursor :after ":zrbl<Enter>") => [0 0])
   (fact "`:blrg<Enter>` produces error message" 
-    (status-line :after ":blrg<Enter>")
-     => ":blrg is not a thing")
+    (status-line :after ":blrg<Enter>") => ":blrg is not a thing")
   (fact "':foo<Enter> produces specific error message"
-    (status-line :after ":foo<Enter>")
-     => ":foo is not a thing ")
+    (status-line :after ":foo<Enter>") => ":foo is not a thing")
   (fact "error message longer than terminal width gets clipped"
     (status-line :after ":holycrapbatmanwhatdoido<Enter>") =>  ":holycrapbatmanwhatd"))
 
