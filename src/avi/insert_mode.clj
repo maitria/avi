@@ -48,4 +48,4 @@
   [editor mode]
   (+> editor
       (assoc :mode :insert,
-             :status-line "--INSERT--")))
+             :message "--INSERT--")))

@@ -55,8 +55,8 @@
     (= (:mode editor) :command-line)
     (str ":" (:command-line editor))
 
-    (:status-line editor)
-    (limit-width (:status-line editor) 20)
+    (:message editor)
+    (limit-width (:message editor) 20)
 
     :else
     ""))
