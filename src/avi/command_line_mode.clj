@@ -63,11 +63,9 @@
               e/beep
               (append-to-command-line event-data)))))))
 
-(defn enter
-  [editor]
-  (+> editor
-    (e/enter-mode :command-line)
-    (assoc :command-line "")))
+(defmethod e/enter-mode :command-line
+  [editor mode]
+  (assoc editor :mode :command-line, :command-line ""))
 
 (defmethod e/respond :command-line
   [editor event]

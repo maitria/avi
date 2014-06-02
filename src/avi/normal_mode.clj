@@ -85,7 +85,7 @@
 
     (":"
       [editor]
-      (command-line-mode/enter editor))
+      (e/enter-mode editor :command-line))
 
     ("^"
       [editor]
