@@ -39,13 +39,12 @@
           (in current-buffer
               (b/move-to-line i))))))
 
-(defn enter-mode
+(defmulti enter-mode (fn [editor mode]
+                       mode))
+
+(defmethod enter-mode :default
   [editor mode]
-  (+> editor
-    (assoc :mode mode)
-    (if (= mode :insert)
-      (assoc :status-line "--INSERT--")
-      (dissoc :status-line))))
+  (assoc editor :mode mode, :status-line ""))
 
 (defmulti respond
   (fn [editor [event-kind]]

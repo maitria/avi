@@ -43,3 +43,9 @@
 (defmethod e/respond :insert
   [editor event]
   (em/invoke-event-handler eventmap editor event))
+
+(defmethod e/enter-mode :insert
+  [editor mode]
+  (+> editor
+      (assoc :mode :insert,
+             :status-line "--INSERT--")))
