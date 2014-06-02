@@ -55,9 +55,6 @@
     (= (:mode editor) :command-line)
     (str ":" (:command-line editor))
 
-    (= (:mode editor) :insert)
-    "--INSERT--"
-
     (:status-line editor)
     (limit-width (:status-line editor) 20)
 

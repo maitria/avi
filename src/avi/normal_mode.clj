@@ -48,7 +48,7 @@
   (em/eventmap
     ("<Enter>"
       [editor]
-      (assoc editor :mode :finished))
+      (e/enter-mode :finished))
 
     (:keep-count "0"
       [editor repeat-count]
@@ -103,7 +103,7 @@
     ("a"
       [editor]
       (+> editor
-          (assoc :mode :insert)
+          (e/enter-mode :insert)
           (in e/current-buffer
             (let [{[i j] :cursor} (e/current-buffer editor)]
               (assoc :cursor [i (inc j)])))))
@@ -131,7 +131,7 @@
 
     ("i"
       [editor]
-      (assoc editor :mode :insert))
+      (e/enter-mode editor :insert))
 
     ("j"
       [editor]
@@ -152,7 +152,7 @@
             (in e/current-buffer
                 (b/insert-blank-line (inc i)))
             (e/change-line inc)
-            (assoc :mode :insert))))
+            (e/enter-mode :insert))))
 
     ("x"
       [editor]
@@ -198,7 +198,7 @@
           (let [{[i] :cursor} (e/current-buffer editor)]
             (in e/current-buffer
                 (b/insert-blank-line i))
-            (assoc :mode :insert))))
+            (e/enter-mode :insert))))
 
     ("<C-D>"
       [editor]

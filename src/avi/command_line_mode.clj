@@ -17,10 +17,10 @@
   [editor]
   (+> editor
       (let [command-line (:command-line editor)]
-        (assoc :mode :normal)
+        (e/enter-mode :normal)
         (cond
           (= "q" command-line)
-          (assoc :mode :finished)
+          (e/enter-mode :finished)
 
           (= "w" command-line)
           (in e/current-buffer
@@ -30,7 +30,7 @@
           (do
             (in e/current-buffer
                 (b/write))
-            (assoc :mode :finished))
+            (e/enter-mode :finished))
 
           (= "" command-line)
           identity
@@ -52,7 +52,7 @@
       (+> editor
           (let [command-line (:command-line editor)]
             (if (zero? (count command-line))
-              (assoc :mode :normal)
+              (e/enter-mode :normal)
               (assoc :command-line (subs command-line 0 (dec (count command-line))))))))
     
     (:else
@@ -65,7 +65,9 @@
 
 (defn enter
   [editor]
-  (assoc editor :mode :command-line, :command-line ""))
+  (+> editor
+    (e/enter-mode :command-line)
+    (assoc :command-line "")))
 
 (defmethod e/respond :command-line
   [editor event]
