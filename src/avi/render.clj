@@ -59,8 +59,7 @@
     "--INSERT--"
 
     (:status-line editor)
-    (let [error-message (str ":" (:status-line editor) " is not a thing")]
-      (limit-width error-message 20))
+    (limit-width (:status-line editor) 20)
 
     :else
     ""))
