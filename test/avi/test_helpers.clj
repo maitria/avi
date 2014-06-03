@@ -83,7 +83,7 @@
     (->> (interleave lines line-annotations)
          flatten)))
 
-(defn status-line
+(defn message-line
   [& arguments]
   (-> (apply terminal arguments)
       last
