@@ -44,7 +44,7 @@
       :else
       [fg-keyword :on bg-keyword])))
 
-(defn- prompt-line-text
+(defn- message-line-text
   [editor]
   (cond
     (= (:mode editor) :command-line)
@@ -68,7 +68,7 @@
         buffer-line-count (b/line-count buffer)]
     (cond
       (= prompt-line i)
-      [:white :black (prompt-line-text editor)]
+      [:white :black (message-line-text editor)]
 
       (= status-line i)
       [:black :white (or (:name buffer) "[No Name]")]
