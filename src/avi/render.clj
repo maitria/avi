@@ -68,7 +68,10 @@
         buffer-line-count (b/line-count buffer)]
     (cond
       (= message-line i)
-      [:white :black (message-line-text editor)]
+      (conj (if (:error-message? editor)
+              [:white :red]
+              [:white :black])
+            (message-line-text editor))
 
       (= status-line i)
       [:black :white (or (:name buffer) "[No Name]")]

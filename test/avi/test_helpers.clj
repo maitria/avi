@@ -90,9 +90,18 @@
   (let [terminal-args (->> arguments
                            (merge {:width 120})
                            (apply concat))]
-    (-> (apply terminal terminal-args)
-        last
-        string/trimr)))
+    (->> (apply terminal terminal-args)
+         (filter string?)
+         last
+         string/trimr)))
+
+(defn message-line-colors
+  [& arguments]
+  (->> (apply terminal arguments)
+       reverse
+       (take-while keyword?)
+       reverse
+       vec))
 
 (defn cursor
   [& args]
