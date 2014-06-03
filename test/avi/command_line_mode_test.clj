@@ -43,7 +43,7 @@
   (fact "':foo<Enter> produces specific error message"
     (message-line :after ":foo<Enter>") => ":foo is not a thing")
   (fact "error message longer than terminal width gets clipped"
-    (message-line :after ":holycrapbatmanwhatdoido<Enter>") =>  ":holycrapbatmanwhatd"))
+    (message-line :width 20 :after ":holycrapbatmanwhatdoido<Enter>") =>  ":holycrapbatmanwhatd"))
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"

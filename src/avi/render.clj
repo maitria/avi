@@ -56,7 +56,8 @@
     (str ":" (:command-line editor))
 
     (:message editor)
-    (limit-width (:message editor) 20)
+    (let [[_ width] (get-in editor [:viewport :size])]
+      (limit-width (:message editor) width))
 
     :else
     ""))
