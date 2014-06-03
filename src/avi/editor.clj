@@ -44,7 +44,7 @@
 
 (defmethod enter-mode :default
   [editor mode]
-  (assoc editor :mode mode, :message ""))
+  (assoc editor :mode mode, :message nil))
 
 (defmulti respond
   (fn [editor [event-kind]]

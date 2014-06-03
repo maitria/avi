@@ -45,7 +45,9 @@
   (fact "error message longer than terminal width gets clipped"
     (message-line :width 20 :after ":holycrapbatmanwhatdoido<Enter>") =>  ":holycrapbatmanwhatd")
   (fact "error message is rendered as white on red"
-    (message-line-colors :after ":blrg<Enter>") => [:white :on :red]))
+    (message-line-colors :after ":blrg<Enter>") => [:white :on :red])
+  (fact "error message colors are reset when message is cleared"
+    (message-line-colors :after ":blrg<Enter>:") => []))
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"

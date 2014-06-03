@@ -48,4 +48,4 @@
   [editor mode]
   (+> editor
       (assoc :mode :insert,
-             :message "--INSERT--")))
+             :message [:white :black "--INSERT--"])))

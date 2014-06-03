@@ -39,8 +39,7 @@
           (e/change-line (constantly (dec (Long/parseLong command-line))))
           
           :else
-          (assoc :message (str ":" command-line " is not a thing")
-                 :error-message? true)))))
+          (assoc :message [:white :red (str ":" command-line " is not a thing")])))))
 
 (def eventmap
   (em/eventmap

@@ -44,17 +44,17 @@
       :else
       [fg-keyword :on bg-keyword])))
 
-(defn- message-line-text
+(defn- render-message-line
   [editor]
   (cond
     (= (:mode editor) :command-line)
-    (str ":" (:command-line editor))
+    [:white :black (str ":" (:command-line editor))]
 
     (:message editor)
     (:message editor)
 
     :else
-    ""))
+    [:white :black ""]))
 
 (defn- render-line
   [editor i]
@@ -68,10 +68,7 @@
         buffer-line-count (b/line-count buffer)]
     (cond
       (= message-line i)
-      (conj (if (:error-message? editor)
-              [:white :red]
-              [:white :black])
-            (message-line-text editor))
+      (render-message-line editor)
 
       (= status-line i)
       [:black :white (or (:name buffer) "[No Name]")]
