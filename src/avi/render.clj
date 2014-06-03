@@ -61,13 +61,13 @@
   (let [[height] (:size (:viewport editor))
         buffer (e/current-buffer editor)
         top (:viewport-top buffer)
-        prompt-line (dec height)
-        status-line (dec prompt-line)
+        message-line (dec height)
+        status-line (dec message-line)
         last-edit-line (dec status-line)
         buffer-line (+ i top)
         buffer-line-count (b/line-count buffer)]
     (cond
-      (= prompt-line i)
+      (= message-line i)
       [:white :black (message-line-text editor)]
 
       (= status-line i)
