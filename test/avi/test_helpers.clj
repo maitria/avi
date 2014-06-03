@@ -28,9 +28,11 @@
        (map event)))
 
 (defn- simulate
-  [& {file-contents :editing,
-      string-of-commands :after
-      :or {file-contents "One\nTwo\nThree\n."
+  [& {width :width,
+      file-contents :editing,
+      string-of-commands :after,
+      :or {width 20,
+           file-contents "One\nTwo\nThree\n.",
            keystrokes ""}}]
   (let [events (make-events string-of-commands)
         start-args (if (= :nothing file-contents)
@@ -50,7 +52,7 @@
                        (swap! file-written (constantly [filename content]))
                        nil))
         initial-editor (binding [*world* test-world]
-                         (e/initial-editor [8 20] start-args))
+                         (e/initial-editor [8 width] start-args))
         final-editor (binding [*world* test-world]
                        (reduce
                          e/respond
@@ -84,10 +86,13 @@
          flatten)))
 
 (defn message-line
-  [& arguments]
-  (-> (apply terminal arguments)
-      last
-      string/trimr))
+  [& {:as arguments}]
+  (let [terminal-args (->> arguments
+                           (merge {:width 120})
+                           (apply concat))]
+    (-> (apply terminal terminal-args)
+        last
+        string/trimr)))
 
 (defn cursor
   [& args]
