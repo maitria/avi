@@ -44,11 +44,6 @@
       :else
       [fg-keyword :on bg-keyword])))
 
-(defn- limit-width [error-message width]
-  (if (> (count error-message) width) 
-    (subs error-message 0 width)
-    error-message)) 
-
 (defn- prompt-line-text
   [editor]
   (cond
@@ -56,8 +51,7 @@
     (str ":" (:command-line editor))
 
     (:message editor)
-    (let [[_ width] (get-in editor [:viewport :size])]
-      (limit-width (:message editor) width))
+    (:message editor)
 
     :else
     ""))
@@ -108,7 +102,7 @@
     (doseq [i (range height)]
       (let [[color background text] (render-line editor i)
             attrs (make-attrs color background)]
-        (.getChars text 0 (count text) rendered-chars (* i width))
+        (.getChars text 0 (min width (count text)) rendered-chars (* i width))
         (if (not= attrs default-attrs)
           (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))))
     {:width width
