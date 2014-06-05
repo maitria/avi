@@ -160,6 +160,15 @@
           (in e/current-buffer
               b/delete-char-under-cursor)))
 
+    ("A"
+      [editor]
+      (+> editor
+          (e/enter-mode :insert)
+          (in e/current-buffer
+            (let [{[i] :cursor, lines :lines} (e/current-buffer editor)
+                  j (count (get lines i))]
+              (assoc :cursor [i j])))))
+
     ("G"
       [editor repeat-count]
       (+> editor

@@ -105,4 +105,14 @@
           "~                   " :blue
           "~                   " :blue
           "test.txt            " :black :on :white
+          "                    "])
+  (fact "`Axy<Esc>` inserts at end-of-line"
+    (terminal :editing "One\nTwo\nThree..." :after "Axy<Esc>")
+      => ["Onexy               "
+          "Two                 "
+          "Three...            "
+          "~                   " :blue
+          "~                   " :blue
+          "~                   " :blue
+          "test.txt            " :black :on :white
           "                    "]))
