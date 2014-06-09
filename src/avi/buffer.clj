@@ -19,11 +19,12 @@
                 (try-load filename)
                 [""])]
     {:name filename,
-     :lines lines,
      :viewport-top 0
      :viewport-height height
+     :lines lines,
      :cursor [0 0],
-     :last-explicit-j 0}))
+     :last-explicit-j 0
+     :changes (list {:lines lines})}))
 
 (defn write
   [{lines :lines,
