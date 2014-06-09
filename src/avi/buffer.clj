@@ -181,15 +181,15 @@
 ;; -- changing buffer contents --
 
 (defn- update-line
-  [buffer i modify-fn]
-  (update-lines buffer (update-in (lines buffer) [i] modify-fn)))
+  [{lines :lines, :as buffer} i modify-fn]
+  (update-lines buffer (update-in lines [i] modify-fn)))
 
 (defn insert-text
   [{[i j] :cursor,
+    lines :lines,
     :as buffer} text]
   (+> buffer
-      (let [lines (lines buffer)
-            original-line (line buffer i)
+      (let [original-line (get-in buffer [:lines i])
             resulting-text (splice original-line j j text)
             new-lines (string/split resulting-text #"\n" -1)
             resulting-i (+ i (dec (count new-lines)))
@@ -201,10 +201,10 @@
 
 (defn insert-blank-line
   [{[i] :cursor,
+    lines :lines,
     :as buffer} new-line-i]
   (+> buffer
-      (let [lines (lines buffer)]
-        (update-lines (splice lines new-line-i new-line-i [""])))))
+      (update-lines (splice lines new-line-i new-line-i [""]))))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,
