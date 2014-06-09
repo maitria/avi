@@ -214,14 +214,14 @@
 
 (defn delete-current-line
   [{[i] :cursor,
+    lines :lines,
     :as buffer}]
   (+> buffer
       (if (= 1 (line-count buffer))
         (do
           (update-lines [""])
           (move-cursor [0 0] 0))
-        (let [lines (lines buffer)
-              new-lines (splice lines i (inc i))
+        (let [new-lines (splice lines i (inc i))
               new-i (if (= i (dec (line-count buffer)))
                       (dec i)
                       i)
@@ -232,10 +232,10 @@
 
 (defn- backspace-at-beginning-of-line
   [{[i j] :cursor,
+    lines :lines,
     :as buffer}]
   (+> buffer
-      (let [lines (lines buffer)
-            new-line (str (get lines (dec i)) (get lines i))
+      (let [new-line (str (get lines (dec i)) (get lines i))
             new-lines (splice lines (dec i) (inc i) [new-line])
             i (dec i)
             j (count (get lines i))]
@@ -244,6 +244,7 @@
 
 (defn backspace
   [{[i j] :cursor,
+    lines :lines,
     :as buffer}]
   (+> buffer
       (if (= 0 j)
