@@ -26,6 +26,10 @@
      :last-explicit-j 0
      :changes (list {:lines lines})}))
 
+(defn- lines
+  [buffer]
+  (:lines (first (:changes buffer))))
+
 (defn- update-lines
   [buffer lines]
   (+> buffer
@@ -33,9 +37,9 @@
       (assoc :changes (list {:lines lines}))))
 
 (defn write
-  [{lines :lines,
-    filename :name}]
-  (write-file *world* filename (string/join "\n" lines)))
+  [{filename :name,
+    :as buffer}]
+  (write-file *world* filename (string/join "\n" (lines buffer))))
 
 (defn- adjust-viewport-to-contain-cursor
   [buffer]
