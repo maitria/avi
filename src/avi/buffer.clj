@@ -24,7 +24,7 @@
      :lines lines,
      :cursor [0 0],
      :last-explicit-j 0
-     :changes (list {:lines lines})}))
+     :undo-log ()}))
 
 (defn write
   [{lines :lines,
