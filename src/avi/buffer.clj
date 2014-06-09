@@ -69,7 +69,7 @@
 
 (defn line-count
   [buffer]
-  (count (lines buffer)))
+  (count (:lines buffer)))
 
 (defn move-to-line
   [buffer i]
