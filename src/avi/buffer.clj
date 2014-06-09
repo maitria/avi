@@ -21,7 +21,6 @@
     {:name filename,
      :viewport-top 0
      :viewport-height height
-     :lines lines,
      :cursor [0 0],
      :last-explicit-j 0
      :changes (list {:lines lines})}))
@@ -32,9 +31,7 @@
 
 (defn- update-lines
   [buffer lines]
-  (+> buffer
-      (assoc :lines lines)
-      (assoc :changes (list {:lines lines}))))
+  (assoc buffer :changes (list {:lines lines})))
 
 (defn write
   [{filename :name,
