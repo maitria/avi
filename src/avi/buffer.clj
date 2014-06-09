@@ -6,19 +6,24 @@
             [avi.string :as s]
             [avi.world :refer :all]))
 
+(defn- try-load
+  [filename]
+  (try
+    (string/split (read-file *world* filename) #"\n")
+    (catch FileNotFoundException e
+      [""])))
+
 (defn open
   [filename height]
-  {:name filename,
-   :lines (if filename
-            (try
-              (string/split (read-file *world* filename) #"\n")
-              (catch FileNotFoundException e
-                [""]))
-            [""]),
-   :viewport-top 0
-   :viewport-height height
-   :cursor [0 0],
-   :last-explicit-j 0})
+  (let [lines (if filename
+                (try-load filename)
+                [""])]
+    {:name filename,
+     :lines lines,
+     :viewport-top 0
+     :viewport-height height
+     :cursor [0 0],
+     :last-explicit-j 0}))
 
 (defn write
   [{lines :lines,
