@@ -30,9 +30,8 @@
   (:lines (first (:changes buffer))))
 
 (defn- update-lines
-  [{changes :changes, :as buffer} lines]
-  (+> buffer
-      (assoc :changes (cons {:lines lines} changes))))
+  [buffer lines]
+  (assoc buffer :changes (list {:lines lines})))
 
 (defn write
   [{filename :name,
@@ -175,10 +174,6 @@
             middle-of-file (quot (dec (line-count buffer)) 2)
             new-line (min middle-of-viewport middle-of-file)]
         (move-to-line new-line))))
-
-(defn undo
-  [buffer]
-  (update-in buffer [:changes] rest))
 
 ;; -- changing buffer contents --
 

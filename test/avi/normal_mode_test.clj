@@ -353,15 +353,3 @@
           "~                   " :blue
           "test.txt            " :black :on :white
           "                    "]))
-
-(facts "about `u`"
-  (fact "`xu` undoes the character delete"
-    (terminal :editing "One\nTwo\nThree..." :after "xu")
-      => ["One                 "
-          "Two                 "
-          "Three...            "
-          "~                   " :blue
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          "                    "]))
