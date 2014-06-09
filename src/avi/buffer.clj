@@ -57,7 +57,7 @@
 
 (defn line
   [buffer i]
-  (get (lines buffer) i))
+  (get-in buffer [:lines i]))
 
 (defn j-within-line
   [buffer i]
