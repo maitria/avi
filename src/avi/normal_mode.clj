@@ -165,8 +165,8 @@
       (+> editor
           (e/enter-mode :insert)
           (in e/current-buffer
-            (let [{[i] :cursor, lines :lines} (e/current-buffer editor)
-                  j (count (get lines i))]
+            (let [{[i] :cursor, :as buffer} (e/current-buffer editor)
+                  j (b/line-count buffer)]
               (assoc :cursor [i j])))))
 
     ("G"
