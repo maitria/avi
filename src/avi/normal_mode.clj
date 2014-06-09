@@ -154,6 +154,12 @@
             (e/change-line inc)
             (e/enter-mode :insert))))
 
+    ("u"
+      [editor]
+      (+> editor
+          (in e/current-buffer
+              b/undo)))
+
     ("x"
       [editor]
       (+> editor
