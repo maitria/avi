@@ -26,12 +26,6 @@
      :last-explicit-j 0
      :changes (list {:lines lines})}))
 
-(defn- update-lines
-  [buffer lines]
-  (+> buffer
-      (assoc :lines lines)
-      (assoc :changes (list {:lines lines}))))
-
 (defn write
   [{lines :lines,
     filename :name}]
@@ -177,8 +171,8 @@
 ;; -- changing buffer contents --
 
 (defn- update-line
-  [{lines :lines, :as buffer} i modify-fn]
-  (update-lines buffer (update-in lines [i] modify-fn)))
+  [buffer i modify-fn]
+  (update-in buffer [:lines i] modify-fn))
 
 (defn insert-text
   [{[i j] :cursor,
@@ -192,7 +186,7 @@
             resulting-j (if (= 1 (count new-lines))
                           (+ j (count text))
                           0)]
-        (update-lines (splice lines i (inc i) new-lines))
+        (assoc :lines (splice lines i (inc i) new-lines))
         (move-cursor [resulting-i resulting-j] resulting-j))))
 
 (defn insert-blank-line
@@ -200,7 +194,7 @@
     lines :lines,
     :as buffer} new-line-i]
   (+> buffer
-      (update-lines (splice lines new-line-i new-line-i [""]))))
+      (assoc :lines (splice lines new-line-i new-line-i [""]))))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,
@@ -215,7 +209,7 @@
   (+> buffer
       (if (= 1 (line-count buffer))
         (do
-          (update-lines [""])
+          (assoc :lines [""])
           (move-cursor [0 0] 0))
         (let [new-lines (splice lines i (inc i))
               new-i (if (= i (dec (line-count buffer)))
@@ -223,7 +217,7 @@
                       i)
               target-line (get new-lines new-i)
               new-j (s/index-of-first-non-blank target-line)]
-          (update-lines new-lines)
+          (assoc :lines new-lines)
           (move-cursor [new-i new-j])))))
 
 (defn- backspace-at-beginning-of-line
@@ -236,7 +230,7 @@
             i (dec i)
             j (count (get lines i))]
         (move-cursor [i j] j)
-        (update-lines new-lines))))
+        (assoc :lines new-lines))))
 
 (defn backspace
   [{[i j] :cursor,
