@@ -26,25 +26,6 @@
      :last-explicit-j 0
      :undo-log ()}))
 
-;; Changes, undo, redo
-
-(defn- change
-  [{lines :lines,
-    cursor :cursor,
-    :as buffer} modify-lines-fn]
-  (+> buffer
-    (assoc :lines (modify-lines-fn lines))
-    (update-in [:undo-log] conj {:lines lines,
-                                 :cursor cursor})))
-
-(defn undo
-  [{undo-log :undo-log, :as buffer}]
-  (if-not (seq undo-log)
-    (throw (Exception. "Already at the oldest change"))
-    (+> buffer
-      (merge (first (:undo-log buffer)))
-      (update-in [:undo-log] rest))))
-
 ;; --
 
 (defn write
@@ -188,6 +169,26 @@
             middle-of-file (quot (dec (line-count buffer)) 2)
             new-line (min middle-of-viewport middle-of-file)]
         (move-to-line new-line))))
+
+;; Changes, undo, redo
+
+(defn- change
+  [{lines :lines,
+    cursor :cursor,
+    :as buffer} modify-lines-fn]
+  (+> buffer
+    (assoc :lines (modify-lines-fn lines))
+    (update-in [:undo-log] conj {:lines lines,
+                                 :cursor cursor})))
+
+(defn undo
+  [{undo-log :undo-log, :as buffer}]
+  (if-not (seq undo-log)
+    (throw (Exception. "Already at the oldest change"))
+    (+> buffer
+      (merge (first (:undo-log buffer)))
+      (update-in [:undo-log] rest)
+      adjust-viewport-to-contain-cursor)))
 
 ;; -- changing buffer contents --
 

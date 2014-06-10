@@ -389,4 +389,6 @@
           "~                   " :blue
           "test.txt            " :black :on :white
           "                    "]
-    (cursor :editing "One\nTwo\nThree..." :after "ddju") => [0 0]))
+    (cursor :editing "One\nTwo\nThree..." :after "ddju") => [0 0])
+  (fact "`ddGu` adjusts viewport to cursor"
+    (cursor :editing ten-lines :after "ddGu") => [0 0]))
