@@ -365,6 +365,8 @@
           "~                   " :blue
           "test.txt            " :black :on :white
           "                    "])
+  (fact "`xu` leaves the cursor at 0,0"
+    (cursor :editing "One\nTwo\nThree..." :after "xu") => [0 0])
   (fact "`u` tells us it's already at the oldest change"
     (message-line :editing "One" :after "u") => "Already at the oldest change")
   (fact "`xxxuu` leaves first delete"
