@@ -6,7 +6,7 @@
   :jvm-opts ["-Djava.library.path=/usr/local/lib/avi"]
   :plugins [[lein-midje "3.0.0"]]
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [com.maitria/packthread "0.1.1"]]
+                 [com.maitria/packthread "0.1.2"]]
   :profiles {:dev {:dependencies [[midje "1.6.3"]]}
              :uberjar {:aot :all}}
   :aliases {"install" ^{:doc "Install avi on this machine"}
