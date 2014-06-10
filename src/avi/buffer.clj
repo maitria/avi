@@ -26,12 +26,20 @@
      :last-explicit-j 0
      :undo-log ()}))
 
+;; Changes, undo, redo
+
 (defn- change
   [{lines :lines, :as buffer} modify-lines-fn]
   (+> buffer
-    (let [new-lines (modify-lines-fn lines)]
-      (assoc :lines new-lines)
-      (update-in [:undo-log] conj {:lines lines}))))
+    (assoc :lines (modify-lines-fn lines))
+    (update-in [:undo-log] conj {:lines lines})))
+
+(defn undo
+  [{undo-log :undo-log, :as buffer}]
+  (+> buffer
+      (merge (first (:undo-log buffer)))))
+
+;; --
 
 (defn write
   [{lines :lines,
@@ -174,11 +182,6 @@
             middle-of-file (quot (dec (line-count buffer)) 2)
             new-line (min middle-of-viewport middle-of-file)]
         (move-to-line new-line))))
-
-(defn undo
-  [{undo-log :undo-log, :as buffer}]
-  (+> buffer
-      (merge (first (:undo-log buffer)))))
 
 ;; -- changing buffer contents --
 
