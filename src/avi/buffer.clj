@@ -29,10 +29,13 @@
 ;; Changes, undo, redo
 
 (defn- change
-  [{lines :lines, :as buffer} modify-lines-fn]
+  [{lines :lines,
+    cursor :cursor,
+    :as buffer} modify-lines-fn]
   (+> buffer
     (assoc :lines (modify-lines-fn lines))
-    (update-in [:undo-log] conj {:lines lines})))
+    (update-in [:undo-log] conj {:lines lines,
+                                 :cursor cursor})))
 
 (defn undo
   [{undo-log :undo-log, :as buffer}]

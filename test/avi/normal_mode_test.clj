@@ -378,4 +378,15 @@
           "~                   " :blue
           "~                   " :blue
           "test.txt            " :black :on :white
-          "                    "]))
+          "                    "])
+  (fact "`ddju` leaves cursor at 0,0"
+    (terminal :editing "One\nTwo\nThree..." :after "ddju")
+      => ["One                 "
+          "Two                 "
+          "Three...            "
+          "~                   " :blue
+          "~                   " :blue
+          "~                   " :blue
+          "test.txt            " :black :on :white
+          "                    "]
+    (cursor :editing "One\nTwo\nThree..." :after "ddju") => [0 0]))
