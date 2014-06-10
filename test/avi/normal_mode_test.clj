@@ -353,3 +353,15 @@
           "~                   " :blue
           "test.txt            " :black :on :white
           "                    "]))
+
+(facts "about `u`"
+  (fact "`xu` leaves the file the way it came"
+    (terminal :editing "One\nTwo\nThree..." :after "xu")
+      => ["One                 "
+          "Two                 "
+          "Three...            "
+          "~                   " :blue
+          "~                   " :blue
+          "~                   " :blue
+          "test.txt            " :black :on :white
+          "                    "]))
