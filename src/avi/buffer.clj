@@ -36,8 +36,9 @@
 
 (defn undo
   [{undo-log :undo-log, :as buffer}]
-  (+> buffer
-      (merge (first (:undo-log buffer)))))
+  (if-not (seq undo-log)
+    (throw (Exception. "Already at the oldest change"))
+    (merge buffer (first (:undo-log buffer)))))
 
 ;; --
 

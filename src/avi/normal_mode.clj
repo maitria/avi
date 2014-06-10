@@ -157,8 +157,11 @@
     ("u"
       [editor]
       (+> editor
-          (in e/current-buffer
-              b/undo)))
+          (try
+            (in e/current-buffer
+                b/undo)
+            (catch Exception e
+              (assoc :message [:red :white (.getMessage e)])))))
 
     ("x"
       [editor]
