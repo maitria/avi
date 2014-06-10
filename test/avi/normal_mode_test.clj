@@ -366,4 +366,14 @@
           "test.txt            " :black :on :white
           "                    "])
   (fact "`u` tells us it's already at the oldest change"
-    (message-line :editing "One" :after "u") => "Already at the oldest change"))
+    (message-line :editing "One" :after "u") => "Already at the oldest change")
+  (fact "`xxxuu` leaves first delete"
+    (terminal :editing "One\nTwo\nThree..." :after "xxxuu")
+      => ["ne                  "
+          "Two                 "
+          "Three...            "
+          "~                   " :blue
+          "~                   " :blue
+          "~                   " :blue
+          "test.txt            " :black :on :white
+          "                    "]))
