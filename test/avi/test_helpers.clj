@@ -87,9 +87,9 @@
          chars :chars,
          attrs :attrs} (render/render (apply editor args))
         height (quot (count chars) width)
-        lines (map
-                #(String. chars (* % width) width)
-                (range height))
+        lines (->> (range height)
+                   (map #(String. chars (* % width) width))
+                   (map string/trimr))
         line-annotations (->> (range height)
                               (map (fn [i]
                                      (get attrs (* i width))))
@@ -105,8 +105,7 @@
                            (apply concat))]
     (->> (apply terminal terminal-args)
          (filter string?)
-         last
-         string/trimr)))
+         last)))
 
 (defn message-line-colors
   [& arguments]

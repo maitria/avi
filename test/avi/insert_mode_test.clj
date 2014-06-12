@@ -4,51 +4,27 @@
 
 (facts "regarding insert mode"
   (fact "`ixxx<Esc>` inserts three xs"
-    (terminal :editing "One\nTwo\nThree..." :after "ixxx<Esc>")
-     => ["xxxOne              "
-         "Two                 "
-         "Three...            "
-         "~                   " :blue
-         "~                   " :blue
-         "~                   " :blue
-         "test.txt            " :black :on :white
-         "                    "])
+    (terminal :line 0 :editing "One" :after "ixxx<Esc>") => ["xxxOne"])
   (fact "`ixyz<Esc>` inserts `xyz`"
-    (terminal :editing "One\nTwo\nThree..." :after "ixyz<Esc>")
-     => ["xyzOne              "
-         "Two                 "
-         "Three...            "
-         "~                   " :blue
-         "~                   " :blue
-         "~                   " :blue
-         "test.txt            " :black :on :white
-         "                    "])
+    (terminal :line 0 :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => ["xyzOne"])
   (fact "`ixyz<Esc>` leaves the cursor on `z`"
     (cursor :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => [0 2])
 
   (facts "about `<BS>` in insert mode"
     (fact "`ixy<BS>z<Esc>` inserts `xz`"
-      (terminal :editing "One\nTwo\nThree..." :after "ixy<BS>z<Esc>")
-          => ["xzOne               "
-              "Two                 "
-              "Three...            "
-              "~                   " :blue
-              "~                   " :blue
-              "~                   " :blue
-              "test.txt            " :black :on :white
-              "                    "])
+      (terminal :line 0 :editing "One\nTwo\nThree..." :after "ixy<BS>z<Esc>") => ["xzOne"])
     (fact "`i<BS>` at 0,0 zero beeps"
       (editor :editing "xx" :after "i<BS>") => beeped)
     (fact "`i<BS>` at 1,0 joins lines"
       (terminal :editing "One\nTwo\nThree..." :after "ji<BS><Esc>")
-        => ["OneTwo              "
-            "Three...            "
-            "~                   " :blue
-            "~                   " :blue
-            "~                   " :blue
-            "~                   " :blue
-            "test.txt            " :black :on :white
-            "                    "])
+        => ["OneTwo"
+            "Three..."
+            "~" :blue
+            "~" :blue
+            "~" :blue
+            "~" :blue
+            "test.txt" :black :on :white
+            ""])
     (fact "`i<BS>` at beginning of line leaves the cursor at join"
        (cursor :editing "One\nTwo\nThree..." :after "ji<BS>") => [0 3]))
 
@@ -58,61 +34,61 @@
     (message-line :editing "One\nTwo\nThree..." :after "i") => "--INSERT--")
   (fact "`ix<Enter>` inserts a new line"
     (terminal :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>")
-     => ["x                   "
-         "One                 "
-         "Two                 "
-         "Three...            "
-         "~                   " :blue
-         "~                   " :blue
-         "test.txt            " :black :on :white
-         "                    "]
+     => ["x"
+         "One"
+         "Two"
+         "Three..."
+         "~" :blue
+         "~" :blue
+         "test.txt" :black :on :white
+         ""]
     (cursor :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>") => [1 0]
     (terminal :editing "" :after "i<Enter><Esc>")
-      => ["                    "
-          "                    "
-          "~                   " :blue
-          "~                   " :blue
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          "                    "])
+      => [""
+          ""
+          "~" :blue
+          "~" :blue
+          "~" :blue
+          "~" :blue
+          "test.txt" :black :on :white
+          ""])
   (fact "`oxy<Esc>` inserts a line below"
     (terminal :editing "One\nTwo\nThree..." :after "oxy<Esc>")
-      => ["One                 "
-          "xy                  "
-          "Two                 "
-          "Three...            "
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          "                    "])
+      => ["One"
+          "xy"
+          "Two"
+          "Three..."
+          "~" :blue
+          "~" :blue
+          "test.txt" :black :on :white
+          ""])
   (fact "`Oxy<Esc>` inserts a line here"
     (terminal :editing "One\nTwo\nThree..." :after "Oxy<Esc>")
-      => ["xy                  "
-          "One                 "
-          "Two                 "
-          "Three...            "
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          "                    "])
+      => ["xy"
+          "One"
+          "Two"
+          "Three..."
+          "~" :blue
+          "~" :blue
+          "test.txt" :black :on :white
+          ""])
   (fact "`axy<Esc>` inserts after current character"
     (terminal :editing "One\nTwo\nThree..." :after "axy<Esc>")
-      => ["Oxyne               "
-          "Two                 "
-          "Three...            "
-          "~                   " :blue
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          "                    "])
+      => ["Oxyne"
+          "Two"
+          "Three..."
+          "~" :blue
+          "~" :blue
+          "~" :blue
+          "test.txt" :black :on :white
+          ""])
   (fact "`Axy<Esc>` inserts at end-of-line"
     (terminal :editing "One\nTwo\nThree..." :after "Axy<Esc>")
-      => ["Onexy               "
-          "Two                 "
-          "Three...            "
-          "~                   " :blue
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          "                    "]))
+      => ["Onexy"
+          "Two"
+          "Three..."
+          "~" :blue
+          "~" :blue
+          "~" :blue
+          "test.txt" :black :on :white
+          ""]))
