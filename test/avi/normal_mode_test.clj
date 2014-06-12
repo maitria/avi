@@ -308,7 +308,7 @@
 
 (facts "about `x`"
   (fact "`x` deletes the current character"
-    (terminal :line 0 :editing "One\nTwo\nThree..." :after "x") => ["ne"])
+    (terminal :line 0 :editing "One\nTwo\nThree..." :after "x") => "ne")
   (fact "`x` does not fail on zero-character line"
     (terminal :editing "a\nb\nc" :after "xx")
       => [""
@@ -348,13 +348,13 @@
 
 (facts "about `u`"
   (fact "`xu` leaves the file the way it came"
-    (terminal :line 0 :editing "One\nTwo\nThree..." :after "xu") => ["One"])
+    (terminal :line 0 :editing "One\nTwo\nThree..." :after "xu") => "One")
   (fact "`xu` leaves the cursor at 0,0"
     (cursor :editing "One\nTwo\nThree..." :after "xu") => [0 0])
   (fact "`u` tells us it's already at the oldest change"
     (message-line :editing "One" :after "u") => "Already at the oldest change")
   (fact "`xxxuu` leaves first delete"
-    (terminal :line 0 :editing "One\nTwo\nThree..." :after "xxxuu") => ["ne"])
+    (terminal :line 0 :editing "One\nTwo\nThree..." :after "xxxuu") => "ne")
   (fact "`ddju` leaves cursor at 0,0"
     (terminal :editing "One\nTwo\nThree..." :after "ddju")
       => ["One"

@@ -81,6 +81,12 @@
       (if (= i line)
         v))))
 
+(defn- unwrap-single-value
+  [coll]
+  (if (= 1 (count coll))
+    (first coll)
+    coll))
+
 (defn terminal
   [& args]
   (let [{width :width,
@@ -96,7 +102,8 @@
                               (map render/attr-description))]
     (->> (map vector lines line-annotations)
          (keep-indexed (line-keeper (apply hash-map args)))
-         flatten)))
+         flatten
+         unwrap-single-value)))
 
 (defn message-line
   [& {:as arguments}]

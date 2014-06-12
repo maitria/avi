@@ -4,15 +4,15 @@
 
 (facts "regarding insert mode"
   (fact "`ixxx<Esc>` inserts three xs"
-    (terminal :line 0 :editing "One" :after "ixxx<Esc>") => ["xxxOne"])
+    (terminal :line 0 :editing "One" :after "ixxx<Esc>") => "xxxOne")
   (fact "`ixyz<Esc>` inserts `xyz`"
-    (terminal :line 0 :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => ["xyzOne"])
+    (terminal :line 0 :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => "xyzOne")
   (fact "`ixyz<Esc>` leaves the cursor on `z`"
     (cursor :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => [0 2])
 
   (facts "about `<BS>` in insert mode"
     (fact "`ixy<BS>z<Esc>` inserts `xz`"
-      (terminal :line 0 :editing "One\nTwo\nThree..." :after "ixy<BS>z<Esc>") => ["xzOne"])
+      (terminal :line 0 :editing "One\nTwo\nThree..." :after "ixy<BS>z<Esc>") => "xzOne")
     (fact "`i<BS>` at 0,0 zero beeps"
       (editor :editing "xx" :after "i<BS>") => beeped)
     (fact "`i<BS>` at 1,0 joins lines"
