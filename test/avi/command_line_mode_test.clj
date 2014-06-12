@@ -4,11 +4,11 @@
 
 (facts "regarding command-line mode"
   (fact "`:` echos on the command-line"
-    (terminal :line 7 :after ":") => ":")
+    (terminal :line :message :after ":") => ":")
   (fact "`:` places the cursor after the colon prompt"
     (cursor :after ":") => [7 1])
   (fact "characters typed after `:` echo on the command-line"
-    (terminal :line 7 :after ":abc") =>":abc")
+    (terminal :line :message :after ":abc") =>":abc")
   (fact "characters typed after `:` move the cursor"
     (cursor :after ":a") => [7 2]
     (cursor :after ":abc") => [7 4])
@@ -39,11 +39,11 @@
   (fact "`:zrbl<Enter>` doesn't change cursor position"
     (cursor :after ":zrbl<Enter>") => [0 0])
   (fact "`:blrg<Enter>` produces error message" 
-    (terminal :line 7 :after ":blrg<Enter>") => [":blrg is not a thing" :white :on :red])
+    (terminal :line :message :after ":blrg<Enter>") => [":blrg is not a thing" :white :on :red])
   (fact "':foo<Enter> produces specific error message"
-    (terminal :line 7 :after ":foo<Enter>") => [":foo is not a thing" :white :on :red])
+    (terminal :line :message :after ":foo<Enter>") => [":foo is not a thing" :white :on :red])
   (fact "error message longer than terminal width gets clipped"
-    (terminal :line 7 :width 20 :after ":holycrapbatmanwhatdoido<Enter>") =>  [":holycrapbatmanwhatd" :white :on :red]))
+    (terminal :line :message :width 20 :after ":holycrapbatmanwhatdoido<Enter>") =>  [":holycrapbatmanwhatd" :white :on :red]))
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"

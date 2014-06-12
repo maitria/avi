@@ -76,6 +76,11 @@
     (fn [i v]
       v)
 
+    (= line :message)
+    (fn [i v]
+      (if (= i 7)
+        v))
+
     :else
     (fn [i v]
       (if (= i line)
