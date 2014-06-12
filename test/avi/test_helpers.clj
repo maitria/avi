@@ -55,7 +55,7 @@
                          (e/initial-editor [8 width] start-args))
         final-editor (binding [*world* test-world]
                        (reduce
-                         e/respond
+                         e/safe-respond
                          initial-editor
                          events))]
     {:editor final-editor

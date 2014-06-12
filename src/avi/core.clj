@@ -27,7 +27,7 @@
   [world args]
   (let [initial-editor (e/initial-editor (terminal-size world) args)]
     (->> (event-stream world)
-         (reductions e/respond initial-editor)
+         (reductions e/safe-respond initial-editor)
          (take-while (complement e/finished?)))))
 
 (defn- perform-effects!

@@ -58,3 +58,18 @@
       (assoc-in [:viewport :size] size)
       (in current-buffer
           (b/resize (- (first size) 2)))))
+
+(defn safe-respond
+  [editor event]
+  (+> editor
+    (try
+      (respond event)
+      (catch Throwable e
+        (let [{beep? :beep?,
+               message :message} (or (ex-data e)
+                                     {:beep? true,
+                                      :message (.getMessage e)})]
+          (if beep?
+            (assoc :beep? true)) 
+          (if message
+            (assoc :message [:white :red message])))))))
