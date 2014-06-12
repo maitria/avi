@@ -69,6 +69,18 @@
   [& args]
   (:editor (apply simulate args)))
 
+(defn- line-keeper
+  [{line :line}]
+  (cond
+    (not line)
+    (fn [i v]
+      v)
+
+    :else
+    (fn [i v]
+      (if (= i line)
+        v))))
+
 (defn terminal
   [& args]
   (let [{width :width,
@@ -82,7 +94,8 @@
                               (map (fn [i]
                                      (get attrs (* i width))))
                               (map render/attr-description))]
-    (->> (interleave lines line-annotations)
+    (->> (map vector lines line-annotations)
+         (keep-indexed (line-keeper (apply hash-map args)))
          flatten)))
 
 (defn message-line

@@ -356,29 +356,13 @@
 
 (facts "about `u`"
   (fact "`xu` leaves the file the way it came"
-    (terminal :editing "One\nTwo\nThree..." :after "xu")
-      => ["One                 "
-          "Two                 "
-          "Three...            "
-          "~                   " :blue
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          "                    "])
+    (terminal :line 0 :editing "One\nTwo\nThree..." :after "xu") => ["One                 "])
   (fact "`xu` leaves the cursor at 0,0"
     (cursor :editing "One\nTwo\nThree..." :after "xu") => [0 0])
   (fact "`u` tells us it's already at the oldest change"
     (message-line :editing "One" :after "u") => "Already at the oldest change")
   (fact "`xxxuu` leaves first delete"
-    (terminal :editing "One\nTwo\nThree..." :after "xxxuu")
-      => ["ne                  "
-          "Two                 "
-          "Three...            "
-          "~                   " :blue
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          "                    "])
+    (terminal :line 0 :editing "One\nTwo\nThree..." :after "xxxuu") => ["ne                  "])
   (fact "`ddju` leaves cursor at 0,0"
     (terminal :editing "One\nTwo\nThree..." :after "ddju")
       => ["One                 "
