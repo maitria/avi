@@ -308,15 +308,7 @@
 
 (facts "about `x`"
   (fact "`x` deletes the current character"
-    (terminal :editing "One\nTwo\nThree..." :after "x")
-      => ["ne                  "
-          "Two                 "
-          "Three...            "
-          "~                   " :blue
-          "~                   " :blue
-          "~                   " :blue
-          "test.txt            " :black :on :white
-          "                    "])
+    (terminal :line 0 :editing "One\nTwo\nThree..." :after "x") => ["ne                  "])
   (fact "`x` does not fail on zero-character line"
     (terminal :editing "a\nb\nc" :after "xx")
       => ["                    "
