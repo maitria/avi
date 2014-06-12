@@ -161,7 +161,7 @@
             (in e/current-buffer
                 b/undo)
             (catch Exception e
-              (assoc :message [:red :white (.getMessage e)])))))
+              (assoc :message [:white :red (.getMessage e)])))))
 
     ("x"
       [editor]

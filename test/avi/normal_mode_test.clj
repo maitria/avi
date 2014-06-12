@@ -352,7 +352,7 @@
   (fact "`xu` leaves the cursor at 0,0"
     (cursor :editing "One\nTwo\nThree..." :after "xu") => [0 0])
   (fact "`u` tells us it's already at the oldest change"
-    (message-line :editing "One" :after "u") => "Already at the oldest change")
+    (terminal :line 7 :editing "One" :after "u") => ["Already at the oldest change" :white :on :red])
   (fact "`xxxuu` leaves first delete"
     (terminal :line 0 :editing "One\nTwo\nThree..." :after "xxxuu") => "ne")
   (fact "`ddju` leaves cursor at 0,0"

@@ -31,7 +31,7 @@
   [& {width :width,
       file-contents :editing,
       string-of-commands :after,
-      :or {width 20,
+      :or {width 40,
            file-contents "One\nTwo\nThree\n.",
            keystrokes ""}}]
   (let [events (make-events string-of-commands)
@@ -104,23 +104,6 @@
          (keep-indexed (line-keeper (apply hash-map args)))
          flatten
          unwrap-single-value)))
-
-(defn message-line
-  [& {:as arguments}]
-  (let [terminal-args (->> arguments
-                           (merge {:width 120})
-                           (apply concat))]
-    (->> (apply terminal terminal-args)
-         (filter string?)
-         last)))
-
-(defn message-line-colors
-  [& arguments]
-  (->> (apply terminal arguments)
-       reverse
-       (take-while keyword?)
-       reverse
-       vec))
 
 (defn cursor
   [& args]

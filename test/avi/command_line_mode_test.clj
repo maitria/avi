@@ -4,11 +4,11 @@
 
 (facts "regarding command-line mode"
   (fact "`:` echos on the command-line"
-    (message-line :after ":") => ":")
+    (terminal :line 7 :after ":") => ":")
   (fact "`:` places the cursor after the colon prompt"
     (cursor :after ":") => [7 1])
   (fact "characters typed after `:` echo on the command-line"
-    (message-line :after ":abc") =>":abc")
+    (terminal :line 7 :after ":abc") =>":abc")
   (fact "characters typed after `:` move the cursor"
     (cursor :after ":a") => [7 2]
     (cursor :after ":abc") => [7 4])
@@ -39,15 +39,11 @@
   (fact "`:zrbl<Enter>` doesn't change cursor position"
     (cursor :after ":zrbl<Enter>") => [0 0])
   (fact "`:blrg<Enter>` produces error message" 
-    (message-line :after ":blrg<Enter>") => ":blrg is not a thing")
+    (terminal :line 7 :after ":blrg<Enter>") => [":blrg is not a thing" :white :on :red])
   (fact "':foo<Enter> produces specific error message"
-    (message-line :after ":foo<Enter>") => ":foo is not a thing")
+    (terminal :line 7 :after ":foo<Enter>") => [":foo is not a thing" :white :on :red])
   (fact "error message longer than terminal width gets clipped"
-    (message-line :width 20 :after ":holycrapbatmanwhatdoido<Enter>") =>  ":holycrapbatmanwhatd")
-  (fact "error message is rendered as white on red"
-    (message-line-colors :after ":blrg<Enter>") => [:white :on :red])
-  (fact "error message colors are reset when message is cleared"
-    (message-line-colors :after ":blrg<Enter>:") => []))
+    (terminal :line 7 :width 20 :after ":holycrapbatmanwhatdoido<Enter>") =>  [":holycrapbatmanwhatd" :white :on :red]))
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"
