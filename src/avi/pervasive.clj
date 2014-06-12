@@ -25,3 +25,15 @@
   (= [1] (splice [1] 1 42))
 
   )
+
+;; Not the right place for this...
+(defn fail
+  [& args]
+  (let [options (into #{} args)
+        beep? (:beep options)
+        message (first (filter string? args))
+        ex-map (cond-> {}
+                 beep? (assoc :beep? true)
+                 message (assoc :message [:white :red message]))]
+    (throw (ex-info (or message "") ex-map))))
+

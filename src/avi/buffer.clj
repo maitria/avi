@@ -184,7 +184,7 @@
 (defn undo
   [{undo-log :undo-log, :as buffer}]
   (if-not (seq undo-log)
-    (throw (Exception. "Already at the oldest change"))
+    (fail :beep "Already at the oldest change")
     (+> buffer
       (merge (first (:undo-log buffer)))
       (update-in [:undo-log] rest)

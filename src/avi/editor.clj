@@ -65,11 +65,4 @@
     (try
       (respond event)
       (catch Throwable e
-        (let [{beep? :beep?,
-               message :message} (or (ex-data e)
-                                     {:beep? true,
-                                      :message (.getMessage e)})]
-          (if beep?
-            (assoc :beep? true)) 
-          (if message
-            (assoc :message [:white :red message])))))))
+        (merge editor (ex-data e))))))
