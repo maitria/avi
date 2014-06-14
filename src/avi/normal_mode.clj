@@ -130,7 +130,7 @@
       (change-column editor dec))
 
     ("i"
-      [editor]
+      [editor repeat-count]
       (e/enter-mode editor :insert))
 
     ("j"

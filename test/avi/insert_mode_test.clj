@@ -92,3 +92,7 @@
           "~" :blue
           "test.txt" :black :on :white
           ""]))
+
+(facts "regarding repeating in insert mode"
+  (fact "repeat count for `i` repeatedly inserts the text"
+    (terminal :line 0 :editing "One" :after "3ix<Esc>") => "xxxOne"))

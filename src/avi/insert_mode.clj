@@ -4,11 +4,34 @@
             [avi.buffer :as b]
             [avi.eventmap :as em]))
 
+(defn- record-event
+  [editor event]
+  (update-in editor [:insert-mode-state :script] conj event))
+
+(defn- play-script
+  [editor script]
+  (reduce
+    e/respond
+    editor
+    script))
+
+(defn- replay-script-repeat-count-times
+  [editor]
+  (let [{script :script,
+         repeat-count :count} (:insert-mode-state editor)]
+    (reduce
+      (fn [editor n]
+        (play-script editor script))
+      editor
+      (range (dec repeat-count)))))
+
 (def eventmap
   (em/eventmap
     ("<Esc>"
       [editor]
       (+> editor
+          replay-script-repeat-count-times
+          (dissoc :insert-mode-state)
           (let [b (e/current-buffer editor)
                 [i j] (:cursor b)
                 new-j (max (dec j) 0)]
@@ -37,8 +60,10 @@
           (let [[event-type event-data] event]
             (if-not (= event-type :keystroke)
               e/beep
-              (in e/current-buffer
-                  (b/insert-text event-data))))))))
+              (do
+                (record-event event)
+                (in e/current-buffer
+                    (b/insert-text event-data)))))))))
 
 (defmethod e/respond :insert
   [editor event]
@@ -48,4 +73,6 @@
   [editor mode]
   (+> editor
       (assoc :mode :insert,
-             :message [:white :black "--INSERT--"])))
+             :message [:white :black "--INSERT--"]
+             :insert-mode-state {:count (or (:count editor) 1)
+                                 :script []})))
