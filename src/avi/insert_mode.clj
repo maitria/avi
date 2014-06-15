@@ -10,11 +10,8 @@
 
 (defn- key->text
   [key]
-  (cond
-    (= key "<Enter>")
+  (if (= key "<Enter>")
     "\n"
-
-    :else
     key))
 
 (defn- insert-key
