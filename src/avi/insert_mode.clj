@@ -20,7 +20,6 @@
   (when-not (= event-type :keystroke)
     (fail :beep))
   (+> editor
-    (record-event event)
     (in e/current-buffer
         (if (= event-data "<BS>")
           (if (= [0 0] (:cursor (e/current-buffer editor)))
@@ -31,7 +30,7 @@
 (defn- play-script
   [editor script]
   (reduce
-    e/respond
+    insert-key
     editor
     script))
 
@@ -65,7 +64,10 @@
 
 (defmethod e/respond :insert
   [editor event]
-  (em/invoke-event-handler eventmap editor event))
+  (let [editor (cond-> editor
+                 (not= event [:keystroke "<Esc>"]) (record-event event))]
+
+    (em/invoke-event-handler eventmap editor event)))
 
 (defmethod e/enter-mode :insert
   [editor mode]
