@@ -66,7 +66,9 @@
 
 (defmethod e/respond :insert
   [editor event]
-  (em/invoke-event-handler eventmap (with-event-recorded editor event) event))
+  (em/invoke-event-handler eventmap
+                           (with-event-recorded editor event)
+                           event))
 
 (defmethod e/enter-mode :insert
   [editor mode]
