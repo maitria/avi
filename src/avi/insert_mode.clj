@@ -21,7 +21,9 @@
     (record-event event)
     (in e/current-buffer
         (if (= event-data "<BS>")
-          b/backspace
+          (if (= [0 0] (:cursor (e/current-buffer editor)))
+            (fail :beep)
+            b/backspace)
           (b/insert-text (key->text event-data))))))
 
 (defn- play-script
@@ -54,14 +56,6 @@
             (in e/current-buffer
                 (b/move-cursor [i new-j] new-j)))
           (e/enter-mode :normal)))
-
-    ("<BS>"
-      [editor event]
-      (+> editor
-          (let [[i j] (:cursor (e/current-buffer editor))]
-            (if (= [0 0] [i j])
-              e/beep
-              (insert-key event)))))
 
     (:else
       [editor event]
