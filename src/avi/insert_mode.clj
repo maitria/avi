@@ -8,6 +8,24 @@
   [editor event]
   (update-in editor [:insert-mode-state :script] conj event))
 
+(defn- key->text
+  [key]
+  (cond
+    (= key "<Enter>")
+    "\n"
+
+    :else
+    key))
+
+(defn- insert-key
+  [editor [_ event-data :as event]]
+  (+> editor
+    (record-event event)
+    (in e/current-buffer
+        (if (= event-data "<BS>")
+          b/backspace
+          (b/insert-text (key->text event-data))))))
+
 (defn- play-script
   [editor script]
   (reduce
@@ -24,22 +42,6 @@
         (play-script editor script))
       editor
       (range (dec repeat-count)))))
-
-(defn- key->text
-  [key]
-  (cond
-    (= key "<Enter>")
-    "\n"
-
-    :else
-    key))
-
-(defn- insert-key
-  [editor [_ event-data :as event]]
-  (+> editor
-    (record-event event)
-    (in e/current-buffer
-        (b/insert-text (key->text event-data)))))
 
 (def eventmap
   (em/eventmap
@@ -61,10 +63,7 @@
           (let [[i j] (:cursor (e/current-buffer editor))]
             (if (= [0 0] [i j])
               e/beep
-              (do
-                (record-event event)
-                (in e/current-buffer
-                    (b/backspace)))))))
+              (insert-key event)))))
 
     (:else
       [editor event]
