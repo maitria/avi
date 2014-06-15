@@ -51,8 +51,9 @@
                     (b/backspace)))))))
 
     ("<Enter>"
-      [editor]
+      [editor event]
       (+> editor
+          (record-event event)
           (in e/current-buffer
               (b/insert-text "\n"))))
 
