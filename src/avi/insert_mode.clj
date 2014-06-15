@@ -25,6 +25,13 @@
       editor
       (range (dec repeat-count)))))
 
+(defn- insert-key
+  [editor [_ event-data :as event]]
+  (+> editor
+    (record-event event)
+    (in e/current-buffer
+        (b/insert-text event-data))))
+
 (def eventmap
   (em/eventmap
     ("<Esc>"
@@ -63,10 +70,7 @@
           (let [[event-type event-data] event]
             (if-not (= event-type :keystroke)
               e/beep
-              (do
-                (record-event event)
-                (in e/current-buffer
-                    (b/insert-text event-data)))))))))
+              (insert-key event)))))))
 
 (defmethod e/respond :insert
   [editor event]
