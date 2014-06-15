@@ -5,10 +5,6 @@
             [avi.eventmap :as em]
             [avi.pervasive :refer :all]))
 
-(defn- record-event
-  [editor event]
-  (update-in editor [:insert-mode-state :script] conj event))
-
 (defn- key->text
   [key]
   (if (= key "<Enter>")
@@ -65,7 +61,8 @@
 (defn- with-event-recorded
   [editor event]
   (cond-> editor
-    (not= event [:keystroke "<Esc>"]) (record-event event)))
+    (not= event [:keystroke "<Esc>"])
+    (update-in [:insert-mode-state :script] conj event)))
 
 (defmethod e/respond :insert
   [editor event]
