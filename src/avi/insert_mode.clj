@@ -66,10 +66,6 @@
                 (in e/current-buffer
                     (b/backspace)))))))
 
-    ("<Enter>"
-      [editor event]
-      (insert-key editor event))
-
     (:else
       [editor event]
       (+> editor
