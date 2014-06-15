@@ -25,12 +25,21 @@
       editor
       (range (dec repeat-count)))))
 
+(defn- key->text
+  [key]
+  (cond
+    (= key "<Enter>")
+    "\n"
+
+    :else
+    key))
+
 (defn- insert-key
   [editor [_ event-data :as event]]
   (+> editor
     (record-event event)
     (in e/current-buffer
-        (b/insert-text event-data))))
+        (b/insert-text (key->text event-data)))))
 
 (def eventmap
   (em/eventmap
@@ -59,10 +68,7 @@
 
     ("<Enter>"
       [editor event]
-      (+> editor
-          (record-event event)
-          (in e/current-buffer
-              (b/insert-text "\n"))))
+      (insert-key editor event))
 
     (:else
       [editor event]
