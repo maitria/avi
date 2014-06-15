@@ -2,7 +2,8 @@
   (:require [packthread.core :refer :all]
             [avi.editor :as e]
             [avi.buffer :as b]
-            [avi.eventmap :as em]))
+            [avi.eventmap :as em]
+            [avi.pervasive :refer :all]))
 
 (defn- record-event
   [editor event]
@@ -67,7 +68,7 @@
       (+> editor
           (let [[event-type event-data] event]
             (if-not (= event-type :keystroke)
-              e/beep
+              (fail :beep)
               (insert-key event)))))))
 
 (defmethod e/respond :insert
