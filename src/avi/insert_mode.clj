@@ -15,7 +15,7 @@
     editor
     script))
 
-(defn- replay-script-repeat-count-times
+(defn- play-script-repeat-count-times
   [editor]
   (let [{script :script,
          repeat-count :count} (:insert-mode-state editor)]
@@ -30,7 +30,7 @@
     ("<Esc>"
       [editor]
       (+> editor
-          replay-script-repeat-count-times
+          play-script-repeat-count-times
           (dissoc :insert-mode-state)
           (let [b (e/current-buffer editor)
                 [i j] (:cursor b)
