@@ -16,7 +16,9 @@
     key))
 
 (defn- insert-key
-  [editor [_ event-data :as event]]
+  [editor [event-type event-data :as event]]
+  (when-not (= event-type :keystroke)
+    (fail :beep))
   (+> editor
     (record-event event)
     (in e/current-buffer
@@ -59,11 +61,7 @@
 
     (:else
       [editor event]
-      (+> editor
-          (let [[event-type event-data] event]
-            (if-not (= event-type :keystroke)
-              (fail :beep)
-              (insert-key event)))))))
+      (insert-key editor event))))
 
 (defmethod e/respond :insert
   [editor event]
