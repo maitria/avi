@@ -62,12 +62,14 @@
       [editor event]
       (insert-key editor event))))
 
+(defn- with-event-recorded
+  [editor event]
+  (cond-> editor
+    (not= event [:keystroke "<Esc>"]) (record-event event)))
+
 (defmethod e/respond :insert
   [editor event]
-  (let [editor (cond-> editor
-                 (not= event [:keystroke "<Esc>"]) (record-event event))]
-
-    (em/invoke-event-handler eventmap editor event)))
+  (em/invoke-event-handler eventmap (with-event-recorded editor event) event))
 
 (defmethod e/enter-mode :insert
   [editor mode]
