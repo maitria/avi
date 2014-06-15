@@ -40,13 +40,15 @@
           (e/enter-mode :normal)))
 
     ("<BS>"
-      [editor]
+      [editor event]
       (+> editor
           (let [[i j] (:cursor (e/current-buffer editor))]
             (if (= [0 0] [i j])
               e/beep
-              (in e/current-buffer
-                  (b/backspace))))))
+              (do
+                (record-event event)
+                (in e/current-buffer
+                    (b/backspace)))))))
 
     ("<Enter>"
       [editor]

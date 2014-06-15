@@ -95,4 +95,5 @@
 
 (facts "regarding repeating in insert mode"
   (fact "repeat count for `i` repeatedly inserts the text"
-    (terminal :line 0 :editing "One" :after "3ix<Esc>") => "xxxOne"))
+    (terminal :line 0 :editing "One" :after "3ix<Esc>") => "xxxOne"
+    (terminal :line 0 :editing "One" :after "2ixy<BS><Esc>") => "xxOne"))
