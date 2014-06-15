@@ -11,7 +11,7 @@
     "\n"
     key))
 
-(defn- insert-key
+(defn- update-buffer-for-insert-event
   [editor [event-type event-data :as event]]
   (when-not (= event-type :keystroke)
     (fail :beep))
@@ -26,7 +26,7 @@
 (defn- play-script
   [editor script]
   (reduce
-    insert-key
+    update-buffer-for-insert-event
     editor
     script))
 
@@ -56,7 +56,7 @@
 
     (:else
       [editor event]
-      (insert-key editor event))))
+      (update-buffer-for-insert-event editor event))))
 
 (defn- with-event-recorded
   [editor event]
