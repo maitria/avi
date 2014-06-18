@@ -146,13 +146,14 @@
       (change-column editor inc))
 
     ("o"
-      [editor]
+      [editor repeat-count]
       (+> editor
           (let [{[i] :cursor} (e/current-buffer editor)]
             (in e/current-buffer
                 (b/insert-blank-line (inc i)))
             (e/change-line inc)
-            (e/enter-mode :insert))))
+            (e/enter-mode :insert)
+            (update-in [:insert-mode-state :script] conj [:keystroke "<Enter>"]))))
 
     ("u"
       [editor]
