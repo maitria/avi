@@ -101,7 +101,7 @@
         (change-column editor (constantly j))))
 
     ("a"
-      [editor]
+      [editor repeat-count]
       (+> editor
           (e/enter-mode :insert)
           (in e/current-buffer

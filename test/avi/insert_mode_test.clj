@@ -105,7 +105,9 @@
           "~" :blue
           "~" :blue
           "test.txt" :black :on :white
-          ""])
+          ""]
+  (fact "repeat count for `a` repeatedly inserts the text"
+    (terminal :line 0 :editing "One" :after "3axy<Esc>") => "Oxyxyxyne"))
   (fact "repeat count for `o` makes multiple lines"
     (terminal :editing "One" :after "3oxxx<Esc>")
       => ["One"
