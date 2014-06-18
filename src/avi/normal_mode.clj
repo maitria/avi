@@ -167,7 +167,7 @@
               b/delete-char-under-cursor)))
 
     ("A"
-      [editor]
+      [editor repeat-count]
       (+> editor
           (e/enter-mode :insert)
           (in e/current-buffer
