@@ -115,4 +115,14 @@
           "~" :blue
           "~" :blue
           "test.txt" :black :on :white
+          ""])
+  (fact "repeat count for `O` makes multiple lines"
+    (terminal :editing "One" :after "3Oxxx<Esc>")
+      => ["xxx"
+          "xxx"
+          "xxx"
+          "One"
+          "~" :blue
+          "~" :blue
+          "test.txt" :black :on :white
           ""]))

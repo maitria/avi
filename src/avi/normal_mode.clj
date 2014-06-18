@@ -209,12 +209,13 @@
               b/cursor-to-middle-of-viewport)))
 
     ("O"
-      [editor]
+      [editor repeat-count]
       (+> editor
           (let [{[i] :cursor} (e/current-buffer editor)]
             (in e/current-buffer
                 (b/insert-blank-line i))
-            (e/enter-mode :insert))))
+            (e/enter-mode :insert)
+            (update-in [:insert-mode-state :script] conj [:keystroke "<Enter>"]))))
 
     ("<C-D>"
       [editor]
