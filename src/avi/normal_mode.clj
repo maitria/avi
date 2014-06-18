@@ -152,8 +152,7 @@
             (in e/current-buffer
                 (b/insert-blank-line (inc i)))
             (e/change-line inc)
-            (e/enter-mode :insert)
-            (update-in [:insert-mode-state :script] conj [:keystroke "<Enter>"]))))
+            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]]))))
 
     ("u"
       [editor]
@@ -214,8 +213,7 @@
           (let [{[i] :cursor} (e/current-buffer editor)]
             (in e/current-buffer
                 (b/insert-blank-line i))
-            (e/enter-mode :insert)
-            (update-in [:insert-mode-state :script] conj [:keystroke "<Enter>"]))))
+            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]]))))
 
     ("<C-D>"
       [editor]

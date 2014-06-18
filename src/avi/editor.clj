@@ -39,7 +39,7 @@
           (in current-buffer
               (b/move-to-line i))))))
 
-(defmulti enter-mode (fn [editor mode]
+(defmulti enter-mode (fn [editor mode & args]
                        mode))
 
 (defmethod enter-mode :default
