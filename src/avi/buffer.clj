@@ -207,10 +207,6 @@
 
 ;; -- changing buffer contents --
 
-(defn- update-line
-  [buffer i modify-fn]
-  (change buffer #(update-in % [i] modify-fn)))
-
 (defn insert-text
   [{[i j] :cursor,
     lines :lines,
@@ -237,8 +233,9 @@
 (defn delete-char-under-cursor
   [{[i j] :cursor,
     :as buffer}]
+  {:pre [(:in-transaction? buffer)]}
   (+> buffer
-      (update-line i #(splice % j (inc j)))))
+      (update-in [:lines i] #(splice % j (inc j)))))
 
 (defn delete-current-line
   [{[i] :cursor,

@@ -164,7 +164,9 @@
       [editor]
       (+> editor
           (in e/current-buffer
-              b/delete-char-under-cursor)))
+              b/start-transaction
+              b/delete-char-under-cursor
+              b/commit)))
 
     ("A"
       [editor repeat-count]
