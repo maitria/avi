@@ -198,16 +198,18 @@
     (fail :beep "Already at the oldest change")
     (+> buffer
       (update-in [:redo-log] conj {:lines lines, :cursor cursor})
-      (merge (first (:undo-log buffer)))
+      (merge (first undo-log))
       (update-in [:undo-log] rest)
       adjust-viewport-to-contain-cursor)))
 
 (defn redo
   [{redo-log :redo-log,
     :as buffer}]
-  (+> buffer
-      (merge (first redo-log))
-      (update-in [:redo-log] rest)))
+  (if-not (seq redo-log)
+    (fail :beep "Already at the newest change")
+    (+> buffer
+        (merge (first redo-log))
+        (update-in [:redo-log] rest))))
 
 ;; -- changing buffer contents --
 
