@@ -186,7 +186,8 @@
 (defn commit
   [buffer]
   (+> buffer
-      (assoc :in-transaction? false)))
+      (assoc :in-transaction? false
+             :redo-log ())))
 
 (defn undo
   [{undo-log :undo-log,

@@ -38,4 +38,6 @@
   (fact "`xu<C-R>u` has no edits"
     (terminal :line 0 :editing "One" :after "xu<C-R>u") => "One")
   (fact "`<C-R>` tells us it's already at the newest change"
-    (terminal :line :message :editing "One" :after "<C-R>") => ["Already at the newest change" :white :on :red]))
+    (terminal :line :message :editing "One" :after "<C-R>") => ["Already at the newest change" :white :on :red])
+  (fact "making a change kills the redo list"
+    (terminal :line 0 :editing "One" :after "xuxx<C-R>") => "e"))
