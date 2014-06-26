@@ -212,7 +212,8 @@
     (+> buffer
         (merge (first redo-log))
         (update-in [:redo-log] rest)
-        (update-in [:undo-log] conj {:lines lines, :cursor cursor}))))
+        (update-in [:undo-log] conj {:lines lines, :cursor cursor})
+        adjust-viewport-to-contain-cursor)))
 
 ;; -- changing buffer contents --
 
