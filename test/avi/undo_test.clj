@@ -29,3 +29,7 @@
     (terminal :line 0 :editing "One" :after "ixyz<Esc>u") => "One")
   (fact "can undo repeated inserts"
     (terminal :line 0 :editing "One" :after "2ixy<Esc>u") => "One"))
+
+(facts "about <C-R>"
+  (fact "`xu<C-R>` keeps the first edit"
+    (terminal :line 0 :editing "One" :after "xu<C-R>") => "ne"))

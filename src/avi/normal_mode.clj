@@ -232,6 +232,12 @@
       [editor]
       (scroll editor inc))
 
+    ("<C-R>"
+      [editor]
+      (+> editor
+        (in e/current-buffer
+            b/redo)))
+
     ("<C-U>"
       [editor]
       (+> editor
