@@ -133,4 +133,6 @@
 
 (facts "regarding undoing inserts"
   (fact "can undo an insert"
-    (terminal :line 0 :editing "One" :after "ixyz<Esc>u") => "One"))
+    (terminal :line 0 :editing "One" :after "ixyz<Esc>u") => "One")
+  (fact "can undo repeated inserts"
+    (terminal :line 0 :editing "One" :after "2ixy<Esc>u") => "One"))
