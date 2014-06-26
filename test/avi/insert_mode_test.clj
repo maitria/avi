@@ -130,3 +130,7 @@
           "~" :blue
           "test.txt" :black :on :white
           ""]))
+
+(facts "regarding undoing inserts"
+  (fact "can undo an insert"
+    (terminal :line 0 :editing "One" :after "ixyz<Esc>u") => "One"))

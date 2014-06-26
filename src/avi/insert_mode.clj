@@ -77,4 +77,6 @@
       (assoc :mode :insert,
              :message [:white :black "--INSERT--"]
              :insert-mode-state {:count (or (:count editor) 1)
-                                 :script script})))
+                                 :script script})
+      (in e/current-buffer
+          b/start-transaction)))

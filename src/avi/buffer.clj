@@ -172,14 +172,20 @@
 
 ;; Changes, undo, redo
 
+(defn start-transaction
+  [{lines :lines,
+    cursor :cursor,
+    :as buffer}]
+  (+> buffer
+    (update-in [:undo-log] conj {:lines lines, :cursor cursor})))
+
 (defn- change
   [{lines :lines,
     cursor :cursor,
     :as buffer} modify-lines-fn]
   (+> buffer
-    (assoc :lines (modify-lines-fn lines))
-    (update-in [:undo-log] conj {:lines lines,
-                                 :cursor cursor})))
+    start-transaction
+    (assoc :lines (modify-lines-fn lines))))
 
 (defn undo
   [{undo-log :undo-log, :as buffer}]
@@ -208,7 +214,7 @@
             resulting-j (if (= 1 (count new-lines))
                           (+ j (count text))
                           0)]
-        (change #(splice % i (inc i) new-lines))
+        (update-in [:lines] #(splice % i (inc i) new-lines))
         (move-cursor [resulting-i resulting-j] resulting-j))))
 
 (defn insert-blank-line
