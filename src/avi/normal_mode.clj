@@ -4,6 +4,7 @@
             [avi.command-line-mode :as command-line-mode]
             [avi.editor :as e]
             [avi.eventmap :as em]
+            [avi.pervasive :refer :all]
             [avi.string :as s]))
 
 (defn- cursor-can-move-to-column?
@@ -113,12 +114,7 @@
       (+> editor
           (in e/current-buffer
               b/start-transaction
-              (as-> buffer
-                (reduce
-                  (fn [b n]
-                    (b/delete-current-line b))
-                  buffer
-                  (range (or repeat-count 1))))
+              (n-times (or repeat-count 1) b/delete-current-line)
               b/commit)))
 
     ("gg"

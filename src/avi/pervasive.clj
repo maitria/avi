@@ -26,6 +26,14 @@
 
   )
 
+(defn n-times
+  [thing n a-fn]
+  (reduce
+    (fn [thing n]
+      (a-fn thing))
+    thing
+    (range n)))
+
 ;; Not the right place for this...
 (defn fail
   [& args]
