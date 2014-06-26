@@ -187,15 +187,6 @@
   (+> buffer
       (assoc :in-transaction? false)))
 
-(defn- change
-  [{lines :lines,
-    cursor :cursor,
-    :as buffer} modify-lines-fn]
-  (+> buffer
-    start-transaction
-    (assoc :lines (modify-lines-fn lines))
-    commit))
-
 (defn undo
   [{undo-log :undo-log, :as buffer}]
   (if-not (seq undo-log)
@@ -227,8 +218,9 @@
   [{[i] :cursor,
     lines :lines,
     :as buffer} new-line-i]
+  {:pre [(:in-transaction? buffer)]}
   (+> buffer
-      (change #(splice % new-line-i new-line-i [""]))))
+      (update-in [:lines] #(splice % new-line-i new-line-i [""]))))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,

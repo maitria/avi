@@ -151,10 +151,10 @@
       [editor repeat-count]
       (+> editor
           (let [{[i] :cursor} (e/current-buffer editor)]
+            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]])
             (in e/current-buffer
                 (b/insert-blank-line (inc i)))
-            (e/change-line inc)
-            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]]))))
+            (e/change-line inc))))
 
     ("u"
       [editor]
@@ -215,9 +215,9 @@
       [editor repeat-count]
       (+> editor
           (let [{[i] :cursor} (e/current-buffer editor)]
+            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]])
             (in e/current-buffer
-                (b/insert-blank-line i))
-            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]]))))
+                (b/insert-blank-line i)))))
 
     ("<C-D>"
       [editor]
