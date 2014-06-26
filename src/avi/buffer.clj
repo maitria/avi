@@ -189,31 +189,23 @@
       (assoc :in-transaction? false
              :redo-log ())))
 
-(defn undo
-  [{undo-log :undo-log,
-    lines :lines,
+(defn- xdo
+  [from-log
+   to-log
+   last-name
+   {lines :lines,
     cursor :cursor,
     :as buffer}]
-  (if-not (seq undo-log)
-    (fail :beep "Already at the oldest change")
+  (if-not (seq (from-log buffer))
+    (fail :beep (str "Already at the " last-name " change"))
     (+> buffer
-      (update-in [:redo-log] conj {:lines lines, :cursor cursor})
-      (merge (first undo-log))
-      (update-in [:undo-log] rest)
-      adjust-viewport-to-contain-cursor)))
-
-(defn redo
-  [{redo-log :redo-log,
-    lines :lines,
-    cursor :cursor,
-    :as buffer}]
-  (if-not (seq redo-log)
-    (fail :beep "Already at the newest change")
-    (+> buffer
-        (merge (first redo-log))
-        (update-in [:redo-log] rest)
-        (update-in [:undo-log] conj {:lines lines, :cursor cursor})
+        (update-in [to-log] conj {:lines lines, :cursor cursor})
+        (merge (first (from-log buffer)))
+        (update-in [from-log] rest)
         adjust-viewport-to-contain-cursor)))
+
+(def undo (partial xdo :undo-log :redo-log "oldest"))
+(def redo (partial xdo :redo-log :undo-log "newest"))
 
 ;; -- changing buffer contents --
 
