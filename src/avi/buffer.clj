@@ -204,12 +204,15 @@
 
 (defn redo
   [{redo-log :redo-log,
+    lines :lines,
+    cursor :cursor,
     :as buffer}]
   (if-not (seq redo-log)
     (fail :beep "Already at the newest change")
     (+> buffer
         (merge (first redo-log))
-        (update-in [:redo-log] rest))))
+        (update-in [:redo-log] rest)
+        (update-in [:undo-log] conj {:lines lines, :cursor cursor}))))
 
 ;; -- changing buffer contents --
 

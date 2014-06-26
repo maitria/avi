@@ -35,5 +35,7 @@
     (terminal :line 0 :editing "One" :after "xu<C-R>") => "ne")
   (fact "`xxxuu<C-R><C-R>` keeps the first two edits"
     (terminal :line 0 :editing "One" :after "xxxuu<C-R><C-R>") => "")
+  (fact "`xu<C-R>u` has no edits"
+    (terminal :line 0 :editing "One" :after "xu<C-R>u") => "One")
   (fact "`<C-R>` tells us it's already at the newest change"
     (terminal :line :message :editing "One" :after "<C-R>") => ["Already at the newest change" :white :on :red]))
