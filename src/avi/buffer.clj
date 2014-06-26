@@ -190,7 +190,6 @@
 
 (defn undo
   [{undo-log :undo-log,
-    redo-log :redo-log,
     lines :lines,
     cursor :cursor,
     :as buffer}]
