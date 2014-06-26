@@ -215,6 +215,7 @@
   [{[i j] :cursor,
     lines :lines,
     :as buffer} text]
+  {:pre [(:in-transaction? buffer)]}
   (+> buffer
       (let [original-line (get-in buffer [:lines i])
             resulting-text (splice original-line j j text)
@@ -261,6 +262,7 @@
   [{[i j] :cursor,
     lines :lines,
     :as buffer}]
+  {:pre [(:in-transaction? buffer)]}
   (+> buffer
       (let [new-line (str (get lines (dec i)) (get lines i))
             new-lines (splice lines (dec i) (inc i) [new-line])
@@ -273,6 +275,7 @@
   [{[i j] :cursor,
     lines :lines,
     :as buffer}]
+  {:pre [(:in-transaction? buffer)]}
   (+> buffer
       (if (= 0 j)
         (backspace-at-beginning-of-line)
