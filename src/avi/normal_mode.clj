@@ -112,7 +112,9 @@
       [editor]
       (+> editor
           (in e/current-buffer
-              b/delete-current-line)))
+              b/start-transaction
+              b/delete-current-line
+              b/commit)))
 
     ("gg"
       [editor repeat-count]
