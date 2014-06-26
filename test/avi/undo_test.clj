@@ -22,7 +22,17 @@
           ""]
     (cursor :editing "One\nTwo\nThree..." :after "ddju") => [0 0])
   (fact "`ddGu` adjusts viewport to cursor"
-    (cursor :editing ten-lines :after "ddGu") => [0 0]))
+    (cursor :editing ten-lines :after "ddGu") => [0 0])
+  (fact "`2ddu` undoes both lines"
+    (terminal :editing "One\nTwo\nThree..." :after "2ddGu") =>
+        ["One"
+         "Two"
+         "Three..."
+         "~" :blue
+         "~" :blue
+         "~" :blue
+         "test.txt" :black :on :white
+         ""]))
 
 (facts "regarding undoing inserts"
   (fact "can undo an insert"

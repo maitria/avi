@@ -109,11 +109,16 @@
               (assoc :cursor [i (inc j)])))))
 
     ("dd"
-      [editor]
+      [editor repeat-count]
       (+> editor
           (in e/current-buffer
               b/start-transaction
-              b/delete-current-line
+              (as-> buffer
+                (reduce
+                  (fn [b n]
+                    (b/delete-current-line b))
+                  buffer
+                  (range (or repeat-count 1))))
               b/commit)))
 
     ("gg"
