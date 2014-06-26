@@ -176,8 +176,16 @@
   [{lines :lines,
     cursor :cursor,
     :as buffer}]
+  (when (:in-transaction? buffer)
+    (throw (Exception. "attempt to nest a transaction")))
   (+> buffer
-    (update-in [:undo-log] conj {:lines lines, :cursor cursor})))
+    (update-in [:undo-log] conj {:lines lines, :cursor cursor})
+    (assoc :in-transaction? true)))
+
+(defn commit
+  [buffer]
+  (+> buffer
+      (assoc :in-transaction? false)))
 
 (defn- change
   [{lines :lines,
@@ -185,7 +193,8 @@
     :as buffer} modify-lines-fn]
   (+> buffer
     start-transaction
-    (assoc :lines (modify-lines-fn lines))))
+    (assoc :lines (modify-lines-fn lines))
+    commit))
 
 (defn undo
   [{undo-log :undo-log, :as buffer}]
@@ -258,7 +267,7 @@
             i (dec i)
             j (count (get lines i))]
         (move-cursor [i j] j)
-        (change (constantly new-lines)))))
+        (assoc :lines new-lines))))
 
 (defn backspace
   [{[i j] :cursor,
@@ -269,4 +278,4 @@
         (backspace-at-beginning-of-line)
         (do
           (move-cursor [i (dec j)])
-          (update-line i #(splice % (dec j) j))))))
+          (update-in [:lines  i] #(splice % (dec j) j))))))

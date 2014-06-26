@@ -51,7 +51,8 @@
                 [i j] (:cursor b)
                 new-j (max (dec j) 0)]
             (in e/current-buffer
-                (b/move-cursor [i new-j] new-j)))
+                (b/move-cursor [i new-j] new-j)
+                b/commit))
           (e/enter-mode :normal)))
 
     (:else
