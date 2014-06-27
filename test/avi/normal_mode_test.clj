@@ -358,4 +358,6 @@
     (cursor :editing "(())" :after "$%") => [0 0]
     (cursor :editing "([])" :after "ll%") => [0 1])
   (fact "`%` beeps when no matching paren"
-    (editor :editing "((" :after "%") => beeped))
+    (editor :editing "((" :after "%") => beeped)
+  (fact "`%` beeps when not on a bracket"
+    (editor :editing "x" :after "%") => beeped))

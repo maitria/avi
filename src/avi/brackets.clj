@@ -34,16 +34,30 @@
         (backward-scan (retreat-position pos lines) lines))
     nil)))
 
+(def ^:private bracket-map
+  {\( \)
+   \[ \]
+   \{ \}
+   \< \>})
+
+(def ^:private reverse-bracket-map
+  (->> bracket-map
+       (map (fn [[a b]] [b a]))
+       (into {})))
+
+(def ^:private open-brackets (into #{} (keys bracket-map)))
+(def ^:private brackets (into #{} (concat (keys bracket-map) (vals bracket-map))))
+
 (defn matching-bracket
   [[i j] lines]
   (let [bracket (get-in lines [i j])
-        open-bracket? (#{\( \[ \{ \<} bracket)
+        open-bracket? (open-brackets bracket)
         scan (if open-bracket?
                (forward-scan [i j] lines)
                (backward-scan [i j] lines))
         brackets (if open-bracket?
-                   {\( \) \[ \] \{ \} \< \>}
-                   {\) \( \] \[ \} \{ \> \<})
+                   bracket-map
+                   reverse-bracket-map)
         new-cursor (->> scan
                         (reductions
                           (fn [stack [i j]]
@@ -57,4 +71,5 @@
                         (drop-while #(not (empty? (second %))))
                         first
                         first)]
-    new-cursor))
+    (if (brackets bracket)
+      new-cursor)))
