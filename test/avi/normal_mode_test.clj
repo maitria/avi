@@ -356,4 +356,6 @@
   (fact "`%` moves to a matching opening bracket"
     (cursor :editing "()" :after "l%") => [0 0]  
     (cursor :editing "(())" :after "$%") => [0 0]
-    (cursor :editing "([])" :after "ll%") => [0 1]))
+    (cursor :editing "([])" :after "ll%") => [0 1])
+  (fact "`%` beeps when no matching paren"
+    (editor :editing "((" :after "%") => beeped))

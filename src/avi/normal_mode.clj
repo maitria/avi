@@ -107,8 +107,10 @@
       (+> editor
         (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
               new-cursor (brackets/matching-bracket [i j] lines)]
-          (in e/current-buffer
-            (assoc :cursor new-cursor)))))
+          (if new-cursor
+            (in e/current-buffer
+              (assoc :cursor new-cursor))
+            e/beep))))
 
     ("a"
       [editor repeat-count]
