@@ -123,12 +123,16 @@
       (+> editor
         (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
               scan (forward-scan [i j] lines)
+              brackets {\( \)
+                        \[ \]
+                        \{ \}
+                        \< \>}
               new-cursor (->> scan
                               (reductions
                                 (fn [stack [i j]]
                                   (let [char (get-in lines [i j])]
                                     (cond-> stack
-                                      (#{\(} char) (conj \))
+                                      (get brackets char) (conj (get brackets char))
                                       (= char (first stack)) rest)))
                                 ())
                               (drop 1)

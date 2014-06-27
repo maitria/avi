@@ -347,6 +347,9 @@
           ""]))
 
 (facts "about `%`"
-  (fact "`%` moves to a matching closing parenthesis"
+  (fact "`%` moves to a matching closing bracket"
     (cursor :editing "()" :after "%") => [0 1]
-    (cursor :editing "(())" :after "%") => [0 3]))
+    (cursor :editing "(())" :after "%") => [0 3]
+    (cursor :editing "[x]" :after "%") => [0 2]
+    (cursor :editing "{[)]}]" :after "%") => [0 4]
+    (cursor :editing "<x>" :after "%") => [0 2]))
