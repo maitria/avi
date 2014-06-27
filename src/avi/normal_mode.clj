@@ -45,6 +45,23 @@
     (in e/current-buffer
         (b/scroll update-fn))))
 
+(defn- advance-position
+  [[i j] lines]
+  (if (>= (inc j) (count (get lines i)))
+    (if (= (inc i) (count lines))
+      nil
+      [(inc i) 0])
+    [i (inc j)]))
+
+(defn- forward-scan
+  [pos lines]
+  (lazy-seq
+    (if-let [[i j] pos]
+      (cons
+        [i j]
+        (forward-scan (advance-position pos lines) lines))
+      nil)))
+
 (def eventmap
   (em/eventmap
     ("<Enter>"
@@ -100,6 +117,27 @@
             line-length (count (b/line buffer i))
             j (max 0 (dec line-length))]
         (change-column editor (constantly j))))
+
+    ("%"
+      [editor]
+      (+> editor
+        (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
+              scan (forward-scan [i j] lines)
+              new-cursor (->> scan
+                              (reductions
+                                (fn [stack [i j]]
+                                  (let [char (get-in lines [i j])]
+                                    (cond-> stack
+                                      (#{\(} char) (conj \))
+                                      (= char (first stack)) rest)))
+                                ())
+                              (drop 1)
+                              (map vector scan)
+                              (drop-while #(not (empty? (second %))))
+                              first
+                              first)]
+          (in e/current-buffer
+            (assoc :cursor new-cursor)))))
 
     ("a"
       [editor repeat-count]

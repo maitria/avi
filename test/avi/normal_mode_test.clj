@@ -345,3 +345,8 @@
           "~" :blue
           "test.txt" :black :on :white
           ""]))
+
+(facts "about `%`"
+  (fact "`%` moves to a matching closing parenthesis"
+    (cursor :editing "()" :after "%") => [0 1]
+    (cursor :editing "(())" :after "%") => [0 3]))
