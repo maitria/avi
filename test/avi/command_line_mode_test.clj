@@ -47,7 +47,9 @@
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"
-    (file-written :editing "ABC\nDEF\nGHI" :after ":w<Enter>") => ["test.txt" "ABC\nDEF\nGHI"]))
+    (file-written :editing "ABC\nDEF\nGHI" :after ":w<Enter>") => ["test.txt" "ABC\nDEF\nGHI"])
+  (fact "`:w<Enter>` clears the message line (and doesn't fail)"
+    (terminal :line :message :editing "ABC" :after ":w<Enter>") => ""))
 
 (facts "regarding `:wq`"
   (fact "`:wq` writes the file"
