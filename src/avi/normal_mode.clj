@@ -53,6 +53,14 @@
       [(inc i) 0])
     [i (inc j)]))
 
+(defn- retreat-position
+  [[i j] lines]
+  (if (zero? j)
+    (if (zero? i)
+      nil
+      [(dec i) (dec (count (get lines (dec i))))])
+    [i (dec j)]))
+
 (defn- forward-scan
   [pos lines]
   (lazy-seq
@@ -61,6 +69,15 @@
         [i j]
         (forward-scan (advance-position pos lines) lines))
       nil)))
+
+(defn- backward-scan
+  [pos lines]
+  (lazy-seq
+    (if-let [[i j] pos]
+      (cons
+        [i j]
+        (backward-scan (retreat-position pos lines) lines))
+    nil)))
 
 (def eventmap
   (em/eventmap
@@ -122,11 +139,14 @@
       [editor]
       (+> editor
         (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
-              scan (forward-scan [i j] lines)
-              brackets {\( \)
-                        \[ \]
-                        \{ \}
-                        \< \>}
+              bracket (get-in lines [i j])
+              open-bracket? (#{\( \[ \{ \<} bracket)
+              scan (if open-bracket? 
+                     (forward-scan [i j] lines)
+                     (backward-scan [i j] lines))
+              brackets (if open-bracket?
+                         {\( \) \[ \] \{ \} \< \>}
+                         {\) \( \] \[ \} \{ \> \<})
               new-cursor (->> scan
                               (reductions
                                 (fn [stack [i j]]

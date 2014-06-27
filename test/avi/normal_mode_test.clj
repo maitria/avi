@@ -352,4 +352,8 @@
     (cursor :editing "(())" :after "%") => [0 3]
     (cursor :editing "[x]" :after "%") => [0 2]
     (cursor :editing "{[)]}]" :after "%") => [0 4]
-    (cursor :editing "<x>" :after "%") => [0 2]))
+    (cursor :editing "<x>" :after "%") => [0 2])
+  (fact "`%` moves to a matching opening bracket"
+    (cursor :editing "()" :after "l%") => [0 0]  
+    (cursor :editing "(())" :after "$%") => [0 0]
+    (cursor :editing "([])" :after "ll%") => [0 1]))
