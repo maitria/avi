@@ -342,6 +342,18 @@
           "test.txt" :black :on :white
           ""]))
 
+(facts "about `J`"
+  (fact "`J` joins lines"
+    (terminal :editing "One\nTwo\nThree..." :after "J")
+      => ["One Two"
+          "Three..."
+          "~" :blue
+          "~" :blue
+          "~" :blue
+          "~" :blue
+          "test.txt" :black :on :white
+          ""]))
+
 (facts "about `%`"
   (fact "`%` moves to a matching closing bracket"
     (cursor :editing "()" :after "%") => [0 1]

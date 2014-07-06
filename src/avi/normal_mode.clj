@@ -216,6 +216,18 @@
             (in e/current-buffer
                 (b/cursor-to-top-of-viewport count)))))
 
+    ("J"
+      [editor repeat-count]
+      (+> editor
+        (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
+              n (or repeat-count 1)
+              new-line (reduce
+                         #(str %1 " " %2)
+                         (subvec lines i (+ i n 1)))
+              new-lines (splice lines i (+ i n 1) [new-line])]
+          (in e/current-buffer
+            (assoc :lines new-lines)))))
+
     ("L"
       [editor repeat-count]
       (+> editor
