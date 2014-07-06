@@ -362,6 +362,16 @@
           "~" :blue
           "~" :blue
           "test.txt" :black :on :white
+          ""])
+  (fact "`3Ju` leaves file in original state"
+    (terminal :editing "One\nTwo\nThree\nFour\nFive" :after "3Ju")
+      => ["One"
+          "Two"
+          "Three"
+          "Four"
+          "Five"
+          "~" :blue
+          "test.txt" :black :on :white
           ""]))
 
 (facts "about `%`"

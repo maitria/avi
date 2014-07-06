@@ -226,7 +226,9 @@
                          (subvec lines i (+ i n 1)))
               new-lines (splice lines i (+ i n 1) [new-line])]
           (in e/current-buffer
-            (assoc :lines new-lines)))))
+            b/start-transaction
+            (assoc :lines new-lines)
+            b/commit))))
 
     ("L"
       [editor repeat-count]
