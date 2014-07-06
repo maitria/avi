@@ -352,6 +352,16 @@
           "~" :blue
           "~" :blue
           "test.txt" :black :on :white
+          ""])
+  (fact "`3J` joins three lines"
+    (terminal :editing "One\nTwo\nThree\nFour\nFive" :after "3J")
+      => ["One Two Three Four"
+          "Five"
+          "~" :blue
+          "~" :blue
+          "~" :blue
+          "~" :blue
+          "test.txt" :black :on :white
           ""]))
 
 (facts "about `%`"
