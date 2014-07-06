@@ -363,4 +363,5 @@
   (fact "`%` beeps when not on a bracket"
     (editor :editing "x" :after "%") => beeped)
   (fact "`%` works across lines"
-    (cursor :editing "\n(fact \"x\"\n  (foo :bar) => 42)" :after "G$%") => [1 0]))
+    (cursor :editing "\n(fact \"x\"\n  (foo :bar) => 42)" :after "G$%") => [1 0]
+    (cursor :editing "(fact\n\n  (foo :bar) => 42)" :after "%") => [2 18]))

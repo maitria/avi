@@ -2,10 +2,14 @@
 
 (defn- advance-position
   [[i j] lines]
-  (if (>= (inc j) (count (get lines i)))
-    (if (= (inc i) (count lines))
-      nil
-      [(inc i) 0])
+  (cond
+    (>= i (count lines))
+    nil
+    
+    (>= j (count (get lines i)))
+    (recur [(inc i) 0] lines)
+
+    :else
     [i (inc j)]))
 
 (defn- retreat-position
