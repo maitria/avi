@@ -180,7 +180,12 @@
       (+> editor
           (in e/current-buffer
               b/start-transaction
-              b/delete-char-under-cursor 
+              (as-> buffer
+                (reduce
+                  (fn [buffer n]
+                    (b/delete-char-under-cursor buffer))
+                  buffer
+                  (range (or repeat-count 1))))
               b/commit)))
 
     ("A"

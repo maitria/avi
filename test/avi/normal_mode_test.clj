@@ -310,15 +310,9 @@
   (fact "`x` deletes the current character"
     (terminal :line 0 :editing "One\nTwo\nThree..." :after "x") => "ne")
   (fact "`x` does not fail on zero-character line"
-    (terminal :editing "a\nb\nc" :after "xx")
-      => [""
-          "b"
-          "c"
-          "~" :blue
-          "~" :blue
-          "~" :blue
-          "test.txt" :black :on :white
-          ""])
+    (terminal :line 0 :editing "a\nb\nc" :after "xx") => "")
+  (fact "`x` can be repeated"
+    (terminal :line 0 :editing "abcdef" :after "3x") => "def")
   (fact "`x` at end of line moves the cursor back"
     (cursor :editing "ab" :after "$x") => [0 0]))
 
