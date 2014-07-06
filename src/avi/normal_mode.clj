@@ -176,11 +176,11 @@
               b/undo)))
 
     ("x"
-      [editor]
+      [editor repeat-count]
       (+> editor
           (in e/current-buffer
               b/start-transaction
-              b/delete-char-under-cursor
+              b/delete-char-under-cursor 
               b/commit)))
 
     ("A"

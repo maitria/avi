@@ -10,6 +10,8 @@
     (terminal :line :message :editing "One" :after "u") => ["Already at the oldest change" :white :on :red])
   (fact "`xxxuu` leaves first delete"
     (terminal :line 0 :editing "One\nTwo\nThree..." :after "xxxuu") => "ne")
+  (fact "`3xu` leaves file unchanged"
+    (terminal :line 0 :editing "One\n" :after "3xu") => "One")
   (fact "`ddju` leaves cursor at 0,0"
     (terminal :editing "One\nTwo\nThree..." :after "ddju")
       => ["One"
