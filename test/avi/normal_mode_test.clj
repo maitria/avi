@@ -318,7 +318,9 @@
           "~" :blue
           "~" :blue
           "test.txt" :black :on :white
-          ""]))
+          ""])
+  (fact "`x` at end of line moves the cursor back"
+    (cursor :editing "ab" :after "$x") => [0 0]))
 
 (facts "about `dd`"
   (fact "`dd` deletes the current line"

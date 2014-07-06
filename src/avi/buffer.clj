@@ -129,6 +129,14 @@
    new-top]
   (max 0 (min (dec (line-count buffer)) new-top)))
 
+(defn- clamp-cursor-j
+  [{[i j] :cursor,
+    lines :lines,
+    :as buffer}]
+  (+> buffer
+    (let [new-j (max 0 (min j (dec (count (get lines i)))))]
+      (assoc :cursor [i new-j]))))
+
 (defn move-and-scroll-half-page
   [{top :viewport-top,
     height :viewport-height,
@@ -240,7 +248,8 @@
     :as buffer}]
   {:pre [(:in-transaction? buffer)]}
   (+> buffer
-      (update-in [:lines i] #(splice % j (inc j)))))
+      (update-in [:lines i] #(splice % j (inc j)))
+      clamp-cursor-j))
 
 (defn delete-current-line
   [{[i] :cursor,
