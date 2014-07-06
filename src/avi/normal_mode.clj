@@ -117,8 +117,9 @@
       (+> editor
           (e/enter-mode :insert)
           (in e/current-buffer
-            (let [{[i j] :cursor} (e/current-buffer editor)]
-              (assoc :cursor [i (inc j)])))))
+            (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
+                  new-j (min (count (get lines i)) (inc j))]
+              (assoc :cursor [i new-j])))))
 
     ("dd"
       [editor repeat-count]

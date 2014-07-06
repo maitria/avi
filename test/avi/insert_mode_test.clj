@@ -73,15 +73,9 @@
           "test.txt" :black :on :white
           ""])
   (fact "`axy<Esc>` inserts after current character"
-    (terminal :editing "One\nTwo\nThree..." :after "axy<Esc>")
-      => ["Oxyne"
-          "Two"
-          "Three..."
-          "~" :blue
-          "~" :blue
-          "~" :blue
-          "test.txt" :black :on :white
-          ""])
+    (terminal :line 0 :editing "One\nTwo\nThree..." :after "axy<Esc>") => "Oxyne")
+  (fact "`a` behaves like `i` on a zero-length line"
+    (terminal :line 0 :editing "" :after "axy<Esc>") => "xy")
   (fact "`Axy<Esc>` inserts at end-of-line"
     (terminal :editing "One\nTwo\nThree..." :after "Axy<Esc>")
       => ["Onexy"
