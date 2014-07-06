@@ -353,8 +353,7 @@
     (cursor :editing "()" :after "%") => [0 1]
     (cursor :editing "(())" :after "%") => [0 3]
     (cursor :editing "[x]" :after "%") => [0 2]
-    (cursor :editing "{[)]}]" :after "%") => [0 4]
-    (cursor :editing "<x>" :after "%") => [0 2])
+    (cursor :editing "{[)]}]" :after "%") => [0 4])
   (fact "`%` moves to a matching opening bracket"
     (cursor :editing "()" :after "l%") => [0 0]  
     (cursor :editing "(())" :after "$%") => [0 0]
@@ -362,4 +361,6 @@
   (fact "`%` beeps when no matching paren"
     (editor :editing "((" :after "%") => beeped)
   (fact "`%` beeps when not on a bracket"
-    (editor :editing "x" :after "%") => beeped))
+    (editor :editing "x" :after "%") => beeped)
+  (fact "`%` works across lines"
+    (cursor :editing "\n(fact \"x\"\n  (foo :bar) => 42)" :after "G$%") => [1 0]))

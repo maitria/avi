@@ -10,11 +10,17 @@
 
 (defn- retreat-position
   [[i j] lines]
-  (if (zero? j)
-    (if (zero? i)
-      nil
-      [(dec i) (dec (count (get lines (dec i))))])
-    [i (dec j)]))
+  (cond
+    (< i 0)
+    nil
+
+    (>= j 1)
+    [i (dec j)]
+
+    :else
+    (recur
+      [(dec i) (count (get lines (dec i)))]
+      lines)))
 
 (defn- forward-scan
   [pos lines]
@@ -37,8 +43,7 @@
 (def ^:private bracket-map
   {\( \)
    \[ \]
-   \{ \}
-   \< \>})
+   \{ \}})
 
 (def ^:private reverse-bracket-map
   (->> bracket-map
