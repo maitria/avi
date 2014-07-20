@@ -10,12 +10,13 @@
    (splice collection start end (empty collection)))
   ([collection start end replacements]
    (let [subcollection (if (string? collection) subs subvec)
-         con (if (string? collection) str (comp vec concat))]
-     (con (subcollection collection 0 start)
-          replacements
-          (if (>= end (count collection))
-            (empty collection)
-            (subcollection collection end))))))
+         concatenate (if (string? collection) str (comp vec concat))]
+     (concatenate
+       (subcollection collection 0 start)
+       replacements
+       (if (>= end (count collection))
+         (empty collection)
+         (subcollection collection end))))))
 
 (comment
   (= "xa" (splice "a" 0 0 "x"))
