@@ -9,17 +9,15 @@
   ([collection start end]
    (splice collection start end (empty collection)))
   ([collection start end replacements]
-   (let [is-string? (string? collection)
-         sub (if is-string? subs subvec)
-         con (if is-string? str (comp vec concat))]
-     (con (sub collection 0 start)
+   (let [subcollection (if (string? collection) subs subvec)
+         con (if (string? collection) str (comp vec concat))]
+     (con (subcollection collection 0 start)
           replacements
           (if (>= end (count collection))
             (empty collection)
-            (sub collection end))))))
+            (subcollection collection end))))))
 
 (comment
-
   (= "xa" (splice "a" 0 0 "x"))
   (= "a" (splice "a" 1 42))
   (= [1] (splice [1] 1 42))
