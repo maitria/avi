@@ -6,17 +6,17 @@
 
   It is not an error for end to be well past the end of the collection."
   
-  ([coll start end]
-   (splice coll start end (empty coll)))
-  ([coll start end replacements]
-   (let [is-string? (string? coll)
+  ([collection start end]
+   (splice collection start end (empty collection)))
+  ([collection start end replacements]
+   (let [is-string? (string? collection)
          sub (if is-string? subs subvec)
          con (if is-string? str (comp vec concat))]
-     (con (sub coll 0 start)
+     (con (sub collection 0 start)
           replacements
-          (if (>= end (count coll))
-            (empty coll)
-            (sub coll end))))))
+          (if (>= end (count collection))
+            (empty collection)
+            (sub collection end))))))
 
 (comment
 
