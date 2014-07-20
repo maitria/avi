@@ -1,11 +1,11 @@
 (ns avi.pervasive)
 
 (defn splice
-  "Replace or delete elements from the start index (inclusive) through the
-  end index (exclusive).
+  "Replace or delete elements starting at the start index, up to but not
+  including the end index.
 
   It is not an error for end to be well past the end of the collection."
-  
+   
   ([collection start end]
    (splice collection start end (empty collection)))
   ([collection start end replacements]
