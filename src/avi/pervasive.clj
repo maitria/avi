@@ -4,8 +4,8 @@
   "Replace or delete elements from the start index (inclusive) through the
   end index (exclusive).
 
-  It is not an error for end to be well past the end of the collection. 
-  "
+  It is not an error for end to be well past the end of the collection."
+  
   ([coll start end]
    (splice coll start end (empty coll)))
   ([coll start end replacements]
