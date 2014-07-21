@@ -10,7 +10,8 @@
    (splice collection start end (empty collection)))
   ([collection start end replacements]
    (let [subcollection (if (string? collection) subs subvec)
-         concatenate (if (string? collection) str (comp vec concat))]
+         vector-concatenate (comp vec concat)
+         concatenate (if (string? collection) str vector-concatenate)]
      (concatenate
        (subcollection collection 0 start)
        replacements
