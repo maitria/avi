@@ -5,7 +5,12 @@
   including the end index.
 
   It is not an error for end to be well past the end of the collection."
-   
+  {:test (fn test-splice []
+           (assert (= "xa" (splice "a" 0 0 "x")) "splice inserts at 0")
+           (assert (= "a" (splice "a" 1 42)))
+           (assert (= [1] (splice [1] 1 42)))
+           (let [check-splice (splice "xxxxxx" 2 4 "a")]
+             (assert (= "xxaxx" check-splice) (str "actual result was " check-splice))))}
   ([collection start end]
    (splice collection start end (empty collection)))
   ([collection start end replacements]
@@ -20,12 +25,6 @@
        first-section
        replacements
        last-section))))
-
-(comment
-  (= "xa" (splice "a" 0 0 "x"))
-  (= "a" (splice "a" 1 42))
-  (= [1] (splice [1] 1 42))
-  )
 
 (defn n-times
   [thing n a-fn]
