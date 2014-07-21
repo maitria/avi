@@ -2,7 +2,10 @@
 
 (defmacro assert-equal
   [expected-value expression]
-  `(assert (= ~expected-value ~expression) (str "Expected " (pr-str ~expected-value) ", but got " (pr-str ~expression))))
+  `(let [expected-value# ~expected-value
+         expression# ~expression]
+     (assert (= expected-value# expression#)
+       (str "Expected " (pr-str expected-value#) ", but got " (pr-str expression#) " for " '~expression))))
 
 (defn splice
   "Replace or delete elements starting at the start index, up to but not
