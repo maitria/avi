@@ -10,7 +10,8 @@
                        (pr-str expression#)
                        " for "
                        (pr-str '~expression))]
-     (assert (= expected-value# expression#) message#)))
+     (if-not (= expected-value# expression#)
+       (throw (AssertionError. message#)))))
 
 (defn splice
   "Replace or delete elements starting at the start index, up to but not
