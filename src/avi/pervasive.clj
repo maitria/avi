@@ -25,7 +25,6 @@
   (= "xa" (splice "a" 0 0 "x"))
   (= "a" (splice "a" 1 42))
   (= [1] (splice [1] 1 42))
-
   )
 
 (defn n-times
