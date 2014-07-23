@@ -249,7 +249,8 @@
           (let [{[i] :cursor} (e/current-buffer editor)]
             (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]])
             (in e/current-buffer
-                (b/insert-blank-line i)))))
+                (b/insert-blank-line i))
+            (change-column (constantly 0)))))
 
     ("<C-D>"
       [editor]
