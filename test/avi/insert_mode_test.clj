@@ -63,7 +63,7 @@
           "test.txt" :black :on :white
           ""])
   (fact "`Oxy<Esc>` inserts a line here"
-    (terminal :editing "One\nTwo\nThree..." :after "Oxy<Esc>")
+    (terminal :editing "One\nTwo\nThree..." :after "llOxy<Esc>")
       => ["xy"
           "One"
           "Two"
