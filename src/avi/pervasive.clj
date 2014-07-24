@@ -1,5 +1,5 @@
 (ns avi.pervasive
-  (:require [avi.assert :as test])) 
+  (:require [avi.assert])) 
 (defn splice
   "Replace or delete elements starting at the start index, up to but not
   including the end index.
