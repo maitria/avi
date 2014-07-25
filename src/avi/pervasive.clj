@@ -10,7 +10,11 @@
 (def ^:private vector-concatenate
   (comp vec concat))
 
-
+(defn- concatenate 
+  [& collections]  
+  (if (string? (first collections))
+    (apply str collections)
+    (apply vector-concatenate collections)))
 
 (defn splice
   "Replace or delete elements starting at the splice-start, up to but not
@@ -25,8 +29,7 @@
   ([collection splice-start splice-end]
    (splice collection splice-start splice-end (empty collection)))
   ([collection splice-start splice-end replacements]
-   (let [concatenate (if (string? collection) str vector-concatenate)
-         first-section (subcollection collection 0 splice-start)
+   (let [first-section (subcollection collection 0 splice-start)
          last-section (if (>= splice-end (count collection))
                         (empty collection)
                         (subcollection collection splice-end))]
