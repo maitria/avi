@@ -16,7 +16,7 @@
     (apply str collections)
     (apply vector-concatenate collections)))
 
-(defn- first-section
+(defn- splice-head
   [collection splice-start]
   (subcollection collection 0 splice-start))
 
@@ -40,7 +40,7 @@
    (splice collection splice-start splice-end (empty collection)))
   ([collection splice-start splice-end replacements]
    (concatenate
-     (first-section collection splice-start)
+     (splice-head collection splice-start)
      replacements
      (last-section collection splice-end))))
 
