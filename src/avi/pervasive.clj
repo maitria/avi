@@ -7,10 +7,10 @@
 
   It is not an error for end to be well past the end of the collection."
   {:test (fn test-splice []
-           (assert-equal ("xa" (splice "a" 0 0 "x")))
-           (assert-equal ("a" (splice "a" 1 42)))
-           (assert-equal ([1] (splice [1] 1 42)))
-           (assert-equal ("xxaxx" (splice "xxxxxx" 2 4 "a"))))}
+           (assert-equal (= "xa" (splice "a" 0 0 "x")))
+           (assert-equal (= "a" (splice "a" 1 42)))
+           (assert-equal (= [1] (splice [1] 1 42)))
+           (assert-equal (= "xxaxx" (splice "xxxxxx" 2 4 "a"))))}
   ([collection start end]
    (splice collection start end (empty collection)))
   ([collection start end replacements]
