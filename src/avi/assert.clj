@@ -2,7 +2,8 @@
 
 (defmacro examples 
   [& examples]
-  `(fn test-splice []~@ examples))
+  `(fn test-splice []
+     ~@examples))
 
 (defmacro example
   [[comparison expected-value expression]]
