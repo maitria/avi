@@ -11,16 +11,16 @@
            (example (= "a" (splice "a" 1 42)))
            (example (= [1] (splice [1] 1 42)))
            (example (= "xxaxx" (splice "xxxxxx" 2 4 "a"))))}
-  ([collection start end]
-   (splice collection start end (empty collection)))
-  ([collection start end replacements]
+  ([collection start splice-end]
+   (splice collection start splice-end (empty collection)))
+  ([collection start splice-end replacements]
    (let [subcollection (if (string? collection) subs subvec)
          vector-concatenate (comp vec concat)
          concatenate (if (string? collection) str vector-concatenate)
          first-section (subcollection collection 0 start)
-         last-section (if (>= end (count collection))
+         last-section (if (>= splice-end (count collection))
                         (empty collection)
-                        (subcollection collection end))]
+                        (subcollection collection splice-end))]
      (concatenate
        first-section
        replacements
