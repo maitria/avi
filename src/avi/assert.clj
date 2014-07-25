@@ -1,6 +1,6 @@
 (ns avi.assert)
 
-(defmacro assert-equal
+(defmacro example
   [[comparison expected-value expression]]
   `(let [comparison# ~comparison
          expected-value# ~expected-value
