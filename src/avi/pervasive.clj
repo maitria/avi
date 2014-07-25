@@ -34,7 +34,6 @@
     thing
     (range n)))
 
-;; Not the right place for this...
 (defn fail
   [& args]
   (let [options (into #{} args)
@@ -44,4 +43,3 @@
                  beep? (assoc :beep? true)
                  message (assoc :message [:white :red message]))]
     (throw (ex-info (or message "") ex-map))))
-
