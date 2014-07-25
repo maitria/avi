@@ -2,7 +2,7 @@
 
 (defmacro examples 
   [& examples]
-  `(fn test-splice []
+  `(fn []
      ~@examples))
 
 (defmacro example
