@@ -1,7 +1,7 @@
 (ns avi.assert)
 
 (defmacro assert-equal
-  [expected-value expression]
+  [[expected-value expression]]
   `(let [expected-value# ~expected-value
          expression# ~expression
          message# (str "Expected "
