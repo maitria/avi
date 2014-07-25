@@ -7,6 +7,11 @@
     (apply subs collection rest-of-args)
     (apply subvec collection rest-of-args)))
 
+(def ^:private vector-concatenate
+  (comp vec concat))
+
+
+
 (defn splice
   "Replace or delete elements starting at the splice-start, up to but not
   including splice-end.
@@ -20,8 +25,7 @@
   ([collection splice-start splice-end]
    (splice collection splice-start splice-end (empty collection)))
   ([collection splice-start splice-end replacements]
-   (let [vector-concatenate (comp vec concat)
-         concatenate (if (string? collection) str vector-concatenate)
+   (let [concatenate (if (string? collection) str vector-concatenate)
          first-section (subcollection collection 0 splice-start)
          last-section (if (>= splice-end (count collection))
                         (empty collection)
