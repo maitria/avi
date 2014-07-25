@@ -1,9 +1,12 @@
 (ns avi.pervasive
   (:require [avi.assert :refer :all]))
 
+(defn subcollection [collection]
+  (if (string? collection) subs subvec))
+
 (defn splice
-  "Replace or delete elements starting at the start index, up to but not
-  including the end index.
+  "Replace or delete elements starting at the splice-start, up to but not
+  including splice-end.
 
   It is not an error for end to be well past the end of the collection."
   {:test (examples
@@ -11,13 +14,13 @@
            (example (= "a" (splice "a" 1 42)))
            (example (= [1] (splice [1] 1 42)))
            (example (= "xxaxx" (splice "xxxxxx" 2 4 "a"))))}
-  ([collection start splice-end]
-   (splice collection start splice-end (empty collection)))
-  ([collection start splice-end replacements]
+  ([collection splice-start splice-end]
+   (splice collection splice-start splice-end (empty collection)))
+  ([collection splice-start splice-end replacements]
    (let [subcollection (if (string? collection) subs subvec)
          vector-concatenate (comp vec concat)
          concatenate (if (string? collection) str vector-concatenate)
-         first-section (subcollection collection 0 start)
+         first-section (subcollection collection 0 splice-start)
          last-section (if (>= splice-end (count collection))
                         (empty collection)
                         (subcollection collection splice-end))]
