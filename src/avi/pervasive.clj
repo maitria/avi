@@ -16,10 +16,12 @@
     (apply str collections)
     (apply vector-concatenate collections)))
 
-(defn- first-section [collection splice-start]
+(defn- first-section
+  [collection splice-start]
   (subcollection collection 0 splice-start))
 
-(defn- last-section [collection splice-end]
+(defn- last-section
+  [collection splice-end]
   (if (>= splice-end (count collection))
     (empty collection)
     (subcollection collection splice-end)))
