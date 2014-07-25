@@ -20,7 +20,7 @@
   [collection splice-start]
   (subcollection collection 0 splice-start))
 
-(defn- last-section
+(defn- splice-tail
   [collection splice-end]
   (if (>= splice-end (count collection))
     (empty collection)
@@ -42,7 +42,7 @@
    (concatenate
      (splice-head collection splice-start)
      replacements
-     (last-section collection splice-end))))
+     (splice-tail collection splice-end))))
 
 (defn n-times
   [thing n a-fn]
