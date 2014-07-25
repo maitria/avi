@@ -6,7 +6,7 @@
   including the end index.
 
   It is not an error for end to be well past the end of the collection."
-  {:test (fn test-splice []
+  {:test (examples
            (example (= "xa" (splice "a" 0 0 "x")))
            (example (= "a" (splice "a" 1 42)))
            (example (= [1] (splice [1] 1 42)))
