@@ -1,8 +1,11 @@
 (ns avi.pervasive
   (:require [avi.assert :refer :all]))
 
-(defn subcollection [collection]
-  (if (string? collection) subs subvec))
+(defn- subcollection
+  [collection & rest-of-args]
+  (if (string? collection)
+    (apply subs collection rest-of-args)
+    (apply subvec collection rest-of-args)))
 
 (defn splice
   "Replace or delete elements starting at the splice-start, up to but not
@@ -17,8 +20,7 @@
   ([collection splice-start splice-end]
    (splice collection splice-start splice-end (empty collection)))
   ([collection splice-start splice-end replacements]
-   (let [subcollection (if (string? collection) subs subvec)
-         vector-concatenate (comp vec concat)
+   (let [vector-concatenate (comp vec concat)
          concatenate (if (string? collection) str vector-concatenate)
          first-section (subcollection collection 0 splice-start)
          last-section (if (>= splice-end (count collection))
