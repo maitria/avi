@@ -16,6 +16,14 @@
     (apply str collections)
     (apply vector-concatenate collections)))
 
+(defn- first-section [collection splice-start]
+  (subcollection collection 0 splice-start))
+
+(defn- last-section [collection splice-end]
+  (if (>= splice-end (count collection))
+    (empty collection)
+    (subcollection collection splice-end)))
+
 (defn splice
   "Replace or delete elements starting at the splice-start, up to but not
   including splice-end.
@@ -29,14 +37,10 @@
   ([collection splice-start splice-end]
    (splice collection splice-start splice-end (empty collection)))
   ([collection splice-start splice-end replacements]
-   (let [first-section (subcollection collection 0 splice-start)
-         last-section (if (>= splice-end (count collection))
-                        (empty collection)
-                        (subcollection collection splice-end))]
-     (concatenate
-       first-section
-       replacements
-       last-section))))
+   (concatenate
+     (first-section collection splice-start)
+     replacements
+     (last-section collection splice-end))))
 
 (defn n-times
   [thing n a-fn]
