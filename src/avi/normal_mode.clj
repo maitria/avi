@@ -264,12 +264,8 @@
         :else
         (responder event)))))
 
-(defn- beep-responder
-  [editor event]
-  (e/beep editor))
-
 (def responder
-  (-> beep-responder
+  (-> em/beep-responder
       normal-responder
       wrap-collect-repeat-count))
 

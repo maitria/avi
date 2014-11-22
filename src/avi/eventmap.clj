@@ -1,4 +1,5 @@
-(ns avi.eventmap)
+(ns avi.eventmap
+  (:require [avi.editor :as e]))
 
 (defn wrap-handler-with-beep-reset
   [handler]
@@ -106,3 +107,7 @@
              {}
              mappings)]
     `(invoke-event-handler ~em)))
+
+(defn beep-responder
+  [editor event]
+  (e/beep editor))

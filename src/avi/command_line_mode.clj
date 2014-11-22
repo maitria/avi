@@ -2,6 +2,7 @@
   (:require [packthread.core :refer :all]
             [avi.buffer :as b]
             [avi.editor :as e]
+            [avi.eventmap :as em]
             [avi.pervasive :refer :all]))
 
 (defn- append-to-command-line
@@ -40,10 +41,6 @@
           :else
           (assoc :message [:white :red (str ":" command-line " is not a thing")])))))
 
-(defn- bad-event
-  [editor event]
-  (e/beep editor))
-
 (defn- wrap-command-line-insert
   [responder]
   (fn [editor [event-type event-data :as event]]
@@ -71,7 +68,7 @@
       (responder editor event))))
 
 (def responder
-  (-> bad-event
+  (-> em/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
       wrap-process-command))
