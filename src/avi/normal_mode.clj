@@ -37,7 +37,7 @@
     (in e/current-buffer
         (b/scroll update-fn))))
 
-(def eventmap
+(def responder
   (em/eventmap
     ("<Enter>"
       [editor]
@@ -282,4 +282,4 @@
 
 (defmethod e/respond :normal
   [editor event]
-  (eventmap editor event))
+  (responder editor event))
