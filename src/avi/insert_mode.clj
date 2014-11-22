@@ -39,7 +39,7 @@
       editor
       (range (dec repeat-count)))))
 
-(defn esc-responder
+(defn wrap-handle-escape
   [responder]
   (fn [editor event]
     (if (= event [:keystroke "<Esc>"])
@@ -57,7 +57,7 @@
 
 (def responder
   (-> update-buffer-for-insert-event
-      esc-responder))
+      wrap-handle-escape))
 
 (defn- with-event-recorded
   [editor event]
