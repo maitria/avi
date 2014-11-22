@@ -82,15 +82,17 @@
          ~@wrappers)))
 
 (defn invoke-event-handler
-  [eventmap editor event]
-  (let [event-path (conj (or (:pending-events editor) []) event)
-        event-handler-fn (or (get-in eventmap event-path)
-                             (:else eventmap))]
-    (if (map? event-handler-fn)
-      (assoc editor :pending-events event-path)
-      (-> editor
-          (event-handler-fn event)
-          (assoc :pending-events [])))))
+  [eventmap]
+  (fn [responder]
+    (fn [editor event]
+      (let [event-path (conj (or (:pending-events editor) []) event)
+            event-handler-fn (or (get-in eventmap event-path)
+                                 (:else eventmap))]
+        (if (map? event-handler-fn)
+          (assoc editor :pending-events event-path)
+          (-> editor
+              (event-handler-fn event)
+              (assoc :pending-events [])))))))
 
 (defmacro eventmap
   [& mappings]
@@ -103,4 +105,4 @@
                  (assoc-in eventmap event-path (entry-handler-fn entry))))
              {}
              mappings)]
-    `(partial invoke-event-handler ~em)))
+    `(invoke-event-handler ~em)))

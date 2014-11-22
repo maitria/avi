@@ -239,11 +239,7 @@
 
     ("<C-Y>"
       [editor]
-      (scroll editor dec))
-
-    (:else
-      [editor]
-      (e/beep editor))))
+      (scroll editor dec))))
 
 (defn- update-count
   [editor digit]
@@ -268,8 +264,13 @@
         :else
         (responder event)))))
 
+(defn- beep-responder
+  [editor event]
+  (e/beep editor))
+
 (def responder
-  (-> normal-responder
+  (-> beep-responder
+      normal-responder
       wrap-collect-repeat-count))
 
 (defmethod e/respond :normal
