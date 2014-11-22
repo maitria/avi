@@ -81,16 +81,11 @@
            ~body)
          ~@wrappers)))
 
-(defn- null-handler
-  [editor event]
-  editor)
-
 (defn invoke-event-handler
   [eventmap editor event]
   (let [event-path (conj (or (:pending-events editor) []) event)
         event-handler-fn (or (get-in eventmap event-path)
-                             (:else eventmap)
-                             null-handler)]
+                             (:else eventmap))]
     (if (map? event-handler-fn)
       (assoc editor :pending-events event-path)
       (-> editor
