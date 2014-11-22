@@ -82,18 +82,6 @@
            ~body)
          ~@wrappers)))
 
-(defmacro eventmap
-  [& mappings]
-  (reduce
-    (fn [eventmap args]
-      (let [entry (parse-eventmap-entry args)
-            event-path (if (= :else (:event-spec entry))
-                         [:else]
-                         (events (:event-spec entry)))]
-        (assoc-in eventmap event-path (entry-handler-fn entry))))
-    {}
-    mappings))
-
 (defn- null-handler
   [editor event]
   editor)
@@ -109,3 +97,16 @@
       (-> editor
           (event-handler-fn event)
           (assoc :pending-events [])))))
+
+(defmacro eventmap
+  [& mappings]
+  (let [em (reduce
+             (fn [eventmap args]
+               (let [entry (parse-eventmap-entry args)
+                     event-path (if (= :else (:event-spec entry))
+                                  [:else]
+                                  (events (:event-spec entry)))]
+                 (assoc-in eventmap event-path (entry-handler-fn entry))))
+             {}
+             mappings)]
+    `(partial invoke-event-handler ~em)))

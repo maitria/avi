@@ -69,4 +69,4 @@
 
 (defmethod e/respond :command-line
   [editor event]
-  (em/invoke-event-handler eventmap editor event))
+  (eventmap editor event))

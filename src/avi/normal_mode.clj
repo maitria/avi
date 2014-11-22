@@ -282,4 +282,4 @@
 
 (defmethod e/respond :normal
   [editor event]
-  (em/invoke-event-handler eventmap editor event))
+  (eventmap editor event))
