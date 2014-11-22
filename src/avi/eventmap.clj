@@ -66,7 +66,6 @@
                       first))
         editor-arg (arg-named "editor")
         repeat-arg (arg-named "repeat-count")
-        event-arg (or (arg-named "event") `event#)
 
         body (if-not repeat-arg
                `(do ~@body)
@@ -78,7 +77,7 @@
         wrappers (cond-> `[wrap-handler-with-beep-reset]
                    repeat-loop? (conj `wrap-handler-with-repeat-loop)
                    true (conj `wrap-handler-with-count-reset))]
-    `(-> (fn [~editor-arg ~event-arg]
+    `(-> (fn [~editor-arg event#]
            ~body)
          ~@wrappers)))
 
