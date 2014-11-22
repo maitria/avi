@@ -55,19 +55,21 @@
           (e/enter-mode :normal))
       (responder editor event))))
 
+(defn- wrap-record-event
+  [responder]
+  (fn [editor event]
+    (+> editor
+        (responder event)
+        (update-in [:insert-mode-state :script] conj event))))
+
 (def responder
   (-> update-buffer-for-insert-event
+      wrap-record-event
       wrap-handle-escape))
-
-(defn- with-event-recorded
-  [editor event]
-  (cond-> editor
-    (not= event [:keystroke "<Esc>"])
-    (update-in [:insert-mode-state :script] conj event)))
 
 (defmethod e/respond :insert
   [editor event]
-  (responder (with-event-recorded editor event) event))
+  (responder editor event))
 
 (defmethod e/enter-mode :insert
   [editor mode & {script :script-prefix
