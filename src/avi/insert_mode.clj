@@ -2,7 +2,6 @@
   (:require [packthread.core :refer :all]
             [avi.editor :as e]
             [avi.buffer :as b]
-            [avi.eventmap :as em]
             [avi.pervasive :refer :all]))
 
 (defn- key->text
@@ -40,10 +39,10 @@
       editor
       (range (dec repeat-count)))))
 
-(def responder
-  (em/eventmap
-    ("<Esc>"
-      [editor]
+(defn esc-responder
+  [responder]
+  (fn [editor event]
+    (if (= event [:keystroke "<Esc>"])
       (+> editor
           play-script-repeat-count-times
           (dissoc :insert-mode-state)
@@ -53,11 +52,12 @@
             (in e/current-buffer
                 (b/move-cursor [i new-j] new-j)
                 b/commit))
-          (e/enter-mode :normal)))
+          (e/enter-mode :normal))
+      (responder editor event))))
 
-    (:else
-      [editor event]
-      (update-buffer-for-insert-event editor event))))
+(def responder
+  (-> update-buffer-for-insert-event
+      esc-responder))
 
 (defn- with-event-recorded
   [editor event]
