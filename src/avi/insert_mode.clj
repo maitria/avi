@@ -39,7 +39,7 @@
       editor
       (range (dec repeat-count)))))
 
-(defn wrap-handle-escape
+(defn- wrap-handle-escape
   [responder]
   (fn [editor event]
     (if (= event [:keystroke "<Esc>"])
