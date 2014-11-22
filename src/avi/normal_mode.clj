@@ -8,22 +8,13 @@
             [avi.pervasive :refer :all]
             [avi.string :as s]))
 
-(defn- cursor-can-move-to-column?
-  [editor [i j]]
-  (let [line-length (count (b/line (e/current-buffer editor) i))
-        inside-line? (and (>= j 0)
-                          (< j line-length))
-        column-zero? (zero? j)]
-    (or inside-line?
-        column-zero?)))
-
 (defn- change-column
   [editor j-fn]
   (+> editor
-      (let [[i j] (:cursor (e/current-buffer editor))
+      (let [{[i j] :cursor, :as buffer} (e/current-buffer editor)
         j (j-fn j)
         new-position [i j]]
-        (if (cursor-can-move-to-column? editor new-position)
+        (if (b/cursor-can-move-to-column? buffer j)
           (in e/current-buffer
               (b/move-cursor new-position j))
           e/beep))))

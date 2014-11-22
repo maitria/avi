@@ -137,6 +137,15 @@
     (let [new-j (max 0 (min j (dec (count (get lines i)))))]
       (assoc :cursor [i new-j]))))
 
+(defn cursor-can-move-to-column?
+  [{[i] :cursor, lines :lines} j]
+  (let [line-length (count (get lines i))
+        inside-line? (and (>= j 0)
+                          (< j line-length))
+        column-zero? (zero? j)]
+    (or inside-line?
+        column-zero?)))
+
 (defn move-and-scroll-half-page
   [{top :viewport-top,
     height :viewport-height,
