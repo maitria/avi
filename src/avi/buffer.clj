@@ -129,22 +129,21 @@
    new-top]
   (max 0 (min (dec (line-count buffer)) new-top)))
 
+(defn- clamped-j
+  [{[i] :cursor,
+    lines :lines,
+    :as buffer}
+   j]
+  (max 0 (min j (dec (count (get lines i))))))
+
 (defn- clamp-cursor-j
   [{[i j] :cursor,
-    lines :lines,
     :as buffer}]
-  (+> buffer
-    (let [new-j (max 0 (min j (dec (count (get lines i)))))]
-      (assoc :cursor [i new-j]))))
+  (assoc buffer :cursor [i (clamped-j buffer j)]))
 
 (defn cursor-can-move-to-column?
-  [{[i] :cursor, lines :lines} j]
-  (let [line-length (count (get lines i))
-        inside-line? (and (>= j 0)
-                          (< j line-length))
-        column-zero? (zero? j)]
-    (or inside-line?
-        column-zero?)))
+  [buffer j]
+  (= j (clamped-j buffer j)))
 
 (defn move-and-scroll-half-page
   [{top :viewport-top,
