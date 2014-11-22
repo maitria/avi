@@ -43,12 +43,12 @@
           viewport-top (:viewport-top buffer)
           viewport-bottom (dec (+ viewport-top height))
           [cursor-i] (:cursor buffer)]
-        (cond
-          (< cursor-i viewport-top)
-          (assoc :viewport-top cursor-i)
+      (cond
+        (< cursor-i viewport-top)
+        (assoc :viewport-top cursor-i)
 
-          (> cursor-i viewport-bottom)
-          (assoc :viewport-top (inc (- cursor-i height)))))))
+        (> cursor-i viewport-bottom)
+        (assoc :viewport-top (inc (- cursor-i height)))))))
 
 (defn line
   [buffer i]
