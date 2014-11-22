@@ -87,10 +87,15 @@
   (fn [responder]
     (fn [editor event]
       (let [event-path (conj (or (:pending-events editor) []) event)
-            event-handler-fn (or (get-in eventmap event-path)
-                                 (:else eventmap))]
-        (if (map? event-handler-fn)
+            event-handler-fn (get-in eventmap event-path)]
+        (cond
+          (not event-handler-fn)
+          (responder editor event)
+
+          (map? event-handler-fn)
           (assoc editor :pending-events event-path)
+
+          :else
           (-> editor
               (event-handler-fn event)
               (assoc :pending-events [])))))))
@@ -100,9 +105,7 @@
   (let [em (reduce
              (fn [eventmap args]
                (let [entry (parse-eventmap-entry args)
-                     event-path (if (= :else (:event-spec entry))
-                                  [:else]
-                                  (events (:event-spec entry)))]
+                     event-path (events (:event-spec entry))]
                  (assoc-in eventmap event-path (entry-handler-fn entry))))
              {}
              mappings)]

@@ -31,7 +31,7 @@
     (in e/current-buffer
         (b/scroll update-fn))))
 
-(def normal-responder
+(def wrap-normal-mode
   (em/eventmap
     ("0"
       [editor]
@@ -266,7 +266,7 @@
 
 (def responder
   (-> em/beep-responder
-      normal-responder
+      wrap-normal-mode
       wrap-collect-repeat-count))
 
 (defmethod e/respond :normal
