@@ -199,7 +199,7 @@
       (assoc :in-transaction? false
              :redo-log ())))
 
-(defn- xdo
+(defn- undo-or-redo
   [from-log
    to-log
    last-name
@@ -214,8 +214,8 @@
         (update-in [from-log] rest)
         adjust-viewport-to-contain-cursor)))
 
-(def undo (partial xdo :undo-log :redo-log "oldest"))
-(def redo (partial xdo :redo-log :undo-log "newest"))
+(def undo (partial undo-or-redo :undo-log :redo-log "oldest"))
+(def redo (partial undo-or-redo :redo-log :undo-log "newest"))
 
 ;; -- changing buffer contents --
 
