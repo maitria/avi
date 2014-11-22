@@ -19,12 +19,6 @@
               (b/move-cursor new-position j))
           e/beep))))
 
-(defn- update-count
-  [editor digit]
-  (let [old-count (or (:count editor) 0)
-        new-count (+ (* 10 old-count) digit)]
-    (assoc editor :count new-count)))
-
 (defn- current-line 
   [editor] 
   (let [buffer (e/current-buffer editor)
@@ -37,44 +31,15 @@
     (in e/current-buffer
         (b/scroll update-fn))))
 
-(def responder
+(def normal-responder
   (em/eventmap
+    ("0"
+      [editor]
+      (change-column editor (constantly 0)))
+
     ("<Enter>"
       [editor]
       (e/enter-mode :finished))
-
-    (:keep-count "0"
-      [editor repeat-count]
-      (if repeat-count
-        (update-count editor 0)
-        (change-column editor (constantly 0))))
-    (:keep-count "1"
-      [editor repeat-count]
-      (update-count editor 1))
-    (:keep-count "2"
-      [editor repeat-count]
-      (update-count editor 2))
-    (:keep-count "3"
-      [editor repeat-count]
-      (update-count editor 3))
-    (:keep-count "4"
-      [editor repeat-count]
-      (update-count editor 4))
-    (:keep-count "5"
-      [editor repeat-count]
-      (update-count editor 5))
-    (:keep-count "6"
-      [editor repeat-count]
-      (update-count editor 6))
-    (:keep-count "7"
-      [editor repeat-count]
-      (update-count editor 7))
-    (:keep-count "8"
-      [editor repeat-count]
-      (update-count editor 8))
-    (:keep-count "9"
-      [editor repeat-count]
-      (update-count editor 9))
 
     (":"
       [editor]
@@ -279,6 +244,33 @@
     (:else
       [editor]
       (e/beep editor))))
+
+(defn- update-count
+  [editor digit]
+  (let [old-count (or (:count editor) 0)
+        new-count (+ (* 10 old-count) digit)]
+    (assoc editor :count new-count)))
+
+(defn- wrap-collect-repeat-count
+  [responder]
+  (fn [editor [event-type event-data :as event]]
+    (+> editor
+      (cond
+        (= event [:keystroke "0"])
+        (if (:count editor)
+          (update-count 0)
+          (responder event))
+
+        (and (= 1 (count event-data))
+             (Character/isDigit (get event-data 0)))
+        (update-count (Integer/parseInt event-data))
+
+        :else
+        (responder event)))))
+
+(def responder
+  (-> normal-responder
+      wrap-collect-repeat-count))
 
 (defmethod e/respond :normal
   [editor event]
