@@ -1,6 +1,5 @@
 (ns avi.command-line-mode
   (:require [packthread.core :refer :all]
-            [avi.eventmap :as em]
             [avi.buffer :as b]
             [avi.editor :as e]
             [avi.pervasive :refer :all]))
@@ -41,27 +40,41 @@
           :else
           (assoc :message [:white :red (str ":" command-line " is not a thing")])))))
 
-(def eventmap
-  (em/eventmap
-    ("<Enter>"
-      [editor]
-      (process-command editor))
+(defn- bad-event
+  [editor event]
+  (e/beep editor))
 
-    ("<BS>"
-      [editor]
-      (+> editor
-          (let [command-line (:command-line editor)]
-            (if (zero? (count command-line))
-              (e/enter-mode :normal)
-              (assoc :command-line (subs command-line 0 (dec (count command-line))))))))
-    
-    (:else
-      [editor event]
-      (+> editor
-          (let [[event-type event-data] event]
-            (if-not (= event-type :keystroke)
-              e/beep
-              (append-to-command-line event-data)))))))
+(defn- wrap-command-line-insert
+  [responder]
+  (fn [editor [event-type event-data :as event]]
+    (+> editor
+      (if (= event-type :keystroke)
+        (append-to-command-line event-data)
+        (responder event)))))
+
+(defn- wrap-handle-backspace
+  [responder]
+  (fn [editor event]
+    (+> editor
+      (if (= event [:keystroke "<BS>"])
+        (let [command-line (:command-line editor)]
+          (if (zero? (count command-line))
+            (e/enter-mode :normal)
+            (assoc :command-line (subs command-line 0 (dec (count command-line))))))
+        (responder event)))))
+
+(defn- wrap-process-command
+  [responder]
+  (fn [editor event]
+    (if (= event [:keystroke "<Enter>"])
+      (process-command editor)
+      (responder editor event))))
+
+(def responder
+  (-> bad-event
+      wrap-command-line-insert
+      wrap-handle-backspace
+      wrap-process-command))
 
 (defmethod e/enter-mode :command-line
   [editor mode]
@@ -69,4 +82,4 @@
 
 (defmethod e/respond :command-line
   [editor event]
-  (eventmap editor event))
+  (responder editor event))
