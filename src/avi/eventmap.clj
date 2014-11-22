@@ -72,12 +72,11 @@
                `(let [~repeat-arg (:count ~editor-arg)]
                   ~@body))
 
-        repeat-loop? (and (not (:no-repeat tags)) (not repeat-arg))
-        reset-count? (not (:keep-count tags))
+        repeat-loop? (not repeat-arg)
 
         wrappers (cond-> `[wrap-handler-with-beep-reset]
                    repeat-loop? (conj `wrap-handler-with-repeat-loop)
-                   reset-count? (conj `wrap-handler-with-count-reset))]
+                   true (conj `wrap-handler-with-count-reset))]
     `(-> (fn [~editor-arg ~event-arg]
            ~body)
          ~@wrappers)))
