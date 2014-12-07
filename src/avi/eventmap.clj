@@ -45,21 +45,15 @@
        (map #(vector :keystroke %))
        vec))
 
-(defn- tag?
-  [tag]
-  (and (keyword? tag)
-       (not= :else tag)))
-
 (defn- parse-eventmap-entry
   [entry-form]
-  (let [[tags [event-spec args & body]] (split-with tag? entry-form)]
+  (let [[event-spec args & body] entry-form]
     {:event-spec event-spec,
      :args args,
-     :body body
-     :tags (into #{} tags)}))
+     :body body}))
 
 (defn- entry-handler-fn
-  [{:keys [tags args body]}]
+  [{:keys [args body]}]
   (let [arg-named (fn [the-name]
                     (some->> args
                       (filter #(= (name %) the-name))
