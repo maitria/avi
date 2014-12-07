@@ -71,7 +71,8 @@
   (-> em/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
-      wrap-process-command))
+      wrap-process-command
+      em/wrap-reset-beep))
 
 (defmethod e/enter-mode :command-line
   [editor mode]

@@ -1,6 +1,7 @@
 (ns avi.insert-mode
   (:require [packthread.core :refer :all]
             [avi.editor :as e]
+            [avi.eventmap :as em]
             [avi.buffer :as b]
             [avi.pervasive :refer :all]))
 
@@ -65,7 +66,8 @@
 (def responder
   (-> update-buffer-for-insert-event
       wrap-record-event
-      wrap-handle-escape))
+      wrap-handle-escape
+      em/wrap-reset-beep))
 
 (defmethod e/respond :insert
   [editor event]

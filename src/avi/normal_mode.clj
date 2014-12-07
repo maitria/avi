@@ -263,7 +263,8 @@
 (def responder
   (-> em/beep-responder
       wrap-normal-mode
-      wrap-collect-repeat-count))
+      wrap-collect-repeat-count
+      em/wrap-reset-beep))
 
 (defmethod e/respond :normal
   [editor event]
