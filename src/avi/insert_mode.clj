@@ -5,6 +5,48 @@
             [avi.buffer :as b]
             [avi.pervasive :refer :all]))
 
+(def wrap-enter-insert-mode
+  (em/eventmap
+    ("a"
+      [editor repeat-count]
+      (+> editor
+          (e/enter-mode :insert)
+          (in e/current-buffer
+            (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
+                  new-j (min (count (get lines i)) (inc j))]
+              (assoc :cursor [i new-j])))))
+
+    ("i"
+      [editor repeat-count]
+      (e/enter-mode editor :insert))
+
+    ("o"
+      [editor repeat-count]
+      (+> editor
+          (let [{[i] :cursor} (e/current-buffer editor)]
+            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]])
+            (in e/current-buffer
+                (b/insert-blank-line (inc i)))
+            (e/change-line inc))))
+
+    ("A"
+      [editor repeat-count]
+      (+> editor
+          (e/enter-mode :insert)
+          (in e/current-buffer
+            (let [{[i] :cursor, lines :lines} (e/current-buffer editor)
+                  j (count (get lines i))]
+              (assoc :cursor [i j])))))
+
+    ("O"
+      [editor repeat-count]
+      (+> editor
+          (let [{[i] :cursor} (e/current-buffer editor)]
+            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]])
+            (in e/current-buffer
+                (b/insert-blank-line i)
+                (b/move-cursor [i 0] 0)))))))
+
 (defn- key->text
   [key]
   (if (= key "<Enter>")

@@ -5,6 +5,7 @@
             [avi.command-line-mode :as command-line-mode]
             [avi.editor :as e]
             [avi.eventmap :as em]
+            [avi.insert-mode :as insert-mode]
             [avi.pervasive :refer :all]
             [avi.string :as s]))
 
@@ -54,15 +55,6 @@
             j (max 0 (dec line-length))]
         (change-column editor (constantly j))))
 
-    ("a"
-      [editor repeat-count]
-      (+> editor
-          (e/enter-mode :insert)
-          (in e/current-buffer
-            (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
-                  new-j (min (count (get lines i)) (inc j))]
-              (assoc :cursor [i new-j])))))
-
     ("dd"
       [editor repeat-count]
       (+> editor
@@ -86,10 +78,6 @@
       [editor]
       (change-column editor dec))
 
-    ("i"
-      [editor repeat-count]
-      (e/enter-mode editor :insert))
-
     ("j"
       [editor]
       (e/change-line editor inc))
@@ -101,15 +89,6 @@
     ("l"
       [editor]
       (change-column editor inc))
-
-    ("o"
-      [editor repeat-count]
-      (+> editor
-          (let [{[i] :cursor} (e/current-buffer editor)]
-            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]])
-            (in e/current-buffer
-                (b/insert-blank-line (inc i)))
-            (e/change-line inc))))
 
     ("u"
       [editor]
@@ -129,15 +108,6 @@
                   buffer
                   (range (or repeat-count 1))))
               b/commit)))
-
-    ("A"
-      [editor repeat-count]
-      (+> editor
-          (e/enter-mode :insert)
-          (in e/current-buffer
-            (let [{[i] :cursor, lines :lines} (e/current-buffer editor)
-                  j (count (get lines i))]
-              (assoc :cursor [i j])))))
 
     ("G"
       [editor repeat-count]
@@ -184,15 +154,6 @@
       (+> editor
           (in e/current-buffer
               b/cursor-to-middle-of-viewport)))
-
-    ("O"
-      [editor repeat-count]
-      (+> editor
-          (let [{[i] :cursor} (e/current-buffer editor)]
-            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]])
-            (in e/current-buffer
-                (b/insert-blank-line i))
-            (change-column (constantly 0)))))
 
     ("<C-D>"
       [editor]
@@ -253,6 +214,7 @@
 (def responder
   (-> em/beep-responder
       wrap-normal-mode
+      insert-mode/wrap-enter-insert-mode
       brackets/wrap-go-to-matching-bracket
       wrap-collect-repeat-count
       em/wrap-reset-beep))
