@@ -54,16 +54,6 @@
             j (max 0 (dec line-length))]
         (change-column editor (constantly j))))
 
-    ("%"
-      [editor]
-      (+> editor
-        (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
-              new-cursor (brackets/matching-bracket [i j] lines)]
-          (if new-cursor
-            (in e/current-buffer
-              (assoc :cursor new-cursor))
-            e/beep))))
-
     ("a"
       [editor repeat-count]
       (+> editor
@@ -263,6 +253,7 @@
 (def responder
   (-> em/beep-responder
       wrap-normal-mode
+      brackets/wrap-go-to-matching-bracket
       wrap-collect-repeat-count
       em/wrap-reset-beep))
 

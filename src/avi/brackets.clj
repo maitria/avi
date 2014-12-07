@@ -1,4 +1,6 @@
-(ns avi.brackets)
+(ns avi.brackets
+  (:require [packthread.core :refer :all]
+            [avi.editor :as e]))
 
 (defn- advance-position
   [[i j] lines]
@@ -57,7 +59,7 @@
 (def ^:private open-brackets (into #{} (keys bracket-map)))
 (def ^:private brackets (into #{} (concat (keys bracket-map) (vals bracket-map))))
 
-(defn matching-bracket
+(defn- matching-bracket
   [[i j] lines]
   (let [bracket (get-in lines [i j])
         open-bracket? (open-brackets bracket)
@@ -82,3 +84,16 @@
                         first)]
     (if (brackets bracket)
       new-cursor)))
+
+(defn wrap-go-to-matching-bracket
+  [responder]
+  (fn [editor event]
+    (+> editor
+      (if (= event [:keystroke "%"])
+        (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
+              new-cursor (matching-bracket [i j] lines)]
+          (if new-cursor
+            (in e/current-buffer
+              (assoc :cursor new-cursor))
+            e/beep))
+        (responder event)))))
