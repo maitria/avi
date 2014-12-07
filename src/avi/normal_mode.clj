@@ -37,10 +37,6 @@
       [editor]
       (change-column editor (constantly 0)))
 
-    ("<Enter>"
-      [editor]
-      (e/enter-mode :finished))
-
     (":"
       [editor]
       (e/enter-mode editor :command-line))
