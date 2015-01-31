@@ -6,9 +6,9 @@
 
 (def responder
   (-> e/unhandled-event-responder
-      avi.normal-mode/wrap-normal-mode
-      avi.insert-mode/wrap-insert-mode
-      avi.command-line-mode/wrap-command-line-mode
+      avi.normal-mode/wrap-mode
+      avi.insert-mode/wrap-mode
+      avi.command-line-mode/wrap-mode
       e/wrap-handle-resize
       e/wrap-handle-exceptions
       e/wrap-reset-beep))

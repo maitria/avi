@@ -78,16 +78,11 @@
       (process-command editor)
       (responder editor event))))
 
-(def command-line-responder
+(def responder
   (-> e/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
       wrap-process-command
       e/wrap-reset-beep))
 
-(defn wrap-command-line-mode
-  [responder]
-  (fn [editor event]
-    (if (= (:mode editor) :command-line)
-      (command-line-responder editor event)
-      (responder editor event))))
+(def wrap-mode (e/mode-middleware :command-line responder))

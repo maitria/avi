@@ -50,6 +50,14 @@
   [editor]
   (assoc editor :mode :normal, :message nil))
 
+(defn mode-middleware
+  [mode mode-responder]
+  (fn [responder]
+    (fn [editor event]
+      (if (= mode (:mode editor))
+        (mode-responder editor event)
+        (responder editor event)))))
+
 ;; -- Terminal resizing ------------------------------------------------------
 
 (defn wrap-handle-resize

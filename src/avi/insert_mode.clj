@@ -115,14 +115,9 @@
         (responder event)
         (update-in [:insert-mode-state :script] conj event))))
 
-(def insert-mode-responder
+(def responder
   (-> update-buffer-for-insert-event
       wrap-record-event
       wrap-handle-escape))
 
-(defn wrap-insert-mode
-  [responder]
-  (fn [editor event]
-    (if (= (:mode editor) :insert)
-      (insert-mode-responder editor event)
-      (responder editor event))))
+(def wrap-mode (e/mode-middleware :insert responder))
