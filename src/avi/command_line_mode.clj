@@ -20,7 +20,7 @@
         (e/enter-mode :normal)
         (cond
           (= "q" command-line)
-          (e/enter-mode :finished)
+          (assoc :finished? true)
 
           (= "w" command-line)
           (in e/current-buffer
@@ -30,7 +30,7 @@
           (do
             (in e/current-buffer
                 (b/write))
-            (e/enter-mode :finished))
+            (assoc :finished? true))
 
           (= "" command-line)
           identity

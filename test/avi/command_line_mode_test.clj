@@ -18,14 +18,14 @@
     (:mode (editor :after ":<BS>")) => :normal))
 (facts "regarding `:q`"
   (fact "Avi doesn't start in the 'finished' state"
-    (:mode (editor)) =not=> :finished)
+    (:finished? (editor)) => falsey)
   (fact "Typing part of `:q<Enter>` doesn't exit Avi"
-    (:mode (editor :after ":")) =not=> :finished
-    (:mode (editor :after ":q")) =not=> :finished)
+    (:finished? (editor :after ":")) => falsey
+    (:finished? (editor :after ":q")) => falsey)
   (fact "`:q<Enter>` exits Avi."
-    (:mode (editor :after ":q<Enter>")) => :finished)
+    (:finished? (editor :after ":q<Enter>")) => true)
   (fact "`:q!<Enter>` does not exit Avi."
-    (:mode (editor :after ":q!<Enter>")) =not=> :finished))
+    (:finished? (editor :after ":q!<Enter>")) => falsey))
 
 (facts "regarding `:<N>`"
   (fact "`:<N><Enter>` moves to line N"
@@ -55,4 +55,4 @@
   (fact "`:wq` writes the file"
     (file-written :editing "ABC" :after ":wq<Enter>") => ["test.txt" "ABC"])
   (fact "`:wq` exits avi"
-    (:mode (editor :after ":wq<Enter>")) => :finished))
+    (:finished? (editor :after ":wq<Enter>")) => true))
