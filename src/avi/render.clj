@@ -109,3 +109,14 @@
      :chars rendered-chars
      :attrs rendered-attrs
      :cursor (cursor-position editor)}))
+
+(defn rendered
+  [editor]
+  (assoc editor :rendition (render editor)))
+
+(defn wrap
+  [responder]
+  (fn [editor event]
+    (-> editor
+      (responder event)
+      rendered)))

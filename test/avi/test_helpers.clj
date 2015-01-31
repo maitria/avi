@@ -52,7 +52,7 @@
                        (swap! file-written (constantly [filename content]))
                        nil))
         initial-editor (binding [*world* test-world]
-                         (e/initial-editor [8 width] start-args))
+                         (avi.main/initial-editor [8 width] start-args))
         final-editor (binding [*world* test-world]
                        (reduce
                          avi.main/responder
@@ -96,7 +96,7 @@
   [& args]
   (let [{width :width,
          chars :chars,
-         attrs :attrs} (render/render (apply editor args))
+         attrs :attrs} (:rendition (apply editor args))
         height (quot (count chars) width)
         lines (->> (range height)
                    (map #(String. chars (* % width) width))
@@ -112,7 +112,7 @@
 
 (defn cursor
   [& args]
-  (:cursor (render/render (apply editor args))))
+  (:cursor (:rendition (apply editor args))))
 
 (defn beeped
   [editor]

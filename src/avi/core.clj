@@ -4,7 +4,6 @@
             [avi.editor :as e]
             [avi.main]
             [avi.normal-mode]
-            [avi.render :as render]
             [avi.world :refer :all])
   (:gen-class))
 
@@ -24,7 +23,7 @@
 
 (defn- editor-stream
   [world args]
-  (let [initial-editor (e/initial-editor (terminal-size world) args)]
+  (let [initial-editor (avi.main/initial-editor (terminal-size world) args)]
     (->> (event-stream world)
          (reductions avi.main/responder initial-editor)
          (take-while (complement :finished?)))))
@@ -33,7 +32,7 @@
   [editor]
   (when (:beep? editor)
     (beep *world*))
-  (update-terminal *world* (render/render editor)))
+  (update-terminal *world* (:rendition editor)))
 
 (defn- run
   [world args]
