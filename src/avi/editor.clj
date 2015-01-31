@@ -1,5 +1,6 @@
 (ns avi.editor
   (:require [packthread.core :refer :all]
+            [avi.pervasive :refer :all]
             [avi.buffer :as b]))
 
 (defn initial-editor
@@ -28,6 +29,10 @@
 (defn beep-responder
   [editor event]
   (beep editor))
+
+(defn unhandled-event-responder
+  [editor event]
+  (fail (str "Unhandled event " (pr-str event))))
 
 ;; ---------------------------------------------------------------------------
 

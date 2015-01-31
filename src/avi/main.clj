@@ -4,12 +4,8 @@
             [avi.normal-mode]
             [avi.editor :as e]))
 
-(defn unhandled-event
-  [editor event]
-  (e/beep editor))
-
 (def responder
-  (-> unhandled-event
+  (-> e/unhandled-event-responder
       avi.normal-mode/wrap-normal-mode
       avi.insert-mode/wrap-insert-mode
       avi.command-line-mode/wrap-command-line-mode
