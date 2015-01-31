@@ -1,7 +1,11 @@
 (ns avi.editor
+  "Functions (including basse responders, middleware, and utilties) for
+   manipulating the editor map."
   (:require [packthread.core :refer :all]
             [avi.pervasive :refer :all]
             [avi.buffer :as b]))
+
+;; -- Initial state ----------------------------------------------------------
 
 (defn initial-editor
   [[lines columns] [filename]]
@@ -24,6 +28,50 @@
         (assoc :beep? false)
         (handler event))))
 
+;; -- Tracking the current buffer --------------------------------------------
+
+(defn current-buffer
+  "Read or update the current buffer.
+  
+  This is inteaded to be used with packthread's \"in\" macro, like so:
+
+    (+> editor
+        (in e/current-buffer
+            (assoc :foo :bar)))
+  "
+  ([editor]
+   (:buffer editor))
+  ([editor buffer-fn]
+   (update-in editor [:buffer] buffer-fn)))
+
+;; -- Modes ------------------------------------------------------------------
+
+(defn enter-normal-mode
+  [editor]
+  (assoc editor :mode :normal, :message nil))
+
+;; -- Terminal resizing ------------------------------------------------------
+
+(defn wrap-handle-resize
+  [responder]
+  (fn [editor [event-type size :as event]]
+    (if (= event-type :resize)
+      (+> editor
+          (assoc-in [:viewport :size] size)
+          (in current-buffer
+              (b/resize (- (first size) 2))))
+      (responder editor event))))
+
+;; -- Exceptions and failures ------------------------------------------------
+
+(defn wrap-handle-exceptions
+  [responder]
+  (fn [editor event]
+    (try
+      (responder editor event)
+      (catch Throwable e
+        (merge editor (ex-data e))))))
+
 ;; -- Some "base" responders -------------------------------------------------
 
 (defn beep-responder
@@ -34,13 +82,7 @@
   [editor event]
   (fail (str "Unhandled event " (pr-str event))))
 
-;; ---------------------------------------------------------------------------
-
-(defn current-buffer
-  ([editor]
-   (:buffer editor))
-  ([editor buffer-fn]
-   (update-in editor [:buffer] buffer-fn)))
+;; -- Movement helpers -------------------------------------------------------
 
 (defn- valid-line?
   [editor i]
@@ -57,24 +99,4 @@
           (in current-buffer
               (b/move-to-line i))))))
 
-(defn enter-normal-mode
-  [editor]
-  (assoc editor :mode :normal, :message nil))
-
-(defn wrap-handle-resize
-  [responder]
-  (fn [editor [event-type size :as event]]
-    (if (= event-type :resize)
-      (+> editor
-          (assoc-in [:viewport :size] size)
-          (in current-buffer
-              (b/resize (- (first size) 2))))
-      (responder editor event))))
-
-(defn wrap-handle-exceptions
-  [responder]
-  (fn [editor event]
-    (try
-      (responder editor event)
-      (catch Throwable e
-        (merge editor (ex-data e))))))
+;; ---------------------------------------------------------------------------
