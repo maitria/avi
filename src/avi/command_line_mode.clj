@@ -76,7 +76,7 @@
 
 (defmethod e/enter-mode :command-line
   [editor mode]
-  (assoc editor :mode :command-line, :command-line ""))
+  (assoc editor :old-mode :command-line, :command-line ""))
 
 (defmethod e/respond :command-line
   [editor event]

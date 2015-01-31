@@ -4,7 +4,7 @@
 
 (defn initial-editor
   [[lines columns] [filename]]
-  {:mode :normal
+  {:old-mode :normal
    :buffer (b/open filename (- lines 2))
    :viewport {:size [lines columns]}
    :count nil
@@ -42,13 +42,13 @@
 
 (defmethod enter-mode :default
   [editor mode]
-  (assoc editor :mode mode, :message nil))
+  (assoc editor :old-mode mode, :message nil))
 
 (defmulti respond
   (fn [editor [event-kind]]
     (if (= :resize event-kind)
       :resize
-      (:mode editor))))
+      (:old-mode editor))))
 
 (defmethod respond :resize
   [editor [_ size]]

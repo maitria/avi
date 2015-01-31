@@ -119,7 +119,7 @@
   [editor mode & {script :script-prefix
                   :or {script []}}]
   (+> editor
-      (assoc :mode :insert,
+      (assoc :old-mode :insert,
              :message [:white :black "--INSERT--"]
              :insert-mode-state {:count (or (:count editor) 1)
                                  :script script})
