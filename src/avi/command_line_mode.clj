@@ -7,7 +7,7 @@
 
 (defn enter-command-line-mode
   [editor]
-  (assoc editor :old-mode :command-line, :command-line ""))
+  (assoc editor :mode :command-line, :command-line ""))
 
 (defn wrap-enter-command-line-mode
   [responder]
@@ -79,13 +79,16 @@
       (process-command editor)
       (responder editor event))))
 
-(def responder
+(def command-line-responder
   (-> em/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
       wrap-process-command
       em/wrap-reset-beep))
 
-(defmethod e/respond :command-line
-  [editor event]
-  (responder editor event))
+(defn wrap-command-line-mode
+  [responder]
+  (fn [editor event]
+    (if (= (:mode editor) :command-line)
+      (command-line-responder editor event)
+      (responder editor event))))

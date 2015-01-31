@@ -47,7 +47,7 @@
 (defn- render-message-line
   [editor]
   (cond
-    (= (:old-mode editor) :command-line)
+    (= (:mode editor) :command-line)
     [:white :black (str ":" (:command-line editor))]
 
     (:message editor)
@@ -79,7 +79,7 @@
       :else
       [:blue :black "~"])))
 
-(defmulti ^:private cursor-position :old-mode)
+(defmulti ^:private cursor-position :mode)
 
 (defmethod cursor-position :default
   [editor]
