@@ -38,10 +38,6 @@
       [editor]
       (change-column editor (constantly 0)))
 
-    (":"
-      [editor]
-      (e/enter-mode editor :command-line))
-
     ("^"
       [editor]
       (let [position (s/index-of-first-non-blank (current-line editor))]
@@ -214,6 +210,7 @@
 (def responder
   (-> em/beep-responder
       wrap-normal-mode
+      command-line-mode/wrap-enter-command-line-mode
       insert-mode/wrap-enter-insert-mode
       brackets/wrap-go-to-matching-bracket
       wrap-collect-repeat-count

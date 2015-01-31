@@ -5,6 +5,14 @@
             [avi.eventmap :as em]
             [avi.pervasive :refer :all]))
 
+(defn wrap-enter-command-line-mode
+  [responder]
+  (fn [editor event]
+    (+> editor
+      (if (= event [:keystroke ":"])
+        (e/enter-mode :command-line)
+        (responder event)))))
+
 (defn- append-to-command-line
   [editor s]
   (assoc editor :command-line (str (:command-line editor) s)))
