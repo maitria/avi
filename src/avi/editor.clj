@@ -43,8 +43,6 @@
     (assoc :old-mode :normal, :message nil)
     (dissoc :mode)))
 
-(defmulti respond (constantly :normal))
-
 (defn wrap-handle-resize
   [responder]
   (fn [editor [event-type size :as event]]
@@ -62,7 +60,3 @@
       (responder editor event)
       (catch Throwable e
         (merge editor (ex-data e))))))
-
-(defn safe-respond
-  [editor event]
-  (respond editor event))

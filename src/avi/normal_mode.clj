@@ -219,7 +219,3 @@
       e/wrap-handle-resize
       e/wrap-handle-exceptions
       em/wrap-reset-beep))
-
-(defmethod e/respond :normal
-  [editor event]
-  (responder editor event))

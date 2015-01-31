@@ -55,7 +55,7 @@
                          (e/initial-editor [8 width] start-args))
         final-editor (binding [*world* test-world]
                        (reduce
-                         e/safe-respond
+                         avi.normal-mode/responder
                          initial-editor
                          events))]
     {:editor final-editor

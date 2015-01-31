@@ -2,9 +2,7 @@
   (:import [avi.terminal Terminal])
   (:require [packthread.core :refer :all]
             [avi.editor :as e]
-            [avi.command-line-mode]
             [avi.normal-mode]
-            [avi.insert-mode]
             [avi.render :as render]
             [avi.world :refer :all])
   (:gen-class))
@@ -27,7 +25,7 @@
   [world args]
   (let [initial-editor (e/initial-editor (terminal-size world) args)]
     (->> (event-stream world)
-         (reductions e/safe-respond initial-editor)
+         (reductions avi.normal-mode/responder initial-editor)
          (take-while (complement e/finished?)))))
 
 (defn- perform-effects!
