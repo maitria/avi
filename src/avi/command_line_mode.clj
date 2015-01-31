@@ -2,7 +2,6 @@
   (:require [packthread.core :refer :all]
             [avi.buffer :as b]
             [avi.editor :as e]
-            [avi.eventmap :as em]
             [avi.pervasive :refer :all]))
 
 (defn enter-command-line-mode
@@ -80,7 +79,7 @@
       (responder editor event))))
 
 (def command-line-responder
-  (-> em/beep-responder
+  (-> e/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
       wrap-process-command

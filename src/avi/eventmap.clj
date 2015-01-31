@@ -95,7 +95,3 @@
              {}
              mappings)]
     `(invoke-event-handler ~em)))
-
-(defn beep-responder
-  [editor event]
-  (e/beep editor))

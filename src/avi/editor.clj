@@ -23,6 +23,12 @@
         (assoc :beep? false)
         (handler event))))
 
+;; -- Some "base" responders -------------------------------------------------
+
+(defn beep-responder
+  [editor event]
+  (beep editor))
+
 ;; ---------------------------------------------------------------------------
 
 (defn current-buffer

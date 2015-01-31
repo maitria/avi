@@ -208,7 +208,7 @@
         (responder event)))))
 
 (def normal-mode-responder
-  (-> em/beep-responder
+  (-> e/beep-responder
       wrap-normal-mode
       command-line-mode/wrap-enter-command-line-mode
       insert-mode/wrap-enter-insert-mode
