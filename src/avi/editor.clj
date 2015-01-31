@@ -43,18 +43,17 @@
     (assoc :old-mode :normal, :message nil)
     (dissoc :mode)))
 
-(defmulti respond
-  (fn [editor [event-kind]]
-    (if (= :resize event-kind)
-      :resize
-      (:old-mode editor))))
+(defmulti respond (constantly :normal))
 
-(defmethod respond :resize
-  [editor [_ size]]
-  (+> editor
-      (assoc-in [:viewport :size] size)
-      (in current-buffer
-          (b/resize (- (first size) 2)))))
+(defn wrap-handle-resize
+  [responder]
+  (fn [editor [event-type size :as event]]
+    (if (= event-type :resize)
+      (+> editor
+          (assoc-in [:viewport :size] size)
+          (in current-buffer
+              (b/resize (- (first size) 2))))
+      (responder editor event))))
 
 (defn safe-respond
   [editor event]

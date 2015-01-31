@@ -216,6 +216,7 @@
       wrap-collect-repeat-count
       insert-mode/wrap-insert-mode
       command-line-mode/wrap-command-line-mode
+      e/wrap-handle-resize
       em/wrap-reset-beep))
 
 (defmethod e/respond :normal
