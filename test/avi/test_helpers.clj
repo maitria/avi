@@ -94,9 +94,7 @@
 
 (defn terminal
   [& args]
-  (let [{width :width,
-         chars :chars,
-         attrs :attrs} (:rendition (apply editor args))
+  (let [{:keys [width chars attrs]} (:rendition (apply editor args))
         height (quot (count chars) width)
         lines (->> (range height)
                    (map #(String. chars (* % width) width))
