@@ -37,12 +37,9 @@
           (in current-buffer
               (b/move-to-line i))))))
 
-(defmulti enter-mode (fn [editor mode & args]
-                       mode))
-
-(defmethod enter-mode :default
-  [editor mode]
-  (assoc editor :old-mode mode, :message nil))
+(defn enter-normal-mode
+  [editor]
+  (assoc editor :old-mode :normal, :message nil))
 
 (defmulti respond
   (fn [editor [event-kind]]

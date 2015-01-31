@@ -106,7 +106,7 @@
             (in e/current-buffer
                 (b/move-cursor [i new-j] new-j)
                 b/commit))
-          (e/enter-mode :normal))
+          (e/enter-normal-mode))
       (responder editor event))))
 
 (defn- wrap-record-event

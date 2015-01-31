@@ -29,7 +29,7 @@
   [editor]
   (+> editor
       (let [command-line (:command-line editor)]
-        (e/enter-mode :normal)
+        (e/enter-normal-mode)
         (cond
           (= "q" command-line)
           (assoc :finished? true)
@@ -68,7 +68,7 @@
       (if (= event [:keystroke "<BS>"])
         (let [command-line (:command-line editor)]
           (if (zero? (count command-line))
-            (e/enter-mode :normal)
+            (e/enter-normal-mode)
             (assoc :command-line (subs command-line 0 (dec (count command-line))))))
         (responder event)))))
 
