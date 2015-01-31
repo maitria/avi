@@ -5,9 +5,13 @@
             [avi.editor :as e]
             [avi.eventmap :as em]))
 
-require
+(defn unhandled-event
+  [editor event]
+  (e/beep editor))
+
 (def responder
-  (-> avi.normal-mode/responder
+  (-> unhandled-event
+      avi.normal-mode/wrap-normal-mode
       avi.insert-mode/wrap-insert-mode
       avi.command-line-mode/wrap-command-line-mode
       e/wrap-handle-resize

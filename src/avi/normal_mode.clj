@@ -207,10 +207,17 @@
         :else
         (responder event)))))
 
-(def responder
+(def normal-mode-responder
   (-> em/beep-responder
       wrap-normal-mode
       command-line-mode/wrap-enter-command-line-mode
       insert-mode/wrap-enter-insert-mode
       brackets/wrap-go-to-matching-bracket
       wrap-collect-repeat-count))
+
+(defn wrap-normal-mode
+  [responder]
+  (fn [editor event]
+    (if (= :normal (:mode editor))
+      (normal-mode-responder editor event)
+      (responder editor event))))
