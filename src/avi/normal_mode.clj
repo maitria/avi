@@ -213,9 +213,4 @@
       command-line-mode/wrap-enter-command-line-mode
       insert-mode/wrap-enter-insert-mode
       brackets/wrap-go-to-matching-bracket
-      wrap-collect-repeat-count
-      insert-mode/wrap-insert-mode
-      command-line-mode/wrap-command-line-mode
-      e/wrap-handle-resize
-      e/wrap-handle-exceptions
-      em/wrap-reset-beep))
+      wrap-collect-repeat-count))
