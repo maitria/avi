@@ -26,7 +26,7 @@
   (let [initial-editor (e/initial-editor (terminal-size world) args)]
     (->> (event-stream world)
          (reductions avi.normal-mode/responder initial-editor)
-         (take-while (complement e/finished?)))))
+         (take-while (complement :finished?)))))
 
 (defn- perform-effects!
   [editor]
