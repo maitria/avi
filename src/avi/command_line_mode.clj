@@ -5,12 +5,16 @@
             [avi.eventmap :as em]
             [avi.pervasive :refer :all]))
 
+(defn enter-command-line-mode
+  [editor]
+  (assoc editor :old-mode :command-line, :command-line ""))
+
 (defn wrap-enter-command-line-mode
   [responder]
   (fn [editor event]
     (+> editor
       (if (= event [:keystroke ":"])
-        (e/enter-mode :command-line)
+        (enter-command-line-mode)
         (responder event)))))
 
 (defn- append-to-command-line
@@ -81,10 +85,6 @@
       wrap-handle-backspace
       wrap-process-command
       em/wrap-reset-beep))
-
-(defmethod e/enter-mode :command-line
-  [editor mode]
-  (assoc editor :old-mode :command-line, :command-line ""))
 
 (defmethod e/respond :command-line
   [editor event]
