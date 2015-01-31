@@ -29,7 +29,7 @@
        (cursor :editing "One\nTwo\nThree..." :after "ji<BS>") => [0 3]))
 
   (fact "`<Esc>` in insert mode returns to normal mode"
-    (:old-mode (editor :after "i<Esc>")) => :normal)
+    (:mode (editor :after "i<Esc>")) => :normal)
   (fact "Avi displays `--INSERT--` on the prompt mode when in insert mode"
     (terminal :line :message :editing "One\nTwo\nThree..." :after "i") => "--INSERT--")
   (fact "`ix<Enter>` inserts a new line"

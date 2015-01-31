@@ -4,7 +4,7 @@
 
 (defn initial-editor
   [[lines columns] [filename]]
-  {:old-mode :normal
+  {:mode :normal
    :buffer (b/open filename (- lines 2))
    :viewport {:size [lines columns]}
    :count nil
@@ -39,9 +39,7 @@
 
 (defn enter-normal-mode
   [editor]
-  (+> editor
-    (assoc :old-mode :normal, :message nil)
-    (dissoc :mode)))
+  (assoc editor :mode :normal, :message nil))
 
 (defn wrap-handle-resize
   [responder]
