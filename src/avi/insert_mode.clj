@@ -5,12 +5,23 @@
             [avi.buffer :as b]
             [avi.pervasive :refer :all]))
 
+(defn enter-insert-mode
+  [editor & {script :script-prefix
+             :or {script []}}]
+  (+> editor
+      (assoc :old-mode :insert,
+             :message [:white :black "--INSERT--"]
+             :insert-mode-state {:count (or (:count editor) 1)
+                                 :script script})
+      (in e/current-buffer
+          b/start-transaction)))
+
 (def wrap-enter-insert-mode
   (em/eventmap
     ("a"
       [editor repeat-count]
       (+> editor
-          (e/enter-mode :insert)
+          (enter-insert-mode)
           (in e/current-buffer
             (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
                   new-j (min (count (get lines i)) (inc j))]
@@ -18,13 +29,13 @@
 
     ("i"
       [editor repeat-count]
-      (e/enter-mode editor :insert))
+      (enter-insert-mode editor))
 
     ("o"
       [editor repeat-count]
       (+> editor
           (let [{[i] :cursor} (e/current-buffer editor)]
-            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]])
+            (enter-insert-mode :script-prefix [[:keystroke "<Enter>"]])
             (in e/current-buffer
                 (b/insert-blank-line (inc i)))
             (e/change-line inc))))
@@ -32,7 +43,7 @@
     ("A"
       [editor repeat-count]
       (+> editor
-          (e/enter-mode :insert)
+          (enter-insert-mode)
           (in e/current-buffer
             (let [{[i] :cursor, lines :lines} (e/current-buffer editor)
                   j (count (get lines i))]
@@ -42,7 +53,7 @@
       [editor repeat-count]
       (+> editor
           (let [{[i] :cursor} (e/current-buffer editor)]
-            (e/enter-mode :insert :script-prefix [[:keystroke "<Enter>"]])
+            (enter-insert-mode :script-prefix [[:keystroke "<Enter>"]])
             (in e/current-buffer
                 (b/insert-blank-line i)
                 (b/move-cursor [i 0] 0)))))))
@@ -114,14 +125,3 @@
 (defmethod e/respond :insert
   [editor event]
   (responder editor event))
-
-(defmethod e/enter-mode :insert
-  [editor mode & {script :script-prefix
-                  :or {script []}}]
-  (+> editor
-      (assoc :old-mode :insert,
-             :message [:white :black "--INSERT--"]
-             :insert-mode-state {:count (or (:count editor) 1)
-                                 :script script})
-      (in e/current-buffer
-          b/start-transaction)))
