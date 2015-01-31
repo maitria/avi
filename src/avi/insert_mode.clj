@@ -6,13 +6,12 @@
             [avi.pervasive :refer :all]))
 
 (defn enter-insert-mode
-  [editor & {script :script-prefix
-             :or {script []}}]
+  [editor & [script]]
   (+> editor
       (assoc :old-mode :insert,
              :message [:white :black "--INSERT--"]
              :insert-mode-state {:count (or (:count editor) 1)
-                                 :script script})
+                                 :script (or script [])})
       (in e/current-buffer
           b/start-transaction)))
 
@@ -35,7 +34,7 @@
       [editor repeat-count]
       (+> editor
           (let [{[i] :cursor} (e/current-buffer editor)]
-            (enter-insert-mode :script-prefix [[:keystroke "<Enter>"]])
+            (enter-insert-mode [[:keystroke "<Enter>"]])
             (in e/current-buffer
                 (b/insert-blank-line (inc i)))
             (e/change-line inc))))
@@ -53,7 +52,7 @@
       [editor repeat-count]
       (+> editor
           (let [{[i] :cursor} (e/current-buffer editor)]
-            (enter-insert-mode :script-prefix [[:keystroke "<Enter>"]])
+            (enter-insert-mode [[:keystroke "<Enter>"]])
             (in e/current-buffer
                 (b/insert-blank-line i)
                 (b/move-cursor [i 0] 0)))))))
