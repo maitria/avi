@@ -2,8 +2,7 @@
   (:require [avi.command-line-mode]
             [avi.insert-mode]
             [avi.normal-mode]
-            [avi.editor :as e]
-            [avi.eventmap :as em]))
+            [avi.editor :as e]))
 
 (defn unhandled-event
   [editor event]
@@ -16,4 +15,4 @@
       avi.command-line-mode/wrap-command-line-mode
       e/wrap-handle-resize
       e/wrap-handle-exceptions
-      em/wrap-reset-beep))
+      e/wrap-reset-beep))

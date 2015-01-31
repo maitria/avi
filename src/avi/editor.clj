@@ -10,9 +10,20 @@
    :count nil
    :beep? false})
 
+;; -- Beeping ----------------------------------------------------------------
+
 (defn beep
   [editor]
   (assoc editor :beep? true))
+
+(defn wrap-reset-beep
+  [handler]
+  (fn [editor event]
+    (-> editor
+        (assoc :beep? false)
+        (handler event))))
+
+;; ---------------------------------------------------------------------------
 
 (defn current-buffer
   ([editor]

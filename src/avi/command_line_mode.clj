@@ -84,7 +84,7 @@
       wrap-command-line-insert
       wrap-handle-backspace
       wrap-process-command
-      em/wrap-reset-beep))
+      e/wrap-reset-beep))
 
 (defn wrap-command-line-mode
   [responder]

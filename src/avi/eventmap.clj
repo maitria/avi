@@ -1,13 +1,6 @@
 (ns avi.eventmap
   (:require [avi.editor :as e]))
 
-(defn wrap-reset-beep
-  [handler]
-  (fn [editor event]
-    (-> editor
-        (assoc :beep? false)
-        (handler event))))
-
 (defn wrap-handler-with-repeat-loop
   [handler]
   (fn [editor event]
