@@ -8,7 +8,7 @@
 (defn enter-insert-mode
   [editor & [script]]
   (+> editor
-      (assoc :old-mode :insert,
+      (assoc :mode :insert,
              :message [:white :black "--INSERT--"]
              :insert-mode-state {:count (or (:count editor) 1)
                                  :script (or script [])})
@@ -115,12 +115,14 @@
         (responder event)
         (update-in [:insert-mode-state :script] conj event))))
 
-(def responder
+(def insert-mode-responder
   (-> update-buffer-for-insert-event
       wrap-record-event
-      wrap-handle-escape
-      em/wrap-reset-beep))
+      wrap-handle-escape))
 
-(defmethod e/respond :insert
-  [editor event]
-  (responder editor event))
+(defn wrap-insert-mode
+  [responder]
+  (fn [editor event]
+    (if (= (:mode editor) :insert)
+      (insert-mode-responder editor event)
+      (responder editor event))))

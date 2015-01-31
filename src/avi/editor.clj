@@ -39,7 +39,9 @@
 
 (defn enter-normal-mode
   [editor]
-  (assoc editor :old-mode :normal, :message nil))
+  (+> editor
+    (assoc :old-mode :normal, :message nil)
+    (dissoc :mode)))
 
 (defmulti respond
   (fn [editor [event-kind]]

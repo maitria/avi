@@ -214,6 +214,7 @@
       insert-mode/wrap-enter-insert-mode
       brackets/wrap-go-to-matching-bracket
       wrap-collect-repeat-count
+      insert-mode/wrap-insert-mode
       em/wrap-reset-beep))
 
 (defmethod e/respond :normal
