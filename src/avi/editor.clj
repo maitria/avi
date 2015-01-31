@@ -55,10 +55,14 @@
               (b/resize (- (first size) 2))))
       (responder editor event))))
 
-(defn safe-respond
-  [editor event]
-  (+> editor
+(defn wrap-handle-exceptions
+  [responder]
+  (fn [editor event]
     (try
-      (respond event)
+      (responder editor event)
       (catch Throwable e
         (merge editor (ex-data e))))))
+
+(defn safe-respond
+  [editor event]
+  (respond editor event))

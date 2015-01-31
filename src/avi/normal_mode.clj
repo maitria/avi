@@ -217,6 +217,7 @@
       insert-mode/wrap-insert-mode
       command-line-mode/wrap-command-line-mode
       e/wrap-handle-resize
+      e/wrap-handle-exceptions
       em/wrap-reset-beep))
 
 (defmethod e/respond :normal
