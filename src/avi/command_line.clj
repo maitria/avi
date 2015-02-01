@@ -44,6 +44,6 @@
       ((command-wrapper command-fn))
       e/wrap-reset-beep))
 
-(defn command-line-mode
+(defn mode-middleware
   [mode-kw command-fn]
   (e/mode-middleware mode-kw (responder command-fn)))

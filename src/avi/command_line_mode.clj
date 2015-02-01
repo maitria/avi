@@ -56,4 +56,4 @@
       :else
       (assoc :message [:white :red (str ":" command-line " is not a thing")]))))
 
-(def wrap-mode (cl/command-line-mode :command-line process-command))
+(def wrap-mode (cl/mode-middleware :command-line process-command))
