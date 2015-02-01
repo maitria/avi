@@ -2,6 +2,13 @@
   (:require [packthread.core :refer :all]
             [avi.editor :as e]))
 
+(defn enter
+  [editor mode-kw prompt]
+  (assoc editor
+         :mode mode-kw
+         :prompt prompt
+         :command-line ""))
+
 (defn- append-to-command-line
   [editor s]
   (assoc editor :command-line (str (:command-line editor) s)))
