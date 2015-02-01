@@ -1,6 +1,7 @@
 (ns avi.command-line-mode
   (:require [packthread.core :refer :all]
             [avi.buffer :as b]
+            [avi.command-line :as cl]
             [avi.editor :as e]
             [avi.pervasive :refer :all]))
 
@@ -24,10 +25,6 @@
 
         :else
         (responder event)))))
-
-(defn- append-to-command-line
-  [editor s]
-  (assoc editor :command-line (str (:command-line editor) s)))
 
 (defn- line-number?
   [command]
@@ -59,42 +56,4 @@
       :else
       (assoc :message [:white :red (str ":" command-line " is not a thing")]))))
 
-(defn- wrap-command-line-insert
-  [responder]
-  (fn [editor [event-type event-data :as event]]
-    (+> editor
-      (if (= event-type :keystroke)
-        (append-to-command-line event-data)
-        (responder event)))))
-
-(defn- wrap-handle-backspace
-  [responder]
-  (fn [editor event]
-    (+> editor
-      (if (= event [:keystroke "<BS>"])
-        (let [command-line (:command-line editor)]
-          (if (zero? (count command-line))
-            (e/enter-normal-mode)
-            (assoc :command-line (subs command-line 0 (dec (count command-line))))))
-        (responder event)))))
-
-(defn- command-wrapper
-  [command-fn]
-  (fn [responder]
-    (fn [editor event]
-      (+> editor
-        (if (= event [:keystroke "<Enter>"])
-          (do
-            (e/enter-normal-mode)
-            (command-fn (:command-line editor)))
-          (responder event))))))
-
-(defn responder
-  [command-fn]
-  (-> e/beep-responder
-      wrap-command-line-insert
-      wrap-handle-backspace
-      ((command-wrapper command-fn))
-      e/wrap-reset-beep))
-
-(def wrap-mode (e/mode-middleware :command-line (responder process-command)))
+(def wrap-mode (cl/command-line-mode :command-line process-command))
