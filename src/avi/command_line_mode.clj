@@ -34,32 +34,31 @@
   (every? #(Character/isDigit %) command))
 
 (defn- process-command
-  [editor]
+  [editor command-line]
   (+> editor
-      (let [command-line (:command-line editor)]
-        (e/enter-normal-mode)
-        (cond
-          (= "q" command-line)
-          (assoc :finished? true)
+    (e/enter-normal-mode)
+    (cond
+      (= "q" command-line)
+      (assoc :finished? true)
 
-          (= "w" command-line)
-          (in e/current-buffer
-              (b/write))
+      (= "w" command-line)
+      (in e/current-buffer
+          (b/write))
 
-          (= "wq" command-line)
-          (do
-            (in e/current-buffer
-                (b/write))
-            (assoc :finished? true))
+      (= "wq" command-line)
+      (do
+        (in e/current-buffer
+            (b/write))
+        (assoc :finished? true))
 
-          (= "" command-line)
-          identity
+      (= "" command-line)
+      identity
 
-          (line-number? command-line)
-          (e/change-line (constantly (dec (Long/parseLong command-line))))
-          
-          :else
-          (assoc :message [:white :red (str ":" command-line " is not a thing")])))))
+      (line-number? command-line)
+      (e/change-line (constantly (dec (Long/parseLong command-line))))
+
+      :else
+      (assoc :message [:white :red (str ":" command-line " is not a thing")]))))
 
 (defn- wrap-command-line-insert
   [responder]
@@ -85,7 +84,7 @@
   (fn [responder]
     (fn [editor event]
       (if (= event [:keystroke "<Enter>"])
-        (command-fn editor)
+        (command-fn editor (:command-line editor))
         (responder editor event)))))
 
 (defn responder
