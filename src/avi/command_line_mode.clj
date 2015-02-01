@@ -5,15 +5,24 @@
             [avi.pervasive :refer :all]))
 
 (defn enter-command-line-mode
-  [editor]
-  (assoc editor :mode :command-line, :command-line ""))
+  [editor prompt]
+  (assoc editor
+         :mode :command-line
+         :prompt prompt
+         :command-line ""))
 
 (defn wrap-enter-command-line-mode
   [responder]
   (fn [editor event]
     (+> editor
-      (if (= event [:keystroke ":"])
-        (enter-command-line-mode)
+      (cond
+        (= event [:keystroke ":"])
+        (enter-command-line-mode ":")
+
+        (= event [:keystroke "/"])
+        (enter-command-line-mode "/")
+
+        :else
         (responder event)))))
 
 (defn- append-to-command-line

@@ -48,7 +48,7 @@
   [editor]
   (cond
     (= (:mode editor) :command-line)
-    [:white :black (str ":" (:command-line editor))]
+    [:white :black (str (:prompt editor) (:command-line editor))]
 
     (:message editor)
     (:message editor)
