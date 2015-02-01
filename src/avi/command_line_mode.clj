@@ -80,7 +80,7 @@
             (assoc :command-line (subs command-line 0 (dec (count command-line))))))
         (responder event)))))
 
-(defn- wrap-process-command
+(defn- command-wrapper
   [responder]
   (fn [editor event]
     (if (= event [:keystroke "<Enter>"])
@@ -91,7 +91,7 @@
   (-> e/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
-      wrap-process-command
+      command-wrapper
       e/wrap-reset-beep))
 
 (def wrap-mode (e/mode-middleware :command-line responder))
