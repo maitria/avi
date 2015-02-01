@@ -81,17 +81,18 @@
         (responder event)))))
 
 (defn- command-wrapper
-  [responder]
-  (fn [editor event]
-    (if (= event [:keystroke "<Enter>"])
-      (process-command editor)
-      (responder editor event))))
+  [command-fn]
+  (fn [responder]
+    (fn [editor event]
+      (if (= event [:keystroke "<Enter>"])
+        (command-fn editor)
+        (responder editor event)))))
 
 (def responder
   (-> e/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
-      command-wrapper
+      ((command-wrapper process-command))
       e/wrap-reset-beep))
 
 (def wrap-mode (e/mode-middleware :command-line responder))
