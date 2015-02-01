@@ -36,7 +36,6 @@
 (defn- process-command
   [editor command-line]
   (+> editor
-    (e/enter-normal-mode)
     (cond
       (= "q" command-line)
       (assoc :finished? true)
@@ -83,9 +82,12 @@
   [command-fn]
   (fn [responder]
     (fn [editor event]
-      (if (= event [:keystroke "<Enter>"])
-        (command-fn editor (:command-line editor))
-        (responder editor event)))))
+      (+> editor
+        (if (= event [:keystroke "<Enter>"])
+          (do
+            (e/enter-normal-mode)
+            (command-fn (:command-line editor)))
+          (responder event))))))
 
 (defn responder
   [command-fn]
