@@ -92,21 +92,19 @@
       editor
       (range (dec repeat-count)))))
 
-(defn- wrap-handle-escape
-  [responder]
-  (fn [editor event]
-    (if (= event [:keystroke "<Esc>"])
+(def wrap-handle-escape
+  (e/keystroke-middleware "<Esc>"
+    (fn [editor]
       (+> editor
-          play-script-repeat-count-times
-          (dissoc :insert-mode-state)
-          (let [b (e/current-buffer editor)
-                [i j] (:cursor b)
-                new-j (max (dec j) 0)]
-            (in e/current-buffer
-                (b/move-cursor [i new-j] new-j)
-                b/commit))
-          (e/enter-normal-mode))
-      (responder editor event))))
+        play-script-repeat-count-times
+        (dissoc :insert-mode-state)
+        (let [b (e/current-buffer editor)
+              [i j] (:cursor b)
+              new-j (max (dec j) 0)]
+          (in e/current-buffer
+              (b/move-cursor [i new-j] new-j)
+              b/commit))
+        (e/enter-normal-mode)))))
 
 (defn- wrap-record-event
   [responder]
