@@ -85,15 +85,13 @@
     (if (brackets bracket)
       new-cursor)))
 
-(defn wrap-go-to-matching-bracket
-  [responder]
-  (fn [editor event]
-    (+> editor
-      (if (= event [:keystroke "%"])
+(def wrap-go-to-matching-bracket
+  (e/keystroke-middleware "%"
+    (fn [editor]
+      (+> editor
         (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
               new-cursor (matching-bracket [i j] lines)]
           (if new-cursor
             (in e/current-buffer
               (assoc :cursor new-cursor))
-            e/beep))
-        (responder event)))))
+            e/beep))))))
