@@ -9,14 +9,8 @@
   [responder]
   (fn [editor event]
     (+> editor
-      (cond
-        (= event [:keystroke ":"])
+      (if (= event [:keystroke ":"])
         (cl/enter :command-line ":")
-
-        (= event [:keystroke "/"])
-        (cl/enter :command-line "/")
-
-        :else
         (responder event)))))
 
 (defn- line-number?

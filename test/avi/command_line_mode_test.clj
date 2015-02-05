@@ -56,9 +56,3 @@
     (file-written :editing "ABC" :after ":wq<Enter>") => ["test.txt" "ABC"])
   (fact "`:wq` exits avi"
     (:finished? (editor :after ":wq<Enter>")) => true))
-
-(facts "regarding `/`"
-  (fact "`/` echoes on the command line"
-    (terminal :line :message :after "/") => "/")
-  (fact "characters typed after `/` echo on the commmand line"
-    (terminal :line :message :after "/foo") => "/foo"))

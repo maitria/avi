@@ -7,6 +7,7 @@
             [avi.eventmap :as em]
             [avi.insert-mode :as insert-mode]
             [avi.pervasive :refer :all]
+            [avi.search]
             [avi.string :as s]))
 
 (defn- change-column
@@ -210,6 +211,7 @@
 (def responder
   (-> e/beep-responder
       wrap-normal-mode
+      avi.search/wrap-normal-search-commands
       command-line-mode/wrap-enter-command-line-mode
       insert-mode/wrap-enter-insert-mode
       brackets/wrap-go-to-matching-bracket
