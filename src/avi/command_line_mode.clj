@@ -5,13 +5,8 @@
             [avi.editor :as e]
             [avi.pervasive :refer :all]))
 
-(defn wrap-enter-command-line-mode
-  [responder]
-  (fn [editor event]
-    (+> editor
-      (if (= event [:keystroke ":"])
-        (cl/enter :command-line ":")
-        (responder event)))))
+(def wrap-enter-command-line-mode
+  (e/keystroke-middleware ":" #(cl/enter % :command-line ":")))
 
 (defn- line-number?
   [command]

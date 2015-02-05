@@ -15,6 +15,16 @@
    :count nil
    :beep? false})
 
+;; -- Building middlewares ---------------------------------------------------
+
+(defn keystroke-middleware
+  [keystroke a-fn]
+  (fn [handler]
+    (fn [editor event]
+      (if (= event [:keystroke keystroke])
+        (a-fn editor)
+        (handler editor event)))))
+
 ;; -- Beeping ----------------------------------------------------------------
 
 (defn beep

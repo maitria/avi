@@ -1,11 +1,7 @@
 (ns avi.search
   (:require [packthread.core :refer :all]
-            [avi.command-line :as cl]))
+            [avi.command-line :as cl]
+            [avi.editor :as e]))
 
-(defn wrap-normal-search-commands
-  [responder]
-  (fn [editor event]
-    (+> editor
-      (if (= event [:keystroke "/"])
-        (cl/enter :command-line "/")
-        (responder event)))))
+(def wrap-normal-search-commands
+  (e/keystroke-middleware "/" #(cl/enter % :command-line "/")))
