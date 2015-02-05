@@ -87,11 +87,10 @@
 
 (def wrap-go-to-matching-bracket
   (e/keystroke-middleware "%"
-    (fn [editor]
-      (+> editor
-        (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
-              new-cursor (matching-bracket [i j] lines)]
-          (if new-cursor
-            (in e/current-buffer
-              (assoc :cursor new-cursor))
-            e/beep))))))
+    (fn+> [editor]
+      (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
+            new-cursor (matching-bracket [i j] lines)]
+        (if new-cursor
+          (in e/current-buffer
+            (assoc :cursor new-cursor))
+          e/beep)))))

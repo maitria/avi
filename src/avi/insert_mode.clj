@@ -94,24 +94,22 @@
 
 (def wrap-handle-escape
   (e/keystroke-middleware "<Esc>"
-    (fn [editor]
-      (+> editor
-        play-script-repeat-count-times
-        (dissoc :insert-mode-state)
-        (let [b (e/current-buffer editor)
-              [i j] (:cursor b)
-              new-j (max (dec j) 0)]
-          (in e/current-buffer
-              (b/move-cursor [i new-j] new-j)
-              b/commit))
-        (e/enter-normal-mode)))))
+    (fn+> [editor]
+      play-script-repeat-count-times
+      (dissoc :insert-mode-state)
+      (let [b (e/current-buffer editor)
+            [i j] (:cursor b)
+            new-j (max (dec j) 0)]
+        (in e/current-buffer
+            (b/move-cursor [i new-j] new-j)
+            b/commit))
+      (e/enter-normal-mode))))
 
 (defn- wrap-record-event
   [responder]
-  (fn [editor event]
-    (+> editor
-        (responder event)
-        (update-in [:insert-mode-state :script] conj event))))
+  (fn+> [editor event]
+    (responder event)
+    (update-in [:insert-mode-state :script] conj event)))
 
 (def responder
   (-> update-buffer-for-insert-event

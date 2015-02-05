@@ -15,28 +15,25 @@
 
 (defn- wrap-command-line-insert
   [responder]
-  (fn [editor [event-type event-data :as event]]
-    (+> editor
-      (if (= event-type :keystroke)
-        (append-to-command-line event-data)
-        (responder event)))))
+  (fn+> [editor [event-type event-data :as event]]
+    (if (= event-type :keystroke)
+      (append-to-command-line event-data)
+      (responder event))))
 
 (def wrap-handle-backspace
   (e/keystroke-middleware "<BS>"
-    (fn [editor]
-      (+> editor
-        (let [command-line (:command-line editor)]
-          (if (zero? (count command-line))
-            (e/enter-normal-mode)
-            (assoc :command-line (subs command-line 0 (dec (count command-line))))))))))
+    (fn+> [editor]
+      (let [command-line (:command-line editor)]
+        (if (zero? (count command-line))
+          (e/enter-normal-mode)
+          (assoc :command-line (subs command-line 0 (dec (count command-line)))))))))
 
 (defn- command-wrapper
   [command-fn]
   (e/keystroke-middleware "<Enter>"
-    (fn [editor]
-      (+> editor
-        e/enter-normal-mode
-        (command-fn (:command-line editor))))))
+    (fn+> [editor]
+      e/enter-normal-mode
+      (command-fn (:command-line editor)))))
 
 (defn- responder
   [command-fn]
