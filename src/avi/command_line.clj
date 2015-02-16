@@ -33,7 +33,8 @@
   (e/keystroke-middleware "<Enter>"
     (fn+> [editor]
       e/enter-normal-mode
-      (command-fn (:command-line editor)))))
+      (command-fn (:command-line editor))
+      (dissoc :command-line :prompt))))
 
 (defn- responder
   [command-fn]
