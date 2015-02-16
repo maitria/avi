@@ -47,7 +47,7 @@
 (defn- render-message-line
   [editor]
   (cond
-    (= (:mode editor) :command-line)
+    (#{:command-line :forward-search} (:mode editor))
     [:white :black (str (:prompt editor) (:command-line editor))]
 
     (:message editor)

@@ -14,6 +14,7 @@
       avi.normal-mode/wrap-mode
       avi.insert-mode/wrap-mode
       avi.command-line-mode/wrap-mode
+      avi.search/wrap-mode
       e/wrap-handle-resize
       e/wrap-handle-exceptions
       e/wrap-reset-beep
