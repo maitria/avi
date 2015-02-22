@@ -1,50 +1,7 @@
 (ns avi.brackets
   (:require [packthread.core :refer :all]
-            [avi.editor :as e]))
-
-(defn- advance-position
-  [[i j] lines]
-  (cond
-    (>= i (count lines))
-    nil
-    
-    (>= j (count (get lines i)))
-    (recur [(inc i) 0] lines)
-
-    :else
-    [i (inc j)]))
-
-(defn- retreat-position
-  [[i j] lines]
-  (cond
-    (< i 0)
-    nil
-
-    (>= j 1)
-    [i (dec j)]
-
-    :else
-    (recur
-      [(dec i) (count (get lines (dec i)))]
-      lines)))
-
-(defn- forward-scan
-  [pos lines]
-  (lazy-seq
-    (if-let [[i j] pos]
-      (cons
-        [i j]
-        (forward-scan (advance-position pos lines) lines))
-      nil)))
-
-(defn- backward-scan
-  [pos lines]
-  (lazy-seq
-    (if-let [[i j] pos]
-      (cons
-        [i j]
-        (backward-scan (retreat-position pos lines) lines))
-    nil)))
+            [avi.editor :as e]
+            [avi.scan :as scan]))
 
 (def ^:private bracket-map
   {\( \)
@@ -64,8 +21,8 @@
   (let [bracket (get-in lines [i j])
         open-bracket? (open-brackets bracket)
         scan (if open-bracket?
-               (forward-scan [i j] lines)
-               (backward-scan [i j] lines))
+               (scan/forward [i j] lines)
+               (scan/backward [i j] lines))
         brackets (if open-bracket?
                    bracket-map
                    reverse-bracket-map)
