@@ -15,16 +15,14 @@
 (defn retreat
   [[i j] lines]
   (cond
-    (< i 0)
+    (= [i j] [0 0])
     nil
 
     (>= j 1)
     [i (dec j)]
 
     :else
-    (recur
-      [(dec i) (count (get lines (dec i)))]
-      lines)))
+    [(dec i) (count (get lines (dec i)))]))
 
 (defn forward
   [pos lines]

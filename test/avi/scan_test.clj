@@ -3,6 +3,7 @@
             [clojure.test.check.generators :as gen]
             [com.gfredericks.test.chuck.generators :as gen']
             [clojure.test.check.properties :as prop]
+            [com.gfredericks.test.chuck.properties :as prop']
             [clojure.test.check.clojure-test :refer [defspec]]
             [avi.scan :as scan]))
 
@@ -31,3 +32,10 @@
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
     (or (nil? (scan/retreat position lines))
         (before? (scan/retreat position lines) position))))
+
+(defspec retreat-at-beginning-of-line-goes-to-newline-position 100
+  (prop'/for-all [lines lines-generator
+                  :when (>= (count lines) 2)
+                  i (gen'/bounded-int 1 (dec (count lines)))]
+    (= (scan/retreat [i 0] lines)
+       [(dec i) (count (get lines (dec i)))])))
