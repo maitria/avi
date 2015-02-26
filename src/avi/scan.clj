@@ -27,17 +27,11 @@
 (defn forward
   [pos lines]
   (lazy-seq
-    (if-let [[i j] pos]
-      (cons
-        [i j]
-        (forward (advance pos lines) lines))
-      nil)))
+    (when pos
+      (cons pos (forward (advance pos lines) lines)))))
 
 (defn backward
   [pos lines]
   (lazy-seq
-    (if-let [[i j] pos]
-      (cons
-        [i j]
-        (backward (retreat pos lines) lines))
-    nil)))
+    (when pos
+      (cons pos (backward (retreat pos lines) lines)))))
