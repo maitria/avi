@@ -33,6 +33,11 @@
     (or (nil? (scan/retreat position lines))
         (before? (scan/retreat position lines) position))))
 
+(defspec advance-position-always-increases 100
+  (prop/for-all [{:keys [lines position]} lines-and-position-generator]
+    (or (nil? (scan/advance position lines))
+        (before? position (scan/advance position lines)))))
+
 (defspec retreat-at-beginning-of-line-goes-to-newline-position 100
   (prop'/for-all [lines lines-generator
                   :when (>= (count lines) 2)
