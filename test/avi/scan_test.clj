@@ -39,3 +39,9 @@
                   i (gen'/bounded-int 1 (dec (count lines)))]
     (= (scan/retreat [i 0] lines)
        [(dec i) (count (get lines (dec i)))])))
+
+(defspec advance-on-last-character-of-line-goes-to-newline-position 100
+  (prop'/for-all [lines lines-generator
+                  i (gen'/bounded-int 0 (dec (count lines)))
+                  :let [j (dec (count (get lines i)))]]
+    (= (scan/advance [i j] lines) [i (inc j)])))
