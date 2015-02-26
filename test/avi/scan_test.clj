@@ -56,3 +56,9 @@
                   i (gen'/bounded-int 0 (dec (count lines)))
                   :let [j (dec (count (get lines i)))]]
     (= (scan/advance [i j] lines) [i (inc j)])))
+
+(defspec retreat-never-skips-a-line 100
+  (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
+    (or (nil? (scan/retreat [i j] lines))
+        (= i (first (scan/retreat [i j] lines)))
+        (= (dec i) (first (scan/retreat [i j] lines))))))
