@@ -22,6 +22,12 @@
   (prop/for-all [lines lines-generator]
     (nil? (scan/retreat [0 0] lines))))
 
+(defspec advance-at-eof-is-always-nil 100
+  (prop'/for-all [lines lines-generator
+                  :let [i (count lines)
+                        j (count (last lines))]]
+    (nil? (scan/advance [i j] lines))))
+
 (defn- before?
   [[i1 j1] [i2 j2]]
   (or (< i1 i2)
