@@ -15,8 +15,19 @@
              j-base gen/pos-int
              :let [j (mod j-base (inc (count (get lines i))))]]
     {:lines lines
-     :positon [i j]}))
+     :position [i j]}))
 
 (defspec retreat-from-0-0-is-always-nil 100
   (prop/for-all [lines lines-generator]
     (nil? (scan/retreat [0 0] lines))))
+
+(defn- before?
+  [[i1 j1] [i2 j2]]
+  (or (< i1 i2)
+      (and (= i1 i2)
+           (< j1 j2))))
+
+(defspec retreat-position-always-decreases 100
+  (prop/for-all [{:keys [lines position]} lines-and-position-generator]
+    (or (nil? (scan/retreat position lines))
+        (before? (scan/retreat position lines) position))))
