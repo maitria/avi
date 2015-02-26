@@ -7,7 +7,7 @@
     nil
 
     (>= j (count (get lines i)))
-    (recur [(inc i) 0] lines)
+    [(inc i) 0]
 
     :else
     [i (inc j)]))
