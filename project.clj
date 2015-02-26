@@ -7,7 +7,9 @@
   :plugins [[lein-midje "3.0.0"]]
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [com.maitria/packthread "0.1.4"]]
-  :profiles {:dev {:dependencies [[midje "1.6.3"]]}
+  :profiles {:dev {:dependencies [[midje "1.6.3"]
+                                  [org.clojure/test.check "0.7.0"]
+                                  [com.gfredericks/test.chuck "0.1.15"]]}
              :uberjar {:aot :all}}
   :aliases {"install" ^{:doc "Install avi on this machine"}
             ["do" "uberjar" ["run" "-m" "avi.install/install"]]}
