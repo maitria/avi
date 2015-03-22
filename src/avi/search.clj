@@ -2,7 +2,8 @@
   (:require [packthread.core :refer :all]
             [avi.buffer :as b]
             [avi.command-line :as cl]
-            [avi.editor :as e]))
+            [avi.editor :as e]
+            [avi.pervasive :refer :all]))
 
 (def wrap-normal-search-commands
   (e/keystroke-middleware "/" #(cl/enter % :forward-search "/")))
@@ -10,13 +11,16 @@
 (defn find-next
   [{:keys [lines], [i] :cursor, :as buffer} re]
   (let [m (re-matcher re (get lines i))]
-    (assert (.find m))
-    (b/move-cursor buffer [i (.start m)] (.start m))))
+    (if (.find m)
+      [i (.start m)]
+      nil)))
 
 (defn process-search
   [editor command-line]
   (+> editor
-    (in e/current-buffer
-      (find-next (re-pattern command-line)))))
+    (let [p (find-next (e/current-buffer editor) (re-pattern command-line))]
+      (if p
+        (in e/current-buffer (b/move-cursor p (second p)))
+        (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
 
 (def wrap-mode (cl/mode-middleware :forward-search process-search))
