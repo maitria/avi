@@ -13,7 +13,7 @@
   (if (>= i (count lines))
     nil
     (let [m (re-matcher re (get lines i))]
-      (if (.find m)
+      (if (.find m j)
         [i (.start m)]
         (recur lines [(inc i) 0] re)))))
 
