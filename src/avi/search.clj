@@ -8,9 +8,9 @@
 (def wrap-normal-search-commands
   (e/keystroke-middleware "/" #(cl/enter % :forward-search "/")))
 
-(defn find-next
+(defn next-occurrence-position
   ([{:keys [lines [i j] :cursor]} re]
-   (find-next lines [i j] re))
+   (next-occurrence-position lines [i j] re))
   ([lines [i j] re]
    (if (>= i (count lines))
      nil
@@ -22,7 +22,7 @@
 (defn process-search
   [editor command-line]
   (+> editor
-    (if-let [[i j] (find-next (e/current-buffer editor) (re-pattern command-line))]
+    (if-let [[i j] (next-occurrence-position (e/current-buffer editor) (re-pattern command-line))]
        (in e/current-buffer (b/move-cursor [i j] j))
        (assoc :message [:white :red (str "Did not find `" command-line "`.")]))))
 
