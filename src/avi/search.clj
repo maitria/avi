@@ -21,9 +21,9 @@
   [editor command-line]
   (+> editor
     (let [{:keys [lines] [i j] :cursor} (e/current-buffer editor)
-          p (find-next lines [i j] (re-pattern command-line))]
-      (if p
-        (in e/current-buffer (b/move-cursor p (second p)))
+          found-pos (find-next lines [i j] (re-pattern command-line))]
+      (if found-pos
+        (in e/current-buffer (b/move-cursor found-pos (second found-pos)))
         (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
 
 (def wrap-mode (cl/mode-middleware :forward-search process-search))
