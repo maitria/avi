@@ -12,4 +12,6 @@
   (fact "`/xx` jumps to the first occurrence of `xx`"
     (cursor :editing "abcxxy" :after "/xx<Enter>") => [0 3])
   (fact "`/xx` shows error when not found"
-    (terminal :line :message :editing "abcyyz" :after "/xx<Enter>") => ["Did not find `xx`." :white :on :red]))
+    (terminal :line :message :editing "abcyyz" :after "/xx<Enter>") => ["Did not find `xx`." :white :on :red])
+  (fact "`/xx` finds an occurrence on a later line"
+    (cursor :editing "abcyyz\nll\nfooxxy\nz" :after "/xx<Enter>") => [2 3]))

@@ -9,16 +9,19 @@
   (e/keystroke-middleware "/" #(cl/enter % :forward-search "/")))
 
 (defn find-next
-  [{:keys [lines], [i] :cursor, :as buffer} re]
-  (let [m (re-matcher re (get lines i))]
-    (if (.find m)
-      [i (.start m)]
-      nil)))
+  [lines [i j] re]
+  (if (>= i (count lines))
+    nil
+    (let [m (re-matcher re (get lines i))]
+      (if (.find m)
+        [i (.start m)]
+        (recur lines [(inc i) 0] re)))))
 
 (defn process-search
   [editor command-line]
   (+> editor
-    (let [p (find-next (e/current-buffer editor) (re-pattern command-line))]
+    (let [{:keys [lines] [i j] :cursor} (e/current-buffer editor)
+          p (find-next lines [i j] (re-pattern command-line))]
       (if p
         (in e/current-buffer (b/move-cursor p (second p)))
         (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
