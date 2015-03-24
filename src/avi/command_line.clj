@@ -7,7 +7,9 @@
   (assoc editor
          :mode mode-kw
          :prompt prompt
-         :command-line ""))
+         :command-line ""
+         ::pre-history (get-in editor [::history mode-kw])
+         ::post-history '()))
 
 (defn- append-to-command-line
   [editor s]
@@ -31,8 +33,11 @@
 (def wrap-handle-previous-command
   (e/keystroke-middleware "<C-P>"
     (fn+> [editor]
-      (if-let [command (first (get-in editor [::history (:mode editor)]))]
-        (assoc :command-line command)))))
+      (if-let [command (first (::pre-history editor))]
+        (do
+          (update-in [::pre-history] rest)
+          (update-in [::post-history] conj (:command-line editor))
+          (assoc :command-line command))))))
 
 (defn- command-wrapper
   [command-fn]
@@ -41,7 +46,7 @@
       (update-in [::history (:mode editor)] conj (:command-line editor))
       e/enter-normal-mode
       (command-fn (:command-line editor))
-      (dissoc :command-line :prompt))))
+      (dissoc :command-line :prompt ::pre-history ::post-history))))
 
 (defn- responder
   [command-fn]

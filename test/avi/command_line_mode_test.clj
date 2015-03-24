@@ -59,4 +59,5 @@
 
 (facts "regarding command-line history"
   (fact "`:<C-P>` moves to previous command"
-    (terminal :line :message :after ":42<Enter>:<C-P>") => ":42"))
+    (terminal :line :message :after ":42<Enter>:<C-P>") => ":42"
+    (terminal :line :message :after ":42<Enter>:69<Enter>:<C-P><C-P>") => ":42"))
