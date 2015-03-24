@@ -24,30 +24,25 @@
         :else
         (recur (conj ret (.start m)))))))
 
-(defn next-occurrence-position
-  ([{:keys [lines] [i j] :cursor} re]
-   (next-occurrence-position lines [i (inc j)] re))
-  ([lines [i j] re]
-   (if-not (contains? lines i)
-     nil
-     (if-let [found-j (first (occurrences re (get lines i) #(>= % j)))]
-       [i found-j]
-       (recur lines [(inc i) 0] re)))))
+(defn scanner
+  [succ which pred reset]
+  (fn f
+    ([{:keys [lines] [i j] :cursor} re]
+     (f lines [i (succ j)] re))
+    ([lines [i j] re]
+     (if-not (contains? lines i)
+       nil
+       (if-let [found-j (which (occurrences re (get lines i) (partial pred j)))]
+         [i found-j]
+         (recur lines [(succ i) reset] re))))))
 
-(defn previous-occurrence-position
-  ([{:keys [lines] [i j] :cursor} re]
-   (previous-occurrence-position lines [i (dec j)] re))
-  ([lines [i j] re]
-   (if-not (contains? lines i)
-     nil
-     (if-let [found-j (last (occurrences re (get lines i) #(>= j %)))]
-       [i found-j]
-       (recur lines [(dec i) Long/MAX_VALUE] re)))))
+(def next-occurrence-position (scanner inc first <= 0))
+(def previous-occurrence-position (scanner dec last >= Long/MAX_VALUE))
 
 (defn process-search
-  [finder editor command-line]
+  [scanner editor command-line]
   (+> editor
-    (if-let [[i j] (finder (e/current-buffer editor) (re-pattern command-line))]
+    (if-let [[i j] (scanner (e/current-buffer editor) (re-pattern command-line))]
        (in e/current-buffer (b/move-cursor [i j] j))
        (assoc :message [:white :red (str "Did not find `" command-line "`.")]))))
 
