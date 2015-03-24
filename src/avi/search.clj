@@ -30,10 +30,9 @@
   ([lines [i j] re]
    (if-not (contains? lines i)
      nil
-     (let [m (re-matcher re (get lines i))]
-       (if (.find m j)
-         [i (.start m)]
-         (recur lines [(inc i) 0] re))))))
+     (if-let [found-j (first (occurrences re (get lines i) #(>= % j)))]
+       [i found-j]
+       (recur lines [(inc i) 0] re)))))
 
 (defn previous-occurrence-position
   ([{:keys [lines] [i j] :cursor} re]
