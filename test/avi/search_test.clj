@@ -29,4 +29,6 @@
     (cursor :editing "axxbxx" :after "$h?xx<Enter>") => [0 1])
   (fact "`?xx` finds a previous occurrence on a previous line"
     (cursor :editing "axx\nzzy" :after "j?xx<Enter>") => [0 1]
-    (cursor :editing "axxbxx\nzzy" :after "j?xx<Enter>") => [0 4]))
+    (cursor :editing "axxbxx\nzzy" :after "j?xx<Enter>") => [0 4])
+  (fact "`?xx` shows an error when not found"
+    (terminal :line :message :editing "abcyyz" :after "?xx<Enter>") => ["Did not find `xx`." :white :on :red]))

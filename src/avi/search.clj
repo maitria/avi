@@ -11,11 +11,18 @@
     (e/keystroke-middleware "?" #(cl/enter % :backward-search "?"))))
 
 (defn occurrences
-  [m]
-  (loop [ret []]
-    (if-not (.find m)
-      ret
-      (recur (conj ret (.start m))))))
+  [re s pred]
+  (let [m (re-matcher re s)]
+    (loop [ret []]
+      (cond
+        (not (.find m))
+        ret
+
+        (not (pred (.start m)))
+        (recur ret)
+
+        :else
+        (recur (conj ret (.start m)))))))
 
 (defn next-occurrence-position
   ([{:keys [lines] [i j] :cursor} re]
@@ -34,12 +41,9 @@
   ([lines [i j] re]
    (if (< i 0)
      nil
-     (let [m (re-matcher re (get lines i))]
-       (if-let [found-j (->> (occurrences m)
-                          (filter #(>= j %))
-                          last)]
-         [i found-j]
-         (recur lines [(dec i) Long/MAX_VALUE] re))))))
+     (if-let [found-j (last (occurrences re (get lines i) #(>= j %)))]
+       [i found-j]
+       (recur lines [(dec i) Long/MAX_VALUE] re)))))
 
 (defn process-search
   [finder editor command-line]
