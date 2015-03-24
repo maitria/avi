@@ -12,9 +12,10 @@
 
 (defn occurrences
   [m]
-  (lazy-seq
-    (when (.find m)
-      (cons (.start m) (occurrences m)))))
+  (loop [ret []]
+    (if-not (.find m)
+      ret
+      (recur (conj ret (.start m))))))
 
 (defn next-occurrence-position
   ([{:keys [lines] [i j] :cursor} re]
@@ -29,13 +30,15 @@
 
 (defn previous-occurrence-position
   ([{:keys [lines] [i j] :cursor} re]
-   (previous-occurrence-position lines [i (inc j)] re))
+   (previous-occurrence-position lines [i (dec j)] re))
   ([lines [i j] re]
    (if (< i 0)
      nil
      (let [m (re-matcher re (get lines i))]
-       (if-let [j (last (occurrences m))]
-         [i j]
+       (if-let [found-j (->> (occurrences m)
+                          (filter #(>= j %))
+                          last)]
+         [i found-j]
          (recur lines [(dec i) Long/MAX_VALUE] re))))))
 
 (defn process-search

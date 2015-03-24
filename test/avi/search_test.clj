@@ -25,4 +25,5 @@
     (terminal :line :message :after "?") => "?")
   (fact "`?xx` jumps to the previous occurrence of `xx` on the line"
     (cursor :editing "axxbzz" :after "$?xx<Enter>") => [0 1]
-    (cursor :editing "axxbxx" :after "$?xx<Enter>") => [0 4]))
+    (cursor :editing "axxbxx" :after "$?xx<Enter>") => [0 4]
+    (cursor :editing "axxbxx" :after "$h?xx<Enter>") => [0 1]))
