@@ -10,7 +10,7 @@
 
 (defn next-occurrence-position
   ([{:keys [lines] [i j] :cursor} re]
-   (next-occurrence-position lines [i j] re))
+   (next-occurrence-position lines [i (inc j)] re))
   ([lines [i j] re]
    (if (>= i (count lines))
      nil

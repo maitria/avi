@@ -16,4 +16,6 @@
   (fact "`/xx` finds an occurrence on a later line"
     (cursor :editing "abcyyz\nll\nfooxxy\nz" :after "/xx<Enter>") => [2 3])
   (fact "`/xx` finds a later occurrence on the current line"
-    (cursor :editing "axxbxx" :after "ll/xx<Enter>") => [0 4]))
+    (cursor :editing "axxbxx" :after "ll/xx<Enter>") => [0 4])
+  (fact "`/` won't find the occurrence the cursor is on"
+    (cursor :editing "axxbxx" :after "l/xx<Enter>") => [0 4]))
