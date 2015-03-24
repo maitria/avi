@@ -39,6 +39,15 @@
           (update-in [::post-history] conj (:command-line editor))
           (assoc :command-line command))))))
 
+(def wrap-handle-next-command
+  (e/keystroke-middleware "<C-N>"
+    (fn+> [editor]
+      (if-let [command (first (::post-history editor))]
+        (do
+          (update-in [::post-history] rest)
+          (update-in [::pre-history] conj (:command-line editor))
+          (assoc :command-line command))))))
+
 (defn- command-wrapper
   [command-fn]
   (e/keystroke-middleware "<Enter>"
@@ -54,6 +63,7 @@
       wrap-command-line-insert
       wrap-handle-backspace
       wrap-handle-previous-command
+      wrap-handle-next-command
       ((command-wrapper command-fn))
       e/wrap-reset-beep))
 
