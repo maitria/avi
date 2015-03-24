@@ -8,7 +8,7 @@
          :mode mode-kw
          :prompt prompt
          :command-line ""
-         ::pre-history (get-in editor [::history mode-kw])
+         ::pre-history (get-in editor [:command-line-history mode-kw])
          ::post-history '()))
 
 (defn- append-to-command-line
@@ -52,7 +52,7 @@
   [command-fn]
   (e/keystroke-middleware "<Enter>"
     (fn+> [editor]
-      (update-in [::history (:mode editor)] conj (:command-line editor))
+      (update-in [:command-line-history (:mode editor)] conj (:command-line editor))
       e/enter-normal-mode
       (command-fn (:command-line editor))
       (dissoc :command-line :prompt ::pre-history ::post-history))))
