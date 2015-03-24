@@ -9,7 +9,7 @@
   (e/keystroke-middleware "/" #(cl/enter % :forward-search "/")))
 
 (defn next-occurrence-position
-  ([{:keys [lines [i j] :cursor]} re]
+  ([{:keys [lines] [i j] :cursor} re]
    (next-occurrence-position lines [i j] re))
   ([lines [i j] re]
    (if (>= i (count lines))
