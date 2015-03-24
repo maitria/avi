@@ -40,13 +40,16 @@
 (def find-backward  (scanner dec last >= Long/MAX_VALUE))
 
 (defn process-search
-  [scanner editor command-line]
+  [mode scanner editor command-line]
   (+> editor
-    (if-let [[i j] (scanner (e/current-buffer editor) (re-pattern command-line))]
-       (in e/current-buffer (b/move-cursor [i j] j))
-       (assoc :message [:white :red (str "Did not find `" command-line "`.")]))))
+    (let [pattern (if (= "" command-line)
+                    (second (get-in editor [:command-line-history mode]))
+                    command-line)]
+      (if-let [[i j] (scanner (e/current-buffer editor) (re-pattern pattern))]
+        (in e/current-buffer (b/move-cursor [i j] j))
+        (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
 
 (def wrap-mode
   (comp
-    (cl/mode-middleware :forward-search (partial process-search find-forward))
-    (cl/mode-middleware :backward-search (partial process-search find-backward))))
+    (cl/mode-middleware :forward-search (partial process-search :forward-search find-forward))
+    (cl/mode-middleware :backward-search (partial process-search :backward-search find-backward))))

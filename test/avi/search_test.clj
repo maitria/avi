@@ -18,7 +18,9 @@
   (fact "`/xx` finds a later occurrence on the current line"
     (cursor :editing "axxbxx" :after "ll/xx<Enter>") => [0 4])
   (fact "`/` won't find the occurrence the cursor is on"
-    (cursor :editing "axxbxx" :after "l/xx<Enter>") => [0 4]))
+    (cursor :editing "axxbxx" :after "l/xx<Enter>") => [0 4])
+  (fact "`/<Enter>` repeats the last forward search"
+    (cursor :editing "axxbxx" :after "/xx<Enter>/<Enter>") => [0 4]))
 
 (facts "regarding `?`"
   (fact "`?` echoes on the command line"
