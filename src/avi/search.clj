@@ -21,11 +21,25 @@
          [i (.start m)]
          (recur lines [(inc i) 0] re))))))
 
+(defn previous-occurrence-position
+  ([{:keys [lines] [i j] :cursor} re]
+   (previous-occurrence-position lines [i (inc j)] re))
+  ([lines [i j] re]
+   (if (< i 0)
+     nil
+     (let [m (re-matcher re (get lines i))]
+       (if (.find m)
+         [i (.start m)]
+         (recur lines [(dec i) Long/MAX_VALUE] re))))))
+
 (defn process-search
-  [editor command-line]
+  [finder editor command-line]
   (+> editor
-    (if-let [[i j] (next-occurrence-position (e/current-buffer editor) (re-pattern command-line))]
+    (if-let [[i j] (finder (e/current-buffer editor) (re-pattern command-line))]
        (in e/current-buffer (b/move-cursor [i j] j))
        (assoc :message [:white :red (str "Did not find `" command-line "`.")]))))
 
-(def wrap-mode (cl/mode-middleware :forward-search process-search))
+(def wrap-mode
+  (comp
+    (cl/mode-middleware :forward-search (partial process-search next-occurrence-position))
+    (cl/mode-middleware :backward-search (partial process-search previous-occurrence-position))))
