@@ -56,3 +56,7 @@
     (file-written :editing "ABC" :after ":wq<Enter>") => ["test.txt" "ABC"])
   (fact "`:wq` exits avi"
     (:finished? (editor :after ":wq<Enter>")) => true))
+
+(facts "regarding command-line history"
+  (fact "`:<C-P>` moves to previous command"
+    (terminal :line :message :after ":42<Enter>:<C-P>") => ":42"))

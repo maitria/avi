@@ -28,10 +28,17 @@
           (e/enter-normal-mode)
           (assoc :command-line (subs command-line 0 (dec (count command-line)))))))))
 
+(def wrap-handle-previous-command
+  (e/keystroke-middleware "<C-P>"
+    (fn+> [editor]
+      (if-let [command (first (get-in editor [::history (:mode editor)]))]
+        (assoc :command-line command)))))
+
 (defn- command-wrapper
   [command-fn]
   (e/keystroke-middleware "<Enter>"
     (fn+> [editor]
+      (update-in [::history (:mode editor)] conj (:command-line editor))
       e/enter-normal-mode
       (command-fn (:command-line editor))
       (dissoc :command-line :prompt))))
@@ -41,6 +48,7 @@
   (-> e/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
+      wrap-handle-previous-command
       ((command-wrapper command-fn))
       e/wrap-reset-beep))
 
