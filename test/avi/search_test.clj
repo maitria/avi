@@ -23,5 +23,6 @@
 (facts "regarding `?`"
   (fact "`?` echoes on the command line"
     (terminal :line :message :after "?") => "?")
-  (fact "`?xx` jumps to a previous occurrence of `xx` on the line"
-    (cursor :editing "axxbzz" :after "$?xx<Enter>") => [0 1]))
+  (fact "`?xx` jumps to the previous occurrence of `xx` on the line"
+    (cursor :editing "axxbzz" :after "$?xx<Enter>") => [0 1]
+    (cursor :editing "axxbxx" :after "$?xx<Enter>") => [0 4]))

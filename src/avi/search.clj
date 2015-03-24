@@ -10,6 +10,12 @@
     (e/keystroke-middleware "/" #(cl/enter % :forward-search "/"))
     (e/keystroke-middleware "?" #(cl/enter % :backward-search "?"))))
 
+(defn occurrences
+  [m]
+  (lazy-seq
+    (when (.find m)
+      (cons (.start m) (occurrences m)))))
+
 (defn next-occurrence-position
   ([{:keys [lines] [i j] :cursor} re]
    (next-occurrence-position lines [i (inc j)] re))
@@ -28,8 +34,8 @@
    (if (< i 0)
      nil
      (let [m (re-matcher re (get lines i))]
-       (if (.find m)
-         [i (.start m)]
+       (if-let [j (last (occurrences m))]
+         [i j]
          (recur lines [(dec i) Long/MAX_VALUE] re))))))
 
 (defn process-search
