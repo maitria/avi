@@ -36,8 +36,8 @@
          [i found-j]
          (recur lines [(succ i) reset] re))))))
 
-(def next-occurrence-position (scanner inc first <= 0))
-(def previous-occurrence-position (scanner dec last >= Long/MAX_VALUE))
+(def find-forward (scanner inc first <= 0))
+(def find-backward  (scanner dec last >= Long/MAX_VALUE))
 
 (defn process-search
   [scanner editor command-line]
@@ -48,5 +48,5 @@
 
 (def wrap-mode
   (comp
-    (cl/mode-middleware :forward-search (partial process-search next-occurrence-position))
-    (cl/mode-middleware :backward-search (partial process-search previous-occurrence-position))))
+    (cl/mode-middleware :forward-search (partial process-search find-forward))
+    (cl/mode-middleware :backward-search (partial process-search find-backward))))
