@@ -6,7 +6,9 @@
             [avi.pervasive :refer :all]))
 
 (def wrap-normal-search-commands
-  (e/keystroke-middleware "/" #(cl/enter % :forward-search "/")))
+  (comp
+    (e/keystroke-middleware "/" #(cl/enter % :forward-search "/"))
+    (e/keystroke-middleware "?" #(cl/enter % :backward-search "?"))))
 
 (defn next-occurrence-position
   ([{:keys [lines] [i j] :cursor} re]

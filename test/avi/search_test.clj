@@ -19,3 +19,7 @@
     (cursor :editing "axxbxx" :after "ll/xx<Enter>") => [0 4])
   (fact "`/` won't find the occurrence the cursor is on"
     (cursor :editing "axxbxx" :after "l/xx<Enter>") => [0 4]))
+
+(facts "regarding `?`"
+  (fact "`?` echoes on the command line"
+    (terminal :line :message :after "?") => "?"))
