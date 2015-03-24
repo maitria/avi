@@ -30,23 +30,15 @@
           (e/enter-normal-mode)
           (assoc :command-line (subs command-line 0 (dec (count command-line)))))))))
 
-(def wrap-handle-previous-command
-  (e/keystroke-middleware "<C-P>"
-    (fn+> [editor]
-      (if-let [command (first (::pre-history editor))]
-        (do
-          (update-in [::pre-history] rest)
-          (update-in [::post-history] conj (:command-line editor))
-          (assoc :command-line command))))))
-
-(def wrap-handle-next-command
-  (e/keystroke-middleware "<C-N>"
-    (fn+> [editor]
-      (if-let [command (first (::post-history editor))]
-        (do
-          (update-in [::post-history] rest)
-          (update-in [::pre-history] conj (:command-line editor))
-          (assoc :command-line command))))))
+(defn wrap-handle-history-movement
+  [responder key from to]
+  ((e/keystroke-middleware key
+     (fn+> [editor]
+       (if-let [command (first (from editor))]
+         (do
+           (update-in [from] rest)
+           (update-in [to] conj (:command-line editor))
+           (assoc :command-line command))))) responder))
 
 (defn- command-wrapper
   [command-fn]
@@ -62,8 +54,8 @@
   (-> e/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
-      wrap-handle-previous-command
-      wrap-handle-next-command
+      (wrap-handle-history-movement "<C-P>" ::pre-history ::post-history)
+      (wrap-handle-history-movement "<C-N>" ::post-history ::pre-history)
       ((command-wrapper command-fn))
       e/wrap-reset-beep))
 
