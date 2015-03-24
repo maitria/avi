@@ -28,7 +28,7 @@
   ([{:keys [lines] [i j] :cursor} re]
    (next-occurrence-position lines [i (inc j)] re))
   ([lines [i j] re]
-   (if (>= i (count lines))
+   (if-not (contains? lines i)
      nil
      (let [m (re-matcher re (get lines i))]
        (if (.find m j)
@@ -39,7 +39,7 @@
   ([{:keys [lines] [i j] :cursor} re]
    (previous-occurrence-position lines [i (dec j)] re))
   ([lines [i j] re]
-   (if (< i 0)
+   (if-not (contains? lines i)
      nil
      (if-let [found-j (last (occurrences re (get lines i) #(>= j %)))]
        [i found-j]
