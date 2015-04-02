@@ -45,8 +45,9 @@
     (if (= "" command-line)
       (update-in [:command-line-history mode] rest))
     (let [pattern (if (= "" command-line)
-                    (second (get-in editor [:command-line-history mode]))
+                    (get-in editor [::last-search mode])
                     command-line)]
+      (assoc-in [::last-search mode] pattern)
       (if-let [[i j] (scanner (e/current-buffer editor) (re-pattern pattern))]
         (in e/current-buffer (b/move-cursor [i j] j))
         (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
