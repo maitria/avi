@@ -43,6 +43,7 @@
                     (get-in editor [::last-search mode])
                     command-line)]
       (assoc-in [::last-search mode] pattern)
+      (assoc ::last-direction mode)
       (if-let [[i j] (scanner (e/current-buffer editor) (re-pattern pattern))]
         (in e/current-buffer (b/move-cursor [i j] j))
         (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
@@ -53,8 +54,11 @@
     (cl/mode-middleware :backward-search (partial process-search :backward-search find-backward))))
 
 (defn next-occurrence
-  [editor]
-  (process-search :forward-search find-forward editor ""))
+  [{:keys [::last-direction] :as editor}]
+  (let [scanner (if (= :forward-search last-direction)
+                  find-forward
+                  find-backward)]
+    (process-search last-direction scanner editor "")))
 
 (def wrap-normal-search-commands
   (comp

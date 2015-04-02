@@ -37,5 +37,6 @@
     (terminal :line :message :editing "abcyyz" :after "?xx<Enter>") => ["Did not find `xx`." :white :on :red]))
 
 (facts "regarding `n`"
-  (fact "`/xx<Enter>n` moves to the second `xx`"
-    (cursor :editing "axxbxx" :after "/xx<Enter>n") => [0 4]))
+  (fact "`n` moves to the next occurrence in the same direction as the last search"
+    (cursor :editing "axxbxx" :after "/xx<Enter>n") => [0 4]
+    (cursor :editing "axxbxx\nz" :after "j?xx<Enter>n") => [0 1]))
