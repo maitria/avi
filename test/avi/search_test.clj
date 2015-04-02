@@ -35,3 +35,7 @@
     (cursor :editing "axxbxx\nzzy" :after "j?xx<Enter>") => [0 4])
   (fact "`?xx` shows an error when not found"
     (terminal :line :message :editing "abcyyz" :after "?xx<Enter>") => ["Did not find `xx`." :white :on :red]))
+
+(facts "regarding `n`"
+  (fact "`/xx<Enter>n` moves to the second `xx`"
+    (cursor :editing "axxbxx" :after "/xx<Enter>n") => [0 4]))

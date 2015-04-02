@@ -5,11 +5,6 @@
             [avi.editor :as e]
             [avi.pervasive :refer :all]))
 
-(def wrap-normal-search-commands
-  (comp
-    (e/keystroke-middleware "/" #(cl/enter % :forward-search "/"))
-    (e/keystroke-middleware "?" #(cl/enter % :backward-search "?"))))
-
 (defn occurrences
   [re s pred]
   (let [m (re-matcher re s)]
@@ -56,3 +51,14 @@
   (comp
     (cl/mode-middleware :forward-search (partial process-search :forward-search find-forward))
     (cl/mode-middleware :backward-search (partial process-search :backward-search find-backward))))
+
+(defn next-occurrence
+  [editor]
+  (process-search :forward-search find-forward editor ""))
+
+(def wrap-normal-search-commands
+  (comp
+    (e/keystroke-middleware "n" next-occurrence)
+    (e/keystroke-middleware "/" #(cl/enter % :forward-search "/"))
+    (e/keystroke-middleware "?" #(cl/enter % :backward-search "?"))))
+
