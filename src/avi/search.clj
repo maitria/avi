@@ -45,9 +45,9 @@
   [direction editor command-line]
   (+> editor
     (let [pattern (if (= "" command-line)
-                    (get-in editor [::last-search direction])
+                    (::last-search editor)
                     command-line)]
-      (assoc-in [::last-search direction] pattern)
+      (assoc ::last-search pattern)
       (assoc ::last-direction direction)
       (if-let [[i j] (find-occurrence direction (e/current-buffer editor) (re-pattern pattern))]
         (in e/current-buffer (b/move-cursor [i j] j))
