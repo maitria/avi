@@ -37,26 +37,26 @@
 (defn find-occurrence
   [direction & args]
   (let [scanner (case direction
-                  :forward-search find-forward
-                  :backward-search find-backward)]
+                  :forward find-forward
+                  :backward find-backward)]
     (apply scanner args)))
 
 (defn process-search
-  [mode editor command-line]
+  [direction editor command-line]
   (+> editor
     (let [pattern (if (= "" command-line)
-                    (get-in editor [::last-search mode])
+                    (get-in editor [::last-search direction])
                     command-line)]
-      (assoc-in [::last-search mode] pattern)
-      (assoc ::last-direction mode)
-      (if-let [[i j] (find-occurrence mode (e/current-buffer editor) (re-pattern pattern))]
+      (assoc-in [::last-search direction] pattern)
+      (assoc ::last-direction direction)
+      (if-let [[i j] (find-occurrence direction (e/current-buffer editor) (re-pattern pattern))]
         (in e/current-buffer (b/move-cursor [i j] j))
         (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
 
 (def wrap-mode
   (comp
-    (cl/mode-middleware :forward-search (partial process-search :forward-search))
-    (cl/mode-middleware :backward-search (partial process-search :backward-search))))
+    (cl/mode-middleware :forward-search (partial process-search :forward))
+    (cl/mode-middleware :backward-search (partial process-search :backward))))
 
 (defn next-occurrence
   [{:keys [::last-direction] :as editor}]
