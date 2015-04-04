@@ -43,3 +43,7 @@
   (fact "`n` moves to the next occurrence in the same direction as the last search"
     (cursor :editing "axxbxx" :after "/xx<Enter>n") => [0 4]
     (cursor :editing "axxbxx\nz" :after "j?xx<Enter>n") => [0 1]))
+
+(facts "regarding `N`"
+  (fact "`N` finds the next occurrence in the opposite direction"
+    (cursor :editing "axxbxx" :after "3l/xx<Enter>N") => [0 1]))
