@@ -44,8 +44,6 @@
 (defn process-search
   [mode editor command-line]
   (+> editor
-    (if (= "" command-line)
-      (update-in [:command-line-history mode] rest))
     (let [pattern (if (= "" command-line)
                     (get-in editor [::last-search mode])
                     command-line)]

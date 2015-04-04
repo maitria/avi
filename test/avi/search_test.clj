@@ -21,7 +21,9 @@
     (cursor :editing "axxbxx" :after "l/xx<Enter>") => [0 4])
   (fact "`/<Enter>` repeats the last forward search"
     (cursor :editing "axxbxx" :after "/xx<Enter>/<Enter>") => [0 4]
-    (cursor :editing "axxbxxcxx" :after "/xx<Enter>/<Enter>/<Enter>") => [0 7]))
+    (cursor :editing "axxbxxcxx" :after "/xx<Enter>/<Enter>/<Enter>") => [0 7])
+  (fact "empty searches are not recorded in the command history"
+    (terminal :line :message :editing "axxbxx" :after "/xx<Enter>/<Enter>/<C-P>") => "/xx"))
 
 (facts "regarding `?`"
   (fact "`?` echoes on the command line"

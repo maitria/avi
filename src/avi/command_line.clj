@@ -44,10 +44,11 @@
   [command-fn]
   (e/keystroke-middleware "<Enter>"
     (fn+> [editor]
-      (update-in [:command-line-history (:mode editor)] conj (:command-line editor))
-      e/enter-normal-mode
-      (command-fn (:command-line editor))
-      (dissoc :command-line :prompt ::pre-history ::post-history))))
+      (let [{:keys [command-line mode]} editor]
+        (cond-> (not= "" command-line) (update-in [:command-line-history mode] conj command-line))
+        e/enter-normal-mode
+        (command-fn (:command-line editor))
+        (dissoc :command-line :prompt ::pre-history ::post-history)))))
 
 (defn- responder
   [command-fn]
