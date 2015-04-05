@@ -37,9 +37,11 @@
 
 (def directions
   {:forward {:wrap-message "Wrapped to beginning of file!"
-             :prompt "/"}
+             :prompt "/"
+             :opposite :backward}
    :backward {:wrap-message "Wrapped to end of file!"
-              :prompt "?"}})
+              :prompt "?"
+              :opposite :forward}})
 
 (defn find-occurrence
   [direction & args]
@@ -75,11 +77,8 @@
 
 (defn previous-occurrence
   [{:keys [::last-direction] :as editor}]
-  (let [opposite-direction (case last-direction
-                             :forward :backward
-                             :backward :forward)]
-    (+> (process-search opposite-direction editor "")
-      (assoc ::last-direction last-direction)))) 
+  (+> (process-search (get-in directions [last-direction :opposite]) editor "")
+    (assoc ::last-direction last-direction))) 
 
 (def wrap-normal-search-commands
   (comp
