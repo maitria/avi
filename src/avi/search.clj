@@ -36,8 +36,10 @@
 (def find-backward  (scanner dec last >= Long/MAX_VALUE))
 
 (def directions
-  {:forward {:wrap-message "Wrapped to beginning of file!"}
-   :backward {:wrap-message "Wrapped to end of file!"}})
+  {:forward {:wrap-message "Wrapped to beginning of file!"
+             :prompt "/"}
+   :backward {:wrap-message "Wrapped to end of file!"
+              :prompt "?"}})
 
 (defn find-occurrence
   [direction & args]
@@ -59,10 +61,7 @@
           (in e/current-buffer (b/move-cursor [i j] j))
           (if wrapped?
             (assoc :message [:red :black (get-in directions [direction :wrap-message])])
-            (assoc :message [:white :black (str (case direction
-                                                  :forward "/"
-                                                  :backward "?")
-                                                pattern)])))
+            (assoc :message [:white :black (str (get-in directions [direction :prompt]) pattern)])))
         (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
 
 (def wrap-mode
