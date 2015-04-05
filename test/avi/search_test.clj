@@ -52,6 +52,8 @@
 
 (facts "regarding `N`"
   (fact "`N` finds the next occurrence in the opposite direction"
-    (cursor :editing "axxbxxcxx" :after "3l/xx<Enter>N") => [0 1])
+    (cursor :editing "axxbxxcxx" :after "3l/xx<Enter>N") => [0 1]
+    (cursor :editing "axxbxxcxx" :after "5l?xx<Enter>N") => [0 7])
   (fact "`N` does not change the current search direction"
-    (cursor :editing "axxbxxcxx" :after "3l/xx<Enter>Nn") => [0 4]))
+    (cursor :editing "axxbxxcxx" :after "3l/xx<Enter>Nn") => [0 4]
+    (cursor :editing "axxbxxcxx" :after "5l?xx<Enter>Nn") => [0 4]))
