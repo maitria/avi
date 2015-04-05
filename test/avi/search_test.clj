@@ -13,6 +13,8 @@
     (cursor :editing "abcxxy" :after "/xx<Enter>") => [0 3])
   (fact "`/xx` shows error when not found"
     (terminal :line :message :editing "abcyyz" :after "/xx<Enter>") => ["Did not find `xx`." :white :on :red])
+  (fact "`/xx` wraps to beginning of file"
+    (cursor :line :message :editing "axx\nbyy" :after "j/xx<Enter>") => [0 1])
   (fact "`/xx` finds an occurrence on a later line"
     (cursor :editing "abcyyz\nll\nfooxxy\nz" :after "/xx<Enter>") => [2 3])
   (fact "`/xx` finds a later occurrence on the current line"

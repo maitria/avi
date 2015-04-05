@@ -21,15 +21,15 @@
 
 (defn scanner
   [succ which pred reset]
-  (fn f
-    ([{:keys [lines] [i j] :cursor} re]
-     (f lines [i (succ j)] re))
-    ([lines [i j] re]
-     (if-not (contains? lines i)
-       nil
-       (if-let [found-j (which (occurrences re (get lines i) (partial pred j)))]
-         [i found-j]
-         (recur lines [(succ i) reset] re))))))
+  (fn [{:keys [lines] [start-i start-j] :cursor} re]
+    (loop [n (inc (count lines))
+           i start-i
+           j (succ start-j)]
+      (if (zero? n)
+        nil
+        (if-let [found-j (which (occurrences re (get lines (mod i (count lines))) (partial pred j)))]
+          [(mod i (count lines)) found-j]
+          (recur (dec n) (succ i) reset))))))
 
 (def find-forward (scanner inc first <= 0))
 (def find-backward  (scanner dec last >= Long/MAX_VALUE))
