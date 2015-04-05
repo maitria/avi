@@ -32,23 +32,19 @@
             (conj found-pos wrapped?))
           (recur (dec n) (succ i) reset))))))
 
-(def find-forward (scanner inc first <= 0))
-(def find-backward  (scanner dec last >= Long/MAX_VALUE))
-
 (def directions
   {:forward {:wrap-message "Wrapped to beginning of file!"
              :prompt "/"
-             :opposite :backward}
+             :opposite :backward
+             :scanner (scanner inc first <= 0)}
    :backward {:wrap-message "Wrapped to end of file!"
               :prompt "?"
-              :opposite :forward}})
+              :opposite :forward
+              :scanner (scanner dec last >= Long/MAX_VALUE)}})
 
 (defn find-occurrence
   [direction & args]
-  (let [scanner (case direction
-                  :forward find-forward
-                  :backward find-backward)]
-    (apply scanner args)))
+  (apply (get-in directions [direction :scanner]) args))
 
 (defn process-search
   [direction editor command-line]
