@@ -27,7 +27,9 @@
            j (succ start-j)]
       (if-not (zero? n)
         (if-let [found-j (which (occurrences re (get lines (mod i (count lines))) (partial pred j)))]
-          [(mod i (count lines)) found-j]
+          (let [found-pos [(mod i (count lines)) found-j]
+                wrapped? (pred (compare found-pos [start-i start-j]) 0)]
+            (conj found-pos wrapped?))
           (recur (dec n) (succ i) reset))))))
 
 (def find-forward (scanner inc first <= 0))
@@ -48,8 +50,11 @@
                     command-line)]
       (assoc ::last-search pattern)
       (assoc ::last-direction direction)
-      (if-let [[i j] (find-occurrence direction (e/current-buffer editor) (re-pattern pattern))]
-        (in e/current-buffer (b/move-cursor [i j] j))
+      (if-let [[i j wrapped?] (find-occurrence direction (e/current-buffer editor) (re-pattern pattern))]
+        (do
+          (in e/current-buffer (b/move-cursor [i j] j))
+          (if wrapped?
+            (assoc :message [:red :black "Wrapped to beginning of file!"])))
         (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
 
 (def wrap-mode
