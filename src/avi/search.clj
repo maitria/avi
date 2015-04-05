@@ -56,7 +56,11 @@
           (if wrapped?
             (assoc :message [:red :black (str "Wrapped to " (case direction
                                                               :forward "beginning"
-                                                              :backward "end") " of file!")])))
+                                                              :backward "end") " of file!")])
+            (assoc :message [:white :black (str (case direction
+                                                  :forward "/"
+                                                  :backward "?")
+                                                pattern)])))
         (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
 
 (def wrap-mode

@@ -48,7 +48,10 @@
 (facts "regarding `n`"
   (fact "`n` moves to the next occurrence in the same direction as the last search"
     (cursor :editing "axxbxx" :after "/xx<Enter>n") => [0 4]
-    (cursor :editing "axxbxx\nz" :after "j?xx<Enter>n") => [0 1]))
+    (cursor :editing "axxbxx\nz" :after "j?xx<Enter>n") => [0 1])
+  (fact "`n` displays the last search on the message line"
+    (terminal :line :message :editing "axxbxx" :after "/xx<Enter>n") => "/xx"
+    (terminal :line :message :editing "axxbxx\nz" :after "j?xx<Enter>n") => "?xx"))
 
 (facts "regarding `N`"
   (fact "`N` finds the next occurrence in the opposite direction"
