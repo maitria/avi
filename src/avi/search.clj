@@ -35,6 +35,10 @@
 (def find-forward (scanner inc first <= 0))
 (def find-backward  (scanner dec last >= Long/MAX_VALUE))
 
+(def directions
+  {:forward {:wrap-message "Wrapped to beginning of file!"}
+   :backward {:wrap-message "Wrapped to end of file!"}})
+
 (defn find-occurrence
   [direction & args]
   (let [scanner (case direction
@@ -54,9 +58,7 @@
         (do
           (in e/current-buffer (b/move-cursor [i j] j))
           (if wrapped?
-            (assoc :message [:red :black (str "Wrapped to " (case direction
-                                                              :forward "beginning"
-                                                              :backward "end") " of file!")])
+            (assoc :message [:red :black (get-in directions [direction :wrap-message])])
             (assoc :message [:white :black (str (case direction
                                                   :forward "/"
                                                   :backward "?")
