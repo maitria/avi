@@ -52,4 +52,4 @@
 
 (facts "regarding `N`"
   (fact "`N` finds the next occurrence in the opposite direction"
-    (cursor :editing "axxbxx" :after "3l/xx<Enter>N") => [0 1]))
+    (cursor :editing "axxbxxcxx" :after "3l/xx<Enter>N") => [0 1]))

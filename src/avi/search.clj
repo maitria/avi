@@ -68,19 +68,18 @@
   [{:keys [::last-direction] :as editor}]
   (process-search last-direction editor ""))
 
-(defn reverse-search-direction
-  [editor]
-  (update-in editor [::last-direction] #(case % :forward :backward :backward :forward)))
-
-(def next-occurrence-in-opposite-direction
-  (comp
-    next-occurrence
-    reverse-search-direction))
+(defn previous-occurrence
+  [{:keys [::last-direction] :as editor}]
+  (let [opposite-direction (case last-direction
+                             :forward :backward
+                             :backward :forward)]
+    (+> (process-search opposite-direction editor "")
+      (assoc ::last-direction last-direction)))) 
 
 (def wrap-normal-search-commands
   (comp
     (e/keystroke-middleware "n" next-occurrence)
-    (e/keystroke-middleware "N" next-occurrence-in-opposite-direction)
+    (e/keystroke-middleware "N" previous-occurrence)
     (e/keystroke-middleware "/" #(cl/enter % :forward-search "/"))
     (e/keystroke-middleware "?" #(cl/enter % :backward-search "?"))))
 
