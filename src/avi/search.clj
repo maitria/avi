@@ -54,7 +54,9 @@
         (do
           (in e/current-buffer (b/move-cursor [i j] j))
           (if wrapped?
-            (assoc :message [:red :black "Wrapped to beginning of file!"])))
+            (assoc :message [:red :black (str "Wrapped to " (case direction
+                                                              :forward "beginning"
+                                                              :backward "end") " of file!")])))
         (assoc :message [:white :red (str "Did not find `" command-line "`.")])))))
 
 (def wrap-mode

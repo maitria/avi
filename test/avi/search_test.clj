@@ -40,7 +40,8 @@
     (cursor :editing "axx\nzzy" :after "j?xx<Enter>") => [0 1]
     (cursor :editing "axxbxx\nzzy" :after "j?xx<Enter>") => [0 4])
   (fact "`?xx` wraps to end-of-file"
-    (cursor :editing "ayy\nbxx" :after "?xx<Enter>") => [1 1])
+    (cursor :editing "ayy\nbxx" :after "?xx<Enter>") => [1 1]
+    (terminal :line :message :editing "ayy\nbxx" :after "?xx<Enter>") => ["Wrapped to end of file!" :red])
   (fact "`?xx` shows an error when not found"
     (terminal :line :message :editing "abcyyz" :after "?xx<Enter>") => ["Did not find `xx`." :white :on :red]))
 
