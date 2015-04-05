@@ -25,8 +25,7 @@
     (loop [n (inc (count lines))
            i start-i
            j (succ start-j)]
-      (if (zero? n)
-        nil
+      (if-not (zero? n)
         (if-let [found-j (which (occurrences re (get lines (mod i (count lines))) (partial pred j)))]
           [(mod i (count lines)) found-j]
           (recur (dec n) (succ i) reset))))))
