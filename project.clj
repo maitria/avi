@@ -12,6 +12,6 @@
                                   [com.gfredericks/test.chuck "0.1.15"]]}
              :uberjar {:aot :all}}
   :aliases {"install" ^{:doc "Install avi on this machine"}
-            ["do" "uberjar" ["run" "-m" "avi.install/install"]]}
+            ["do" "uberjar," "run" "-m" "avi.install/install"]}
   :java-source-paths ["java-src"]
   :main avi.core)

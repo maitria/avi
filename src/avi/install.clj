@@ -18,7 +18,8 @@
         include-path (if (= os-name "Mac OS X")
                        "/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers"
                        (str (get-property "java.home") "/../include"))
-        avi-bin-path (str prefix "/bin/avi")
+        avi-bin-dir (str prefix "/bin")
+        avi-bin (str avi-bin-dir "/avi")
         avi-jar-dir (str prefix "/share/avi/")
         avi-jar-path (str avi-jar-dir "/avi.jar")
         avi-lib-dir (str prefix "/lib/")
@@ -29,8 +30,9 @@
                          "darwin"
                          "linux")
         avi-Terminal-path (str avi-lib-dir "libavi_jni" dll-suffix)]
-    [["install" "-d" avi-jar-dir]
-     ["install" "-m" "0755" "bin/avi" avi-bin-path]
+    [["install" "-d" avi-bin-dir]
+     ["install" "-d" avi-jar-dir]
+     ["install" "-m" "0755" "bin/avi" avi-bin]
      ["install" "-m" "0644" (str "target/avi-" (version) "-standalone.jar") avi-jar-path]
      ["install" "-d" avi-lib-dir]
      (concat
@@ -47,6 +49,6 @@
          ["-ltinfo"]))]))
 
 (defn install
-  []
-  (doseq [cmd (install-commands "/usr/local" #(System/getProperty %))]
+  [& [prefix]]
+  (doseq [cmd (install-commands (or prefix "/usr/local") #(System/getProperty %))]
     (apply sh cmd)))

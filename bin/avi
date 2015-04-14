@@ -5,7 +5,16 @@ then
 	JAVA_CMD=java
 fi
 
-avi_prefix="/usr/local"
+
+if [ "`dirname $0`" = "." ]
+then
+	full_0=`command -v $0`
+else
+	full_0=$0
+fi
+
+bin_dir=`dirname $full_0`
+avi_prefix=`dirname $bin_dir`
 avi_classpath="$avi_prefix/share/avi/avi.jar"
 avi_library_path="$avi_prefix/lib"
 

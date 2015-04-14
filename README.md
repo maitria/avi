@@ -42,11 +42,11 @@ $ lein midje :print-facts
 ```
 $ git clone https://github.com/maitria/avi.git
 $ cd avi
-$ lein install
+$ lein install /usr/local
 ```
 
 On Linux, you'll likely not have access to `/usr/local`.  In that case you'll need to use
-`sudo lein install` instead.
+`sudo lein install` instead or specify a different installation directory.
 
 ## License
 
