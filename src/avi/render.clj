@@ -75,7 +75,14 @@
       [(make-attrs :black :white) (or (:name buffer) "[No Name]")]
 
       (< buffer-line buffer-line-count)
-      [(make-attrs :white :black) (b/line buffer buffer-line)]
+      (let [white-on-black (make-attrs :white :black)
+            red-on-black (make-attrs :red :black)
+            line (b/line buffer buffer-line)
+            attrs (byte-array (count line) white-on-black)]
+        (doseq [j (range (count line))]
+          (when (= \( (get line j))
+            (aset-byte attrs j red-on-black)))
+        [attrs line])
 
       :else
       [(make-attrs :blue :black) "~"])))
@@ -94,6 +101,11 @@
   (let [[height] (:size (:viewport editor))]
     [(dec height) (inc (count (:command-line editor)))]))
 
+(let [byte-array-class (Class/forName "[B")]
+  (defn byte-array?
+    [obj]
+    (= byte-array-class (class obj))))
+
 (defn render
   [editor]
   (let [[height width] (:size (:viewport editor))
@@ -103,7 +115,9 @@
     (doseq [i (range height)]
       (let [[attrs text] (render-line editor i)]
         (.getChars text 0 (min width (count text)) rendered-chars (* i width))
-        (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs)))
+        (if (byte-array? attrs)
+          (System/arraycopy attrs 0 rendered-attrs (* i width) (min width (count attrs)))
+          (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))))
     {:width width
      :chars rendered-chars
      :attrs rendered-attrs

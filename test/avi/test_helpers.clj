@@ -108,6 +108,14 @@
          flatten
          unwrap-single-value)))
 
+(defn attributes
+  [& args]
+  (let [{:keys [width attrs]} (:rendition (apply editor args))
+        [i j] (:at (apply hash-map args))]
+    (-> (get attrs (+ j (* i width)))
+      render/attr-description
+      unwrap-single-value)))
+
 (defn cursor
   [& args]
   (:cursor (:rendition (apply editor args))))
