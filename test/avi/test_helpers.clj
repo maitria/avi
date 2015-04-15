@@ -102,7 +102,7 @@
         line-annotations (->> (range height)
                               (map (fn [i]
                                      (get attrs (* i width))))
-                              (map color/attr-description))]
+                              (map color/description))]
     (->> (map vector lines line-annotations)
          (keep-indexed (line-keeper (apply hash-map args)))
          flatten
@@ -113,7 +113,7 @@
   (let [{:keys [width attrs]} (:rendition (apply editor args))
         [i j] (:at (apply hash-map args))]
     (-> (get attrs (+ j (* i width)))
-      color/attr-description
+      color/description
       unwrap-single-value)))
 
 (defn cursor
