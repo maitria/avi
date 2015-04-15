@@ -103,8 +103,7 @@
     (doseq [i (range height)]
       (let [[attrs text] (render-line editor i)]
         (.getChars text 0 (min width (count text)) rendered-chars (* i width))
-        (if (not= attrs default-attrs)
-          (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))))
+        (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs)))
     {:width width
      :chars rendered-chars
      :attrs rendered-attrs
