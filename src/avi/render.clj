@@ -17,7 +17,7 @@
 (def ^:private number->color
   (map-invert color->number))
 
-(defn make-attrs
+(defn make-attributes
   [color background]
   (byte (bit-or (bit-shift-left (color->number color) 3)
                 (color->number background))))
@@ -48,14 +48,14 @@
   [editor]
   (cond
     (and (:prompt editor) (:command-line editor))
-    [(make-attrs :white :black) (str (:prompt editor) (:command-line editor))]
+    [(make-attributes :white :black) (str (:prompt editor) (:command-line editor))]
 
     (:message editor)
     (let [[foreground background text] (:message editor)]
-      [(make-attrs foreground background) text])
+      [(make-attributes foreground background) text])
 
     :else
-    [(make-attrs :white :black) ""]))
+    [(make-attributes :white :black) ""]))
 
 (defn- render-line
   [editor i]
@@ -72,11 +72,11 @@
       (render-message-line editor)
 
       (= status-line i)
-      [(make-attrs :black :white) (or (:name buffer) "[No Name]")]
+      [(make-attributes :black :white) (or (:name buffer) "[No Name]")]
 
       (< buffer-line buffer-line-count)
-      (let [white-on-black (make-attrs :white :black)
-            red-on-black (make-attrs :red :black)
+      (let [white-on-black (make-attributes :white :black)
+            red-on-black (make-attributes :red :black)
             line (b/line buffer buffer-line)
             attrs (byte-array (count line) white-on-black)]
         (doseq [j (range (count line))]
@@ -85,7 +85,7 @@
         [attrs line])
 
       :else
-      [(make-attrs :blue :black) "~"])))
+      [(make-attributes :blue :black) "~"])))
 
 (defmulti ^:private cursor-position :mode)
 
@@ -109,7 +109,7 @@
 (defn render
   [editor]
   (let [[height width] (:size (:viewport editor))
-        default-attrs (make-attrs :white :black)
+        default-attrs (make-attributes :white :black)
         rendered-chars (char-array (* height width) \space)
         rendered-attrs (byte-array (* height width) default-attrs)]
     (doseq [i (range height)]
