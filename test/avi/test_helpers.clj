@@ -1,9 +1,9 @@
 (ns avi.test-helpers
   (:import [java.io FileNotFoundException])
-  (:require [avi.core]
+  (:require [avi.color :as color]
+            [avi.core]
             [avi.editor :as e]
             [avi.eventmap :as em]
-            [avi.render :as render]
             [avi.world :refer :all]
             [clojure.string :as string]))
 
@@ -102,7 +102,7 @@
         line-annotations (->> (range height)
                               (map (fn [i]
                                      (get attrs (* i width))))
-                              (map render/attr-description))]
+                              (map color/attr-description))]
     (->> (map vector lines line-annotations)
          (keep-indexed (line-keeper (apply hash-map args)))
          flatten
@@ -113,7 +113,7 @@
   (let [{:keys [width attrs]} (:rendition (apply editor args))
         [i j] (:at (apply hash-map args))]
     (-> (get attrs (+ j (* i width)))
-      render/attr-description
+      color/attr-description
       unwrap-single-value)))
 
 (defn cursor

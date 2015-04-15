@@ -2,60 +2,21 @@
   (:import [java.util Arrays])
   (:require [clojure.set :refer [map-invert]]
             [avi.editor :as e]
-            [avi.buffer :as b]))
-
-(def ^:private color->number
-  {:black 0
-   :red 1
-   :green 2
-   :yellow 3
-   :blue 4
-   :magenta 5
-   :cyan 6
-   :white 7})
-
-(def ^:private number->color
-  (map-invert color->number))
-
-(defn make-attributes
-  [color background]
-  (byte (bit-or (bit-shift-left (color->number color) 3)
-                (color->number background))))
-
-(defn- foreground-color
-  [character-attributes]
-  (number->color (bit-and 7 (bit-shift-right character-attributes 3))))
-
-(defn- background-color
-  [character-attributes]
-  (number->color (bit-and 7 character-attributes)))
-
-(defn attr-description
-  [character-attributes]
-  (let [fg-keyword (foreground-color character-attributes)
-        bg-keyword (background-color character-attributes)]
-    (cond
-      (= [:white :black] [fg-keyword bg-keyword])
-      []
-
-      (= :black bg-keyword)
-      [fg-keyword]
-
-      :else
-      [fg-keyword :on bg-keyword])))
+            [avi.buffer :as b]
+            [avi.color :as color]))
 
 (defn- render-message-line
   [editor]
   (cond
     (and (:prompt editor) (:command-line editor))
-    [(make-attributes :white :black) (str (:prompt editor) (:command-line editor))]
+    [(color/make-attributes :white :black) (str (:prompt editor) (:command-line editor))]
 
     (:message editor)
     (let [[foreground background text] (:message editor)]
-      [(make-attributes foreground background) text])
+      [(color/make-attributes foreground background) text])
 
     :else
-    [(make-attributes :white :black) ""]))
+    [(color/make-attributes :white :black) ""]))
 
 (defn- render-line
   [editor i]
@@ -72,11 +33,11 @@
       (render-message-line editor)
 
       (= status-line i)
-      [(make-attributes :black :white) (or (:name buffer) "[No Name]")]
+      [(color/make-attributes :black :white) (or (:name buffer) "[No Name]")]
 
       (< buffer-line buffer-line-count)
-      (let [white-on-black (make-attributes :white :black)
-            red-on-black (make-attributes :red :black)
+      (let [white-on-black (color/make-attributes :white :black)
+            red-on-black (color/make-attributes :red :black)
             line (b/line buffer buffer-line)
             attrs (byte-array (count line) white-on-black)]
         (doseq [j (range (count line))]
@@ -85,7 +46,7 @@
         [attrs line])
 
       :else
-      [(make-attributes :blue :black) "~"])))
+      [(color/make-attributes :blue :black) "~"])))
 
 (defmulti ^:private cursor-position :mode)
 
@@ -109,7 +70,7 @@
 (defn render
   [editor]
   (let [[height width] (:size (:viewport editor))
-        default-attrs (make-attributes :white :black)
+        default-attrs (color/make-attributes :white :black)
         rendered-chars (char-array (* height width) \space)
         rendered-attrs (byte-array (* height width) default-attrs)]
     (doseq [i (range height)]
