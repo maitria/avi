@@ -26,14 +26,14 @@
   [attrs]
   (number->color (bit-and 7 (bit-shift-right attrs 3))))
 
-(defn- attr-background
+(defn- background-color
   [attrs]
   (number->color (bit-and 7 attrs)))
 
 (defn attr-description
   [attrs]
   (let [fg-keyword (foreground-color attrs)
-        bg-keyword (attr-background attrs)]
+        bg-keyword (background-color attrs)]
     (cond
       (= [:white :black] [fg-keyword bg-keyword])
       []
