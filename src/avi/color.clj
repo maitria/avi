@@ -14,7 +14,7 @@
 (def number->color
   (map-invert color->number))
 
-(defn make-attributes
+(defn make
   [foreground background]
   (byte (bit-or (bit-shift-left (color->number foreground) 3)
                 (color->number background))))
