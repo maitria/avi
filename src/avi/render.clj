@@ -80,7 +80,7 @@
             line (b/line buffer buffer-line)
             attrs (byte-array (count line) white-on-black)]
         (doseq [j (range (count line))]
-          (when (= \( (get line j))
+          (when (#{\( \)} (get line j))
             (aset-byte attrs j red-on-black)))
         [attrs line])
 
