@@ -23,17 +23,17 @@
                 (color->number background))))
 
 (defn- foreground-color
-  [attrs]
-  (number->color (bit-and 7 (bit-shift-right attrs 3))))
+  [character-attributes]
+  (number->color (bit-and 7 (bit-shift-right character-attributes 3))))
 
 (defn- background-color
-  [attrs]
-  (number->color (bit-and 7 attrs)))
+  [character-attributes]
+  (number->color (bit-and 7 character-attributes)))
 
 (defn attr-description
-  [attrs]
-  (let [fg-keyword (foreground-color attrs)
-        bg-keyword (background-color attrs)]
+  [character-attributes]
+  (let [fg-keyword (foreground-color character-attributes)
+        bg-keyword (background-color character-attributes)]
     (cond
       (= [:white :black] [fg-keyword bg-keyword])
       []
