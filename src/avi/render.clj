@@ -48,13 +48,14 @@
   [editor]
   (cond
     (and (:prompt editor) (:command-line editor))
-    [:white :black (str (:prompt editor) (:command-line editor))]
+    [(make-attrs :white :black) (str (:prompt editor) (:command-line editor))]
 
     (:message editor)
-    (:message editor)
+    (let [[foreground background text] (:message editor)]
+      [(make-attrs foreground background) text])
 
     :else
-    [:white :black ""]))
+    [(make-attrs :white :black) ""]))
 
 (defn- render-line
   [editor i]
@@ -71,13 +72,13 @@
       (render-message-line editor)
 
       (= status-line i)
-      [:black :white (or (:name buffer) "[No Name]")]
+      [(make-attrs :black :white) (or (:name buffer) "[No Name]")]
 
       (< buffer-line buffer-line-count)
-      [:white :black (b/line buffer buffer-line)]
+      [(make-attrs :white :black) (b/line buffer buffer-line)]
 
       :else
-      [:blue :black "~"])))
+      [(make-attrs :blue :black) "~"])))
 
 (defmulti ^:private cursor-position :mode)
 
@@ -100,8 +101,7 @@
         rendered-chars (char-array (* height width) \space)
         rendered-attrs (byte-array (* height width) default-attrs)]
     (doseq [i (range height)]
-      (let [[color background text] (render-line editor i)
-            attrs (make-attrs color background)]
+      (let [[attrs text] (render-line editor i)]
         (.getChars text 0 (min width (count text)) rendered-chars (* i width))
         (if (not= attrs default-attrs)
           (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))))
