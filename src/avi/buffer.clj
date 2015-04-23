@@ -27,6 +27,13 @@
      :undo-log ()
      :redo-log ()}))
 
+;; Lenses
+
+(defn lines
+  [buffer f]
+  (let [result (f (select-keys buffer [:cursor :lines]))]
+    (merge buffer result)))
+
 ;; --
 
 (defn write
