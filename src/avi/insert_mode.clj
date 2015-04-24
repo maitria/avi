@@ -73,7 +73,8 @@
           (if (= [0 0] (:cursor (e/current-buffer editor)))
             (fail :beep)
             b/backspace)
-          (b/insert-text (key->text event-data))))))
+          (in b/lines-and-cursor
+            (b/insert-text (key->text event-data)))))))
 
 (defn- play-script
   [editor script]

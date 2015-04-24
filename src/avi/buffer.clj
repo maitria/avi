@@ -32,6 +32,7 @@
 (let [lines-and-cursor-keys [:viewport-top :viewport-height :lines :cursor :last-explicit-j]]
   (defn lines-and-cursor
     [buffer f]
+    {:pre [(:in-transaction? buffer)]}
     (merge buffer
            (-> buffer
                (select-keys lines-and-cursor-keys)
@@ -241,18 +242,16 @@
 (defn insert-text
   [{[i j] :cursor,
     lines :lines,
-    :as buffer} text]
-  {:pre [(:in-transaction? buffer)]}
-  (+> buffer
-      (let [original-line (get-in buffer [:lines i])
-            resulting-text (splice original-line j j text)
-            new-lines (string/split resulting-text #"\n" -1)
-            resulting-i (+ i (dec (count new-lines)))
-            resulting-j (if (= 1 (count new-lines))
-                          (+ j (count text))
-                          0)]
-        (in lines-and-cursor
-          (update-in [:lines] #(splice % i (inc i) new-lines)))
+    :as lines-and-text} text]
+  (+> lines-and-text
+    (let [original-line (get lines i)
+          resulting-text (splice original-line j j text)
+          new-lines (string/split resulting-text #"\n" -1)
+          resulting-i (+ i (dec (count new-lines)))
+          resulting-j (if (= 1 (count new-lines))
+                        (+ j (count text))
+                        0)]
+        (update-in [:lines] #(splice % i (inc i) new-lines))
         (move-cursor [resulting-i resulting-j] resulting-j))))
 
 (defn insert-blank-line
