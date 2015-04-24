@@ -29,10 +29,14 @@
 
 ;; Lenses
 
-(defn lines
-  [buffer f]
-  (let [result (f (:lines buffer))]
-    (assoc buffer :lines result)))
+(let [lines-and-cursor-keys [:viewport-top :viewport-height :lines :cursor :last-explicit-j]]
+  (defn lines-and-cursor
+    [buffer f]
+    (merge buffer
+           (-> buffer
+               (select-keys lines-and-cursor-keys)
+               f
+               (select-keys lines-and-cursor-keys)))))
 
 ;; --
 
@@ -247,8 +251,8 @@
             resulting-j (if (= 1 (count new-lines))
                           (+ j (count text))
                           0)]
-        (in avi.buffer/lines
-          (splice i (inc i) new-lines))
+        (in lines-and-cursor
+          (update-in [:lines] #(splice % i (inc i) new-lines)))
         (move-cursor [resulting-i resulting-j] resulting-j))))
 
 (defn insert-blank-line
@@ -257,8 +261,8 @@
     :as buffer} new-line-i]
   {:pre [(:in-transaction? buffer)]}
   (+> buffer
-    (in avi.buffer/lines
-      (splice new-line-i new-line-i [""]))))
+    (in lines-and-cursor
+      (update-in [:lines] #(splice % new-line-i new-line-i [""])))))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,
