@@ -31,8 +31,8 @@
 
 (defn lines
   [buffer f]
-  (let [result (f (select-keys buffer [:cursor :lines]))]
-    (merge buffer result)))
+  (let [result (f (:lines buffer))]
+    (assoc buffer :lines result)))
 
 ;; --
 
@@ -247,7 +247,8 @@
             resulting-j (if (= 1 (count new-lines))
                           (+ j (count text))
                           0)]
-        (update-in [:lines] #(splice % i (inc i) new-lines))
+        (in avi.buffer/lines
+          (splice i (inc i) new-lines))
         (move-cursor [resulting-i resulting-j] resulting-j))))
 
 (defn insert-blank-line
