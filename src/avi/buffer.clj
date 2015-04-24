@@ -257,7 +257,8 @@
     :as buffer} new-line-i]
   {:pre [(:in-transaction? buffer)]}
   (+> buffer
-      (update-in [:lines] #(splice % new-line-i new-line-i [""]))))
+    (in avi.buffer/lines
+      (splice new-line-i new-line-i [""]))))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,
