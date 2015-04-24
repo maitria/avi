@@ -255,13 +255,8 @@
         (move-cursor [resulting-i resulting-j] resulting-j))))
 
 (defn insert-blank-line
-  [{[i] :cursor,
-    lines :lines,
-    :as buffer} new-line-i]
-  {:pre [(:in-transaction? buffer)]}
-  (+> buffer
-    (in lines-and-cursor
-      (update-in [:lines] #(splice % new-line-i new-line-i [""])))))
+  [lines-and-text new-line-i]
+  (update-in lines-and-text [:lines] #(splice % new-line-i new-line-i [""])))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,

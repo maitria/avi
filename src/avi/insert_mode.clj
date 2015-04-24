@@ -36,7 +36,8 @@
           (let [{[i] :cursor} (e/current-buffer editor)]
             (enter-insert-mode [[:keystroke "<Enter>"]])
             (in e/current-buffer
-                (b/insert-blank-line (inc i)))
+              (in b/lines-and-cursor
+                (b/insert-blank-line (inc i))))
             (e/change-line inc))))
 
     ("A"
@@ -54,8 +55,9 @@
           (let [{[i] :cursor} (e/current-buffer editor)]
             (enter-insert-mode [[:keystroke "<Enter>"]])
             (in e/current-buffer
+              (in b/lines-and-cursor
                 (b/insert-blank-line i)
-                (b/move-cursor [i 0] 0)))))))
+                (b/move-cursor [i 0] 0))))))))
 
 (defn- key->text
   [key]
