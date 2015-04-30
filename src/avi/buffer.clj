@@ -66,10 +66,7 @@
 
 (defn line
   [buffer i]
-  (-> buffer
-    lines-and-cursor
-    :lines
-    (get i)))
+  (-> buffer lines-and-cursor :lines (get i)))
 
 (defn j-within-line
   [buffer i]
@@ -81,7 +78,7 @@
 
 (defn line-count
   [buffer]
-  (count (:lines buffer)))
+  (-> buffer lines-and-cursor :lines count))
 
 (defn move-to-line
   [buffer i]
