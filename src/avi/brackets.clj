@@ -1,5 +1,6 @@
 (ns avi.brackets
-  (:require [packthread.core :refer :all]
+  (:require [avi.pervasive :refer :all]
+            [packthread.core :refer :all]
             [avi.editor :as e]
             [avi.scan :as scan]))
 
@@ -50,4 +51,4 @@
         (if new-cursor
           (in e/current-buffer
             (assoc :cursor new-cursor))
-          e/beep)))))
+          (fail :beep))))))
