@@ -145,10 +145,9 @@
 
 (defn- clamped-j
   [{[i] :cursor,
-    lines :lines,
     :as buffer}
    j]
-  (max 0 (min j (dec (count (get lines i))))))
+  (max 0 (min j (dec (count (line buffer i))))))
 
 (defn- clamp-cursor-j
   [{[i j] :cursor,
