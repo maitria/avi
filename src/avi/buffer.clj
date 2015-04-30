@@ -66,7 +66,10 @@
 
 (defn line
   [buffer i]
-  (get-in buffer [:lines i]))
+  (-> buffer
+    lines-and-cursor
+    :lines
+    (get i)))
 
 (defn j-within-line
   [buffer i]
