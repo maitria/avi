@@ -45,7 +45,7 @@
 (defn write
   [{filename :name,
     :as buffer}]
-  (let [lines (:lines (lines-and-cursor buffer))]
+  (let [{:keys [lines]} (lines-and-cursor buffer)]
     (write-file *world* filename (string/join "\n" lines)))
   buffer)
 
