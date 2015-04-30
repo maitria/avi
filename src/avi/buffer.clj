@@ -32,14 +32,13 @@
 (let [lines-and-cursor-keys [:viewport-top :viewport-height :lines :cursor :last-explicit-j]]
   (defn lines-and-cursor
     ([buffer]
-     (+> buffer
-       (select-keys lines-and-cursor-keys)))
+     (select-keys buffer lines-and-cursor-keys))
     ([buffer f]
-      {:pre [(:in-transaction? buffer)]}
-      (merge buffer
-             (-> (lines-and-cursor buffer)
-                 f
-                 (select-keys lines-and-cursor-keys))))))
+     {:pre [(:in-transaction? buffer)]}
+     (merge buffer
+            (-> (lines-and-cursor buffer)
+                f
+                (select-keys lines-and-cursor-keys))))))
 
 ;; --
 
