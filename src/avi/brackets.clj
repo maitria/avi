@@ -1,6 +1,8 @@
 (ns avi.brackets
   (:require [avi.pervasive :refer :all]
             [packthread.core :refer :all]
+            [packthread.lenses :as l]
+            [avi.buffer :as b]
             [avi.editor :as e]
             [avi.scan :as scan]))
 
@@ -17,8 +19,8 @@
 (def ^:private open-brackets (into #{} (keys bracket-map)))
 (def ^:private brackets (into #{} (concat (keys bracket-map) (vals bracket-map))))
 
-(defn- matching-bracket
-  [[i j] lines]
+(defn- go-to-matching-bracket
+  [{[i j] :cursor lines :lines :as result}]
   (let [bracket (get-in lines [i j])
         open-bracket? (open-brackets bracket)
         scan (if open-bracket?
@@ -40,15 +42,14 @@
                         (drop-while #(not (empty? (second %))))
                         first
                         first)]
-    (if (brackets bracket)
-      new-cursor)))
+    (when-not (brackets bracket)
+      (fail :beep))
+    (when-not new-cursor
+      (fail :beep))
+    (assoc result :cursor new-cursor)))
 
 (def wrap-go-to-matching-bracket
   (e/keystroke-middleware "%"
     (fn+> [editor]
-      (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
-            new-cursor (matching-bracket [i j] lines)]
-        (if new-cursor
-          (in e/current-buffer
-            (assoc :cursor new-cursor))
-          (fail :beep))))))
+      (in (l/comp e/current-buffer)
+        go-to-matching-bracket))))
