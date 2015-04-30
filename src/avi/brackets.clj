@@ -20,7 +20,7 @@
 (def ^:private brackets (into #{} (concat (keys bracket-map) (vals bracket-map))))
 
 (defn- go-to-matching-bracket
-  [{[i j] :cursor lines :lines :as result}]
+  [{[i j] :cursor lines :lines :as lines-and-cursor}]
   (let [bracket (get-in lines [i j])
         open-bracket? (open-brackets bracket)
         scan (if open-bracket?
@@ -46,10 +46,10 @@
       (fail :beep))
     (when-not new-cursor
       (fail :beep))
-    (assoc result :cursor new-cursor)))
+    (assoc lines-and-cursor :cursor new-cursor)))
 
 (def wrap-go-to-matching-bracket
   (e/keystroke-middleware "%"
     (fn+> [editor]
-      (in (l/comp e/current-buffer)
+      (in (l/comp e/current-buffer b/lines-and-cursor)
         go-to-matching-bracket))))

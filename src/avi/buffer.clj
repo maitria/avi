@@ -34,7 +34,8 @@
     ([buffer]
      (select-keys buffer lines-and-cursor-keys))
     ([buffer f]
-     {:pre [(:in-transaction? buffer)]}
+     {:post [(or (:in-transaction? %)
+                 (= (:lines buffer) (:lines %)))]}
      (merge buffer
             (-> (lines-and-cursor buffer)
                 f
