@@ -43,10 +43,10 @@
 ;; --
 
 (defn write
-  [{lines :lines,
-    filename :name,
+  [{filename :name,
     :as buffer}]
-  (write-file *world* filename (string/join "\n" lines))
+  (let [lines (:lines (lines-and-cursor buffer))]
+    (write-file *world* filename (string/join "\n" lines)))
   buffer)
 
 (defn- adjust-viewport-to-contain-cursor
