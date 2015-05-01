@@ -16,6 +16,10 @@
       (in e/current-buffer
           b/start-transaction)))
 
+(defn advance-for-append
+  [{[i j] :cursor, lines :lines :as lines-and-cursor}]
+  (assoc lines-and-cursor :cursor [i (min (count (get lines i)) (inc j))]))
+
 (def wrap-enter-insert-mode
   (em/eventmap
     ("a"
@@ -23,9 +27,7 @@
       (+> editor
           (enter-insert-mode)
           (in (l/comp e/current-buffer b/lines-and-cursor)
-            (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
-                  new-j (min (count (get lines i)) (inc j))]
-              (assoc :cursor [i new-j])))))
+            advance-for-append)))
 
     ("i"
       [editor repeat-count]
