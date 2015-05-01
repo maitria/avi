@@ -1,5 +1,6 @@
 (ns avi.insert-mode
   (:require [packthread.core :refer :all]
+            [packthread.lenses :as l]
             [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.buffer :as b]
@@ -21,7 +22,7 @@
       [editor repeat-count]
       (+> editor
           (enter-insert-mode)
-          (in e/current-buffer
+          (in (l/comp e/current-buffer b/lines-and-cursor)
             (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
                   new-j (min (count (get lines i)) (inc j))]
               (assoc :cursor [i new-j])))))
