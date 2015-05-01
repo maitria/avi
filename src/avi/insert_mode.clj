@@ -20,6 +20,10 @@
   [{[i j] :cursor, lines :lines :as lines-and-cursor}]
   (assoc lines-and-cursor :cursor [i (min (count (get lines i)) (inc j))]))
 
+(defn move-to-eol
+  [{[i] :cursor, lines :lines :as lines-and-cursor}]
+  (assoc lines-and-cursor :cursor [i (count (get lines i))]))
+
 (def wrap-enter-insert-mode
   (em/eventmap
     ("a"
@@ -47,10 +51,8 @@
       [editor repeat-count]
       (+> editor
           (enter-insert-mode)
-          (in e/current-buffer
-            (let [{[i] :cursor, lines :lines} (e/current-buffer editor)
-                  j (count (get lines i))]
-              (assoc :cursor [i j])))))
+          (in (l/comp e/current-buffer b/lines-and-cursor)
+            move-to-eol)))
 
     ("O"
       [editor repeat-count]
