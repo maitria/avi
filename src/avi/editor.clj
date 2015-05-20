@@ -90,12 +90,6 @@
       (catch Throwable e
         (merge editor (ex-data e))))))
 
-;; -- Some "base" responders -------------------------------------------------
-
-(defn unhandled-event-responder
-  [editor event]
-  (beep/beep editor (str "Unhandled event " (pr-str event))))
-
 ;; -- Movement helpers -------------------------------------------------------
 
 (defn- valid-line?

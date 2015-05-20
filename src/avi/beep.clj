@@ -16,3 +16,7 @@
 (defn beep-responder
   [editor event]
   (beep editor))
+
+(defn unhandled-event-responder
+  [editor event]
+  (beep editor (str "Unhandled event " (pr-str event))))
