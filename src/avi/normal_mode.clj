@@ -209,7 +209,7 @@
       (responder event))))
 
 (def responder
-  (-> e/beep-responder
+  (-> beep/beep-responder
       wrap-normal-mode
       avi.search/wrap-normal-search-commands
       command-line-mode/wrap-enter-command-line-mode

@@ -13,3 +13,6 @@
     (if message
       (error message))))
 
+(defn beep-responder
+  [editor event]
+  (beep editor))

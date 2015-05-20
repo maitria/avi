@@ -1,5 +1,6 @@
 (ns avi.command-line
   (:require [packthread.core :refer :all]
+            [avi.beep :as beep]
             [avi.editor :as e]))
 
 (defn enter
@@ -52,7 +53,7 @@
 
 (defn- responder
   [command-fn]
-  (-> e/beep-responder
+  (-> beep/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
       (wrap-handle-history-movement "<C-P>" ::pre-history ::post-history)
