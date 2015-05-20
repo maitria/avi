@@ -98,7 +98,9 @@
 
 (defn unhandled-event-responder
   [editor event]
-  (fail (str "Unhandled event " (pr-str event))))
+  (assoc editor
+         :message [:white :red (str "Unhandled event " (pr-str event))]
+         :beep? true))
 
 ;; -- Movement helpers -------------------------------------------------------
 
