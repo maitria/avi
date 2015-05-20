@@ -59,7 +59,7 @@
       (wrap-handle-history-movement "<C-P>" ::pre-history ::post-history)
       (wrap-handle-history-movement "<C-N>" ::post-history ::pre-history)
       ((command-wrapper command-fn))
-      e/wrap-reset-beep))
+      beep/wrap-reset-beep))
 
 (defn mode-middleware
   [mode-kw command-fn]

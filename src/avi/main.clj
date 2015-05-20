@@ -18,5 +18,5 @@
       avi.search/wrap-mode
       e/wrap-handle-resize
       e/wrap-handle-exceptions
-      e/wrap-reset-beep
+      beep/wrap-reset-beep
       avi.render/wrap))

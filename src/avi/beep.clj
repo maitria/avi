@@ -20,3 +20,10 @@
 (defn unhandled-event-responder
   [editor event]
   (beep editor (str "Unhandled event " (pr-str event))))
+
+(defn wrap-reset-beep
+  [handler]
+  (fn [editor event]
+    (-> editor
+        (assoc :beep? false)
+        (handler event))))

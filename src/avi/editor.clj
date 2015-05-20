@@ -26,15 +26,6 @@
         (a-fn editor)
         (handler editor event)))))
 
-;; -- Beeping ----------------------------------------------------------------
-
-(defn wrap-reset-beep
-  [handler]
-  (fn [editor event]
-    (-> editor
-        (assoc :beep? false)
-        (handler event))))
-
 ;; -- Tracking the current buffer --------------------------------------------
 
 (defn current-buffer
