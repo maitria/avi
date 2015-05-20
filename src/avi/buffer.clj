@@ -29,7 +29,7 @@
 
 ;; Lenses
 
-(let [lines-and-cursor-keys [:viewport-top :viewport-height :lines :cursor :last-explicit-j]]
+(let [lines-and-cursor-keys [:viewport-top :viewport-height :lines :cursor :last-explicit-j :beep? :message]]
   (defn lines-and-cursor
     ([buffer]
      (select-keys buffer lines-and-cursor-keys))

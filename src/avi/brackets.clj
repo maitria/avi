@@ -2,6 +2,7 @@
   (:require [avi.pervasive :refer :all]
             [packthread.core :refer :all]
             [packthread.lenses :as l]
+            [avi.beep :as beep]
             [avi.buffer :as b]
             [avi.editor :as e]
             [avi.scan :as scan]))
@@ -21,32 +22,37 @@
 
 (defn- go-to-matching-bracket
   [{[i j] :cursor lines :lines :as lines-and-cursor}]
-  (let [bracket (get-in lines [i j])
-        open-bracket? (open-brackets bracket)
-        scan (if open-bracket?
-               (scan/forward [i j] lines)
-               (scan/backward [i j] lines))
-        brackets (if open-bracket?
-                   bracket-map
-                   reverse-bracket-map)
-        new-cursor (->> scan
-                        (reductions
-                          (fn [stack [i j]]
-                            (let [char (get-in lines [i j])]
-                              (cond-> stack
-                                (get brackets char) (conj (get brackets char))
-                                (= char (first stack)) rest)))
-                          ())
-                        (drop 1)
-                        (map vector scan)
-                        (drop-while #(not (empty? (second %))))
-                        first
-                        first)]
-    (when-not (brackets bracket)
-      (fail :beep))
-    (when-not new-cursor
-      (fail :beep))
-    (assoc lines-and-cursor :cursor new-cursor)))
+  (+> lines-and-cursor
+    (let [bracket (get-in lines [i j])
+          open-bracket? (open-brackets bracket)
+          scan (if open-bracket?
+                 (scan/forward [i j] lines)
+                 (scan/backward [i j] lines))
+          brackets (if open-bracket?
+                     bracket-map
+                     reverse-bracket-map)
+          new-cursor (->> scan
+                          (reductions
+                            (fn [stack [i j]]
+                              (let [char (get-in lines [i j])]
+                                (cond-> stack
+                                  (get brackets char) (conj (get brackets char))
+                                  (= char (first stack)) rest)))
+                            ())
+                          (drop 1)
+                          (map vector scan)
+                          (drop-while #(not (empty? (second %))))
+                          first
+                          first)]
+      (cond
+        (not (brackets bracket))
+        beep/beep
+
+        (not new-cursor)
+        beep/beep
+
+        :else
+        (assoc :cursor new-cursor)))))
 
 (def wrap-go-to-matching-bracket
   (e/keystroke-middleware "%"
