@@ -1,6 +1,7 @@
 (ns avi.insert-mode
   (:require [packthread.core :refer :all]
             [packthread.lenses :as l]
+            [avi.beep :as beep]
             [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.buffer :as b]
@@ -72,16 +73,16 @@
 
 (defn- update-buffer-for-insert-event
   [editor [event-type event-data :as event]]
-  (when-not (= event-type :keystroke)
-    (fail :beep))
   (+> editor
-    (in e/current-buffer
-        (if (= event-data "<BS>")
-          (if (= [0 0] (:cursor (e/current-buffer editor)))
-            (fail :beep)
-            b/backspace)
-          (in b/lines-and-cursor
-            (b/insert-text (key->text event-data)))))))
+    (if-not (= event-type :keystroke)
+      beep/beep
+      (in e/current-buffer
+          (if (= event-data "<BS>")
+            (if (= [0 0] (:cursor (e/current-buffer editor)))
+              (fail :beep)
+              b/backspace)
+            (in b/lines-and-cursor
+              (b/insert-text (key->text event-data))))))))
 
 (defn- play-script
   [editor script]
