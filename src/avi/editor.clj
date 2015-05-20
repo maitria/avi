@@ -28,10 +28,6 @@
 
 ;; -- Beeping ----------------------------------------------------------------
 
-(defn beep
-  [editor]
-  (assoc editor :beep? true))
-
 (defn wrap-reset-beep
   [handler]
   (fn [editor event]
@@ -98,7 +94,7 @@
 
 (defn beep-responder
   [editor event]
-  (beep editor))
+  (beep/beep editor))
 
 (defn unhandled-event-responder
   [editor event]
@@ -117,7 +113,7 @@
       (let [[i] (:cursor (current-buffer editor))
         i (i-fn i)]
         (if-not (valid-line? editor i)
-          (beep)
+          beep/beep
           (in current-buffer
               (b/move-to-line i))))))
 

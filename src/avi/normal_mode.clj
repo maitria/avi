@@ -1,5 +1,6 @@
 (ns avi.normal-mode
   (:require [packthread.core :refer :all]
+            [avi.beep :as beep]
             [avi.brackets :as brackets]
             [avi.buffer :as b]
             [avi.command-line-mode :as command-line-mode]
@@ -19,7 +20,7 @@
         (if (b/cursor-can-move-to-column? buffer j)
           (in e/current-buffer
               (b/move-cursor new-position j))
-          e/beep))))
+          beep/beep))))
 
 (defn- current-line 
   [editor] 
@@ -157,7 +158,7 @@
       (+> editor
           (let [buffer (e/current-buffer editor)]
             (if (b/on-last-line? buffer)
-              e/beep
+              beep/beep
               (in e/current-buffer
                   (b/move-and-scroll-half-page :down))))))
 
@@ -177,7 +178,7 @@
           (let [buffer (e/current-buffer editor)
                 [i] (:cursor buffer)]
             (if (zero? i)
-              e/beep
+              beep/beep
               (in e/current-buffer
                   (b/move-and-scroll-half-page :up))))))
 
