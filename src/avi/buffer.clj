@@ -2,6 +2,7 @@
   (:import [java.io FileNotFoundException])
   (:require [packthread.core :refer :all]
             [clojure.string :as string]
+            [avi.beep :as beep]
             [avi.pervasive :refer :all]
             [avi.string :as s]
             [avi.world :refer :all]))
@@ -227,13 +228,16 @@
    {lines :lines,
     cursor :cursor,
     :as buffer}]
-  (if-not (seq (from-log buffer))
-    (fail :beep (str "Already at the " last-name " change"))
-    (+> buffer
+  (+> buffer
+    (if-not (seq (from-log buffer))
+      (do
+        beep/beep
+        (beep/error (str "Already at the " last-name " change")))
+      (do
         (update-in [to-log] conj {:lines lines, :cursor cursor})
         (merge (first (from-log buffer)))
         (update-in [from-log] rest)
-        adjust-viewport-to-contain-cursor)))
+        adjust-viewport-to-contain-cursor))))
 
 (def undo (partial undo-or-redo :undo-log :redo-log "oldest"))
 (def redo (partial undo-or-redo :redo-log :undo-log "newest"))
