@@ -79,7 +79,7 @@
       (in e/current-buffer
           (if (= event-data "<BS>")
             (if (= [0 0] (:cursor (e/current-buffer editor)))
-              (fail :beep)
+              beep/beep
               b/backspace)
             (in b/lines-and-cursor
               (b/insert-text (key->text event-data))))))))

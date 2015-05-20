@@ -53,7 +53,10 @@
   ([editor]
    (:buffer editor))
   ([editor buffer-fn]
-   (update-in editor [:buffer] buffer-fn)))
+   (let [buffer-like (buffer-fn (merge (:buffer editor) (select-keys editor [:beep? :message])))
+         modified-buffer (dissoc buffer-like :beep? :message)
+         modified-editor (merge editor (select-keys buffer-like [:beep? :message]))]
+     (assoc modified-editor :buffer modified-buffer))))
 
 ;; -- Modes ------------------------------------------------------------------
 
