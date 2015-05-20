@@ -230,9 +230,7 @@
     :as buffer}]
   (+> buffer
     (if-not (seq (from-log buffer))
-      (do
-        beep/beep
-        (beep/error (str "Already at the " last-name " change")))
+      (beep/beep (str "Already at the " last-name " change"))
       (do
         (update-in [to-log] conj {:lines lines, :cursor cursor})
         (merge (first (from-log buffer)))

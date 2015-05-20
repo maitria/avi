@@ -102,9 +102,7 @@
 
 (defn unhandled-event-responder
   [editor event]
-  (+> editor
-    beep/beep
-    (beep/error (str "Unhandled event " (pr-str event)))))
+  (beep/beep editor (str "Unhandled event " (pr-str event))))
 
 ;; -- Movement helpers -------------------------------------------------------
 

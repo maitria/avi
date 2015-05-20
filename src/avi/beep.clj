@@ -1,9 +1,15 @@
-(ns avi.beep)
-
-(defn beep
-  [editor-like]
-  (assoc editor-like :beep? true))
+(ns avi.beep
+  (:require [packthread.core :refer :all]))
 
 (defn error
   [editor-like message]
-  (assoc editor-like :message [:white :red message]))
+  (+> editor-like
+    (assoc :message [:white :red message])))
+
+(defn beep
+  [editor-like & [message]]
+  (+> editor-like
+    (assoc :beep? true)
+    (if message
+      (error message))))
+
