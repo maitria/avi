@@ -3,6 +3,7 @@
    manipulating the editor map."
   (:require [packthread.core :refer :all]
             [avi.pervasive :refer :all]
+            [avi.beep :as beep]
             [avi.buffer :as b]))
 
 ;; -- Initial state ----------------------------------------------------------
@@ -98,9 +99,9 @@
 
 (defn unhandled-event-responder
   [editor event]
-  (assoc editor
-         :message [:white :red (str "Unhandled event " (pr-str event))]
-         :beep? true))
+  (+> editor
+    beep/beep
+    (beep/error (str "Unhandled event " (pr-str event)))))
 
 ;; -- Movement helpers -------------------------------------------------------
 
