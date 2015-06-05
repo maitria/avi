@@ -38,12 +38,13 @@
             (assoc :foo :bar)))
   "
   ([editor]
-   (:buffer editor))
-  ([editor buffer-fn]
-   (let [buffer-like (buffer-fn (merge (:buffer editor) (select-keys editor [:beep? :message])))
-         modified-buffer (dissoc buffer-like :beep? :message)
-         modified-editor (merge editor (select-keys buffer-like [:beep? :message]))]
-     (assoc modified-editor :buffer modified-buffer))))
+   (merge
+     (:buffer editor)
+     (select-keys editor [:beep? :message])))
+  ([editor new-value]
+   (+> editor
+     (assoc :buffer (dissoc new-value :beep? :message))
+     (merge (select-keys new-value [:beep? :message])))))
 
 ;; -- Modes ------------------------------------------------------------------
 

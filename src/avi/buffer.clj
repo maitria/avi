@@ -34,13 +34,10 @@
   (defn lines-and-cursor
     ([buffer]
      (select-keys buffer lines-and-cursor-keys))
-    ([buffer f]
+    ([buffer updated-lines]
      {:post [(or (:in-transaction? %)
                  (= (:lines buffer) (:lines %)))]}
-     (merge buffer
-            (-> (lines-and-cursor buffer)
-                f
-                (select-keys lines-and-cursor-keys))))))
+     (merge buffer (select-keys updated-lines lines-and-cursor-keys)))))
 
 ;; --
 
