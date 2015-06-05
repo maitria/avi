@@ -2,6 +2,7 @@
   "Functions (including basse responders, middleware, and utilties) for
    manipulating the editor map."
   (:require [packthread.core :refer :all]
+            [packthread.lenses :as l]
             [avi.pervasive :refer :all]
             [avi.beep :as beep]
             [avi.buffer :as b]))
@@ -28,23 +29,15 @@
 
 ;; -- Tracking the current buffer --------------------------------------------
 
-(defn current-buffer
+(def current-buffer
   "Read or update the current buffer.
   
   This is inteaded to be used with packthread's \"in\" macro, like so:
 
     (+> editor
         (in e/current-buffer
-            (assoc :foo :bar)))
-  "
-  ([editor]
-   (merge
-     (:buffer editor)
-     (select-keys editor [:beep? :message])))
-  ([editor new-value]
-   (+> editor
-     (assoc :buffer (dissoc new-value :beep? :message))
-     (merge (select-keys new-value [:beep? :message])))))
+            (assoc :foo :bar)))"
+  (beep/add-beep-to-focus (l/under :buffer)))
 
 ;; -- Modes ------------------------------------------------------------------
 

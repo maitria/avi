@@ -27,3 +27,17 @@
     (-> editor
         (assoc :beep? false)
         (handler event))))
+
+(defn add-beep-to-focus
+  "Modifies a lens to pass :beep? and :message into and out of the focus so
+  that our error-signalling functions can be used within the focus."
+  [lens]
+  (fn
+    ([original]
+     (merge
+       (lens original)
+       (select-keys original [:beep? :message])))
+    ([original new-value]
+     (-> original
+       (lens (dissoc new-value :beep? :message))
+       (merge (select-keys new-value [:beep? :message]))))))
