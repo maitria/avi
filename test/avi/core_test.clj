@@ -32,4 +32,4 @@
          "test.txt" :black :on :white
          ""])
   (fact "When the terminal window is resized, the cursor stays inside the buffer viewport."
-    (cursor :editing ten-lines :after "G<Resize [5 20]>") => [2 0]))
+    (editor :editing ten-lines :after "G<Resize [5 20]>") => (cursor [2 0])))

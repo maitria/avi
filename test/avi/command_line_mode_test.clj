@@ -6,14 +6,14 @@
   (fact "`:` echos on the command-line"
     (terminal :line :message :after ":") => ":")
   (fact "`:` places the cursor after the colon prompt"
-    (cursor :after ":") => [7 1])
+    (editor :after ":") => (cursor [7 1]))
   (fact "characters typed after `:` echo on the command-line"
     (terminal :line :message :after ":abc") =>":abc")
   (fact "characters typed after `:` move the cursor"
-    (cursor :after ":a") => [7 2]
-    (cursor :after ":abc") => [7 4])
+    (editor :after ":a") => (cursor [7 2])
+    (editor :after ":abc") => (cursor [7 4]))
   (fact "characters typed after `:` can be deleted with backspace"
-    (cursor :after ":abc<BS><BS>") => [7 2])
+    (editor :after ":abc<BS><BS>") => (cursor [7 2]))
   (fact "<BS> at position zero on the command-line cancels"
     (:mode (editor :after ":<BS>")) => :normal))
 (facts "regarding `:q`"
@@ -29,15 +29,15 @@
 
 (facts "regarding `:<N>`"
   (fact "`:<N><Enter>` moves to line N"
-    (cursor :after ":3<Enter>") => [2 0]))
+    (editor :after ":3<Enter>") => (cursor [2 0])))
 
 (facts "regarding `:<Enter>`"
   (fact "`:<Enter>` does nothing"
-    (cursor :after ":<Enter>") => [0 0]))
+    (editor :after ":<Enter>") => (cursor [0 0])))
 
 (facts "regarding bad commands"
   (fact "`:zrbl<Enter>` doesn't change cursor position"
-    (cursor :after ":zrbl<Enter>") => [0 0])
+    (editor :after ":zrbl<Enter>") => (cursor [0 0]))
   (fact "`:blrg<Enter>` produces error message" 
     (terminal :line :message :after ":blrg<Enter>") => [":blrg is not a thing" :white :on :red])
   (fact "':foo<Enter> produces specific error message"

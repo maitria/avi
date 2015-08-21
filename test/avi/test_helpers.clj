@@ -5,7 +5,8 @@
             [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.world :refer :all]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [midje.checking.core :as checking]))
 
 (def ten-lines
   (str "One\nTwo\nThree\nFour\nFive\nSix\n"
@@ -117,8 +118,9 @@
       unwrap-single-value)))
 
 (defn cursor
-  [& args]
-  (:cursor (:rendition (apply editor args))))
+  [expected-pos]
+  (fn [editor]
+    (checking/extended-= (:cursor (:rendition editor)) expected-pos)))
 
 (defn beeped
   [editor]
