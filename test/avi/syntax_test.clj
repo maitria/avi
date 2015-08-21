@@ -4,5 +4,5 @@
 
 (facts "about clojure syntax"
   (fact "clojure parentheses are red"
-    (attributes :at [0 0] :editing "(foo)") => :red
-    (attributes :at [0 4] :editing "(foo)") => :red))
+    (editor :editing "(foo)") => (attributes [0 0] :red)
+    (editor :editing "(foo)") => (attributes [0 4] :red)))

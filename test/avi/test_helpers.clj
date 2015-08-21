@@ -110,12 +110,12 @@
          unwrap-single-value)))
 
 (defn attributes
-  [& args]
-  (let [{:keys [width attrs]} (:rendition (apply editor args))
-        [i j] (:at (apply hash-map args))]
+  [[i j] expected]
+  (fn [{{:keys [width attrs]} :rendition}]
     (-> (get attrs (+ j (* i width)))
       color/description
-      unwrap-single-value)))
+      unwrap-single-value
+      (checking/extended-= expected))))
 
 (defn cursor
   [expected-pos]
