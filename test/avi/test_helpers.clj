@@ -116,7 +116,6 @@
   [expected]
   (line nil expected))
 
-
 (defn attributes
   [[i j] expected]
   (fn [{{:keys [width attrs]} :rendition}]
