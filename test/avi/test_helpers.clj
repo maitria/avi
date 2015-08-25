@@ -71,7 +71,7 @@
   (:editor (apply simulate args)))
 
 (defn- line-keeper
-  [{line :line}]
+  [line]
   (cond
     (not line)
     (fn [i v]
@@ -94,20 +94,26 @@
     coll))
 
 (defn terminal
-  [& args]
-  (let [{:keys [width chars attrs]} (:rendition (apply editor args))
-        height (quot (count chars) width)
-        lines (->> (range height)
-                   (map #(String. chars (* % width) width))
-                   (map string/trimr))
-        line-annotations (->> (range height)
-                              (map (fn [i]
-                                     (get attrs (* i width))))
-                              (map color/description))]
-    (->> (map vector lines line-annotations)
-         (keep-indexed (line-keeper (apply hash-map args)))
-         flatten
-         unwrap-single-value)))
+  ([expected] (terminal nil expected))
+  ([line expected]
+   (fn [{{:keys [width chars attrs]} :rendition}]
+     (let [height (quot (count chars) width)
+           lines (->> (range height)
+                      (map #(String. chars (* % width) width))
+                      (map string/trimr))
+           line-annotations (->> (range height)
+                                 (map (fn [i]
+                                        (get attrs (* i width))))
+                                 (map color/description))]
+       (checking/extended-=
+         (->> (map vector lines line-annotations)
+              (keep-indexed (line-keeper line))
+              flatten
+              unwrap-single-value)
+         expected)))))
+
+(def message-line (partial terminal :message))
+(def line terminal)
 
 (defn attributes
   [[i j] expected]

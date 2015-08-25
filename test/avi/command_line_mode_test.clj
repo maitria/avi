@@ -4,11 +4,11 @@
 
 (facts "regarding command-line mode"
   (fact "`:` echos on the command-line"
-    (terminal :line :message :after ":") => ":")
+    (editor :after ":") => (message-line ":"))
   (fact "`:` places the cursor after the colon prompt"
     (editor :after ":") => (cursor [7 1]))
   (fact "characters typed after `:` echo on the command-line"
-    (terminal :line :message :after ":abc") =>":abc")
+    (editor :after ":abc") => (message-line ":abc"))
   (fact "characters typed after `:` move the cursor"
     (editor :after ":a") => (cursor [7 2])
     (editor :after ":abc") => (cursor [7 4]))
@@ -39,17 +39,17 @@
   (fact "`:zrbl<Enter>` doesn't change cursor position"
     (editor :after ":zrbl<Enter>") => (cursor [0 0]))
   (fact "`:blrg<Enter>` produces error message" 
-    (terminal :line :message :after ":blrg<Enter>") => [":blrg is not a thing" :white :on :red])
+    (editor :after ":blrg<Enter>") => (message-line [":blrg is not a thing" :white :on :red]))
   (fact "':foo<Enter> produces specific error message"
-    (terminal :line :message :after ":foo<Enter>") => [":foo is not a thing" :white :on :red])
+    (editor :after ":foo<Enter>") => (message-line [":foo is not a thing" :white :on :red]))
   (fact "error message longer than terminal width gets clipped"
-    (terminal :line :message :width 20 :after ":holycrapbatmanwhatdoido<Enter>") =>  [":holycrapbatmanwhatd" :white :on :red]))
+    (editor :width 20 :after ":holycrapbatmanwhatdoido<Enter>") =>  (message-line [":holycrapbatmanwhatd" :white :on :red])))
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"
     (file-written :editing "ABC\nDEF\nGHI" :after ":w<Enter>") => ["test.txt" "ABC\nDEF\nGHI"])
   (fact "`:w<Enter>` clears the message line (and doesn't fail)"
-    (terminal :line :message :editing "ABC" :after ":w<Enter>") => ""))
+    (editor :editing "ABC" :after ":w<Enter>") => (message-line "")))
 
 (facts "regarding `:wq`"
   (fact "`:wq` writes the file"
@@ -59,7 +59,7 @@
 
 (facts "regarding command-line history"
   (fact "`:<C-P>` moves to previous command"
-    (terminal :line :message :after ":42<Enter>:<C-P>") => ":42"
-    (terminal :line :message :after ":42<Enter>:69<Enter>:<C-P><C-P>") => ":42")
+    (editor :after ":42<Enter>:<C-P>") => (message-line ":42")
+    (editor :after ":42<Enter>:69<Enter>:<C-P><C-P>") => (message-line ":42"))
   (fact "`:<C-N>` moves to next command"
-    (terminal :line :message :after ":42<Enter>:69<Enter>:<C-P><C-P><C-N>") => ":69"))
+    (editor :after ":42<Enter>:69<Enter>:<C-P><C-P><C-N>") => (message-line ":69")))
