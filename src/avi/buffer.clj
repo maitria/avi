@@ -4,7 +4,6 @@
             [clojure.string :as string]
             [avi.beep :as beep]
             [avi.pervasive :refer :all]
-            [avi.string :as s]
             [avi.world :as w]))
 
 (defn- try-load
@@ -281,7 +280,7 @@
                       (dec i)
                       i)
               target-line (get new-lines new-i)
-              new-j (s/index-of-first-non-blank target-line)]
+              new-j (index-of-first-non-blank target-line)]
           (assoc :lines new-lines)
           (move-cursor [new-i new-j])))))
 

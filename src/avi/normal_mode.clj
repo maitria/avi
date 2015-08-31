@@ -8,8 +8,7 @@
             [avi.eventmap :as em]
             [avi.insert-mode :as insert-mode]
             [avi.pervasive :refer :all]
-            [avi.search]
-            [avi.string :as s]))
+            [avi.search]))
 
 (defn- change-column
   [editor j-fn]
@@ -42,7 +41,7 @@
 
     ("^"
       [editor]
-      (let [position (s/index-of-first-non-blank (current-line editor))]
+      (let [position (index-of-first-non-blank (current-line editor))]
         (change-column editor (constantly position))))
 
     ("$"
@@ -67,7 +66,7 @@
             specified-line (dec (or repeat-count 1))
             last-line (dec (b/line-count buffer))
             target-line (min specified-line last-line)
-            target-column (s/index-of-first-non-blank (b/line buffer target-line))]
+            target-column (index-of-first-non-blank (b/line buffer target-line))]
         (-> editor
             (e/change-line (constantly target-line))
             (change-column (constantly target-column)))))
@@ -115,7 +114,7 @@
                 target-line (if repeat-count
                               (dec repeat-count)
                               last-line)
-                target-column (s/index-of-first-non-blank (b/line buffer target-line))]
+                target-column (index-of-first-non-blank (b/line buffer target-line))]
             (e/change-line (constantly target-line))
             (change-column (constantly target-column)))))
 
