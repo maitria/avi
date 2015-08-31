@@ -16,4 +16,6 @@
   (fact "replace can insert at beginning of buffer"
     (:lines (c/replace (c/content "Hello!") [1 0] [1 0] "xyz")) => ["xyzHello!"])
   (fact "replace can insert within a line"
-    (:lines (c/replace (c/content "Hello!") [1 2] [1 2] "//")) => ["He//llo!"]))
+    (:lines (c/replace (c/content "Hello!") [1 2] [1 2] "//")) => ["He//llo!"])
+  (fact "replace can insert at the end of a line"
+    (:lines (c/replace (c/content "Hello!") [1 6] [1 6] "//")) => ["Hello!//"]))
