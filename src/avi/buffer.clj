@@ -5,12 +5,12 @@
             [avi.beep :as beep]
             [avi.pervasive :refer :all]
             [avi.string :as s]
-            [avi.world :refer :all]))
+            [avi.world :as w]))
 
 (defn- try-load
   [filename]
   (try
-    (string/split (read-file *world* filename) #"\n")
+    (string/split (w/read-file w/*world* filename) #"\n")
     (catch FileNotFoundException e
       [""])))
 
@@ -45,7 +45,7 @@
   [{filename :name,
     :as buffer}]
   (let [{:keys [lines]} (lines-and-cursor buffer)]
-    (write-file *world* filename (string/join "\n" lines)))
+    (w/write-file w/*world* filename (string/join "\n" lines)))
   buffer)
 
 (defn- adjust-viewport-to-contain-cursor
