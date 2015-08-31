@@ -24,7 +24,10 @@
   lines; therefore, this is the most general content operation which can insert,
   delete, or replace text."
   [content :- Content
-   start :- Mark
+   [_ column] :- Mark
    end :- Mark
    replacement :- s/Str]
-  (update-in content [:lines 0] #(str replacement %)))
+  (update-in content [:lines 0] #(str
+                                   (subs % 0 column)
+                                   replacement
+                                   (subs % column))))
