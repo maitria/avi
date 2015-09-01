@@ -13,18 +13,18 @@
   {:lines [(s/one s/Str "first line") s/Str]})
 
 (defn split-lines
-  [s]
+  [text]
   (loop [start 0
          end 0
          lines []]
     (cond
-      (= end (count s))
+      (= end (count text))
       (cond-> lines
         (not= start end)
-        (conj (subs s start end)))
+        (conj (subs text start end)))
 
-      (= (get s end) \newline)
-      (recur (inc end) (inc end) (conj lines (subs s start end)))
+      (= (get text end) \newline)
+      (recur (inc end) (inc end) (conj lines (subs text start end)))
 
       :else
       (recur start (inc end) lines))))
