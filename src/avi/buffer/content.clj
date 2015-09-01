@@ -14,19 +14,23 @@
 
 (defn- split-lines
   [text]
-  (let [text-end (cond-> (count text) (.endsWith text "\n") dec)]
+  (let [stopping-point (if (.endsWith text "\n")
+                         (dec (count text))
+                         (count text))]
     (loop [line-start 0
-           line-end 0
+           current-offset 0
            lines []]
       (cond
-        (= line-end text-end)
-        (conj lines (subs text line-start line-end))
+        (= current-offset stopping-point)
+        (conj lines (subs text line-start current-offset))
 
-        (= (get text line-end) \newline)
-        (recur (inc line-end) (inc line-end) (conj lines (subs text line-start line-end)))
+        (= (get text current-offset) \newline)
+        (recur (inc current-offset)
+               (inc current-offset)
+               (conj lines (subs text line-start current-offset)))
 
         :else
-        (recur line-start (inc line-end) lines)))))
+        (recur line-start (inc current-offset) lines)))))
 
 (s/defn content :- Content
   [text :- s/Str]
