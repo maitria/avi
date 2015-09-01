@@ -44,10 +44,10 @@
   lines; therefore, this is the most general content operation which can insert,
   delete, or replace text."
   [content :- Content
-   [line column] :- Mark
+   [start-line start-column] :- Mark
    end :- Mark
    replacement :- s/Str]
-  (update-in content [:lines (dec line)] #(str
-                                            (subs % 0 column)
+  (update-in content [:lines (dec start-line)] #(str
+                                            (subs % 0 start-column)
                                             replacement
-                                            (subs % column))))
+                                            (subs % start-column))))
