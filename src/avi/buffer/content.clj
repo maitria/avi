@@ -14,9 +14,7 @@
 
 (defn- split-lines
   [text]
-  (let [text-end (if (.endsWith text "\n")
-                   (dec (count text))
-                   (count text))]
+  (let [text-end (cond-> (count text) (.endsWith text "\n") dec)]
     (loop [line-start 0
            line-end 0
            lines []]
