@@ -54,7 +54,6 @@
 
 (defspec replace-does-not-change-lines-prior-to-first-mark 25
   (prop/for-all [{:keys [pre-content post-content] [start-line] :start :as foo} replace-generator]
-        
     (every?
       #(= (get-in pre-content [:lines (dec %)]) (get-in post-content [:lines (dec %)]))
       (range 1 start-line))))
