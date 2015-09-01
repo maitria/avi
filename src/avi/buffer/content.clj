@@ -1,7 +1,6 @@
 (ns avi.buffer.content
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :as string]
-            [schema.core :as s]))
+  (:require [schema.core :as s]))
 
 (def Line (s/both s/Int (s/pred pos?)))
 (def Column (s/both s/Int (s/pred (complement neg?))))
@@ -13,9 +12,26 @@
 (def Content
   {:lines [(s/one s/Str "first line") s/Str]})
 
+(defn split-lines
+  [s]
+  (loop [start 0
+         end 0
+         lines []]
+    (cond
+      (= end (count s))
+      (cond-> lines
+        (not= start end)
+        (conj (subs s start end)))
+
+      (= (get s end) \newline)
+      (recur (inc end) (inc end) (conj lines (subs s start end)))
+
+      :else
+      (recur start (inc end) lines))))
+
 (s/defn content :- Content
   [text :- s/Str]
-  {:lines (string/split text #"\n")})
+  {:lines (split-lines text)})
 
 (s/defn replace :- Content
   "Replace text between the `start` mark and the `end` mark with `replacement`.
