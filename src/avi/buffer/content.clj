@@ -2,15 +2,16 @@
   (:refer-clojure :exclude [replace])
   (:require [schema.core :as s]))
 
-(def Line (s/both s/Int (s/pred pos?)))
-(def Column (s/both s/Int (s/pred (complement neg?))))
+(def Line s/Str)
+(def LineNumber (s/both s/Int (s/pred pos?)))
+(def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
 
 (def Mark
-  [(s/one Line "Line") 
-   (s/one Column "Column")])
+  [(s/one LineNumber "LineNumber") 
+   (s/one ColumnNumber "Column")])
 
 (def Content
-  {:lines [(s/one s/Str "first line") s/Str]})
+  {:lines [(s/one Line "first line") Line]})
 
 (defn- split-lines
   [text]
@@ -43,10 +44,10 @@
   lines; therefore, this is the most general content operation which can insert,
   delete, or replace text."
   [content :- Content
-   [_ column] :- Mark
+   [line column] :- Mark
    end :- Mark
    replacement :- s/Str]
-  (update-in content [:lines 0] #(str
-                                   (subs % 0 column)
-                                   replacement
-                                   (subs % column))))
+  (update-in content [:lines (dec line)] #(str
+                                            (subs % 0 column)
+                                            replacement
+                                            (subs % column))))
