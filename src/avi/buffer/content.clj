@@ -14,28 +14,34 @@
   {:lines [(s/one Line "first line") Line]})
 
 (defn- split-lines
+  ([text]
+   (split-lines text (count text)))
+  ([text up-to]
+   (loop [line-start 0
+          current-offset 0
+          lines []]
+     (cond
+       (= current-offset up-to)
+       (conj lines (subs text line-start current-offset))
+
+       (= (get text current-offset) \newline)
+       (recur (inc current-offset)
+              (inc current-offset)
+              (conj lines (subs text line-start current-offset)))
+
+       :else
+       (recur line-start (inc current-offset) lines)))))
+
+(defn- text-lines
   [text]
   (let [stopping-point (if (.endsWith text "\n")
                          (dec (count text))
                          (count text))]
-    (loop [line-start 0
-           current-offset 0
-           lines []]
-      (cond
-        (= current-offset stopping-point)
-        (conj lines (subs text line-start current-offset))
-
-        (= (get text current-offset) \newline)
-        (recur (inc current-offset)
-               (inc current-offset)
-               (conj lines (subs text line-start current-offset)))
-
-        :else
-        (recur line-start (inc current-offset) lines)))))
+    (split-lines text stopping-point)))
 
 (s/defn content :- Content
   [text :- s/Str]
-  {:lines (split-lines text)})
+  {:lines (text-lines text)})
 
 (s/defn lines-upto :- [Line]
   [lines :- [Line]
@@ -58,24 +64,6 @@
   ([a b c]
    (join-line-sets (join-line-sets a b) c)))
 
-(defn- replacement-lines
-  [text]
-  (let [stopping-point (count text)]
-    (loop [line-start 0
-           current-offset 0
-           lines []]
-      (cond
-        (= current-offset stopping-point)
-        (conj lines (subs text line-start current-offset))
-
-        (= (get text current-offset) \newline)
-        (recur (inc current-offset)
-               (inc current-offset)
-               (conj lines (subs text line-start current-offset)))
-
-        :else
-        (recur line-start (inc current-offset) lines)))))
-
 (s/defn replace :- Content
   "Replace text between the `start` mark and the `end` mark with `replacement`.
 
@@ -88,5 +76,5 @@
    replacement :- s/Str]
   (assoc content :lines (join-line-sets
                           (lines-upto lines start)
-                          (replacement-lines replacement)
+                          (split-lines replacement)
                           (lines-from lines end))))
