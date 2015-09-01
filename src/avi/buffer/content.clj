@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [replace])
   (:require [schema.core :as s]))
 
-(def Line s/Str)
+(def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
 (def LineNumber (s/both s/Int (s/pred pos?)))
 (def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
 
