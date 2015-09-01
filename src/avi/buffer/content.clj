@@ -12,22 +12,23 @@
 (def Content
   {:lines [(s/one s/Str "first line") s/Str]})
 
-(defn split-lines
+(defn- split-lines
   [text]
-  (loop [start 0
-         end 0
-         lines []]
-    (cond
-      (= end (count text))
-      (cond-> lines
-        (not= start end)
-        (conj (subs text start end)))
+  (let [text-end (if (.endsWith text "\n")
+                   (dec (count text))
+                   (count text))]
+    (loop [line-start 0
+           line-end 0
+           lines []]
+      (cond
+        (= line-end text-end)
+        (conj lines (subs text line-start line-end))
 
-      (= (get text end) \newline)
-      (recur (inc end) (inc end) (conj lines (subs text start end)))
+        (= (get text line-end) \newline)
+        (recur (inc line-end) (inc line-end) (conj lines (subs text line-start line-end)))
 
-      :else
-      (recur start (inc end) lines))))
+        :else
+        (recur line-start (inc line-end) lines)))))
 
 (s/defn content :- Content
   [text :- s/Str]
