@@ -10,10 +10,12 @@
     (:lines (c/content "Hello, World!")) => ["Hello, World!"]
     (:lines (c/content "Line 1\nLine 2")) => ["Line 1" "Line 2"]
     (:lines (c/content "Line 1\nLine 3\n")) => ["Line 1" "Line 3"]
-    (:lines (c/content "Line 1\n\nLine 3")) => ["Line 1" "" "Line 3"]
+    (:lines (c/content "Line 1\n\nLine 3")) => ["Line 1" "" "Line 3"])
+  (fact "if the last character is a newline, it does not make an extra line"
     (:lines (c/content "\n")) => [""]
     (:lines (c/content "\n\n")) => ["" ""]
-    ))
+    (:lines (c/content "\nfoo")) => ["" "foo"]
+    (:lines (c/content "foo\n")) => ["foo"]))
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"
