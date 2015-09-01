@@ -32,8 +32,11 @@
   (fact "replace can insert at the end of a line"
     (:lines (c/replace (c/content "Hello!") [1 6] [1 6] "//")) => ["Hello!//"]))
 
+(def text-generator
+  (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
+
 (def replace-generator
-  (gen'/for [initial-text (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii))
+  (gen'/for [initial-text text-generator
              :let [content (c/content initial-text)
                    line-count (count (:lines content))]
              start-line (gen/choose 1 line-count)
@@ -42,7 +45,7 @@
              end-column (if (= start-line end-line)
                           (gen/choose start-column (count (get-in content [:lines (dec end-line)])))
                           (gen/choose 0 (count (get-in content [:lines (dec end-line)]))))
-             replacement gen/string-ascii]
+             replacement text-generator]
     {:replacement replacement
      :start [start-line start-column]
      :end [end-line end-column]
