@@ -47,13 +47,13 @@
 
 (facts "regarding `:w<Enter>`"
   (fact "`:w<Enter>` writes the file"
-    (file-written :editing "ABC\nDEF\nGHI" :after ":w<Enter>") => ["test.txt" "ABC\nDEF\nGHI"])
+    (editor :editing "ABC\nDEF\nGHI" :after ":w<Enter>") => (wrote-file "test.txt" "ABC\nDEF\nGHI"))
   (fact "`:w<Enter>` clears the message line (and doesn't fail)"
     (editor :editing "ABC" :after ":w<Enter>") => (message-line "")))
 
 (facts "regarding `:wq`"
   (fact "`:wq` writes the file"
-    (file-written :editing "ABC" :after ":wq<Enter>") => ["test.txt" "ABC"])
+    (editor :editing "ABC" :after ":wq<Enter>") => (wrote-file "test.txt" "ABC"))
   (fact "`:wq` exits avi"
     (editor :after ":wq<Enter>") => finished?))
 

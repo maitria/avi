@@ -62,9 +62,12 @@
     {:editor final-editor
      :file-written @file-written}))
 
-(defn file-written
-  [& args]
-  (:file-written (apply editor args)))
+(defn wrote-file
+  [expected-filename expected-contents]
+  (fn [{[filename contents] :file-written}]
+    (and
+      (checking/extended-= filename expected-filename)
+      (checking/extended-= contents expected-contents))))
 
 (defn- line-keeper
   [line]
