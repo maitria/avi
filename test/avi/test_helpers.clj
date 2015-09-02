@@ -28,7 +28,7 @@
        (em/split-string-of-commands)
        (map event)))
 
-(defn- simulate
+(defn editor
   [& {width :width,
       file-contents :editing,
       string-of-commands :after,
@@ -62,11 +62,9 @@
     {:editor final-editor
      :file-written @file-written}))
 
-(def editor simulate)
-
 (defn file-written
   [& args]
-  (:file-written (apply simulate args)))
+  (:file-written (apply editor args)))
 
 (defn- line-keeper
   [line]
