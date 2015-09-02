@@ -15,17 +15,17 @@
   (fact "characters typed after `:` can be deleted with backspace"
     (editor :after ":abc<BS><BS>") => (cursor [7 2]))
   (fact "<BS> at position zero on the command-line cancels"
-    (:mode (editor :after ":<BS>")) => :normal))
+    (editor :after ":<BS>") => (mode :normal)))
 (facts "regarding `:q`"
   (fact "Avi doesn't start in the 'finished' state"
-    (:finished? (editor)) => falsey)
+    (editor) => unfinished?)
   (fact "Typing part of `:q<Enter>` doesn't exit Avi"
-    (:finished? (editor :after ":")) => falsey
-    (:finished? (editor :after ":q")) => falsey)
+    (editor :after ":") => unfinished?
+    (editor :after ":q") => unfinished?)
   (fact "`:q<Enter>` exits Avi."
-    (:finished? (editor :after ":q<Enter>")) => true)
+    (editor :after ":q<Enter>") => finished?)
   (fact "`:q!<Enter>` does not exit Avi."
-    (:finished? (editor :after ":q!<Enter>")) => falsey))
+    (editor :after ":q!<Enter>") => unfinished?))
 
 (facts "regarding `:<N>`"
   (fact "`:<N><Enter>` moves to line N"
@@ -55,7 +55,7 @@
   (fact "`:wq` writes the file"
     (file-written :editing "ABC" :after ":wq<Enter>") => ["test.txt" "ABC"])
   (fact "`:wq` exits avi"
-    (:finished? (editor :after ":wq<Enter>")) => true))
+    (editor :after ":wq<Enter>") => finished?))
 
 (facts "regarding command-line history"
   (fact "`:<C-P>` moves to previous command"

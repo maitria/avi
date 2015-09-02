@@ -16,7 +16,7 @@
 
 (facts "regarding resizing of terminal window"
   (fact "When the terminal window is resized, it updates the editor viewport size."
-    (:size (:viewport (editor :after "<Resize [17 42]>"))) => [17 42])
+    (editor :after "<Resize [17 42]>") => (viewport-size [17 42]))
   (fact "When the terminal window is resized, it updates the buffer viewport size."
     (editor :editing ten-lines :after "<Resize [12 20]>G")
      => (terminal ["One"

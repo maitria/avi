@@ -62,13 +62,11 @@
     {:editor final-editor
      :file-written @file-written}))
 
+(def editor simulate)
+
 (defn file-written
   [& args]
   (:file-written (apply simulate args)))
-
-(defn editor
-  [& args]
-  (:editor (apply simulate args)))
 
 (defn- line-keeper
   [line]
@@ -95,7 +93,7 @@
 
 (defn line
   [line expected]
-  (fn [{{:keys [width chars attrs]} :rendition}]
+  (fn [{{{:keys [width chars attrs]} :rendition} :editor}]
     (let [height (quot (count chars) width)
           lines (->> (range height)
                      (map #(String. chars (* % width) width))
@@ -118,7 +116,7 @@
 
 (defn attributes
   [[i j] expected]
-  (fn [{{:keys [width attrs]} :rendition}]
+  (fn [{{{:keys [width attrs]} :rendition} :editor}]
     (-> (get attrs (+ j (* i width)))
       color/description
       unwrap-single-value
@@ -126,13 +124,26 @@
 
 (defn cursor
   [expected-pos]
-  (fn [editor]
+  (fn [{:keys [editor]}]
     (checking/extended-= (:cursor (:rendition editor)) expected-pos)))
 
 (defn beeped
-  [editor]
+  [{:keys [editor]}]
   (:beep? editor))
 
 (defn did-not-beep
-  [editor]
+  [{:keys [editor]}]
   (not (:beep? editor)))
+
+(defn mode
+  [expected-mode]
+  (fn [{{:keys [mode]} :editor}]
+    (checking/extended-= mode expected-mode)))
+
+(def finished? (comp :finished? :editor))
+(def unfinished? (complement finished?))
+
+(defn viewport-size
+  [expected-size]
+  (fn [{{{:keys [size]} :viewport} :editor}]
+    (checking/extended-= size expected-size)))

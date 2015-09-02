@@ -20,7 +20,7 @@
   (fact "The repeat goes away after a command is executed."
     (editor :editing "0123456789x" :after "4ll") => (cursor [0 5]))
   (fact "None of the digits clear the repeat count."
-    (:count (editor :after "1234567890")) => 1234567890))
+    (:count (:editor (editor :after "1234567890"))) => 1234567890))
 
 (facts "regarding cursor movement"
   (fact "The cursor starts on line 1, column 0."
