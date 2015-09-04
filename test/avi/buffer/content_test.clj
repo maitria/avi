@@ -34,7 +34,7 @@
     (:lines (c/replace (c/content "Hello!") [1 2] [1 2] "//")) => ["He//llo!"])
   (fact "replace can insert at the end of a line"
     (:lines (c/replace (c/content "Hello!") [1 6] [1 6] "//")) => ["Hello!//"])
-  (fact "replace increments buffer revision"
+  (fact "replace increments contents revision"
     (:revision (c/replace (c/content "Hello!") [1 3] [1 3] "?")) => 1))
 
 (def text-generator
