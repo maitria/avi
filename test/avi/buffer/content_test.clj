@@ -36,19 +36,19 @@
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
 
 (defn mark-generator
-  [lines]
+  [{:keys [lines]}]
   (gen'/for [line (gen/choose 1 (count lines))
              column (gen/choose 0 (count (get lines (dec line))))]
     [line column]))
 
+(defn start-end-mark-generator
+  [content]
+  (gen/fmap sort (gen/vector (mark-generator content) 2)))
+
 (def replace-generator
   (gen'/for [initial-text text-generator
-             :let [content (c/content initial-text)
-                   line-count (count (:lines content))]
-             [start end] (gen/fmap
-                           sort
-                           (gen/tuple (mark-generator (:lines content))
-                                      (mark-generator (:lines content))))
+             :let [content (c/content initial-text)]
+             [start end] (start-end-mark-generator content)
              replacement text-generator]
     {:replacement replacement
      :start start
