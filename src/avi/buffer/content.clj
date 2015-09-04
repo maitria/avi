@@ -76,6 +76,8 @@
    start :- Mark
    end :- Mark
    replacement :- s/Str]
-  (assoc content :lines (join (before lines start)
-                              (split-lines replacement)
-                              (after lines end))))
+  (-> content
+    (update-in [:revision] inc)
+    (assoc :lines (join (before lines start)
+                        (split-lines replacement)
+                        (after lines end)))))

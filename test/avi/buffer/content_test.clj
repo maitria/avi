@@ -33,7 +33,9 @@
   (fact "replace can insert within a line"
     (:lines (c/replace (c/content "Hello!") [1 2] [1 2] "//")) => ["He//llo!"])
   (fact "replace can insert at the end of a line"
-    (:lines (c/replace (c/content "Hello!") [1 6] [1 6] "//")) => ["Hello!//"]))
+    (:lines (c/replace (c/content "Hello!") [1 6] [1 6] "//")) => ["Hello!//"])
+  (fact "replace increments buffer revision"
+    (:revision (c/replace (c/content "Hello!") [1 3] [1 3] "?")) => 1))
 
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
