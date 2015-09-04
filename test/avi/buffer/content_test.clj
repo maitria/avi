@@ -25,7 +25,9 @@
     (:lines (c/content "\nfoo")) => ["" "foo"]
     (:lines (c/content "foo\n")) => ["foo"])
   (fact "content starts at revision zero"
-    (:revision (c/content "Hello!")) => 0))
+    (:revision (c/content "Hello!")) => 0)
+  (fact "content starts with no history steps"
+    (:history (c/content "Wha?!")) => []))
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"

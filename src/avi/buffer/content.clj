@@ -10,9 +10,16 @@
   [(s/one LineNumber "LineNumber") 
    (s/one ColumnNumber "Column")])
 
+(def HistoryStep
+  {:start Mark
+   :end Mark
+   :+lines s/Int
+   :+columns s/Int})
+
 (def Content
   {:lines [(s/one Line "first line") Line]
-   :revision s/Int})
+   :revision s/Int
+   :history [HistoryStep]})
 
 (defn- split-lines
   ([text]
@@ -43,7 +50,8 @@
 (s/defn content :- Content
   [text :- s/Str]
   {:lines (text-lines text)
-   :revision 0})
+   :revision 0
+   :history []})
 
 (s/defn before :- [Line]
   [lines :- [Line]
