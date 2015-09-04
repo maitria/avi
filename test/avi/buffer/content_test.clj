@@ -23,7 +23,9 @@
     (:lines (c/content "\n")) => [""]
     (:lines (c/content "\n\n")) => ["" ""]
     (:lines (c/content "\nfoo")) => ["" "foo"]
-    (:lines (c/content "foo\n")) => ["foo"]))
+    (:lines (c/content "foo\n")) => ["foo"])
+  (fact "content starts at revision zero"
+    (:revision (c/content "Hello!")) => 0))
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"
@@ -63,3 +65,4 @@
             replacement
             (string/join "\n" (c/after (:lines content) end)))
        (string/join "\n" (:lines (c/replace content start end replacement))))))
+

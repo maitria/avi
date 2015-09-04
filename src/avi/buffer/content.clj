@@ -11,7 +11,8 @@
    (s/one ColumnNumber "Column")])
 
 (def Content
-  {:lines [(s/one Line "first line") Line]})
+  {:lines [(s/one Line "first line") Line]
+   :revision s/Int})
 
 (defn- split-lines
   ([text]
@@ -41,7 +42,8 @@
 
 (s/defn content :- Content
   [text :- s/Str]
-  {:lines (text-lines text)})
+  {:lines (text-lines text)
+   :revision 0})
 
 (s/defn before :- [Line]
   [lines :- [Line]
