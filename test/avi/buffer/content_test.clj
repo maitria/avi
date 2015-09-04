@@ -35,22 +35,26 @@
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
 
+(defn mark-generator
+  [lines]
+  (gen'/for [line (gen/choose 1 (count lines))
+             column (gen/choose 0 (count (get lines (dec line))))]
+    [line column]))
+
 (def replace-generator
   (gen'/for [initial-text text-generator
              :let [content (c/content initial-text)
                    line-count (count (:lines content))]
-             start-line (gen/choose 1 line-count)
-             end-line (gen/choose start-line line-count)
-             start-column (gen/choose 0 (count (get-in content [:lines (dec start-line)])))
-             end-column (if (= start-line end-line)
-                          (gen/choose start-column (count (get-in content [:lines (dec end-line)])))
-                          (gen/choose 0 (count (get-in content [:lines (dec end-line)]))))
+             [start end] (gen/fmap
+                           sort
+                           (gen/tuple (mark-generator (:lines content))
+                                      (mark-generator (:lines content))))
              replacement text-generator]
     {:replacement replacement
-     :start [start-line start-column]
-     :end [end-line end-column]
+     :start start
+     :end end
      :pre-content content
-     :post-content (c/replace content [start-line start-column] [end-line end-column] replacement)}))
+     :post-content (c/replace content start end replacement)}))
 
 (defspec replace-does-not-change-lines-prior-to-first-mark 25
   (prop/for-all [{:keys [pre-content post-content] [start-line] :start} replace-generator]
