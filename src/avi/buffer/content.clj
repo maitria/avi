@@ -19,7 +19,7 @@
 (def Content
   {:lines [(s/one Line "first line") Line]
    :revision s/Int
-   :history [HistoryStep]})
+   :history {s/Int HistoryStep}})
 
 (defn- split-lines
   ([text]
@@ -51,7 +51,7 @@
   [text :- s/Str]
   {:lines (text-lines text)
    :revision 0
-   :history []})
+   :history {}})
 
 (s/defn before :- [Line]
   [lines :- [Line]
@@ -80,12 +80,17 @@
   `replacement` may contain newlines, and the `start` and `end` marks can span
   lines; therefore, this is the most general content operation which can insert,
   delete, or replace text."
-  [{:keys [lines] :as content} :- Content
+  [{:keys [lines revision] :as content} :- Content
    start :- Mark
    end :- Mark
    replacement :- s/Str]
-  (-> content
-    (update-in [:revision] inc)
-    (assoc :lines (join (before lines start)
-                        (split-lines replacement)
-                        (after lines end)))))
+  (let [replacement-lines (split-lines replacement)]
+    (-> content
+      (update-in [:revision] inc)
+      (update-in [:history] assoc revision {:start start
+                                            :end end
+                                            :+lines (dec (count replacement-lines))
+                                            :+columns (count (last replacement-lines))})
+      (assoc :lines (join (before lines start)
+                          replacement-lines
+                          (after lines end))))))

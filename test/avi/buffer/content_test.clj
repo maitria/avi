@@ -27,7 +27,7 @@
   (fact "content starts at revision zero"
     (:revision (c/content "Hello!")) => 0)
   (fact "content starts with no history steps"
-    (:history (c/content "Wha?!")) => []))
+    (:history (c/content "Wha?!")) => {}))
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"
@@ -37,7 +37,10 @@
   (fact "replace can insert at the end of a line"
     (:lines (c/replace (c/content "Hello!") [1 6] [1 6] "//")) => ["Hello!//"])
   (fact "replace increments contents revision"
-    (:revision (c/replace (c/content "Hello!") [1 3] [1 3] "?")) => 1))
+    (:revision (c/replace (c/content "Hello!") [1 3] [1 3] "?")) => 1)
+  (fact "replace records history steps"
+    (:history (c/replace (c/content "Hello!") [1 2] [1 3] "??!!\nfy")) =>
+      {0 {:start [1 2] :end [1 3] :+lines 1 :+columns 2}}))
 
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
