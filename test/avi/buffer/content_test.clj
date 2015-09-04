@@ -5,6 +5,7 @@
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
             [com.gfredericks.test.chuck.generators :as gen']
+            [com.gfredericks.test.chuck.properties :as prop']
             [midje.sweet :refer :all]
             [schema.core :as s]))
 
@@ -35,6 +36,9 @@
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
 
+(def content-generator
+  (gen/fmap c/content text-generator))
+
 (defn mark-generator
   [{:keys [lines]}]
   (gen'/for [line (gen/choose 1 (count lines))
@@ -46,8 +50,7 @@
   (gen/fmap sort (gen/vector (mark-generator content) 2)))
 
 (def replace-generator
-  (gen'/for [initial-text text-generator
-             :let [content (c/content initial-text)]
+  (gen'/for [content content-generator
              [start end] (start-end-mark-generator content)
              replacement text-generator]
     {:replacement replacement
