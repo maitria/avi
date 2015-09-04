@@ -55,18 +55,11 @@
     (= (c/join (c/before (:lines content) mark) (c/after (:lines content) mark))
        (:lines content))))
 
-(def replace-generator
-  (gen'/for [content content-generator
-             [start end] (start-end-mark-generator content)
-             replacement text-generator]
-    {:replacement replacement
-     :start start
-     :end end
-     :pre-content content
-     :post-content (c/replace content start end replacement)}))
-
-(defspec replace-does-not-change-lines-prior-to-first-mark 25
-  (prop/for-all [{:keys [pre-content post-content] [start-line] :start} replace-generator]
-    (every?
-      #(= (get-in pre-content [:lines (dec %)]) (get-in post-content [:lines (dec %)]))
-      (range 1 start-line))))
+(defspec replace-invariant 25
+  (prop'/for-all [content content-generator
+                  [start end] (start-end-mark-generator content)
+                  replacement text-generator]
+    (= (str (string/join "\n" (c/before (:lines content) start))
+            replacement
+            (string/join "\n" (c/after (:lines content) end)))
+       (string/join "\n" (:lines (c/replace content start end replacement))))))
