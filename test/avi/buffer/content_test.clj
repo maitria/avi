@@ -49,6 +49,12 @@
   [content]
   (gen/fmap sort (gen/vector (mark-generator content) 2)))
 
+(defspec join-before-after-invariant 25
+  (prop'/for-all [content content-generator
+                  mark (mark-generator content)]
+    (= (c/join (c/before (:lines content) mark) (c/after (:lines content) mark))
+       (:lines content))))
+
 (def replace-generator
   (gen'/for [content content-generator
              [start end] (start-end-mark-generator content)
