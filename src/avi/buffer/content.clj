@@ -43,26 +43,26 @@
   [text :- s/Str]
   {:lines (text-lines text)})
 
-(s/defn lines-upto :- [Line]
+(s/defn before :- [Line]
   [lines :- [Line]
    [end-line end-column] :- Mark]
   (-> lines
     (subvec 0 (dec end-line))
     (conj (subs (get lines (dec end-line)) 0 end-column))))
 
-(s/defn lines-from :- [Line]
+(s/defn after :- [Line]
   [lines :- [Line]
    [start-line start-column] :- Mark]
   (vec (concat [(subs (get lines (dec start-line)) start-column)]
                (subvec lines start-line))))
 
-(defn join-line-sets
+(defn join
   ([a b]
    (vec (concat (drop-last a)
                 [(str (last a) (first b))]
                 (drop 1 b))))
   ([a b c]
-   (join-line-sets (join-line-sets a b) c)))
+   (join (join a b) c)))
 
 (s/defn replace :- Content
   "Replace text between the `start` mark and the `end` mark with `replacement`.
@@ -74,7 +74,6 @@
    start :- Mark
    end :- Mark
    replacement :- s/Str]
-  (assoc content :lines (join-line-sets
-                          (lines-upto lines start)
-                          (split-lines replacement)
-                          (lines-from lines end))))
+  (assoc content :lines (join (before lines start)
+                              (split-lines replacement)
+                              (after lines end))))
