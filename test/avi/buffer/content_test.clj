@@ -64,7 +64,7 @@
     (= (c/join (c/before (:lines content) mark) (c/after (:lines content) mark))
        (:lines content))))
 
-(defspec replace-invariant 25
+(defspec replace-before-after-replacement-invariant 25
   (prop'/for-all [content content-generator
                   [start end] (start-end-mark-generator content)
                   replacement text-generator]
