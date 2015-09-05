@@ -5,10 +5,16 @@
 (def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
 (def LineNumber (s/both s/Int (s/pred pos?)))
 (def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
+(def Version s/Int)
 
 (def Mark
   [(s/one LineNumber "LineNumber") 
    (s/one ColumnNumber "Column")])
+
+(def VersionedMark
+  [(s/one LineNumber "LineNumber") 
+   (s/one ColumnNumber "Column")
+   (s/one Version "Version")])
 
 (def HistoryStep
   {:start Mark
@@ -19,7 +25,7 @@
 (def Content
   {:lines [(s/one Line "first line") Line]
    :revision s/Int
-   :history {s/Int HistoryStep}})
+   :history {Version HistoryStep}})
 
 (defn- split-lines
   ([text]
@@ -95,7 +101,7 @@
                           replacement-lines
                           (after lines end))))))
 
-(s/defn versioned-mark
+(s/defn versioned-mark :- VersionedMark
   "Creates a versioned mark from a simple mark"
   [{:keys [revision]} :- Content
    mark :- Mark]
