@@ -7,7 +7,7 @@
 (def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
 (def Version s/Int)
 
-(def Mark
+(def SimpleMark
   [(s/one LineNumber "LineNumber") 
    (s/one ColumnNumber "Column")])
 
@@ -15,6 +15,10 @@
   [(s/one LineNumber "LineNumber") 
    (s/one ColumnNumber "Column")
    (s/one Version "Version")])
+
+(def Mark
+  [(s/one LineNumber "LineNumber")
+   (s/one ColumnNumber "Column")])
 
 (def HistoryStep
   {:start Mark
@@ -104,5 +108,5 @@
 (s/defn versioned-mark :- VersionedMark
   "Creates a versioned mark from a simple mark"
   [{:keys [revision]} :- Content
-   mark :- Mark]
+   mark :- SimpleMark]
   (conj mark revision))
