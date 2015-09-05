@@ -94,3 +94,9 @@
       (assoc :lines (join (before lines start)
                           replacement-lines
                           (after lines end))))))
+
+(s/defn versioned-mark
+  "Creates a versioned mark from a simple mark"
+  [{:keys [revision]} :- Content
+   mark :- Mark]
+  (conj mark revision))
