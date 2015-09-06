@@ -80,5 +80,10 @@
 (facts "about unversioning marks"
   (fact "unversioning passes simple marks through"
     (c/unversion (c/content "Hello!") [1 2]) => [1 2])
-  (fact "unversioning a mark on the current revision is simple"
-    (c/unversion (c/content "Hello!") [1 2 0]) => [1 2]))
+  (fact "unversioning a mark with the current revision just discards the version"
+    (c/unversion (c/content "Hello!") [1 2 0]) => [1 2])
+  (fact "unversioning a mark that was before any changes doesn't change the position"
+    (let [content (c/content "Hello!")
+          old-mark (c/versioned-mark content [1 2])
+          new-content (c/replace content [1 3] [1 3] "xxx")]
+      (c/unversion new-content old-mark) => [1 2])))
