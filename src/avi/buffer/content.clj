@@ -119,7 +119,7 @@
    mark :- SimpleMark]
   (conj mark revision))
 
-(s/defn unversion :- SimpleMark
+(s/defn unversion :- (s/maybe SimpleMark)
   [{:keys [revision history]} :- Content
    [line column version :as mark] :- Mark]
   (if-not (versioned-mark? mark)
@@ -140,6 +140,11 @@
           (and (= line end-line)
                (>= column end-column))
           (recur (inc version) line (+ column +columns))
+
+          (or (> line start-line)
+              (and (= line start-line)
+                   (> column start-column)))
+          nil
 
           :else
           (recur (inc version) line column))))))
