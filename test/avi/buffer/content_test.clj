@@ -79,4 +79,6 @@
 
 (facts "about unversioning marks"
   (fact "unversioning passes simple marks through"
-    (c/unversion (c/content "Hello!") [1 2]) => [1 2]))
+    (c/unversion (c/content "Hello!") [1 2]) => [1 2])
+  (fact "unversioning a mark on the current revision is simple"
+    (c/unversion (c/content "Hello!") [1 2 0]) => [1 2]))

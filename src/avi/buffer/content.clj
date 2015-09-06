@@ -121,5 +121,5 @@
 
 (s/defn unversion :- SimpleMark
   [content :- Content
-   mark :- Mark]
-  mark)
+   [line column revision] :- Mark]
+  [line column])
