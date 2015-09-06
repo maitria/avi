@@ -120,6 +120,22 @@
   (conj mark revision))
 
 (s/defn unversion :- SimpleMark
-  [content :- Content
-   [line column revision] :- Mark]
-  [line column])
+  [{:keys [revision history]} :- Content
+   [line column version :as mark] :- Mark]
+  (if-not (versioned-mark? mark)
+    mark
+    (loop [version version
+           line line
+           column column]
+      (let [{[start-line start-column] :start
+             [end-line end-column] :end
+             :keys [+lines +columns]} (get history version)]
+        (cond
+          (= version revision)
+          [line column]
+
+          (> line end-line)
+          (recur (inc version) (+ line +lines) column)
+
+          :else
+          (recur (inc version) line column))))))
