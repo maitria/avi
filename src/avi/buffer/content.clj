@@ -2,6 +2,10 @@
   (:refer-clojure :exclude [replace])
   (:require [schema.core :as s]))
 
+(defn versioned-mark?
+  [mark]
+  (= 3 (count mark)))
+
 (def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
 (def LineNumber (s/both s/Int (s/pred pos?)))
 (def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
@@ -17,8 +21,12 @@
    (s/one Version "Version")])
 
 (def Mark
-  [(s/one LineNumber "LineNumber")
-   (s/one ColumnNumber "Column")])
+  (s/conditional
+    versioned-mark?
+    VersionedMark
+    
+    :else
+    SimpleMark))
 
 (def HistoryStep
   {:start Mark
