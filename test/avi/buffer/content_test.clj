@@ -91,4 +91,9 @@
     (let [content (c/content "Hello!\nWorld")
           old-mark (c/versioned-mark content [2 2])
           new-content (c/replace content [1 3] [1 3] "x\n\nxx")]
-      (c/unversion new-content old-mark) => [4 2])))
+      (c/unversion new-content old-mark) => [4 2]))
+  (fact "unversioning a mark on same line as end mark, but to the right, moves right"
+    (let [content (c/content "Hello!\nWorld")
+          old-mark (c/versioned-mark content [2 2])
+          new-content (c/replace content [2 0] [2 0] "123")]
+      (c/unversion new-content old-mark) => [2 5])))

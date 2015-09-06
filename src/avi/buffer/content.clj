@@ -137,5 +137,9 @@
           (> line end-line)
           (recur (inc version) (+ line +lines) column)
 
+          (and (= line end-line)
+               (>= column end-column))
+          (recur (inc version) line (+ column +columns))
+
           :else
           (recur (inc version) line column))))))
