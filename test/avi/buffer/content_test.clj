@@ -76,3 +76,7 @@
             replacement
             (string/join "\n" (c/after (:lines content) end)))
        (string/join "\n" (:lines (c/replace content start end replacement))))))
+
+(facts "about unversioning marks"
+  (fact "simple marks are passed through"
+    (c/unversion (c/content "Hello!") [1 2]) => [1 2]))

@@ -118,3 +118,8 @@
   [{:keys [revision]} :- Content
    mark :- SimpleMark]
   (conj mark revision))
+
+(s/defn unversion :- SimpleMark
+  [content :- Content
+   mark :- Mark]
+  mark)
