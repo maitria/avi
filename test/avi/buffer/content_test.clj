@@ -42,8 +42,8 @@
     (:history (c/replace (c/content "Hello!") [1 2] [1 3] "??!!\nfy")) =>
       {0 {:start [1 2] :end [1 3] :+lines 1 :+columns 2}}))
 
-(facts "about marking"
-  (fact "marking adds the buffer revision"
+(facts "about versioning marks"
+  (fact "versioning marks adds the buffer revision"
     (c/versioned-mark (c/content "Hello!") [1 3]) => [1 3 0]))
 
 (def text-generator
