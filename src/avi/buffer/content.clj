@@ -138,7 +138,9 @@
    start :- Mark
    end :- Mark
    replacement :- s/Str]
-  (let [replacement-lines (split-lines replacement)]
+  (let [replacement-lines (split-lines replacement)
+        start (unversion-mark content start)
+        end (unversion-mark content end)]
     (-> content
       (update-in [:revision] inc)
       (update-in [:history] assoc revision {:start start

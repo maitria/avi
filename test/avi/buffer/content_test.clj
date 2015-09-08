@@ -40,7 +40,11 @@
     (:revision (c/replace (c/content "Hello!") [1 3] [1 3] "?")) => 1)
   (fact "replace records history steps"
     (:history (c/replace (c/content "Hello!") [1 2] [1 3] "??!!\nfy")) =>
-      {0 {:start [1 2] :end [1 3] :+lines 1 :+columns 2}}))
+      {0 {:start [1 2] :end [1 3] :+lines 1 :+columns 2}})
+  (fact "replace can use versioned marks"
+    (:lines (-> (c/content "Hello!")
+              (c/replace [1 2] [1 2] "xxx")
+              (c/replace [1 1 0] [1 3 0] "yyy"))) => ["Hyyylo!"]))
 
 (facts "about versioning marks"
   (fact "versioning marks adds the buffer revision"
