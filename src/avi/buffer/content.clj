@@ -29,8 +29,8 @@
     SimpleMark))
 
 (def HistoryStep
-  {:start Mark
-   :end Mark
+  {:start SimpleMark
+   :end SimpleMark
    :+lines s/Int
    :+columns s/Int})
 
