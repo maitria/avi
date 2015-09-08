@@ -92,27 +92,6 @@
   ([a b c]
    (join (join a b) c)))
 
-(s/defn replace :- Content
-  "Replace text between the `start` mark and the `end` mark with `replacement`.
-
-  `replacement` may contain newlines, and the `start` and `end` marks can span
-  lines; therefore, this is the most general content operation which can insert,
-  delete, or replace text."
-  [{:keys [lines revision] :as content} :- Content
-   start :- Mark
-   end :- Mark
-   replacement :- s/Str]
-  (let [replacement-lines (split-lines replacement)]
-    (-> content
-      (update-in [:revision] inc)
-      (update-in [:history] assoc revision {:start start
-                                            :end end
-                                            :+lines (dec (count replacement-lines))
-                                            :+columns (count (last replacement-lines))})
-      (assoc :lines (join (before lines start)
-                          replacement-lines
-                          (after lines end))))))
-
 (s/defn version-mark :- VersionedMark
   "Creates a versioned mark from a simple mark"
   [{:keys [revision]} :- Content
@@ -148,3 +127,24 @@
 
           :else
           (recur (inc version) line column))))))
+
+(s/defn replace :- Content
+  "Replace text between the `start` mark and the `end` mark with `replacement`.
+
+  `replacement` may contain newlines, and the `start` and `end` marks can span
+  lines; therefore, this is the most general content operation which can insert,
+  delete, or replace text."
+  [{:keys [lines revision] :as content} :- Content
+   start :- Mark
+   end :- Mark
+   replacement :- s/Str]
+  (let [replacement-lines (split-lines replacement)]
+    (-> content
+      (update-in [:revision] inc)
+      (update-in [:history] assoc revision {:start start
+                                            :end end
+                                            :+lines (dec (count replacement-lines))
+                                            :+columns (count (last replacement-lines))})
+      (assoc :lines (join (before lines start)
+                          replacement-lines
+                          (after lines end))))))
