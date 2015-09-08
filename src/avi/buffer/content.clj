@@ -113,7 +113,7 @@
                           replacement-lines
                           (after lines end))))))
 
-(s/defn versioned-mark :- VersionedMark
+(s/defn version-mark :- VersionedMark
   "Creates a versioned mark from a simple mark"
   [{:keys [revision]} :- Content
    mark :- SimpleMark]

@@ -44,7 +44,7 @@
 
 (facts "about versioning marks"
   (fact "versioning marks adds the buffer revision"
-    (c/versioned-mark (c/content "Hello!") [1 3]) => [1 3 0]))
+    (c/version-mark (c/content "Hello!") [1 3]) => [1 3 0]))
 
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
@@ -84,21 +84,21 @@
     (c/unversion (c/content "Hello!") [1 2 0]) => [1 2])
   (fact "unversioning a mark that was before any changes doesn't change the position"
     (let [content (c/content "Hello!")
-          old-mark (c/versioned-mark content [1 2])
+          old-mark (c/version-mark content [1 2])
           new-content (c/replace content [1 3] [1 3] "xxx")]
       (c/unversion new-content old-mark) => [1 2]))
   (fact "unversioning a mark >1 lines after any changes moves down"
     (let [content (c/content "Hello!\nWorld")
-          old-mark (c/versioned-mark content [2 2])
+          old-mark (c/version-mark content [2 2])
           new-content (c/replace content [1 3] [1 3] "x\n\nxx")]
       (c/unversion new-content old-mark) => [4 2]))
   (fact "unversioning a mark on same line as end mark, but to the right, moves right"
     (let [content (c/content "Hello!\nWorld")
-          old-mark (c/versioned-mark content [2 2])
+          old-mark (c/version-mark content [2 2])
           new-content (c/replace content [2 0] [2 0] "123")]
       (c/unversion new-content old-mark) => [2 5]))
   (fact "unversioning a mark for a replaced region returns nil"
     (let [content (c/content "Hello!")
-          old-mark (c/versioned-mark content [1 3])
+          old-mark (c/version-mark content [1 3])
           new-content (c/replace content [1 2] [1 4] "123")]
       (c/unversion new-content old-mark) => nil)))
