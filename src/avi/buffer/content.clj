@@ -119,7 +119,7 @@
    mark :- SimpleMark]
   (conj mark revision))
 
-(s/defn unversion :- (s/maybe SimpleMark)
+(s/defn unversion-mark :- (s/maybe SimpleMark)
   [{:keys [revision history]} :- Content
    [line column version :as mark] :- Mark]
   (if-not (versioned-mark? mark)

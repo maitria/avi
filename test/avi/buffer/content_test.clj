@@ -79,26 +79,26 @@
 
 (facts "about unversioning marks"
   (fact "unversioning passes simple marks through"
-    (c/unversion (c/content "Hello!") [1 2]) => [1 2])
+    (c/unversion-mark (c/content "Hello!") [1 2]) => [1 2])
   (fact "unversioning a mark with the current revision just discards the version"
-    (c/unversion (c/content "Hello!") [1 2 0]) => [1 2])
+    (c/unversion-mark (c/content "Hello!") [1 2 0]) => [1 2])
   (fact "unversioning a mark that was before any changes doesn't change the position"
     (let [content (c/content "Hello!")
           old-mark (c/version-mark content [1 2])
           new-content (c/replace content [1 3] [1 3] "xxx")]
-      (c/unversion new-content old-mark) => [1 2]))
+      (c/unversion-mark new-content old-mark) => [1 2]))
   (fact "unversioning a mark >1 lines after any changes moves down"
     (let [content (c/content "Hello!\nWorld")
           old-mark (c/version-mark content [2 2])
           new-content (c/replace content [1 3] [1 3] "x\n\nxx")]
-      (c/unversion new-content old-mark) => [4 2]))
+      (c/unversion-mark new-content old-mark) => [4 2]))
   (fact "unversioning a mark on same line as end mark, but to the right, moves right"
     (let [content (c/content "Hello!\nWorld")
           old-mark (c/version-mark content [2 2])
           new-content (c/replace content [2 0] [2 0] "123")]
-      (c/unversion new-content old-mark) => [2 5]))
+      (c/unversion-mark new-content old-mark) => [2 5]))
   (fact "unversioning a mark for a replaced region returns nil"
     (let [content (c/content "Hello!")
           old-mark (c/version-mark content [1 3])
           new-content (c/replace content [1 2] [1 4] "123")]
-      (c/unversion new-content old-mark) => nil)))
+      (c/unversion-mark new-content old-mark) => nil)))
