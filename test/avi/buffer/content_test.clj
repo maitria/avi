@@ -7,23 +7,29 @@
             [com.gfredericks.test.chuck.generators :as gen']
             [com.gfredericks.test.chuck.properties :as prop']
             [midje.sweet :refer :all]
+            [midje.checking.core :as checking]
             [schema.core :as s]))
 
 (s/set-fn-validation! true)
 
+(defn lines
+  [expected-lines]
+  (fn [{:keys [lines]}]
+    (checking/extended-= lines expected-lines)))
+
 (facts "about buffer contents"
   (fact "we can retrieve buffer contents initial text"
-    (:lines (c/content "Hello, World!")) => ["Hello, World!"]
-    (:lines (c/content "Line 1\nLine 2")) => ["Line 1" "Line 2"]
-    (:lines (c/content "Line 1\nLine 3\n")) => ["Line 1" "Line 3"]
-    (:lines (c/content "Line 1\n\nLine 3")) => ["Line 1" "" "Line 3"])
+    (c/content "Hello, World!") => (lines ["Hello, World!"])
+    (c/content "Line 1\nLine 2") => (lines ["Line 1" "Line 2"])
+    (c/content "Line 1\nLine 3\n") => (lines ["Line 1" "Line 3"])
+    (c/content "Line 1\n\nLine 3") => (lines ["Line 1" "" "Line 3"]))
   (fact "we always have at least one line"
-    (:lines (c/content "")) => [""])
+    (c/content "") => (lines [""]))
   (fact "if the last character is a newline, it does not make an extra line"
-    (:lines (c/content "\n")) => [""]
-    (:lines (c/content "\n\n")) => ["" ""]
-    (:lines (c/content "\nfoo")) => ["" "foo"]
-    (:lines (c/content "foo\n")) => ["foo"])
+    (c/content "\n") => (lines [""])
+    (c/content "\n\n") => (lines ["" ""])
+    (c/content "\nfoo") => (lines ["" "foo"])
+    (c/content "foo\n") => (lines ["foo"]))
   (fact "content starts at revision zero"
     (:revision (c/content "Hello!")) => 0)
   (fact "content starts with no history steps"
@@ -31,20 +37,20 @@
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"
-    (:lines (c/replace (c/content "Hello!") [1 0] [1 0] "xyz")) => ["xyzHello!"])
+    (c/replace (c/content "Hello!") [1 0] [1 0] "xyz") => (lines ["xyzHello!"]))
   (fact "replace can insert within a line"
-    (:lines (c/replace (c/content "Hello!") [1 2] [1 2] "//")) => ["He//llo!"])
+    (c/replace (c/content "Hello!") [1 2] [1 2] "//") => (lines ["He//llo!"]))
   (fact "replace can insert at the end of a line"
-    (:lines (c/replace (c/content "Hello!") [1 6] [1 6] "//")) => ["Hello!//"])
+    (c/replace (c/content "Hello!") [1 6] [1 6] "//") => (lines ["Hello!//"]))
   (fact "replace increments contents revision"
     (:revision (c/replace (c/content "Hello!") [1 3] [1 3] "?")) => 1)
   (fact "replace records history steps"
     (:history (c/replace (c/content "Hello!") [1 2] [1 3] "??!!\nfy")) =>
       {0 {:start [1 2] :end [1 3] :+lines 1 :+columns 2}})
   (fact "replace can use versioned marks"
-    (:lines (-> (c/content "Hello!")
-              (c/replace [1 2] [1 2] "xxx")
-              (c/replace [1 1 0] [1 3 0] "yyy"))) => ["Hyyylo!"]))
+    (-> (c/content "Hello!")
+      (c/replace [1 2] [1 2] "xxx")
+      (c/replace [1 1 0] [1 3 0] "yyy")) => (lines ["Hyyylo!"])))
 
 (facts "about versioning marks"
   (fact "versioning marks adds the buffer revision"
