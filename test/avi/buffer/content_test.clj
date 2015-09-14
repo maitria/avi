@@ -12,10 +12,15 @@
 
 (s/set-fn-validation! true)
 
-(defn lines
-  [expected-lines]
-  (fn [{:keys [lines]}]
-    (checking/extended-= lines expected-lines)))
+(defn check-inside
+  [& path]
+  (fn [expected-value]
+    (fn [outer-value]
+      (let [value (get-in outer-value path)]
+      (checking/extended-= value expected-value)))))
+
+(def lines (check-inside :lines))
+(def revision (check-inside :revision))
 
 (defn history
   ([expected-history]
@@ -24,11 +29,6 @@
   ([n expected-item]
    (fn [{:keys [history]}]
      (checking/extended-= (get history n) expected-item))))
-
-(defn revision
-  [expected-revision]
-  (fn [{:keys [revision]}]
-    (checking/extended-= revision expected-revision)))
 
 (facts "about buffer contents"
   (fact "we can retrieve buffer contents initial text"
