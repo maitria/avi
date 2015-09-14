@@ -25,6 +25,11 @@
    (fn [{:keys [history]}]
      (checking/extended-= (get history n) expected-item))))
 
+(defn revision
+  [expected-revision]
+  (fn [{:keys [revision]}]
+    (checking/extended-= revision expected-revision)))
+
 (facts "about buffer contents"
   (fact "we can retrieve buffer contents initial text"
     (c/content "Hello, World!") => (lines ["Hello, World!"])
@@ -39,7 +44,7 @@
     (c/content "\nfoo") => (lines ["" "foo"])
     (c/content "foo\n") => (lines ["foo"]))
   (fact "content starts at revision zero"
-    (:revision (c/content "Hello!")) => 0)
+    (c/content "Hello!") => (revision 0))
   (fact "content starts with no history steps"
     (c/content "Wha?!") => (history {})))
 
@@ -51,7 +56,7 @@
   (fact "replace can insert at the end of a line"
     (c/replace (c/content "Hello!") [1 6] [1 6] "//") => (lines ["Hello!//"]))
   (fact "replace increments contents revision"
-    (:revision (c/replace (c/content "Hello!") [1 3] [1 3] "?")) => 1)
+    (c/replace (c/content "Hello!") [1 3] [1 3] "?") => (revision 1))
   (fact "replace records history steps"
     (c/replace (c/content "Hello!") [1 2] [1 3] "??!!\nfy") =>
       (history 0 {:start [1 2] :end [1 3] :+lines 1 :+columns 2}))
