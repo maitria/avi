@@ -17,6 +17,11 @@
   (fn [{:keys [lines]}]
     (checking/extended-= lines expected-lines)))
 
+(defn history
+  [expected-history]
+  (fn [{:keys [history]}]
+    (checking/extended-= history expected-history)))
+
 (facts "about buffer contents"
   (fact "we can retrieve buffer contents initial text"
     (c/content "Hello, World!") => (lines ["Hello, World!"])
@@ -33,7 +38,7 @@
   (fact "content starts at revision zero"
     (:revision (c/content "Hello!")) => 0)
   (fact "content starts with no history steps"
-    (:history (c/content "Wha?!")) => {}))
+    (c/content "Wha?!") => (history {})))
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"
