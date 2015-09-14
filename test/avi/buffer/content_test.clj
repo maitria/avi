@@ -18,9 +18,12 @@
     (checking/extended-= lines expected-lines)))
 
 (defn history
-  [expected-history]
-  (fn [{:keys [history]}]
-    (checking/extended-= history expected-history)))
+  ([expected-history]
+   (fn [{:keys [history]}]
+     (checking/extended-= history expected-history)))
+  ([n expected-item]
+   (fn [{:keys [history]}]
+     (checking/extended-= (get history n) expected-item))))
 
 (facts "about buffer contents"
   (fact "we can retrieve buffer contents initial text"
@@ -50,8 +53,8 @@
   (fact "replace increments contents revision"
     (:revision (c/replace (c/content "Hello!") [1 3] [1 3] "?")) => 1)
   (fact "replace records history steps"
-    (:history (c/replace (c/content "Hello!") [1 2] [1 3] "??!!\nfy")) =>
-      {0 {:start [1 2] :end [1 3] :+lines 1 :+columns 2}})
+    (c/replace (c/content "Hello!") [1 2] [1 3] "??!!\nfy") =>
+      (history 0 {:start [1 2] :end [1 3] :+lines 1 :+columns 2}))
   (fact "replace can use versioned marks"
     (-> (c/content "Hello!")
       (c/replace [1 2] [1 2] "xxx")
