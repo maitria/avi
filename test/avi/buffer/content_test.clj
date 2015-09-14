@@ -14,21 +14,16 @@
 
 (defn check-inside
   [& path]
-  (fn [expected-value]
+  (fn [& args]
     (fn [outer-value]
-      (let [value (get-in outer-value path)]
-      (checking/extended-= value expected-value)))))
+      (let [expected-value (last args)
+            more-path (drop-last args)
+            value (get-in outer-value (concat path more-path))]
+        (checking/extended-= value expected-value)))))
 
 (def lines (check-inside :lines))
 (def revision (check-inside :revision))
-
-(defn history
-  ([expected-history]
-   (fn [{:keys [history]}]
-     (checking/extended-= history expected-history)))
-  ([n expected-item]
-   (fn [{:keys [history]}]
-     (checking/extended-= (get history n) expected-item))))
+(def history (check-inside :history))
 
 (facts "about buffer contents"
   (fact "we can retrieve buffer contents initial text"
