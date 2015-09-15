@@ -145,3 +145,14 @@
                   :let [a [ai aj]
                         b [bi bj]]]
    (= (c/mark< a b) (c/mark> b a))))
+
+(defspec mark<-implies-mark<= 25
+  (prop'/for-all [ai (gen/choose 1 50)
+                  aj (gen/choose 0 50)
+                  bi (gen/choose 1 50)
+                  bj (gen/choose 0 50)
+                  :let [a [ai aj]
+                        b [bi bj]]]
+   (if (c/mark< a b)
+     (c/mark<= a b)
+     true)))
