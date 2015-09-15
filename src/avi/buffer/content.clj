@@ -139,14 +139,15 @@
    end :- Mark
    replacement :- s/Str]
   (let [replacement-lines (split-lines replacement)
-        start (unversion-mark content start)
-        end (unversion-mark content end)]
+        [_ start-column :as start] (unversion-mark content start)
+        [_ end-column :as end] (unversion-mark content end)]
     (-> content
       (update-in [:revision] inc)
       (update-in [:history] assoc revision {:start start
                                             :end end
                                             :+lines (dec (count replacement-lines))
-                                            :+columns (count (last replacement-lines))})
+                                            :+columns (- (count (last replacement-lines))
+                                                         (- end-column start-column))})
       (assoc :lines (join (before lines start)
                           replacement-lines
                           (after lines end))))))

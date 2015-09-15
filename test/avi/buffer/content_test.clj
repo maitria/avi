@@ -54,7 +54,7 @@
     (c/replace (c/content "Hello!") [1 3] [1 3] "?") => (revision 1))
   (fact "replace records history steps"
     (c/replace (c/content "Hello!") [1 2] [1 3] "??!!\nfy") =>
-      (history 0 {:start [1 2] :end [1 3] :+lines 1 :+columns 2}))
+      (history 0 {:start [1 2] :end [1 3] :+lines 1 :+columns 1}))
   (fact "replace can use versioned marks"
     (-> (c/content "Hello!")
       (c/replace [1 2] [1 2] "xxx")
@@ -119,4 +119,9 @@
     (let [content (c/content "Hello!")
           old-mark (c/version-mark content [1 3])
           new-content (c/replace content [1 2] [1 4] "123")]
-      (c/unversion-mark new-content old-mark) => nil)))
+      (c/unversion-mark new-content old-mark) => nil))
+  (fact "unversioning a mark can move left"
+    (let [content (c/content "Hello!")
+          old-mark (c/version-mark content [1 5])
+          new-content (c/replace content [1 1] [1 4] "")]
+      (c/unversion-mark new-content old-mark) => [1 2])))
