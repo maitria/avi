@@ -137,22 +137,26 @@
   (c/mark< [1 4] [2 2]) => true
   (c/mark<= [1 2] [1 2]) => true)
 
+(def simple-mark-generator
+  (gen/tuple
+    (gen/choose 1 50)
+    (gen/choose 0 50)))
+
 (defspec mark<-mark>-symmetry 25
-  (prop'/for-all [ai (gen/choose 1 50)
-                  aj (gen/choose 0 50)
-                  bi (gen/choose 1 50)
-                  bj (gen/choose 0 50)
-                  :let [a [ai aj]
-                        b [bi bj]]]
+  (prop/for-all [a simple-mark-generator
+                 b simple-mark-generator]
    (= (c/mark< a b) (c/mark> b a))))
 
 (defspec mark<-implies-mark<= 25
-  (prop'/for-all [ai (gen/choose 1 50)
-                  aj (gen/choose 0 50)
-                  bi (gen/choose 1 50)
-                  bj (gen/choose 0 50)
-                  :let [a [ai aj]
-                        b [bi bj]]]
+  (prop'/for-all [a simple-mark-generator
+                  b simple-mark-generator]
    (if (c/mark< a b)
      (c/mark<= a b)
+     true)))
+
+(defspec mark>-implies-mark>= 25
+  (prop'/for-all [a simple-mark-generator
+                  b simple-mark-generator]
+   (if (c/mark> a b)
+     (c/mark>= a b)
      true)))
