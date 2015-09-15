@@ -130,3 +130,9 @@
           old-mark (c/version-mark content [3 0])
           new-content (c/replace content [1 0] [2 0] "")]
       (c/unversion-mark new-content old-mark) => [2 0])))
+
+(facts "about comparing simple marks"
+  (c/mark< [1 2] [1 4]) => true
+  (c/mark< [1 2] [2 2]) => true
+  (c/mark< [1 4] [2 2]) => true
+  (c/mark<= [1 2] [1 2]) => true)

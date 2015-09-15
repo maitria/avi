@@ -105,9 +105,22 @@
       (and (= ai bi)
            (< aj bj))))
 
-(defn mark>
-  [a b]
+(s/defn mark<=
+  [a :- SimpleMark
+   b :- SimpleMark]
+  (or (= a b)
+      (mark< a b)))
+
+(s/defn mark>
+  [a :- SimpleMark
+   b :- SimpleMark]
   (mark< b a))
+
+(s/defn mark>=
+  [a :- SimpleMark
+   b :- SimpleMark]
+  (or (= a b)
+      (mark> a b)))
 
 (s/defn unversion-mark :- (s/maybe SimpleMark)
   [{:keys [revision history]} :- Content
