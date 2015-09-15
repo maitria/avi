@@ -26,7 +26,7 @@
 (def history (check-inside :history))
 
 (facts "about buffer contents"
-  (fact "we can retrieve buffer contents initial text"
+  (fact "we can retrieve buffer contents' initial text"
     (c/content "Hello, World!") => (lines ["Hello, World!"])
     (c/content "Line 1\nLine 2") => (lines ["Line 1" "Line 2"])
     (c/content "Line 1\nLine 3\n") => (lines ["Line 1" "Line 3"])
