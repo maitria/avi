@@ -124,4 +124,9 @@
     (let [content (c/content "Hello!")
           old-mark (c/version-mark content [1 5])
           new-content (c/replace content [1 1] [1 4] "")]
-      (c/unversion-mark new-content old-mark) => [1 2])))
+      (c/unversion-mark new-content old-mark) => [1 2]))
+  (fact "unversioning a mark can move up"
+    (let [content (c/content "a\nb\nc\nd")
+          old-mark (c/version-mark content [3 0])
+          new-content (c/replace content [1 0] [2 0] "")]
+      (c/unversion-mark new-content old-mark) => [2 0])))
