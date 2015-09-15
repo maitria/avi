@@ -136,3 +136,12 @@
   (c/mark< [1 2] [2 2]) => true
   (c/mark< [1 4] [2 2]) => true
   (c/mark<= [1 2] [1 2]) => true)
+
+(defspec mark<-mark>-symmetry 25
+  (prop'/for-all [ai (gen/choose 1 50)
+                  aj (gen/choose 0 50)
+                  bi (gen/choose 1 50)
+                  bj (gen/choose 0 50)
+                  :let [a [ai aj]
+                        b [bi bj]]]
+   (= (c/mark< a b) (c/mark> b a))))
