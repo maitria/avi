@@ -98,6 +98,17 @@
    mark :- SimpleMark]
   (conj mark revision))
 
+(s/defn mark<
+  [[ai aj] :- SimpleMark
+   [bi bj] :- SimpleMark]
+  (or (< ai bi)
+      (and (= ai bi)
+           (< aj bj))))
+
+(defn mark>
+  [a b]
+  (mark< b a))
+
 (s/defn unversion-mark :- (s/maybe SimpleMark)
   [{:keys [revision history]} :- Content
    [line column version :as mark] :- Mark]
@@ -106,9 +117,8 @@
     (loop [version version
            line line
            column column]
-      (let [{[start-line start-column] :start
-             [end-line end-column] :end
-             :keys [+lines +columns]} (get history version)]
+      (let [{[end-line end-column :as end] :end
+             :keys [start +lines +columns]} (get history version)]
         (cond
           (= version revision)
           [line column]
@@ -116,13 +126,10 @@
           (> line end-line)
           (recur (inc version) (+ line +lines) column)
 
-          (and (= line end-line)
-               (>= column end-column))
+          (mark> [line column] end)
           (recur (inc version) line (+ column +columns))
 
-          (or (> line start-line)
-              (and (= line start-line)
-                   (> column start-column)))
+          (mark> [line column] start)
           nil
 
           :else
