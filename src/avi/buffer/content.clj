@@ -3,39 +3,12 @@
   (:require [schema.core :as s]
             [avi.buffer.marks :as marks]))
 
-(def LineNumber (s/both s/Int (s/pred pos?)))
-(def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
-
-(def SimpleMark
-  [(s/one LineNumber "LineNumber") 
-   (s/one ColumnNumber "Column")])
-
 (def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
-(def Version s/Int)
-
-(def VersionedMark
-  [(s/one LineNumber "LineNumber") 
-   (s/one ColumnNumber "Column")
-   (s/one Version "Version")])
-
-(def Mark
-  (s/conditional
-    marks/versioned-mark?
-    VersionedMark
-    
-    :else
-    SimpleMark))
-
-(def HistoryStep
-  {:start SimpleMark
-   :end SimpleMark
-   :+lines s/Int
-   :+columns s/Int})
 
 (def Content
   {:lines [(s/one Line "first line") Line]
    :revision s/Int
-   :history {Version HistoryStep}})
+   :history marks/History})
 
 (defn- split-lines
   ([text]
@@ -71,14 +44,14 @@
 
 (s/defn before :- [Line]
   [lines :- [Line]
-   [end-line end-column] :- Mark]
+   [end-line end-column] :- marks/Mark]
   (-> lines
     (subvec 0 (dec end-line))
     (conj (subs (get lines (dec end-line)) 0 end-column))))
 
 (s/defn after :- [Line]
   [lines :- [Line]
-   [start-line start-column] :- Mark]
+   [start-line start-column] :- marks/Mark]
   (vec (concat [(subs (get lines (dec start-line)) start-column)]
                (subvec lines start-line))))
 
@@ -90,61 +63,16 @@
   ([a b c]
    (join (join a b) c)))
 
-(s/defn version-mark :- VersionedMark
+(s/defn version-mark :- marks/VersionedMark
   "Creates a versioned mark from a simple mark"
   [{:keys [revision]} :- Content
-   mark :- SimpleMark]
-  (conj mark revision))
+   mark :- marks/SimpleMark]
+  (marks/version-mark revision mark))
 
-(s/defn mark<
-  [[ai aj] :- SimpleMark
-   [bi bj] :- SimpleMark]
-  (or (< ai bi)
-      (and (= ai bi)
-           (< aj bj))))
-
-(s/defn mark<=
-  [a :- SimpleMark
-   b :- SimpleMark]
-  (or (= a b)
-      (mark< a b)))
-
-(s/defn mark>
-  [a :- SimpleMark
-   b :- SimpleMark]
-  (mark< b a))
-
-(s/defn mark>=
-  [a :- SimpleMark
-   b :- SimpleMark]
-  (or (= a b)
-      (mark> a b)))
-
-(s/defn unversion-mark :- (s/maybe SimpleMark)
+(s/defn unversion-mark :- (s/maybe marks/SimpleMark)
   [{:keys [revision history]} :- Content
-   [line column version :as mark] :- Mark]
-  (if-not (marks/versioned-mark? mark)
-    mark
-    (loop [version version
-           line line
-           column column]
-      (let [{[end-line end-column :as end] :end
-             :keys [start +lines +columns]} (get history version)]
-        (cond
-          (= version revision)
-          [line column]
-
-          (> line end-line)
-          (recur (inc version) (+ line +lines) column)
-
-          (mark> [line column] end)
-          (recur (inc version) line (+ column +columns))
-
-          (mark> [line column] start)
-          nil
-
-          :else
-          (recur (inc version) line column))))))
+   mark :- marks/Mark]
+  (marks/unversion-mark revision history mark))
 
 (s/defn replace :- Content
   "Replace text between the `start` mark and the `end` mark with `replacement`.
@@ -153,8 +81,8 @@
   lines; therefore, this is the most general content operation which can insert,
   delete, or replace text."
   [{:keys [lines revision] :as content} :- Content
-   start :- Mark
-   end :- Mark
+   start :- marks/Mark
+   end :- marks/Mark
    replacement :- s/Str]
   (let [replacement-lines (split-lines replacement)
         [start-line start-column :as start] (unversion-mark content start)

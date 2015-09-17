@@ -130,33 +130,3 @@
           old-mark (c/version-mark content [3 0])
           new-content (c/replace content [1 0] [2 0] "")]
       (c/unversion-mark new-content old-mark) => [2 0])))
-
-(facts "about comparing simple marks"
-  (c/mark< [1 2] [1 4]) => true
-  (c/mark< [1 2] [2 2]) => true
-  (c/mark< [1 4] [2 2]) => true
-  (c/mark<= [1 2] [1 2]) => true)
-
-(def simple-mark-generator
-  (gen/tuple
-    (gen/choose 1 50)
-    (gen/choose 0 50)))
-
-(defspec mark<-mark>-symmetry 25
-  (prop/for-all [a simple-mark-generator
-                 b simple-mark-generator]
-   (= (c/mark< a b) (c/mark> b a))))
-
-(defspec mark<-implies-mark<= 25
-  (prop'/for-all [a simple-mark-generator
-                  b simple-mark-generator]
-   (if (c/mark< a b)
-     (c/mark<= a b)
-     true)))
-
-(defspec mark>-implies-mark>= 25
-  (prop'/for-all [a simple-mark-generator
-                  b simple-mark-generator]
-   (if (c/mark> a b)
-     (c/mark>= a b)
-     true)))
