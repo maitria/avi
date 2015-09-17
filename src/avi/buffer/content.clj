@@ -1,19 +1,17 @@
 (ns avi.buffer.content
   (:refer-clojure :exclude [replace])
-  (:require [schema.core :as s]))
+  (:require [schema.core :as s]
+            [avi.buffer.marks :as marks]))
 
-(defn versioned-mark?
-  [mark]
-  (= 3 (count mark)))
-
-(def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
 (def LineNumber (s/both s/Int (s/pred pos?)))
 (def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
-(def Version s/Int)
 
 (def SimpleMark
   [(s/one LineNumber "LineNumber") 
    (s/one ColumnNumber "Column")])
+
+(def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
+(def Version s/Int)
 
 (def VersionedMark
   [(s/one LineNumber "LineNumber") 
@@ -22,7 +20,7 @@
 
 (def Mark
   (s/conditional
-    versioned-mark?
+    marks/versioned-mark?
     VersionedMark
     
     :else
@@ -125,7 +123,7 @@
 (s/defn unversion-mark :- (s/maybe SimpleMark)
   [{:keys [revision history]} :- Content
    [line column version :as mark] :- Mark]
-  (if-not (versioned-mark? mark)
+  (if-not (marks/versioned-mark? mark)
     mark
     (loop [version version
            line line
