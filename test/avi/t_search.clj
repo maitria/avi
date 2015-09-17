@@ -1,4 +1,4 @@
-(ns avi.search-test
+(ns avi.t-search
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 

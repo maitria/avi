@@ -1,4 +1,4 @@
-(ns avi.command-line-mode-test
+(ns avi.t-command-line-mode
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 

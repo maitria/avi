@@ -1,4 +1,4 @@
-(ns avi.install-test
+(ns avi.t-install
   (:require [midje.sweet :refer :all]
             [avi.install :refer :all]))
 

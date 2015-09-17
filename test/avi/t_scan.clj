@@ -1,4 +1,4 @@
-(ns avi.scan-test
+(ns avi.t-scan
   (:require [midje.sweet :refer :all]
             [clojure.test.check.generators :as gen]
             [com.gfredericks.test.chuck.generators :as gen']

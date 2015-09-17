@@ -1,4 +1,4 @@
-(ns avi.normal-mode-test
+(ns avi.t-normal-mode
   (:require [midje.sweet :refer :all] 
             [avi.test-helpers :refer :all]))
 

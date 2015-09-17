@@ -1,4 +1,4 @@
-(ns avi.syntax-test
+(ns avi.t-syntax
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 

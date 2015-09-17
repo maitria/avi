@@ -1,4 +1,4 @@
-(ns avi.undo-test
+(ns avi.t-undo
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 (facts "about `u`"

@@ -1,4 +1,4 @@
-(ns avi.eventmap-test
+(ns avi.t-eventmap
   (:require [midje.sweet :refer :all]
             [avi.eventmap :as em]))
 

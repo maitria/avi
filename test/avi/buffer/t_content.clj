@@ -1,4 +1,4 @@
-(ns avi.buffer.content-test
+(ns avi.buffer.t-content
   (:require [avi.buffer.content :as c]
             [clojure.string :as string]
             [clojure.test.check.clojure-test :refer [defspec]]

@@ -1,4 +1,4 @@
-(ns avi.insert-mode-test
+(ns avi.t-insert-mode
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 

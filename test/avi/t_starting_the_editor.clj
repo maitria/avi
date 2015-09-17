@@ -1,4 +1,4 @@
-(ns avi.starting-the-editor-test
+(ns avi.t-starting-the-editor
   (:require [midje.sweet :refer :all]
             [avi.test-helpers :refer :all]))
 
