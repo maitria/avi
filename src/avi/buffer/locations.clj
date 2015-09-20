@@ -1,12 +1,12 @@
 (ns avi.buffer.locations
   (:require [schema.core :as s]))
 
-(def LineNumber (s/both s/Int (s/pred (complement neg?))))
+(def ZLineNumber (s/both s/Int (s/pred (complement neg?))))
 (def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
 
 (def Location
-  [(s/one LineNumber "LineNumber") 
-   (s/one ColumnNumber "Column")])
+  [(s/one ZLineNumber "line number (zero-based)")
+   (s/one ColumnNumber "column")])
 
 (s/defn location<
   [a :- Location
