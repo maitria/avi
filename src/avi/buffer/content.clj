@@ -66,10 +66,10 @@
 (s/defn version-mark :- marks/VersionedMark
   "Creates a versioned mark from a simple mark"
   [{:keys [revision]} :- Content
-   mark :- marks/SimpleMark]
+   mark :- marks/Location]
   (marks/version-mark revision mark))
 
-(s/defn unversion-mark :- (s/maybe marks/SimpleMark)
+(s/defn unversion-mark :- (s/maybe marks/Location)
   [{:keys [revision history]} :- Content
    mark :- marks/Mark]
   (marks/unversion-mark revision history mark))

@@ -9,7 +9,7 @@
 (def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
 (def Version s/Int)
 
-(def SimpleMark
+(def Location
   [(s/one LineNumber "LineNumber") 
    (s/one ColumnNumber "Column")])
 
@@ -24,11 +24,11 @@
     VersionedMark
     
     :else
-    SimpleMark))
+    Location))
 
 (def HistoryStep
-  {:start SimpleMark
-   :end SimpleMark
+  {:start Location
+   :end Location
    :+lines s/Int
    :+columns s/Int})
 
@@ -36,35 +36,35 @@
   {Version HistoryStep})
 
 (s/defn mark<
-  [[ai aj] :- SimpleMark
-   [bi bj] :- SimpleMark]
+  [[ai aj] :- Location
+   [bi bj] :- Location]
   (or (< ai bi)
       (and (= ai bi)
            (< aj bj))))
 
 (s/defn mark<=
-  [a :- SimpleMark
-   b :- SimpleMark]
+  [a :- Location
+   b :- Location]
   (or (= a b)
       (mark< a b)))
 
 (s/defn mark>
-  [a :- SimpleMark
-   b :- SimpleMark]
+  [a :- Location
+   b :- Location]
   (mark< b a))
 
 (s/defn mark>=
-  [a :- SimpleMark
-   b :- SimpleMark]
+  [a :- Location
+   b :- Location]
   (or (= a b)
       (mark> a b)))
 
 (s/defn version-mark :- VersionedMark
   [revision :- Version
-   mark :- SimpleMark]
+   mark :- Location]
   (conj mark revision))
 
-(s/defn unversion-mark :- (s/maybe SimpleMark)
+(s/defn unversion-mark :- (s/maybe Location)
   [revision :- Version
    history :- History
    [line column version :as mark] :- Mark]
