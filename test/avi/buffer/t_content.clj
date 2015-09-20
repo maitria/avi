@@ -22,8 +22,6 @@
         (checking/extended-= value expected-value)))))
 
 (def lines (check-inside :lines))
-(def revision (check-inside :revision))
-(def history (check-inside :history))
 
 (facts "about buffer contents"
   (fact "we can retrieve buffer contents' initial text"
@@ -37,11 +35,7 @@
     (c/content "\n") => (lines [""])
     (c/content "\n\n") => (lines ["" ""])
     (c/content "\nfoo") => (lines ["" "foo"])
-    (c/content "foo\n") => (lines ["foo"]))
-  (fact "content starts at revision zero"
-    (c/content "Hello!") => (revision 0))
-  (fact "content starts with no history steps"
-    (c/content "Wha?!") => (history {})))
+    (c/content "foo\n") => (lines ["foo"])))
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"
@@ -49,20 +43,7 @@
   (fact "replace can insert within a line"
     (c/replace (c/content "Hello!") [1 2] [1 2] "//") => (lines ["He//llo!"]))
   (fact "replace can insert at the end of a line"
-    (c/replace (c/content "Hello!") [1 6] [1 6] "//") => (lines ["Hello!//"]))
-  (fact "replace increments contents revision"
-    (c/replace (c/content "Hello!") [1 3] [1 3] "?") => (revision 1))
-  (fact "replace records history steps"
-    (c/replace (c/content "Hello!") [1 2] [1 3] "??!!\nfy") =>
-      (history 0 {:start [1 2] :end [1 3] :+lines 1 :+columns 1}))
-  (fact "replace can use versioned marks"
-    (-> (c/content "Hello!")
-      (c/replace [1 2] [1 2] "xxx")
-      (c/replace [1 1 0] [1 3 0] "yyy")) => (lines ["Hyyylo!"])))
-
-(facts "about versioning marks"
-  (fact "versioning marks adds the buffer revision"
-    (c/version-mark (c/content "Hello!") [1 3]) => [1 3 0]))
+    (c/replace (c/content "Hello!") [1 6] [1 6] "//") => (lines ["Hello!//"])))
 
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
@@ -94,39 +75,3 @@
             replacement
             (string/join "\n" (c/after (:lines content) end)))
        (string/join "\n" (:lines (c/replace content start end replacement))))))
-
-(facts "about unversioning marks"
-  (fact "unversioning passes simple marks through"
-    (c/unversion-mark (c/content "Hello!") [1 2]) => [1 2])
-  (fact "unversioning a mark with the current revision just discards the version"
-    (c/unversion-mark (c/content "Hello!") [1 2 0]) => [1 2])
-  (fact "unversioning a mark that was before any changes doesn't change the position"
-    (let [content (c/content "Hello!")
-          old-mark (c/version-mark content [1 2])
-          new-content (c/replace content [1 3] [1 3] "xxx")]
-      (c/unversion-mark new-content old-mark) => [1 2]))
-  (fact "unversioning a mark >1 lines after any changes moves down"
-    (let [content (c/content "Hello!\nWorld")
-          old-mark (c/version-mark content [2 2])
-          new-content (c/replace content [1 3] [1 3] "x\n\nxx")]
-      (c/unversion-mark new-content old-mark) => [4 2]))
-  (fact "unversioning a mark on same line as end mark, but to the right, moves right"
-    (let [content (c/content "Hello!\nWorld")
-          old-mark (c/version-mark content [2 2])
-          new-content (c/replace content [2 0] [2 0] "123")]
-      (c/unversion-mark new-content old-mark) => [2 5]))
-  (fact "unversioning a mark for a replaced region returns nil"
-    (let [content (c/content "Hello!")
-          old-mark (c/version-mark content [1 3])
-          new-content (c/replace content [1 2] [1 4] "123")]
-      (c/unversion-mark new-content old-mark) => nil))
-  (fact "unversioning a mark can move left"
-    (let [content (c/content "Hello!")
-          old-mark (c/version-mark content [1 5])
-          new-content (c/replace content [1 1] [1 4] "")]
-      (c/unversion-mark new-content old-mark) => [1 2]))
-  (fact "unversioning a mark can move up"
-    (let [content (c/content "a\nb\nc\nd")
-          old-mark (c/version-mark content [3 0])
-          new-content (c/replace content [1 0] [2 0] "")]
-      (c/unversion-mark new-content old-mark) => [2 0])))

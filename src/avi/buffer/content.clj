@@ -7,7 +7,6 @@
 
 (def Content
   {:lines [(s/one Line "first line") Line]
-   :revision s/Int
    :history locations/History})
 
 (defn- split-lines
@@ -39,7 +38,6 @@
 (s/defn content :- Content
   [text :- s/Str]
   {:lines (text-lines text)
-   :revision 0
    :history {}})
 
 (s/defn before :- [Line]
@@ -63,38 +61,18 @@
   ([a b c]
    (join (join a b) c)))
 
-(s/defn version-mark :- locations/VersionedMark
-  "Creates a versioned mark from a simple mark"
-  [{:keys [revision]} :- Content
-   mark :- locations/Location]
-  (locations/version-mark revision mark))
-
-(s/defn unversion-mark :- (s/maybe locations/Location)
-  [{:keys [revision history]} :- Content
-   mark :- locations/Mark]
-  (locations/unversion-mark revision history mark))
-
 (s/defn replace :- Content
   "Replace text between the `start` mark and the `end` mark with `replacement`.
 
   `replacement` may contain newlines, and the `start` and `end` marks can span
   lines; therefore, this is the most general content operation which can insert,
   delete, or replace text."
-  [{:keys [lines revision] :as content} :- Content
-   start :- locations/Mark
-   end :- locations/Mark
+  [{:keys [lines] :as content} :- Content
+   [start-line start-column :as start] :- locations/Location
+   [end-line end-column :as end] :- locations/Location
    replacement :- s/Str]
-  (let [replacement-lines (split-lines replacement)
-        [start-line start-column :as start] (unversion-mark content start)
-        [end-line end-column :as end] (unversion-mark content end)]
+  (let [replacement-lines (split-lines replacement)]
     (-> content
-      (update-in [:revision] inc)
-      (update-in [:history] assoc revision {:start start
-                                            :end end
-                                            :+lines (- (dec (count replacement-lines))
-                                                       (- end-line start-line))
-                                            :+columns (- (count (last replacement-lines))
-                                                         (- end-column start-column))})
       (assoc :lines (join (before lines start)
                           replacement-lines
                           (after lines end))))))

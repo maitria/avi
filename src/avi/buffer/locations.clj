@@ -58,35 +58,3 @@
    b :- Location]
   (or (= a b)
       (location> a b)))
-
-(s/defn version-mark :- VersionedMark
-  [revision :- Version
-   mark :- Location]
-  (conj mark revision))
-
-(s/defn unversion-mark :- (s/maybe Location)
-  [revision :- Version
-   history :- History
-   [line column version :as mark] :- Mark]
-  (if-not (versioned-mark? mark)
-    mark
-    (loop [version version
-           line line
-           column column]
-      (let [{[end-line end-column :as end] :end
-             :keys [start +lines +columns]} (get history version)]
-        (cond
-          (= version revision)
-          [line column]
-
-          (> line end-line)
-          (recur (inc version) (+ line +lines) column)
-
-          (location> [line column] end)
-          (recur (inc version) line (+ column +columns))
-
-          (location> [line column] start)
-          nil
-
-          :else
-          (recur (inc version) line column))))))
