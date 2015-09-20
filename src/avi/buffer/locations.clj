@@ -35,29 +35,29 @@
 (def History
   {Version HistoryStep})
 
-(s/defn mark<
+(s/defn location<
   [[ai aj] :- Location
    [bi bj] :- Location]
   (or (< ai bi)
       (and (= ai bi)
            (< aj bj))))
 
-(s/defn mark<=
+(s/defn location<=
   [a :- Location
    b :- Location]
   (or (= a b)
-      (mark< a b)))
+      (location< a b)))
 
-(s/defn mark>
+(s/defn location>
   [a :- Location
    b :- Location]
-  (mark< b a))
+  (location< b a))
 
-(s/defn mark>=
+(s/defn location>=
   [a :- Location
    b :- Location]
   (or (= a b)
-      (mark> a b)))
+      (location> a b)))
 
 (s/defn version-mark :- VersionedMark
   [revision :- Version
@@ -82,10 +82,10 @@
           (> line end-line)
           (recur (inc version) (+ line +lines) column)
 
-          (mark> [line column] end)
+          (location> [line column] end)
           (recur (inc version) line (+ column +columns))
 
-          (mark> [line column] start)
+          (location> [line column] start)
           nil
 
           :else

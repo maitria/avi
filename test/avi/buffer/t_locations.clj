@@ -7,32 +7,32 @@
             [com.gfredericks.test.chuck.properties :as prop']
             [midje.sweet :refer :all]))
 
-(facts "about comparing simple marks"
-  (mark< [1 2] [1 4]) => true
-  (mark< [1 2] [2 2]) => true
-  (mark< [1 4] [2 2]) => true
-  (mark<= [1 2] [1 2]) => true)
+(facts "about comparing simple locations"
+  (location< [1 2] [1 4]) => true
+  (location< [1 2] [2 2]) => true
+  (location< [1 4] [2 2]) => true
+  (location<= [1 2] [1 2]) => true)
 
-(def simple-mark-generator
+(def simple-location-generator
   (gen/tuple
     (gen/choose 1 50)
     (gen/choose 0 50)))
 
-(defspec mark<-mark>-symmetry 25
-  (prop/for-all [a simple-mark-generator
-                 b simple-mark-generator]
-   (= (mark< a b) (mark> b a))))
+(defspec location<-location>-symmetry 25
+  (prop/for-all [a simple-location-generator
+                 b simple-location-generator]
+   (= (location< a b) (location> b a))))
 
-(defspec mark<-implies-mark<= 25
-  (prop'/for-all [a simple-mark-generator
-                  b simple-mark-generator]
-   (if (mark< a b)
-     (mark<= a b)
+(defspec location<-implies-location<= 25
+  (prop'/for-all [a simple-location-generator
+                  b simple-location-generator]
+   (if (location< a b)
+     (location<= a b)
      true)))
 
-(defspec mark>-implies-mark>= 25
-  (prop'/for-all [a simple-mark-generator
-                  b simple-mark-generator]
-   (if (mark> a b)
-     (mark>= a b)
+(defspec location>-implies-location>= 25
+  (prop'/for-all [a simple-location-generator
+                  b simple-location-generator]
+   (if (location> a b)
+     (location>= a b)
      true)))
