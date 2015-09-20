@@ -10,25 +10,21 @@
    (s/one ColumnNumber "Column")])
 
 (s/defn location<
-  [[ai aj] :- Location
-   [bi bj] :- Location]
-  (or (< ai bi)
-      (and (= ai bi)
-           (< aj bj))))
+  [a :- Location
+   b :- Location]
+  (< (.compareTo a b) 0))
 
 (s/defn location<=
   [a :- Location
    b :- Location]
-  (or (= a b)
-      (location< a b)))
+  (<= (.compareTo a b) 0))
 
 (s/defn location>
   [a :- Location
    b :- Location]
-  (location< b a))
+  (> (.compareTo a b) 0))
 
 (s/defn location>=
   [a :- Location
    b :- Location]
-  (or (= a b)
-      (location> a b)))
+  (>= (.compareTo a b) 0))
