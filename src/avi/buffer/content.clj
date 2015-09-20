@@ -6,8 +6,7 @@
 (def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
 
 (def Content
-  {:lines [(s/one Line "first line") Line]
-   :history locations/History})
+  {:lines [(s/one Line "first line") Line]})
 
 (defn- split-lines
   ([text]
@@ -37,19 +36,18 @@
 
 (s/defn content :- Content
   [text :- s/Str]
-  {:lines (text-lines text)
-   :history {}})
+  {:lines (text-lines text)})
 
 (s/defn before :- [Line]
   [lines :- [Line]
-   [end-line end-column] :- locations/Mark]
+   [end-line end-column] :- locations/Location]
   (-> lines
     (subvec 0 (dec end-line))
     (conj (subs (get lines (dec end-line)) 0 end-column))))
 
 (s/defn after :- [Line]
   [lines :- [Line]
-   [start-line start-column] :- locations/Mark]
+   [start-line start-column] :- locations/Location]
   (vec (concat [(subs (get lines (dec start-line)) start-column)]
                (subvec lines start-line))))
 
