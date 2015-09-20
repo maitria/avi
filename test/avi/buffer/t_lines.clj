@@ -32,7 +32,9 @@
   (fact "replace can insert within a line"
     (lines/replace (lines/content "Hello!") [1 2] [1 2] "//") => ["He//llo!"])
   (fact "replace can insert at the end of a line"
-    (lines/replace (lines/content "Hello!") [1 6] [1 6] "//") => ["Hello!//"]))
+    (lines/replace (lines/content "Hello!") [1 6] [1 6] "//") => ["Hello!//"])
+  (fact "replace works with start and end reversed"
+    (lines/replace (lines/content "Hello!") [1 5] [1 2] "//") => ["He//!"]))
 
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))

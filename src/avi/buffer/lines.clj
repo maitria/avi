@@ -65,9 +65,12 @@
   span lines; therefore, this is the most general content operation which can
   insert, delete, or replace text."
   [lines :- Lines
-   [start-line start-column :as start] :- l/Location
-   [end-line end-column :as end] :- l/Location
+   a :- l/Location
+   b :- l/Location
    replacement :- s/Str]
-  (join (before lines start)
-        (split-lines replacement)
-        (after lines end)))
+  (let [[start end] (if (l/location< a b)
+                      [a b]
+                      [b a])]
+    (join (before lines start)
+          (split-lines replacement)
+          (after lines end))))
