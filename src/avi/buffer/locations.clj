@@ -3,7 +3,6 @@
 
 (def LineNumber (s/both s/Int (s/pred pos?)))
 (def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
-(def Version s/Int)
 
 (def Location
   [(s/one LineNumber "LineNumber") 
