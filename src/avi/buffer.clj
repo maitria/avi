@@ -3,13 +3,14 @@
   (:require [packthread.core :refer :all]
             [clojure.string :as string]
             [avi.beep :as beep]
+            [avi.buffer [lines :as l]]
             [avi.pervasive :refer :all]
             [avi.world :as w]))
 
 (defn- try-load
   [filename]
   (try
-    (string/split (w/read-file w/*world* filename) #"\n")
+    (l/content (w/read-file w/*world* filename))
     (catch FileNotFoundException e
       [""])))
 
