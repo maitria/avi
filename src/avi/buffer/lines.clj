@@ -40,14 +40,14 @@
   [lines :- [Line]
    [end-line end-column] :- l/Location]
   (-> lines
-    (subvec 0 (dec end-line))
-    (conj (subs (get lines (dec end-line)) 0 end-column))))
+    (subvec 0 end-line)
+    (conj (subs (get lines end-line) 0 end-column))))
 
 (s/defn after :- [Line]
   [lines :- [Line]
    [start-line start-column] :- l/Location]
-  (vec (concat [(subs (get lines (dec start-line)) start-column)]
-               (subvec lines start-line))))
+  (vec (concat [(subs (get lines start-line) start-column)]
+               (subvec lines (inc start-line)))))
 
 (defn join
   ([a b]

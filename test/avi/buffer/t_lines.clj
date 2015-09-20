@@ -28,13 +28,13 @@
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"
-    (lines/replace (lines/content "Hello!") [1 0] [1 0] "xyz") => ["xyzHello!"])
+    (lines/replace (lines/content "Hello!") [0 0] [0 0] "xyz") => ["xyzHello!"])
   (fact "replace can insert within a line"
-    (lines/replace (lines/content "Hello!") [1 2] [1 2] "//") => ["He//llo!"])
+    (lines/replace (lines/content "Hello!") [0 2] [0 2] "//") => ["He//llo!"])
   (fact "replace can insert at the end of a line"
-    (lines/replace (lines/content "Hello!") [1 6] [1 6] "//") => ["Hello!//"])
+    (lines/replace (lines/content "Hello!") [0 6] [0 6] "//") => ["Hello!//"])
   (fact "replace works with start and end reversed"
-    (lines/replace (lines/content "Hello!") [1 5] [1 2] "//") => ["He//!"]))
+    (lines/replace (lines/content "Hello!") [0 5] [0 2] "//") => ["He//!"]))
 
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
@@ -44,8 +44,8 @@
 
 (defn location-generator
   [lines]
-  (gen'/for [line (gen/choose 1 (count lines))
-             column (gen/choose 0 (count (get lines (dec line))))]
+  (gen'/for [line (gen/choose 0 (dec (count lines)))
+             column (gen/choose 0 (count (get lines line)))]
     [line column]))
 
 (defn start-end-location-generator
