@@ -4,7 +4,8 @@
             [avi.buffer.locations :as l]))
 
 (def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
-(def Content {:lines [(s/one Line "first line") Line]})
+(def Lines [(s/one Line "first line") Line])
+(def Content {:lines Lines})
 
 (defn- split-lines
   ([text]
