@@ -5,7 +5,6 @@
 
 (def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
 (def Lines [(s/one Line "first line") Line])
-(def Content {:lines Lines})
 
 (defn- split-lines
   ([text]
@@ -33,9 +32,9 @@
                          (count text))]
     (split-lines text stopping-point)))
 
-(s/defn content :- Content
+(s/defn content :- Lines
   [text :- s/Str]
-  {:lines (text-lines text)})
+  (text-lines text))
 
 (s/defn before :- [Line]
   [lines :- [Line]
@@ -58,17 +57,17 @@
   ([a b c]
    (join (join a b) c)))
 
-(s/defn replace :- Content
+(s/defn replace :- Lines
   "Replace text between the `start` location and the `end` location with
   `replacement`.
 
   `replacement` may contain newlines, and the `start` and `end` locations can
   span lines; therefore, this is the most general content operation which can
   insert, delete, or replace text."
-  [{:keys [lines] :as content} :- Content
+  [lines :- Lines
    [start-line start-column :as start] :- l/Location
    [end-line end-column :as end] :- l/Location
    replacement :- s/Str]
-  (assoc content :lines (join (before lines start)
-                              (split-lines replacement)
-                              (after lines end))))
+  (join (before lines start)
+        (split-lines replacement)
+        (after lines end)))
