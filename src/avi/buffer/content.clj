@@ -59,17 +59,16 @@
    (join (join a b) c)))
 
 (s/defn replace :- Content
-  "Replace text between the `start` mark and the `end` mark with `replacement`.
+  "Replace text between the `start` location and the `end` location with
+  `replacement`.
 
-  `replacement` may contain newlines, and the `start` and `end` marks can span
-  lines; therefore, this is the most general content operation which can insert,
-  delete, or replace text."
+  `replacement` may contain newlines, and the `start` and `end` locations can
+  span lines; therefore, this is the most general content operation which can
+  insert, delete, or replace text."
   [{:keys [lines] :as content} :- Content
    [start-line start-column :as start] :- l/Location
    [end-line end-column :as end] :- l/Location
    replacement :- s/Str]
-  (let [replacement-lines (split-lines replacement)]
-    (-> content
-      (assoc :lines (join (before lines start)
-                          replacement-lines
-                          (after lines end))))))
+  (assoc content :lines (join (before lines start)
+                              (split-lines replacement)
+                              (after lines end))))
