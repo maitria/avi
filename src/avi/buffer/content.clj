@@ -1,14 +1,14 @@
 (ns avi.buffer.content
   (:refer-clojure :exclude [replace])
   (:require [schema.core :as s]
-            [avi.buffer.marks :as marks]))
+            [avi.buffer.locations :as locations]))
 
 (def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
 
 (def Content
   {:lines [(s/one Line "first line") Line]
    :revision s/Int
-   :history marks/History})
+   :history locations/History})
 
 (defn- split-lines
   ([text]
@@ -44,14 +44,14 @@
 
 (s/defn before :- [Line]
   [lines :- [Line]
-   [end-line end-column] :- marks/Mark]
+   [end-line end-column] :- locations/Mark]
   (-> lines
     (subvec 0 (dec end-line))
     (conj (subs (get lines (dec end-line)) 0 end-column))))
 
 (s/defn after :- [Line]
   [lines :- [Line]
-   [start-line start-column] :- marks/Mark]
+   [start-line start-column] :- locations/Mark]
   (vec (concat [(subs (get lines (dec start-line)) start-column)]
                (subvec lines start-line))))
 
@@ -63,16 +63,16 @@
   ([a b c]
    (join (join a b) c)))
 
-(s/defn version-mark :- marks/VersionedMark
+(s/defn version-mark :- locations/VersionedMark
   "Creates a versioned mark from a simple mark"
   [{:keys [revision]} :- Content
-   mark :- marks/Location]
-  (marks/version-mark revision mark))
+   mark :- locations/Location]
+  (locations/version-mark revision mark))
 
-(s/defn unversion-mark :- (s/maybe marks/Location)
+(s/defn unversion-mark :- (s/maybe locations/Location)
   [{:keys [revision history]} :- Content
-   mark :- marks/Mark]
-  (marks/unversion-mark revision history mark))
+   mark :- locations/Mark]
+  (locations/unversion-mark revision history mark))
 
 (s/defn replace :- Content
   "Replace text between the `start` mark and the `end` mark with `replacement`.
@@ -81,8 +81,8 @@
   lines; therefore, this is the most general content operation which can insert,
   delete, or replace text."
   [{:keys [lines revision] :as content} :- Content
-   start :- marks/Mark
-   end :- marks/Mark
+   start :- locations/Mark
+   end :- locations/Mark
    replacement :- s/Str]
   (let [replacement-lines (split-lines replacement)
         [start-line start-column :as start] (unversion-mark content start)

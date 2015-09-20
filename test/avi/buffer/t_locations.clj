@@ -1,5 +1,5 @@
-(ns avi.buffer.t-marks
-  (:require [avi.buffer.marks :refer :all]
+(ns avi.buffer.t-locations
+  (:require [avi.buffer.locations :refer :all]
             [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]

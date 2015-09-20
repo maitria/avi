@@ -1,4 +1,4 @@
-(ns avi.buffer.marks
+(ns avi.buffer.locations
   (:require [schema.core :as s]))
 
 (defn versioned-mark?
