@@ -1,5 +1,5 @@
-(ns avi.buffer.t-content
-  (:require [avi.buffer.content :as c]
+(ns avi.buffer.t-lines
+  (:require [avi.buffer.lines :as lines]
             [clojure.string :as string]
             [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
@@ -25,31 +25,31 @@
 
 (facts "about buffer contents"
   (fact "we can retrieve buffer contents' initial text"
-    (c/content "Hello, World!") => (lines ["Hello, World!"])
-    (c/content "Line 1\nLine 2") => (lines ["Line 1" "Line 2"])
-    (c/content "Line 1\nLine 3\n") => (lines ["Line 1" "Line 3"])
-    (c/content "Line 1\n\nLine 3") => (lines ["Line 1" "" "Line 3"]))
+    (lines/content "Hello, World!") => (lines ["Hello, World!"])
+    (lines/content "Line 1\nLine 2") => (lines ["Line 1" "Line 2"])
+    (lines/content "Line 1\nLine 3\n") => (lines ["Line 1" "Line 3"])
+    (lines/content "Line 1\n\nLine 3") => (lines ["Line 1" "" "Line 3"]))
   (fact "we always have at least one line"
-    (c/content "") => (lines [""]))
+    (lines/content "") => (lines [""]))
   (fact "if the last character is a newline, it does not make an extra line"
-    (c/content "\n") => (lines [""])
-    (c/content "\n\n") => (lines ["" ""])
-    (c/content "\nfoo") => (lines ["" "foo"])
-    (c/content "foo\n") => (lines ["foo"])))
+    (lines/content "\n") => (lines [""])
+    (lines/content "\n\n") => (lines ["" ""])
+    (lines/content "\nfoo") => (lines ["" "foo"])
+    (lines/content "foo\n") => (lines ["foo"])))
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"
-    (c/replace (c/content "Hello!") [1 0] [1 0] "xyz") => (lines ["xyzHello!"]))
+    (lines/replace (lines/content "Hello!") [1 0] [1 0] "xyz") => (lines ["xyzHello!"]))
   (fact "replace can insert within a line"
-    (c/replace (c/content "Hello!") [1 2] [1 2] "//") => (lines ["He//llo!"]))
+    (lines/replace (lines/content "Hello!") [1 2] [1 2] "//") => (lines ["He//llo!"]))
   (fact "replace can insert at the end of a line"
-    (c/replace (c/content "Hello!") [1 6] [1 6] "//") => (lines ["Hello!//"])))
+    (lines/replace (lines/content "Hello!") [1 6] [1 6] "//") => (lines ["Hello!//"])))
 
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
 
 (def content-generator
-  (gen/fmap c/content text-generator))
+  (gen/fmap lines/content text-generator))
 
 (defn mark-generator
   [{:keys [lines]}]
@@ -64,14 +64,14 @@
 (defspec join-before-and-after-invariant 25
   (prop'/for-all [content content-generator
                   mark (mark-generator content)]
-    (= (c/join (c/before (:lines content) mark) (c/after (:lines content) mark))
+    (= (lines/join (lines/before (:lines content) mark) (lines/after (:lines content) mark))
        (:lines content))))
 
 (defspec replace-before-after-replacement-invariant 25
   (prop'/for-all [content content-generator
                   [start end] (start-end-mark-generator content)
                   replacement text-generator]
-    (= (str (string/join "\n" (c/before (:lines content) start))
+    (= (str (string/join "\n" (lines/before (:lines content) start))
             replacement
-            (string/join "\n" (c/after (:lines content) end)))
-       (string/join "\n" (:lines (c/replace content start end replacement))))))
+            (string/join "\n" (lines/after (:lines content) end)))
+       (string/join "\n" (:lines (lines/replace content start end replacement))))))

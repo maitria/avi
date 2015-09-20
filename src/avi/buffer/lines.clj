@@ -1,4 +1,4 @@
-(ns avi.buffer.content
+(ns avi.buffer.lines
   (:refer-clojure :exclude [replace])
   (:require [schema.core :as s]
             [avi.buffer.locations :as l]))
