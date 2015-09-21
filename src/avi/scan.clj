@@ -13,7 +13,7 @@
     [i (inc j)]))
 
 (defn retreat
-  [[i j] lines]
+  [[i j] line-length]
   (cond
     (= [i j] [0 0])
     nil
@@ -22,7 +22,7 @@
     [i (dec j)]
 
     :else
-    [(dec i) (count (get lines (dec i)))]))
+    [(dec i) (line-length (dec i))]))
 
 (defn forward
   [pos lines]
@@ -34,4 +34,4 @@
   [pos lines]
   (lazy-seq
     (when pos
-      (cons pos (backward (retreat pos lines) lines)))))
+      (cons pos (backward (retreat pos #(count (get lines %))) lines)))))

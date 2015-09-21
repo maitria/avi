@@ -21,7 +21,7 @@
 
 (defspec retreat-from-0-0-is-always-nil 100
   (prop/for-all [lines lines-generator]
-    (nil? (scan/retreat [0 0] lines))))
+    (nil? (scan/retreat [0 0] #(count (get lines %))))))
 
 (defspec advance-at-eof-is-always-nil 100
   (prop'/for-all [lines lines-generator
@@ -31,8 +31,8 @@
 
 (defspec retreat-position-always-decreases 100
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
-    (or (nil? (scan/retreat position lines))
-        (l/location< (scan/retreat position lines) position))))
+    (or (nil? (scan/retreat position #(count (get lines %))))
+        (l/location< (scan/retreat position #(count (get lines %))) position))))
 
 (defspec advance-position-always-increases 100
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
@@ -43,7 +43,7 @@
   (prop'/for-all [lines lines-generator
                   :when (>= (count lines) 2)
                   i (gen'/bounded-int 1 (dec (count lines)))]
-    (= (scan/retreat [i 0] lines)
+    (= (scan/retreat [i 0] #(count (get lines %)))
        [(dec i) (count (get lines (dec i)))])))
 
 (defspec advance-on-last-character-of-any-line-but-last-goes-to-newline-position 100
@@ -55,9 +55,9 @@
 
 (defspec retreat-never-skips-a-line 100
   (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
-    (or (nil? (scan/retreat [i j] lines))
-        (= i (first (scan/retreat [i j] lines)))
-        (= (dec i) (first (scan/retreat [i j] lines))))))
+    (or (nil? (scan/retreat [i j] #(count (get lines %))))
+        (= i (first (scan/retreat [i j] #(count (get lines %)))))
+        (= (dec i) (first (scan/retreat [i j] #(count (get lines %))))))))
 
 (defspec advance-never-skips-a-line 100
   (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
