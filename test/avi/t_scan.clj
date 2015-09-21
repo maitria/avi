@@ -8,6 +8,11 @@
             [avi.buffer.locations :as l]
             [avi.scan :as scan]))
 
+(defn line-length
+  [lines]
+  (fn [i]
+    (some-> lines (get i) count)))
+
 (def line-generator (gen/such-that #(= -1 (.indexOf % "\n")) gen/string-ascii))
 (def lines-generator (gen/such-that #(not (zero? (count %))) (gen/vector line-generator)))
 (def lines-and-position-generator
@@ -21,7 +26,7 @@
 
 (defspec retreat-from-0-0-is-always-nil 100
   (prop/for-all [lines lines-generator]
-    (nil? (scan/retreat [0 0] #(count (get lines %))))))
+    (nil? (scan/retreat [0 0] (line-length lines)))))
 
 (defspec advance-at-eof-is-always-nil 100
   (prop'/for-all [lines lines-generator
@@ -31,8 +36,8 @@
 
 (defspec retreat-position-always-decreases 100
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
-    (or (nil? (scan/retreat position #(count (get lines %))))
-        (l/location< (scan/retreat position #(count (get lines %))) position))))
+    (or (nil? (scan/retreat position (line-length lines)))
+        (l/location< (scan/retreat position (line-length lines)) position))))
 
 (defspec advance-position-always-increases 100
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
@@ -43,7 +48,7 @@
   (prop'/for-all [lines lines-generator
                   :when (>= (count lines) 2)
                   i (gen'/bounded-int 1 (dec (count lines)))]
-    (= (scan/retreat [i 0] #(count (get lines %)))
+    (= (scan/retreat [i 0] (line-length lines))
        [(dec i) (count (get lines (dec i)))])))
 
 (defspec advance-on-last-character-of-any-line-but-last-goes-to-newline-position 100
@@ -55,9 +60,9 @@
 
 (defspec retreat-never-skips-a-line 100
   (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
-    (or (nil? (scan/retreat [i j] #(count (get lines %))))
-        (= i (first (scan/retreat [i j] #(count (get lines %)))))
-        (= (dec i) (first (scan/retreat [i j] #(count (get lines %))))))))
+    (or (nil? (scan/retreat [i j] (line-length lines)))
+        (= i (first (scan/retreat [i j] (line-length lines))))
+        (= (dec i) (first (scan/retreat [i j] (line-length lines)))))))
 
 (defspec advance-never-skips-a-line 100
   (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
