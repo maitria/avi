@@ -27,3 +27,26 @@
   [a :- Location
    b :- Location]
   (>= (.compareTo a b) 0))
+
+(defn advance
+  [[i j] line-length]
+  (cond
+    (>= j (line-length i))
+    (if-not (line-length (inc i))
+      nil
+      [(inc i) 0])
+
+    :else
+    [i (inc j)]))
+
+(defn retreat
+  [[i j] line-length]
+  (cond
+    (= [i j] [0 0])
+    nil
+
+    (>= j 1)
+    [i (dec j)]
+
+    :else
+    [(dec i) (line-length (dec i))]))
