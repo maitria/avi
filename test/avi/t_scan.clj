@@ -26,7 +26,7 @@
 (defspec advance-at-eof-is-always-nil 100
   (prop'/for-all [lines lines-generator
                   :let [i (dec (count lines))
-                        j (dec (count (last lines)))]]
+                        j (count (last lines))]]
     (nil? (scan/advance [i j] lines))))
 
 (defspec retreat-position-always-decreases 100

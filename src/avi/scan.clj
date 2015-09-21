@@ -3,7 +3,7 @@
 (defn advance
   [[i j] lines]
   (cond
-    (= [i j] [(dec (count lines)) (dec (count (last lines)))])
+    (= [i j] [(dec (count lines)) (count (last lines))])
     nil
 
     (>= j (count (get lines i)))
