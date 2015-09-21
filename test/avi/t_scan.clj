@@ -5,6 +5,7 @@
             [clojure.test.check.properties :as prop]
             [com.gfredericks.test.chuck.properties :as prop']
             [clojure.test.check.clojure-test :refer [defspec]]
+            [avi.buffer.locations :as l]
             [avi.scan :as scan]))
 
 (def line-generator (gen/such-that #(= -1 (.indexOf % "\n")) gen/string-ascii))
@@ -28,21 +29,15 @@
                         j (dec (count (last lines)))]]
     (nil? (scan/advance [i j] lines))))
 
-(defn- before?
-  [[i1 j1] [i2 j2]]
-  (or (< i1 i2)
-      (and (= i1 i2)
-           (< j1 j2))))
-
 (defspec retreat-position-always-decreases 100
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
     (or (nil? (scan/retreat position lines))
-        (before? (scan/retreat position lines) position))))
+        (l/location< (scan/retreat position lines) position))))
 
 (defspec advance-position-always-increases 100
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
     (or (nil? (scan/advance position lines))
-        (before? position (scan/advance position lines)))))
+        (l/location< position (scan/advance position lines)))))
 
 (defspec retreat-at-beginning-of-line-goes-to-newline-position 100
   (prop'/for-all [lines lines-generator
