@@ -77,11 +77,11 @@
        [(dec i) (count (get lines (dec i)))])))
 
 (defspec advance-on-last-character-of-any-line-but-last-goes-to-newline-position 100
-  (prop'/for-all [lines lines-generator
-                  :when (>= (count lines) 2)
-                  i (gen'/bounded-int 0 (- (count lines) 2))
-                  :let [j (dec (count (get lines i)))]]
-    (= (advance [i j] (scan/line-length lines)) [i (inc j)])))
+  (prop'/for-all [line-lengths (gen/vector (gen'/bounded-int 1 25))
+                  :when (>= (count line-lengths) 2)
+                  i (gen'/bounded-int 0 (- (count line-lengths) 2))
+                  :let [j (dec (line-lengths i))]]
+    (= (advance [i j] line-lengths) [i (inc j)])))
 
 (defspec retreat-never-skips-a-line 100
   (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]

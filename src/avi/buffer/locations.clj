@@ -28,8 +28,9 @@
    b :- Location]
   (>= (.compareTo a b) 0))
 
-(defn advance
-  [[i j] line-length]
+(s/defn advance :- (s/maybe Location)
+  [[i j] :- Location
+   line-length]
   (cond
     (>= j (line-length i))
     (if-not (line-length (inc i))
@@ -39,8 +40,9 @@
     :else
     [i (inc j)]))
 
-(defn retreat
-  [[i j] line-length]
+(s/defn retreat :- (s/maybe Location)
+  [[i j] :- Location
+   line-length]
   (cond
     (= [i j] [0 0])
     nil
