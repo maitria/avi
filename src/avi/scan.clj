@@ -1,13 +1,12 @@
 (ns avi.scan)
 
 (defn advance
-  [[i j] lines]
+  [[i j] line-length]
   (cond
-    (= [i j] [(dec (count lines)) (count (last lines))])
-    nil
-
-    (>= j (count (get lines i)))
-    [(inc i) 0]
+    (>= j (line-length i))
+    (if-not (line-length (inc i))
+      nil
+      [(inc i) 0])
 
     :else
     [i (inc j)]))
@@ -33,7 +32,7 @@
   [pos lines]
   (lazy-seq
     (when pos
-      (cons pos (forward (advance pos lines) lines)))))
+      (cons pos (forward (advance pos (line-length lines)) lines)))))
 
 (defn backward
   [pos lines]
