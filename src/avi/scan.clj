@@ -24,6 +24,11 @@
     :else
     [(dec i) (line-length (dec i))]))
 
+(defn line-length
+  [lines]
+  (fn [i]
+    (some-> lines (get i) count)))
+
 (defn forward
   [pos lines]
   (lazy-seq
@@ -34,4 +39,4 @@
   [pos lines]
   (lazy-seq
     (when pos
-      (cons pos (backward (retreat pos #(count (get lines %))) lines)))))
+      (cons pos (backward (retreat pos (line-length lines)) lines)))))
