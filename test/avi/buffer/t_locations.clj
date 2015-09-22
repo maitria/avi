@@ -50,10 +50,7 @@
      :position [i j]}))
 
 (def line-length-generator
-  (gen/such-that
-    (fn [v]
-      (>= (count v) 1))
-    (gen/vector gen/pos-int)))
+  (gen/vector gen/pos-int 1 35))
 
 (defspec retreat-from-0-0-is-always-nil 100
   (prop/for-all [line-length line-length-generator]
@@ -76,11 +73,11 @@
         (location< position (advance position (scan/line-length lines))))))
 
 (defspec retreat-at-beginning-of-line-goes-to-newline-position 100
-  (prop'/for-all [lines lines-generator
-                  :when (>= (count lines) 2)
-                  i (gen'/bounded-int 1 (dec (count lines)))]
-    (= (retreat [i 0] (scan/line-length lines))
-       [(dec i) (count (get lines (dec i)))])))
+  (prop'/for-all [line-length line-length-generator
+                  :when (>= (count line-length) 2)
+                  i (gen'/bounded-int 1 (dec (count line-length)))]
+    (= (retreat [i 0] line-length)
+       [(dec i) (line-length (dec i))])))
 
 (defspec advance-on-last-character-of-any-line-but-last-goes-to-newline-position 100
   (prop'/for-all [line-lengths (gen/vector (gen'/bounded-int 1 25))
