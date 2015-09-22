@@ -49,15 +49,21 @@
     {:lines lines
      :position [i j]}))
 
+(def line-length-generator
+  (gen/such-that
+    (fn [v]
+      (>= (count v) 1))
+    (gen/vector gen/pos-int)))
+
 (defspec retreat-from-0-0-is-always-nil 100
-  (prop/for-all [lines lines-generator]
-    (nil? (retreat [0 0] (scan/line-length lines)))))
+  (prop/for-all [line-length line-length-generator]
+    (nil? (retreat [0 0] line-length))))
 
 (defspec advance-at-eof-is-always-nil 100
-  (prop'/for-all [lines lines-generator
-                  :let [i (dec (count lines))
-                        j (count (last lines))]]
-    (nil? (advance [i j] (scan/line-length lines)))))
+  (prop'/for-all [line-length line-length-generator
+                  :let [i (dec (count line-length))
+                        j (last line-length)]]
+    (nil? (advance [i j] #(get line-length %)))))
 
 (defspec retreat-position-always-decreases 100
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
