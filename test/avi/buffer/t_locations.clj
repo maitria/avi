@@ -14,26 +14,26 @@
   (location< [1 4] [2 2]) => true
   (location<= [1 2] [1 2]) => true)
 
-(def simple-location-generator
+(def location-generator
   (gen/tuple
     (gen/choose 1 50)
     (gen/choose 0 50)))
 
 (defspec location<-location>-symmetry 25
-  (prop/for-all [a simple-location-generator
-                 b simple-location-generator]
+  (prop/for-all [a location-generator
+                 b location-generator]
    (= (location< a b) (location> b a))))
 
 (defspec location<-implies-location<= 25
-  (prop'/for-all [a simple-location-generator
-                  b simple-location-generator]
+  (prop'/for-all [a location-generator
+                  b location-generator]
    (if (location< a b)
      (location<= a b)
      true)))
 
 (defspec location>-implies-location>= 25
-  (prop'/for-all [a simple-location-generator
-                  b simple-location-generator]
+  (prop'/for-all [a location-generator
+                  b location-generator]
    (if (location> a b)
      (location>= a b)
      true)))
