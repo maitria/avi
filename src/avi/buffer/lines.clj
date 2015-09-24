@@ -74,3 +74,9 @@
     (join (before lines start)
           (split-lines replacement)
           (after lines end))))
+
+(defn line-length
+  "Convert a vector of lines to a line length function."
+  [lines]
+  (fn [i]
+    (some-> lines (get i) count)))

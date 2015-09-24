@@ -1,6 +1,7 @@
 (ns avi.buffer.t-locations
-  (:require [avi.buffer.locations :refer :all]
-            [avi.scan :as scan]
+  (:require [avi.buffer
+             [lines :as lines]
+             [locations :refer :all]]
             [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
@@ -64,13 +65,13 @@
 
 (defspec retreat-position-always-decreases 100
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
-    (or (nil? (retreat position (scan/line-length lines)))
-        (location< (retreat position (scan/line-length lines)) position))))
+    (or (nil? (retreat position (lines/line-length lines)))
+        (location< (retreat position (lines/line-length lines)) position))))
 
 (defspec advance-position-always-increases 100
   (prop/for-all [{:keys [lines position]} lines-and-position-generator]
-    (or (nil? (advance position (scan/line-length lines)))
-        (location< position (advance position (scan/line-length lines))))))
+    (or (nil? (advance position (lines/line-length lines)))
+        (location< position (advance position (lines/line-length lines))))))
 
 (defspec retreat-at-beginning-of-line-goes-to-newline-position 100
   (prop'/for-all [line-length line-length-generator
@@ -88,12 +89,12 @@
 
 (defspec retreat-never-skips-a-line 100
   (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
-    (or (nil? (retreat [i j] (scan/line-length lines)))
-        (= i (first (retreat [i j] (scan/line-length lines))))
-        (= (dec i) (first (retreat [i j] (scan/line-length lines)))))))
+    (or (nil? (retreat [i j] (lines/line-length lines)))
+        (= i (first (retreat [i j] (lines/line-length lines))))
+        (= (dec i) (first (retreat [i j] (lines/line-length lines)))))))
 
 (defspec advance-never-skips-a-line 100
   (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
-    (or (nil? (advance [i j] (scan/line-length lines)))
-        (= i (first (advance [i j] (scan/line-length lines))))
-        (= (inc i) (first (advance [i j] (scan/line-length lines)))))))
+    (or (nil? (advance [i j] (lines/line-length lines)))
+        (= i (first (advance [i j] (lines/line-length lines))))
+        (= (inc i) (first (advance [i j] (lines/line-length lines)))))))
