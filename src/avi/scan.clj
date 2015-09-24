@@ -1,16 +1,15 @@
 (ns avi.scan
   (:require [avi.buffer
-             [lines :as lines]
              [locations :as l]]))
 
 (defn forward
-  [pos lines]
+  [pos line-length]
   (lazy-seq
     (when pos
-      (cons pos (forward (l/advance pos (lines/line-length lines)) lines)))))
+      (cons pos (forward (l/advance pos line-length) line-length)))))
 
 (defn backward
-  [pos lines]
+  [pos line-length]
   (lazy-seq
     (when pos
-      (cons pos (backward (l/retreat pos (lines/line-length lines)) lines)))))
+      (cons pos (backward (l/retreat pos line-length) line-length)))))
