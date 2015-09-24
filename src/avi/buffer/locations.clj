@@ -52,3 +52,15 @@
 
     :else
     [(dec i) (line-length (dec i))]))
+
+(defn forward
+  [pos line-length]
+  (lazy-seq
+    (when pos
+      (cons pos (forward (advance pos line-length) line-length)))))
+
+(defn backward
+  [pos line-length]
+  (lazy-seq
+    (when pos
+      (cons pos (backward (retreat pos line-length) line-length)))))

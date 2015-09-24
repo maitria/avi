@@ -4,9 +4,10 @@
             [packthread.lenses :as l]
             [avi.beep :as beep]
             [avi.buffer :as b]
-            [avi.buffer [lines :as lines]]
-            [avi.editor :as e]
-            [avi.scan :as scan]))
+            [avi.buffer
+             [lines :as lines]
+             [locations :as loc]]
+            [avi.editor :as e]))
 
 (def ^:private bracket-map
   {\( \)
@@ -27,8 +28,8 @@
     (let [bracket (get-in lines [i j])
           open-bracket? (open-brackets bracket)
           scan (if open-bracket?
-                 (scan/forward [i j] (lines/line-length lines))
-                 (scan/backward [i j] (lines/line-length lines)))
+                 (loc/forward [i j] (lines/line-length lines))
+                 (loc/backward [i j] (lines/line-length lines)))
           brackets (if open-bracket?
                      bracket-map
                      reverse-bracket-map)
