@@ -98,3 +98,11 @@
     (or (nil? (advance [i j] (lines/line-length lines)))
         (= i (first (advance [i j] (lines/line-length lines))))
         (= (inc i) (first (advance [i j] (lines/line-length lines)))))))
+
+(defspec adjust-for-replacement-passes-locations-before-replacement 100
+  (prop'/for-all [[l a b] (gen/fmap sort (gen/vector location-generator 3))
+                  :when (not (= l a))
+                  line-count (gen/choose 0 35)
+                  last-length (gen/choose 0 25)
+                  bias (gen/elements [:left :right])]
+    (= l (adjust-for-replacement l a b line-count last-length bias))))

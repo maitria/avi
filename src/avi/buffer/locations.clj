@@ -1,4 +1,5 @@
 (ns avi.buffer.locations
+  (:refer-clojure :exclude [replace])
   (:require [schema.core :as s]))
 
 (def ZLineNumber (s/both s/Int (s/pred (complement neg?))))
@@ -64,3 +65,12 @@
   (lazy-seq
     (when pos
       (cons pos (backward (retreat pos line-length) line-length)))))
+
+(s/defn adjust-for-replacement :- (s/maybe Location)
+  [location :- Location
+   a :- Location
+   b :- Location
+   replacement-line-count :- s/Int
+   length-of-last-replacement-line :- s/Int
+   bias :- (s/enum :left :right)]
+  location)
