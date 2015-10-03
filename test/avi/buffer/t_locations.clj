@@ -125,4 +125,12 @@
                     line-count (gen/choose 0 35)
                     last-length (gen/choose 0 25)
                     bias (gen/elements [:left :right])]
-      (nil? (adjust-for-replacement l a b line-count last-length bias)))))
+      (nil? (adjust-for-replacement l a b line-count last-length bias))))
+  (property "adjust-for-replacement does not change column when l line > b line"
+    (prop'/for-all [[a b l] (gen/fmap sort (gen/vector location-generator 3))
+                    :when (not (= (first b) (first l)))
+                    line-count (gen/choose 0 35)
+                    last-length (gen/choose 0 25)
+                    bias (gen/elements [:left :right])]
+      (= (second l)
+         (second (adjust-for-replacement l a b line-count last-length bias))))))

@@ -78,4 +78,7 @@
     location
 
     (location< location b)
-    nil))
+    nil
+    
+    :else
+    location))
