@@ -100,19 +100,19 @@
         (= i (first (advance [i j] (lines/line-length lines))))
         (= (inc i) (first (advance [i j] (lines/line-length lines)))))))
 
-(defspec adjust-for-replacement-passes-locations-before-replacement 100
-  (prop'/for-all [[l a b] (gen/fmap sort (gen/vector location-generator 3))
-                  :when (not (= l a))
-                  line-count (gen/choose 0 35)
-                  last-length (gen/choose 0 25)
-                  bias (gen/elements [:left :right])]
-    (= l (adjust-for-replacement l a b line-count last-length bias))))
-
 (defn holds
   [result]
   (:result result))
 
 (facts "about adjust-for-replacement"
+  (fact "adjust-for-replacement does not change locations before a"
+    (quick-check 25
+      (prop'/for-all [[l a b] (gen/fmap sort (gen/vector location-generator 3))
+                      :when (not (= l a))
+                      line-count (gen/choose 0 35)
+                      last-length (gen/choose 0 25)
+                      bias (gen/elements [:left :right])]
+        (= l (adjust-for-replacement l a b line-count last-length bias)))) => holds)
   (fact "adjust-for-replacement deletes locations between a and b"
     (quick-check 25
       (prop'/for-all [[a l b] (gen/fmap sort (gen/vector location-generator 3))
