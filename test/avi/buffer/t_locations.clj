@@ -5,6 +5,7 @@
             [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
+            [clojure.test.check :refer [quick-check]]
             [com.gfredericks.test.chuck.generators :as gen']
             [com.gfredericks.test.chuck.properties :as prop']
             [midje.sweet :refer :all]))
@@ -107,10 +108,16 @@
                   bias (gen/elements [:left :right])]
     (= l (adjust-for-replacement l a b line-count last-length bias))))
 
-(defspec adjust-for-replacement-deletes-replaced-positions 100
-  (prop'/for-all [[a l b] (gen/fmap sort (gen/vector location-generator 3))
-                  :when (and (not (= a l)) (not (= l b)))
-                  line-count (gen/choose 0 35)
-                  last-length (gen/choose 0 25)
-                  bias (gen/elements [:left :right])]
-    (nil? (adjust-for-replacement l a b line-count last-length bias))))
+(defn holds
+  [result]
+  (:result result))
+
+(facts "about adjust-for-replacement"
+  (fact "adjust-for-replacement deletes locations between a and b"
+    (quick-check 25
+      (prop'/for-all [[a l b] (gen/fmap sort (gen/vector location-generator 3))
+                      :when (and (not (= a l)) (not (= l b)))
+                      line-count (gen/choose 0 35)
+                      last-length (gen/choose 0 25)
+                      bias (gen/elements [:left :right])]
+        (nil? (adjust-for-replacement l a b line-count last-length bias)))) => holds))
