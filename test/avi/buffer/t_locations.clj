@@ -104,20 +104,25 @@
   [result]
   (:result result))
 
+(defmacro property
+  ([descr prop]
+   `(prop ~descr 25 ~prop))
+  ([descr trials prop]
+  `(fact ~descr
+     (quick-check ~trials ~prop) => holds)))
+
 (facts "about adjust-for-replacement"
-  (fact "adjust-for-replacement does not change locations before a"
-    (quick-check 25
-      (prop'/for-all [[l a b] (gen/fmap sort (gen/vector location-generator 3))
-                      :when (not (= l a))
-                      line-count (gen/choose 0 35)
-                      last-length (gen/choose 0 25)
-                      bias (gen/elements [:left :right])]
-        (= l (adjust-for-replacement l a b line-count last-length bias)))) => holds)
-  (fact "adjust-for-replacement deletes locations between a and b"
-    (quick-check 25
-      (prop'/for-all [[a l b] (gen/fmap sort (gen/vector location-generator 3))
-                      :when (and (not (= a l)) (not (= l b)))
-                      line-count (gen/choose 0 35)
-                      last-length (gen/choose 0 25)
-                      bias (gen/elements [:left :right])]
-        (nil? (adjust-for-replacement l a b line-count last-length bias)))) => holds))
+  (property "adjust-for-replacement does not change locations before a"
+    (prop'/for-all [[l a b] (gen/fmap sort (gen/vector location-generator 3))
+                    :when (not (= l a))
+                    line-count (gen/choose 0 35)
+                    last-length (gen/choose 0 25)
+                    bias (gen/elements [:left :right])]
+                   (= l (adjust-for-replacement l a b line-count last-length bias))))
+  (property "adjust-for-replacement deletes locations between a and b"
+    (prop'/for-all [[a l b] (gen/fmap sort (gen/vector location-generator 3))
+                    :when (and (not (= a l)) (not (= l b)))
+                    line-count (gen/choose 0 35)
+                    last-length (gen/choose 0 25)
+                    bias (gen/elements [:left :right])]
+      (nil? (adjust-for-replacement l a b line-count last-length bias)))))
