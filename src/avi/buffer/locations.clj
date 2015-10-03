@@ -66,6 +66,13 @@
     (when pos
       (cons pos (backward (retreat pos line-length) line-length)))))
 
+(s/defn forget-location? :- s/Bool
+  [a :- Location
+   b :- Location
+   l :- Location]
+  (and (location< a l)
+       (location< l b)))
+
 (s/defn adjust-for-replacement :- (s/maybe Location)
   [location :- Location
    a :- Location
@@ -73,12 +80,6 @@
    replacement-line-count :- s/Int
    length-of-last-replacement-line :- s/Int
    bias :- (s/enum :left :right)]
-  (cond
-    (location< location a)
-    location
-
-    (location< location b)
+  (if (forget-location? a b location)
     nil
-    
-    :else
     location))
