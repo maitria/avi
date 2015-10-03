@@ -73,4 +73,9 @@
    replacement-line-count :- s/Int
    length-of-last-replacement-line :- s/Int
    bias :- (s/enum :left :right)]
-  location)
+  (cond
+    (location< location a)
+    location
+
+    (location< location b)
+    nil))

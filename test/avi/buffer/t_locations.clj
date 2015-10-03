@@ -106,3 +106,11 @@
                   last-length (gen/choose 0 25)
                   bias (gen/elements [:left :right])]
     (= l (adjust-for-replacement l a b line-count last-length bias))))
+
+(defspec adjust-for-replacement-deletes-replaced-positions 100
+  (prop'/for-all [[a l b] (gen/fmap sort (gen/vector location-generator 3))
+                  :when (and (not (= a l)) (not (= l b)))
+                  line-count (gen/choose 0 35)
+                  last-length (gen/choose 0 25)
+                  bias (gen/elements [:left :right])]
+    (nil? (adjust-for-replacement l a b line-count last-length bias))))
