@@ -92,11 +92,9 @@
        (- (- bi ai))
        (+ replacement-line-count))
      (if (= li bi)
-       (if (zero? replacement-line-count)
-         (-> lj
-           (- (- bj aj))
-           (+ length-of-last-replacement-line))
-         (+ (- lj bj) length-of-last-replacement-line))
+       (cond-> (+ (- lj bj) length-of-last-replacement-line)
+          (zero? replacement-line-count)
+          (+ aj)) 
        lj)]
 
     :else
