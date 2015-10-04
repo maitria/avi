@@ -74,24 +74,28 @@
        (location< l b)))
 
 (s/defn adjust-for-replacement :- (s/maybe Location)
-  [location :- Location
-   a :- Location
-   b :- Location
+  [[li lj :as l] :- Location
+   [ai aj :as a] :- Location
+   [bi bj :as b] :- Location
    replacement-line-count :- s/Int
    length-of-last-replacement-line :- s/Int
    bias :- (s/enum :left :right)]
   (cond
-    (and (= a b location) (= bias :left))
-    location
+    (and (= a b l) (= bias :left))
+    l
 
-    (forget-location? a b location)
+    (forget-location? a b l)
     nil
 
-    (location<= b location)
-    [(-> (first location)
-       (- (- (first b) (first a)))
+    (location<= b l)
+    [(-> li
+       (- (- bi ai))
        (+ replacement-line-count))
-     (second location)]
+     (if (= li bi)
+       (-> lj
+        (- (- bj aj))
+        (+ length-of-last-replacement-line))
+       lj)]
 
     :else
-    location))
+    l))

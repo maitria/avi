@@ -138,4 +138,6 @@
     (adjust-for-replacement [4 2] [2 2] [3 7] 7 3 :left) => [10 2])
   (fact "adjust-for-replacement uses bias when a=b"
     (adjust-for-replacement [3 3] [3 3] [3 3] 3 12 :left) => [3 3]
-    (adjust-for-replacement [3 3] [3 3] [3 3] 3 12 :right) => [6 3]))
+    (adjust-for-replacement [3 3] [3 3] [3 3] 3 0 :right) => [6 3])
+  (fact "adjust-for-replacement adjusts column when l > b ∧ l line = b line"
+    (adjust-for-replacement [3 5] [3 3] [3 3] 0 12 :left) => [3 17]))
