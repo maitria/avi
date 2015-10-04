@@ -135,4 +135,7 @@
       (= (second l)
          (second (adjust-for-replacement l a b line-count last-length bias)))))
   (fact "adjust-for-replacement adjusts line when l line >= b line"
-    (adjust-for-replacement [4 2] [2 2] [3 7] 7 3 :left) => [10 2]))
+    (adjust-for-replacement [4 2] [2 2] [3 7] 7 3 :left) => [10 2])
+  (fact "adjust-for-replacement uses bias when a=b"
+    (adjust-for-replacement [3 3] [3 3] [3 3] 3 12 :left) => [3 3]
+    (adjust-for-replacement [3 3] [3 3] [3 3] 3 12 :right) => [6 3]))

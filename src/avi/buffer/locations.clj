@@ -81,6 +81,9 @@
    length-of-last-replacement-line :- s/Int
    bias :- (s/enum :left :right)]
   (cond
+    (and (= a b location) (= bias :left))
+    location
+
     (forget-location? a b location)
     nil
 
