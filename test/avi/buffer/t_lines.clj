@@ -1,14 +1,14 @@
 (ns avi.buffer.t-lines
   (:require [avi.buffer.lines :as lines]
             [clojure.string :as string]
-            [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
             [com.gfredericks.test.chuck.generators :as gen']
             [com.gfredericks.test.chuck.properties :as prop']
             [midje.sweet :refer :all]
             [midje.checking.core :as checking]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [avi.test-helpers :refer :all]))
 
 (s/set-fn-validation! true)
 
@@ -26,16 +26,6 @@
     (lines/content "\nfoo") => ["" "foo"]
     (lines/content "foo\n") => ["foo"]))
 
-(facts "about replacing contents"
-  (fact "replace can insert at beginning of buffer"
-    (lines/replace (lines/content "Hello!") [0 0] [0 0] "xyz") => ["xyzHello!"])
-  (fact "replace can insert within a line"
-    (lines/replace (lines/content "Hello!") [0 2] [0 2] "//") => ["He//llo!"])
-  (fact "replace can insert at the end of a line"
-    (lines/replace (lines/content "Hello!") [0 6] [0 6] "//") => ["Hello!//"])
-  (fact "replace works with start and end reversed"
-    (lines/replace (lines/content "Hello!") [0 5] [0 2] "//") => ["He//!"]))
-
 (def text-generator
   (gen/fmap (partial string/join "\n") (gen/vector gen/string-ascii)))
 
@@ -52,17 +42,25 @@
   [lines]
   (gen/fmap sort (gen/vector (location-generator lines) 2)))
 
-(defspec join-before-and-after-invariant 25
-  (prop'/for-all [content content-generator
-                  location (location-generator content)]
-    (= (lines/join (lines/before content location) (lines/after content location))
-       content)))
-
-(defspec replace-before-after-replacement-invariant 25
-  (prop'/for-all [content content-generator
-                  [start end] (start-end-location-generator content)
-                  replacement text-generator]
-    (= (str (string/join "\n" (lines/before content start))
-            replacement
-            (string/join "\n" (lines/after content end)))
-       (string/join "\n" (lines/replace content start end replacement)))))
+(facts "about replacing contents"
+  (fact "replace can insert at beginning of buffer"
+    (lines/replace (lines/content "Hello!") [0 0] [0 0] "xyz") => ["xyzHello!"])
+  (fact "replace can insert within a line"
+    (lines/replace (lines/content "Hello!") [0 2] [0 2] "//") => ["He//llo!"])
+  (fact "replace can insert at the end of a line"
+    (lines/replace (lines/content "Hello!") [0 6] [0 6] "//") => ["Hello!//"])
+  (fact "replace works with start and end reversed"
+    (lines/replace (lines/content "Hello!") [0 5] [0 2] "//") => ["He//!"])
+  (property "join before and after an arbitrary location results in original"
+    (prop'/for-all [content content-generator
+                    location (location-generator content)]
+      (= (lines/join (lines/before content location) (lines/after content location))
+         content))          )
+  (property "replace = before + replacement + after invariant"
+    (prop'/for-all [content content-generator
+                    [start end] (start-end-location-generator content)
+                    replacement text-generator]
+      (= (str (string/join "\n" (lines/before content start))
+              replacement
+              (string/join "\n" (lines/after content end)))
+         (string/join "\n" (lines/replace content start end replacement))))))
