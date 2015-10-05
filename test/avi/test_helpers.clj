@@ -5,8 +5,13 @@
             [avi.editor :as e]
             [avi.eventmap :as em]
             [avi.world :refer :all]
+            [avi.test-helpers properties]
             [clojure.string :as string]
-            [midje.checking.core :as checking]))
+            [midje.checking.core :as checking]
+            [potemkin :refer [import-vars]]))
+
+(import-vars [avi.test-helpers.properties
+                property])
 
 (def ten-lines
   (str "One\nTwo\nThree\nFour\nFive\nSix\n"

@@ -2,10 +2,10 @@
   (:require [avi.buffer
              [lines :as lines]
              [locations :refer :all]]
+            [avi.test-helpers :refer :all]
             [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
-            [clojure.test.check :refer [quick-check]]
             [com.gfredericks.test.chuck.generators :as gen']
             [com.gfredericks.test.chuck.properties :as prop']
             [midje.sweet :refer :all]))
@@ -99,17 +99,6 @@
     (or (nil? (advance [i j] (lines/line-length lines)))
         (= i (first (advance [i j] (lines/line-length lines))))
         (= (inc i) (first (advance [i j] (lines/line-length lines)))))))
-
-(defn holds
-  [result]
-  (:result result))
-
-(defmacro property
-  ([descr prop]
-   `(prop ~descr 25 ~prop))
-  ([descr trials prop]
-  `(fact ~descr
-     (quick-check ~trials ~prop) => holds)))
 
 (facts "about adjust-for-replacement"
   (property "adjust-for-replacement does not change locations before a"
