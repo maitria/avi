@@ -3,7 +3,6 @@
              [lines :as lines]
              [locations :refer :all]]
             [avi.test-helpers :refer :all]
-            [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
             [com.gfredericks.test.chuck.generators :as gen']
@@ -51,51 +50,47 @@
 (def line-length-generator
   (gen/vector gen/pos-int 1 35))
 
-(defspec retreat-from-0-0-is-always-nil 100
-  (prop/for-all [line-length line-length-generator]
-    (nil? (retreat [0 0] line-length))))
+(facts "about advance"
+  (property "advance at eof is always nil"
+    (prop'/for-all [line-length line-length-generator
+                    :let [i (dec (count line-length))
+                          j (last line-length)]]
+      (nil? (advance [i j] #(get line-length %)))))
+  (property "advance position always increases" 55
+    (prop/for-all [{:keys [lines position]} lines-and-position-generator]
+      (or (nil? (advance position (lines/line-length lines)))
+          (location< position (advance position (lines/line-length lines))))))
+  (property "advance never skips a line" 55 
+    (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
+      (or (nil? (advance [i j] (lines/line-length lines)))
+          (= i (first (advance [i j] (lines/line-length lines))))
+          (= (inc i) (first (advance [i j] (lines/line-length lines)))))))
+  (property "advance on last character of any line but last goes to newline position"
+    (prop'/for-all [line-lengths (gen/vector (gen'/bounded-int 1 25))
+                    :when (>= (count line-lengths) 2)
+                    i (gen'/bounded-int 0 (- (count line-lengths) 2))
+                    :let [j (dec (line-lengths i))]]
+      (= (advance [i j] line-lengths) [i (inc j)]))))
 
-(defspec advance-at-eof-is-always-nil 100
-  (prop'/for-all [line-length line-length-generator
-                  :let [i (dec (count line-length))
-                        j (last line-length)]]
-    (nil? (advance [i j] #(get line-length %)))))
-
-(defspec retreat-position-always-decreases 100
-  (prop/for-all [{:keys [lines position]} lines-and-position-generator]
-    (or (nil? (retreat position (lines/line-length lines)))
-        (location< (retreat position (lines/line-length lines)) position))))
-
-(defspec advance-position-always-increases 100
-  (prop/for-all [{:keys [lines position]} lines-and-position-generator]
-    (or (nil? (advance position (lines/line-length lines)))
-        (location< position (advance position (lines/line-length lines))))))
-
-(defspec retreat-at-beginning-of-line-goes-to-newline-position 100
-  (prop'/for-all [line-length line-length-generator
-                  :when (>= (count line-length) 2)
-                  i (gen'/bounded-int 1 (dec (count line-length)))]
-    (= (retreat [i 0] line-length)
-       [(dec i) (line-length (dec i))])))
-
-(defspec advance-on-last-character-of-any-line-but-last-goes-to-newline-position 100
-  (prop'/for-all [line-lengths (gen/vector (gen'/bounded-int 1 25))
-                  :when (>= (count line-lengths) 2)
-                  i (gen'/bounded-int 0 (- (count line-lengths) 2))
-                  :let [j (dec (line-lengths i))]]
-    (= (advance [i j] line-lengths) [i (inc j)])))
-
-(defspec retreat-never-skips-a-line 100
-  (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
-    (or (nil? (retreat [i j] (lines/line-length lines)))
-        (= i (first (retreat [i j] (lines/line-length lines))))
-        (= (dec i) (first (retreat [i j] (lines/line-length lines)))))))
-
-(defspec advance-never-skips-a-line 100
-  (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
-    (or (nil? (advance [i j] (lines/line-length lines)))
-        (= i (first (advance [i j] (lines/line-length lines))))
-        (= (inc i) (first (advance [i j] (lines/line-length lines)))))))
+(facts "about retreat"
+  (property "retreat from [0 0] is always nil"
+    (prop/for-all [line-length line-length-generator]
+      (nil? (retreat [0 0] line-length))))
+  (property "retreat position always decreases"
+    (prop/for-all [{:keys [lines position]} lines-and-position-generator]
+      (or (nil? (retreat position (lines/line-length lines)))
+          (location< (retreat position (lines/line-length lines)) position))))
+  (property "retreat at bol goes to newline position"
+    (prop'/for-all [line-length line-length-generator
+                    :when (>= (count line-length) 2)
+                    i (gen'/bounded-int 1 (dec (count line-length)))]
+      (= (retreat [i 0] line-length)
+         [(dec i) (line-length (dec i))])))
+  (property "retreat never skips a line"
+    (prop/for-all [{lines :lines [i j] :position} lines-and-position-generator]
+      (or (nil? (retreat [i j] (lines/line-length lines)))
+          (= i (first (retreat [i j] (lines/line-length lines))))
+          (= (dec i) (first (retreat [i j] (lines/line-length lines))))))))
 
 (facts "about adjust-for-replacement"
   (property "adjust-for-replacement does not change locations before a"
