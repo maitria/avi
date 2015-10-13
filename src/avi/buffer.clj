@@ -299,27 +299,11 @@
           (assoc :lines new-lines)
           (move-cursor [new-i new-j])))))
 
-(defn- backspace-at-beginning-of-line
-  [{[i j] :cursor,
-    lines :lines,
-    :as buffer}]
-  {:pre [(:in-transaction? buffer)]}
-  (+> buffer
-      (let [new-line (str (get lines (dec i)) (get lines i))
-            new-lines (splice lines (dec i) (inc i) [new-line])
-            i (dec i)
-            j (count (get lines i))]
-        (move-cursor [i j] j)
-        (assoc :lines new-lines))))
-
 (defn backspace
-  [{[i j] :cursor,
+  [{cursor :cursor,
     lines :lines,
     :as buffer}]
   {:pre [(:in-transaction? buffer)]}
   (+> buffer
-      (if (= 0 j)
-        (backspace-at-beginning-of-line)
-        (do
-          (move-cursor [i (dec j)])
-          (update-in [:lines  i] #(splice % (dec j) j))))))
+    (if-let [pre (l/retreat cursor (lines/line-length lines))]
+      (change pre cursor "" :left))))
