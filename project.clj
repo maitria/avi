@@ -13,6 +13,7 @@
                                   [org.clojure/test.check "0.7.0"]
                                   [com.gfredericks/test.chuck "0.1.15"]]}
              :uberjar {:aot :all}}
+  :repl-options {:init-ns avi.repl}
   :aliases {"install" ^{:doc "Install avi on this machine"}
             ["do" "uberjar," "run" "-m" "avi.install/install"]}
   :java-source-paths ["java-src"]
