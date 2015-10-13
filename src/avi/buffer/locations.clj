@@ -9,6 +9,9 @@
   [(s/one ZLineNumber "line number (zero-based)")
    (s/one ColumnNumber "column")])
 
+(def AdjustmentBias
+  (s/enum :left :right))
+
 (s/defn location<
   [a :- Location
    b :- Location]
@@ -79,7 +82,7 @@
    [bi bj :as b] :- Location
    replacement-line-count :- s/Int
    length-of-last-replacement-line :- s/Int
-   bias :- (s/enum :left :right)]
+   bias :- AdjustmentBias]
   (cond
     (and (= a b l) (= bias :left))
     l

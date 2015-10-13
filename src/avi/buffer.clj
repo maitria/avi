@@ -3,14 +3,17 @@
   (:require [packthread.core :refer :all]
             [clojure.string :as string]
             [avi.beep :as beep]
-            [avi.buffer [lines :as l]]
+            [avi.buffer
+              [lines :as lines]
+              [locations :as l]]
             [avi.pervasive :refer :all]
-            [avi.world :as w]))
+            [avi.world :as w]
+            [schema.core :as s]))
 
 (defn- try-load
   [filename]
   (try
-    (l/content (w/read-file w/*world* filename))
+    (lines/content (w/read-file w/*world* filename))
     (catch FileNotFoundException e
       [""])))
 
@@ -239,20 +242,31 @@
 
 ;; -- changing buffer contents --
 
+(s/defn change
+  "All content changes happen through me!"
+  [{:keys [cursor] :as buffer}
+   a :- l/Location
+   b :- l/Location
+   replacement :- s/Str
+   bias :- l/AdjustmentBias]
+  (+> buffer
+    (let [line-count (reduce (fn [n c]
+                               (cond-> n
+                                 (= c \newline)
+                                 inc))
+                             0
+                             replacement)
+          last-newline (.lastIndexOf replacement (int \newline))
+          length-of-last (cond-> (count replacement)
+                           (not= last-newline -1)
+                           (- (inc last-newline))) 
+          [_ j :as new-cursor] (l/adjust-for-replacement cursor a b line-count length-of-last bias)]
+      (update-in [:lines] lines/replace a b replacement)
+      (move-cursor new-cursor j))))
+
 (defn insert-text
-  [{[i j] :cursor,
-    lines :lines,
-    :as lines-and-text} text]
-  (+> lines-and-text
-    (let [original-line (get lines i)
-          resulting-text (splice original-line j j text)
-          new-lines (string/split resulting-text #"\n" -1)
-          resulting-i (+ i (dec (count new-lines)))
-          resulting-j (if (= 1 (count new-lines))
-                        (+ j (count text))
-                        0)]
-        (update-in [:lines] #(splice % i (inc i) new-lines))
-        (move-cursor [resulting-i resulting-j] resulting-j))))
+  [{cursor :cursor, :as lines-and-text} text]
+  (change lines-and-text cursor cursor text :right))
 
 (defn insert-blank-line
   [lines-and-text new-line-i]
