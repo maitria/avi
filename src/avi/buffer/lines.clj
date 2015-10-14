@@ -68,9 +68,7 @@
    a :- l/Location
    b :- l/Location
    replacement :- s/Str]
-  (let [[start end] (if (l/location< a b)
-                      [a b]
-                      [b a])]
+  (let [[start end] (sort [a b])]
     (join (before lines start)
           (split-lines replacement)
           (after lines end))))
