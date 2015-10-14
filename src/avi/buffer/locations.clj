@@ -93,8 +93,31 @@
       (- (inc last-newline)))))
 
 (s/defn adjust-for-replacement :- (s/maybe Location)
-  ([l a b text bias]
-   (adjust-for-replacement l a b (line-count text) (last-line-length text) bias))
+  ([[li lj :as l] :- Location
+    [ai aj :as a] :- Location
+    [bi bj :as b] :- Location
+    text :- s/Str
+    bias :- AdjustmentBias]
+   (cond
+     (and (= a b l) (= bias :left))
+     l
+
+     (forget-location? a b l)
+     nil
+
+     (location<= b l)
+     (let [replacement-line-count (line-count text)]
+       [(-> li
+          (- (- bi ai))
+          (+ replacement-line-count))
+        (if (= li bi)
+          (cond-> (+ (- lj bj) (last-line-length text))
+             (zero? replacement-line-count)
+             (+ aj)) 
+          lj)])
+
+     :else
+     l))
   ([[li lj :as l] :- Location
     [ai aj :as a] :- Location
     [bi bj :as b] :- Location
