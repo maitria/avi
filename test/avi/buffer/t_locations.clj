@@ -98,27 +98,33 @@
                     :when (not (= l a))
                     line-count (gen/choose 0 35)
                     last-length (gen/choose 0 25)
-                    bias (gen/elements [:left :right])]
-                   (= l (adjust-for-replacement l a b line-count last-length bias))))
+                    bias (gen/elements [:left :right])
+                    :let [text (str (repeat line-count \newline)
+                                    (repeat last-length \-))]]
+                   (= l (adjust-for-replacement l a b text bias))))
   (property "adjust-for-replacement deletes locations between a and b"
     (prop'/for-all [[a l b] (gen/fmap sort (gen/vector location-generator 3))
                     :when (and (not (= a l)) (not (= l b)))
                     line-count (gen/choose 0 35)
                     last-length (gen/choose 0 25)
-                    bias (gen/elements [:left :right])]
-      (nil? (adjust-for-replacement l a b line-count last-length bias))))
+                    bias (gen/elements [:left :right])
+                    :let [text (str (repeat line-count \newline)
+                                    (repeat last-length \-))]]
+      (nil? (adjust-for-replacement l a b text bias))))
   (property "adjust-for-replacement does not change column when l line > b line"
     (prop'/for-all [[a b l] (gen/fmap sort (gen/vector location-generator 3))
                     :when (not (= (first b) (first l)))
                     line-count (gen/choose 0 35)
                     last-length (gen/choose 0 25)
-                    bias (gen/elements [:left :right])]
+                    bias (gen/elements [:left :right])
+                    :let [text (str (repeat line-count \newline)
+                                    (repeat last-length \-))]]
       (= (second l)
-         (second (adjust-for-replacement l a b line-count last-length bias)))))
+         (second (adjust-for-replacement l a b text bias)))))
   (fact "adjust-for-replacement adjusts line when l line >= b line"
-    (adjust-for-replacement [4 2] [2 2] [3 7] 7 3 :left) => [10 2])
+    (adjust-for-replacement [4 2] [2 2] [3 7] "\n\n\n\n\n\n\n---" :left) => [10 2])
   (fact "adjust-for-replacement uses bias when a=b"
-    (adjust-for-replacement [3 3] [3 3] [3 3] 3 12 :left) => [3 3]
-    (adjust-for-replacement [3 3] [3 3] [3 3] 3 3 :right) => [6 3])
+    (adjust-for-replacement [3 3] [3 3] [3 3] "\n\n\n------------" :left) => [3 3]
+    (adjust-for-replacement [3 3] [3 3] [3 3] "\n\n\nxxx" :right) => [6 3])
   (fact "adjust-for-replacement adjusts column when l > b ∧ l line = b line"
-    (adjust-for-replacement [3 5] [3 3] [3 3] 0 12 :left) => [3 17]))
+    (adjust-for-replacement [3 5] [3 3] [3 3] "            " :left) => [3 17]))
