@@ -76,29 +76,47 @@
   (and (location< a l)
        (location< l b)))
 
+(defn line-count
+  [text]
+  (reduce (fn [n c]
+            (cond-> n
+              (= c \newline)
+              inc))
+          0
+          text))
+
+(defn last-line-length
+  [text]
+  (let [last-newline (.lastIndexOf text (int \newline))]
+    (cond-> (count text)
+      (not= last-newline -1)
+      (- (inc last-newline)))))
+
 (s/defn adjust-for-replacement :- (s/maybe Location)
-  [[li lj :as l] :- Location
-   [ai aj :as a] :- Location
-   [bi bj :as b] :- Location
-   replacement-line-count :- s/Int
-   length-of-last-replacement-line :- s/Int
-   bias :- AdjustmentBias]
-  (cond
-    (and (= a b l) (= bias :left))
-    l
+  ([l a b text bias]
+   (adjust-for-replacement l a b (line-count text) (last-line-length text) bias))
+  ([[li lj :as l] :- Location
+    [ai aj :as a] :- Location
+    [bi bj :as b] :- Location
+    replacement-line-count :- s/Int
+    length-of-last-replacement-line :- s/Int
+    bias :- AdjustmentBias]
+   (cond
+     (and (= a b l) (= bias :left))
+     l
 
-    (forget-location? a b l)
-    nil
+     (forget-location? a b l)
+     nil
 
-    (location<= b l)
-    [(-> li
-       (- (- bi ai))
-       (+ replacement-line-count))
-     (if (= li bi)
-       (cond-> (+ (- lj bj) length-of-last-replacement-line)
-          (zero? replacement-line-count)
-          (+ aj)) 
-       lj)]
+     (location<= b l)
+     [(-> li
+        (- (- bi ai))
+        (+ replacement-line-count))
+      (if (= li bi)
+        (cond-> (+ (- lj bj) length-of-last-replacement-line)
+           (zero? replacement-line-count)
+           (+ aj)) 
+        lj)]
 
-    :else
-    l))
+     :else
+     l)))

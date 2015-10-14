@@ -250,17 +250,7 @@
    replacement :- s/Str
    bias :- l/AdjustmentBias]
   (+> buffer
-    (let [line-count (reduce (fn [n c]
-                               (cond-> n
-                                 (= c \newline)
-                                 inc))
-                             0
-                             replacement)
-          last-newline (.lastIndexOf replacement (int \newline))
-          length-of-last (cond-> (count replacement)
-                           (not= last-newline -1)
-                           (- (inc last-newline))) 
-          [_ j :as new-cursor] (l/adjust-for-replacement cursor a b line-count length-of-last bias)]
+    (let [[_ j :as new-cursor] (l/adjust-for-replacement cursor a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)
       (move-cursor new-cursor j))))
 
