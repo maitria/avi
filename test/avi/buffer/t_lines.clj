@@ -33,14 +33,14 @@
   (gen/fmap lines/content text-generator))
 
 (defn location-generator
-  [lines]
+  [lines extra-columns]
   (gen'/for [:parallel [line (gen/choose 0 (dec (count lines)))
-                        column (gen/choose 0 (count (get lines line)))]]
+                        column (gen/choose 0 (+ extra-columns (count (get lines line))))]]
     [line column]))
 
 (defn start-end-location-generator
   [lines]
-  (gen/fmap sort (gen/vector (location-generator lines) 2)))
+  (gen/fmap sort (gen/vector (location-generator lines 10) 2)))
 
 (facts "about replacing contents"
   (fact "replace can insert at beginning of buffer"
@@ -55,9 +55,9 @@
     (lines/before ["x"] [0 4]) => ["x   "])
   (fact "`after` a location after end-of-line keeps the newline"
     (lines/after ["x"] [0 4]) => [""])
-  (property "join before and after an arbitrary location results in original"
+  (property "join before and after an arbitrary location in line results in original"
     (prop'/for-all [content content-generator
-                    location (location-generator content)]
+                    location (location-generator content 0)]
       (= (lines/join (lines/before content location) (lines/after content location))
          content))          )
   (property "replace = before + replacement + after invariant"
