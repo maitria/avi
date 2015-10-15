@@ -1,6 +1,7 @@
 (ns avi.buffer.lines
   (:refer-clojure :exclude [replace])
   (:require [schema.core :as s]
+            [avi.pervasive :refer :all]
             [avi.buffer.locations :as l]))
 
 (def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
@@ -35,18 +36,6 @@
 (s/defn content :- Lines
   [text :- s/Str]
   (text-lines text))
-
-(defn subs-with-spaces
-  ([s start]
-   (if (> start (count s))
-     ""
-     (subs s start)))
-  ([s start end]
-   {:post [(= (count %) (- end start))]}
-   (let [s-end (min end (count s))]
-     (apply str
-            (subs s start s-end)
-            (repeat (- end s-end) \space)))))
 
 (s/defn before :- [Line]
   [lines :- [Line]

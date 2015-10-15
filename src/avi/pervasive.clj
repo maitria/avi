@@ -60,3 +60,19 @@
     (if all-spaces?
       (dec leading-space-count)
       leading-space-count)))
+
+(defn subs-with-spaces
+  "Like subs, except that it is not an error to index past the end of the
+  string.  If `start` is greater, we pretend that the string was longer.  If
+  `end` is greater, we pretend as theough the string were padded with spaces."
+  ([s start]
+   (if (> start (count s))
+     ""
+     (subs s start)))
+  ([s start end]
+   {:post [(= (count %) (- end start))]}
+   (let [s-start (min start (count s))
+         s-end (min end (count s))]
+     (apply str
+            (subs s s-start s-end)
+            (repeat (- end start (- s-end s-start)) \space)))))
