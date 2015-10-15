@@ -267,8 +267,8 @@
     :as buffer}]
   {:pre [(:in-transaction? buffer)]}
   (+> buffer
-      (update-in [:lines i] #(splice % j (inc j)))
-      clamp-cursor-j))
+    (change [i j] [i (inc j)] "" :left)
+    clamp-cursor-j))
 
 (defn delete-current-line
   [{[i] :cursor,
