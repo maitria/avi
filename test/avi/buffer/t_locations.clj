@@ -92,33 +92,30 @@
           (= i (first (retreat [i j] (lines/line-length lines))))
           (= (dec i) (first (retreat [i j] (lines/line-length lines))))))))
 
+(def replacement-text
+  (gen'/for [:parallel [line-count (gen/choose 0 10)
+                        last-length (gen/choose 0 25)]]
+    (str (repeat line-count \newline)
+         (repeat last-length \-))))
+
 (facts "about adjust-for-replacement"
   (property "adjust-for-replacement does not change locations before a"
     (prop'/for-all [[l a b] (gen/fmap sort (gen/vector location-generator 3))
                     :when (not (= l a))
-                    line-count (gen/choose 0 35)
-                    last-length (gen/choose 0 25)
-                    bias (gen/elements [:left :right])
-                    :let [text (str (repeat line-count \newline)
-                                    (repeat last-length \-))]]
-                   (= l (adjust-for-replacement l a b text bias))))
+                    text replacement-text
+                    bias (gen/elements [:left :right])]
+      (= l (adjust-for-replacement l a b text bias))))
   (property "adjust-for-replacement deletes locations between a and b"
     (prop'/for-all [[a l b] (gen/fmap sort (gen/vector location-generator 3))
                     :when (and (not (= a l)) (not (= l b)))
-                    line-count (gen/choose 0 35)
-                    last-length (gen/choose 0 25)
-                    bias (gen/elements [:left :right])
-                    :let [text (str (repeat line-count \newline)
-                                    (repeat last-length \-))]]
+                    text replacement-text
+                    bias (gen/elements [:left :right])]
       (nil? (adjust-for-replacement l a b text bias))))
   (property "adjust-for-replacement does not change column when l line > b line"
     (prop'/for-all [[a b l] (gen/fmap sort (gen/vector location-generator 3))
                     :when (not (= (first b) (first l)))
-                    line-count (gen/choose 0 35)
-                    last-length (gen/choose 0 25)
-                    bias (gen/elements [:left :right])
-                    :let [text (str (repeat line-count \newline)
-                                    (repeat last-length \-))]]
+                    text replacement-text
+                    bias (gen/elements [:left :right])]
       (= (second l)
          (second (adjust-for-replacement l a b text bias)))))
   (fact "adjust-for-replacement adjusts line when l line >= b line"
