@@ -51,6 +51,8 @@
     (lines/replace (lines/content "Hello!") [0 6] [0 6] "//") => ["Hello!//"])
   (fact "replace works with start and end reversed"
     (lines/replace (lines/content "Hello!") [0 5] [0 2] "//") => ["He//!"])
+  (fact "`before` a location after end-of-line adds spaces"
+    (lines/before ["x"] [0 4]) => ["x   "])
   (property "join before and after an arbitrary location results in original"
     (prop'/for-all [content content-generator
                     location (location-generator content)]

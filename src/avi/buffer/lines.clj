@@ -36,12 +36,20 @@
   [text :- s/Str]
   (text-lines text))
 
+(defn subs-with-spaces
+  [s start end]
+  {:post [(= (count %) (- end start))]}
+  (let [s-end (min end (count s))]
+    (apply str
+           (subs s start s-end)
+           (repeat (- end s-end) \space))))
+
 (s/defn before :- [Line]
   [lines :- [Line]
-   [end-line end-column] :- l/Location]
+   [i j] :- l/Location]
   (-> lines
-    (subvec 0 end-line)
-    (conj (subs (get lines end-line) 0 end-column))))
+    (subvec 0 i)
+    (conj (subs-with-spaces (get lines i) 0 j))))
 
 (s/defn after :- [Line]
   [lines :- [Line]
