@@ -34,8 +34,8 @@
 
 (defn location-generator
   [lines]
-  (gen'/for [line (gen/choose 0 (dec (count lines)))
-             column (gen/choose 0 (count (get lines line)))]
+  (gen'/for [:parallel [line (gen/choose 0 (dec (count lines)))
+                        column (gen/choose 0 (count (get lines line)))]]
     [line column]))
 
 (defn start-end-location-generator
