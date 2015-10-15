@@ -37,12 +37,16 @@
   (text-lines text))
 
 (defn subs-with-spaces
-  [s start end]
-  {:post [(= (count %) (- end start))]}
-  (let [s-end (min end (count s))]
-    (apply str
-           (subs s start s-end)
-           (repeat (- end s-end) \space))))
+  ([s start]
+   (if (> start (count s))
+     ""
+     (subs s start)))
+  ([s start end]
+   {:post [(= (count %) (- end start))]}
+   (let [s-end (min end (count s))]
+     (apply str
+            (subs s start s-end)
+            (repeat (- end s-end) \space)))))
 
 (s/defn before :- [Line]
   [lines :- [Line]
@@ -54,7 +58,7 @@
 (s/defn after :- [Line]
   [lines :- [Line]
    [start-line start-column] :- l/Location]
-  (vec (concat [(subs (get lines start-line) start-column)]
+  (vec (concat [(subs-with-spaces (get lines start-line) start-column)]
                (subvec lines (inc start-line)))))
 
 (defn join
