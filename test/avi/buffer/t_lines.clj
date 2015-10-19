@@ -55,6 +55,8 @@
     (lines/before ["x"] [0 4]) => ["x   "])
   (fact "`before` a location after end-of-file adds lines"
     (lines/before ["x"] [1 0]) => ["x" ""])
+  (fact "`before` a location after end-of-line and after position 0 works"
+    (lines/before ["x"] [2 2]) => ["x" "" "  "])
   (fact "`after` a location after end-of-line keeps the newline"
     (lines/after ["x"] [0 4]) => [""])
   (property "join before and after an arbitrary location in line results in original"
