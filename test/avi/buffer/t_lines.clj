@@ -53,6 +53,8 @@
     (lines/replace (lines/content "Hello!") [0 5] [0 2] "//") => ["He//!"])
   (fact "`before` a location after end-of-line adds spaces"
     (lines/before ["x"] [0 4]) => ["x   "])
+  (fact "`before` a location after end-of-file adds lines"
+    (lines/before ["x"] [1 0]) => ["x" ""])
   (fact "`after` a location after end-of-line keeps the newline"
     (lines/after ["x"] [0 4]) => [""])
   (property "join before and after an arbitrary location in line results in original"

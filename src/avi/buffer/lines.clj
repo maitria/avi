@@ -1,6 +1,7 @@
 (ns avi.buffer.lines
   (:refer-clojure :exclude [replace])
-  (:require [schema.core :as s]
+  (:require [packthread.core :refer :all]
+            [schema.core :as s]
             [avi.pervasive :refer :all]
             [avi.buffer.locations :as l]))
 
@@ -37,12 +38,19 @@
   [text :- s/Str]
   (text-lines text))
 
+(defn- ensure-lines-count
+  [lines i]
+  (if (< i (count lines))
+    lines
+    (recur (conj lines "") i)))
+
 (s/defn before :- [Line]
   [lines :- [Line]
    [i j] :- l/Location]
-  (-> lines
-    (subvec 0 i)
-    (conj (subs-with-spaces (get lines i) 0 j))))
+  (let [lines (ensure-lines-count lines i)]
+    (-> lines
+      (subvec 0 i)
+      (conj (subs-with-spaces (get lines i) 0 j)))))
 
 (s/defn after :- [Line]
   [lines :- [Line]
