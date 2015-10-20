@@ -59,6 +59,10 @@
     (lines/before ["x"] [2 2]) => ["x" "" "  "])
   (fact "`after` a location after end-of-line keeps the newline"
     (lines/after ["x"] [0 4]) => [""])
+  (fact "`after` a location after end-of-file"
+    (lines/after ["x"] [5 0]) => [""])
+  (fact "can replace a line after the last"
+    (lines/replace (lines/content "") [1 0] [1 0] "xyz") => ["" "xyz"])
   (property "join before and after an arbitrary location in line results in original"
     (prop'/for-all [content content-generator
                     location (location-generator content 0)]

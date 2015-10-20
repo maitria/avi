@@ -55,8 +55,9 @@
 (s/defn after :- [Line]
   [lines :- [Line]
    [start-line start-column] :- l/Location]
-  (vec (concat [(subs-with-spaces (get lines start-line) start-column)]
-               (subvec lines (inc start-line)))))
+  (let [lines (ensure-lines-count lines start-line)]
+    (vec (concat [(subs-with-spaces (get lines start-line) start-column)]
+                 (subvec lines (inc start-line))))))
 
 (defn join
   ([a b]
