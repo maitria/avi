@@ -259,8 +259,8 @@
   (change lines-and-text cursor cursor text :right))
 
 (defn insert-blank-line
-  [lines-and-text new-line-i]
-  (update-in lines-and-text [:lines] #(splice % new-line-i new-line-i [""])))
+  [lines-and-text i]
+  (change lines-and-text [i 0] [i 0] "\n" :left))
 
 (defn delete-char-under-cursor
   [{[i j] :cursor,

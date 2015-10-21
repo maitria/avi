@@ -62,6 +62,16 @@
                     "~" :blue
                     "test.txt" :black :on :white
                     ""]))
+  (fact "`oxy<Esc>` works when file has one line"
+    (editor :editing "" :after "oxy<Esc>")
+      => (terminal [""
+                    "xy"
+                    "~" :blue
+                    "~" :blue
+                    "~" :blue
+                    "~" :blue
+                    "test.txt" :black :on :white
+                    ""]))
   (fact "`Oxy<Esc>` inserts a line here"
     (editor :editing "One\nTwo\nThree..." :after "llOxy<Esc>")
       => (terminal ["xy"

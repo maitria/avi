@@ -41,12 +41,12 @@
     ("o"
       [editor repeat-count]
       (+> editor
-          (let [{[i] :cursor} (e/current-buffer editor)]
-            (enter-insert-mode [[:keystroke "<Enter>"]])
-            (in e/current-buffer
-              (in b/lines-and-cursor
-                (b/insert-blank-line (inc i))))
-            (e/change-line inc))))
+        (let [{:keys [lines] [i] :cursor} (e/current-buffer editor)
+              eol (count (get lines i))]
+          (enter-insert-mode [[:keystroke "<Enter>"]])
+          (in e/current-buffer
+            (b/change [i eol] [i eol] "\n" :left))
+          (e/change-line inc))))
 
     ("A"
       [editor repeat-count]
