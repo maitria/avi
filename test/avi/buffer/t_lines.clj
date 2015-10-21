@@ -51,16 +51,13 @@
     (lines/replace (lines/content "Hello!") [0 6] [0 6] "//") => ["Hello!//"])
   (fact "replace works with start and end reversed"
     (lines/replace (lines/content "Hello!") [0 5] [0 2] "//") => ["He//!"])
-  (fact "`before` a location after end-of-line adds spaces"
-    (lines/before ["x"] [0 4]) => ["x   "])
-  (fact "`before` a location after end-of-file adds lines"
-    (lines/before ["x"] [1 0]) => ["x" ""])
-  (fact "`before` a location after end-of-line and after position 0 works"
-    (lines/before ["x"] [2 2]) => ["x" "" "  "])
-  (fact "`after` a location after end-of-line keeps the newline"
-    (lines/after ["x"] [0 4]) => [""])
-  (fact "`after` a location after end-of-file has only an empty line"
-    (lines/after ["x"] [5 0]) => [""])
+  (fact "replace works after end-of-line by inserting spaces"
+    (lines/replace ["x"] [0 3] [0 4] "!") => ["x  !"])
+  (fact "replace can insert new lines"
+    (lines/replace ["hello" "world"] [1 0] [1 0] "\n") => ["hello" "" "world"]
+    (lines/replace ["hello"] [0 2] [0 3] "\n") => ["he" "lo"])
+  (fact "replace can append newlines at end-of-line"
+    (lines/replace (lines/content "xx") [0 2] [0 2] "\n") => ["xx" ""])
   (fact "can replace a line after the last"
     (lines/replace (lines/content "") [1 0] [1 0] "xyz") => ["" "xyz"])
   (property "join before and after an arbitrary location in line results in original"
