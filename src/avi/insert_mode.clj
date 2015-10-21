@@ -62,7 +62,7 @@
             (enter-insert-mode [[:keystroke "<Enter>"]])
             (in e/current-buffer
               (in b/lines-and-cursor
-                (b/insert-blank-line i)
+                (b/change [i 0] [i 0] "\n" :left)
                 (b/move-cursor [i 0] 0))))))))
 
 (defn- key->text
