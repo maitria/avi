@@ -47,17 +47,15 @@
 (s/defn before :- [Line]
   [lines :- [Line]
    [i j] :- l/Location]
-  (let [lines (ensure-lines-count lines i)]
-    (-> lines
-      (subvec 0 i)
-      (conj (subs-with-spaces (get lines i) 0 j)))))
+  (-> lines
+    (subvec 0 i)
+    (conj (subs-with-spaces (get lines i) 0 j))))
 
 (s/defn after :- [Line]
   [lines :- [Line]
    [start-line start-column] :- l/Location]
-  (let [lines (ensure-lines-count lines start-line)]
-    (vec (concat [(subs-with-spaces (get lines start-line) start-column)]
-                 (subvec lines (inc start-line))))))
+  (vec (concat [(subs-with-spaces (get lines start-line) start-column)]
+               (subvec lines (inc start-line)))))
 
 (defn join
   ([a b]

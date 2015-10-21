@@ -58,8 +58,6 @@
     (lines/replace ["hello"] [0 2] [0 3] "\n") => ["he" "lo"])
   (fact "replace can append newlines at end-of-line"
     (lines/replace (lines/content "xx") [0 2] [0 2] "\n") => ["xx" ""])
-  (fact "can replace a line after the last"
-    (lines/replace (lines/content "") [1 0] [1 0] "xyz") => ["" "xyz"])
   (property "join before and after an arbitrary location in line results in original"
     (prop'/for-all [content content-generator
                     location (location-generator content 0)]
