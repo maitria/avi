@@ -7,7 +7,7 @@
   :plugins [[lein-midje "3.0.0"]]
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [com.maitria/packthread "0.1.6"]
-                 [prismatic/schema "0.4.4"]
+                 [prismatic/schema "1.0.2"]
                  [potemkin "0.4.1"]]
   :profiles {:dev {:dependencies [[midje "1.6.3"]
                                   [org.clojure/test.check "0.7.0"]
