@@ -103,14 +103,15 @@
           (move-to-line viewport-bottom)))))
 
 (defn move-cursor
-  [{:keys [lines] :as buffer} [i j :as cursor] & [explicit-j]]
+  [{:keys [lines] :as buffer} [i j] & [set-explicit-j?]]
   (+> buffer
-    (assoc :cursor (if (= j :first-non-blank)
-                     [i (index-of-first-non-blank (get lines i))]
-                     cursor))
-    (if j
-      (assoc :last-explicit-j explicit-j))
-    adjust-viewport-to-contain-cursor))
+    (let [j (if (= j :first-non-blank)
+              (index-of-first-non-blank (get lines i))
+              j)]
+      (assoc :cursor [i j])
+      (if set-explicit-j?
+        (assoc :last-explicit-j j))
+      adjust-viewport-to-contain-cursor)))
 
 (defn resize
   [buffer height]
@@ -255,7 +256,7 @@
     (let [[_ j :as new-cursor] (l/adjust-for-replacement cursor a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)
       (if new-cursor
-        (move-cursor new-cursor j)))))
+        (move-cursor new-cursor true)))))
 
 (defn insert-text
   [{cursor :cursor, :as lines-and-text} text]
@@ -279,7 +280,7 @@
       (= 1 (line-count buffer))
       (do
         (change [i 0] [i (count (get lines i))] "" :left)
-        (move-cursor [0 0] 0))
+        (move-cursor [0 0]))
 
       (= i (dec (line-count buffer)))
       (do

@@ -18,7 +18,7 @@
         new-position [i j]]
         (if (b/cursor-can-move-to-column? buffer j)
           (in e/current-buffer
-              (b/move-cursor new-position j))
+              (b/move-cursor new-position true))
           beep/beep))))
 
 (defn- current-line 

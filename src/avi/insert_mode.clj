@@ -63,7 +63,7 @@
             (in e/current-buffer
               (in b/lines-and-cursor
                 (b/change [i 0] [i 0] "\n" :left)
-                (b/move-cursor [i 0] 0))))))))
+                (b/move-cursor [i 0] true))))))))
 
 (defn- key->text
   [key]
@@ -110,7 +110,7 @@
             [i j] (:cursor b)
             new-j (max (dec j) 0)]
         (in e/current-buffer
-            (b/move-cursor [i new-j] new-j)
+            (b/move-cursor [i new-j] true)
             b/commit))
       (e/enter-normal-mode))))
 
