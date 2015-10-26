@@ -106,10 +106,10 @@
             [cursor-i] (:cursor buffer)]
         (cond
           (< cursor-i viewport-top)
-          (move-to-line viewport-top)
+          (move-cursor [viewport-top :last-explicit])
 
           (> cursor-i viewport-bottom)
-          (move-to-line viewport-bottom)))))
+          (move-cursor [viewport-bottom :last-explicit])))))
 
 (defn resize
   [buffer height]
