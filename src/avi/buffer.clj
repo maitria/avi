@@ -84,8 +84,9 @@
 (defn move-cursor
   [{:keys [lines] :as buffer} [i j] & [explicit?]]
   (+> buffer
-    (let [j (if (= j :first-non-blank)
-              (index-of-first-non-blank (get lines i))
+    (let [j (case j
+              :first-non-blank (index-of-first-non-blank (get lines i))
+              :last-explicit   (j-within-line buffer i)
               j)]
       (assoc :cursor [i j])
       (if explicit?
@@ -94,10 +95,7 @@
 
 (defn move-to-line
   [buffer i]
-  {:pre [(>= i 0) (< i (line-count buffer))]}
-  (+> buffer
-    (assoc :cursor [i (j-within-line buffer i)])
-    (adjust-viewport-to-contain-cursor)))
+  (move-cursor buffer [i :last-explicit]))
 
 (defn- adjust-cursor-to-viewport
   [buffer]
