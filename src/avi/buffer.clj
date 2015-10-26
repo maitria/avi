@@ -103,12 +103,14 @@
           (move-to-line viewport-bottom)))))
 
 (defn move-cursor
-  [buffer cursor & [j]]
+  [{:keys [lines] :as buffer} [i j :as cursor] & [explicit-j]]
   (+> buffer
-      (assoc :cursor cursor)
-      (if j
-        (assoc :last-explicit-j j))
-      adjust-viewport-to-contain-cursor))
+    (assoc :cursor (if (= j :first-non-blank)
+                     [i (index-of-first-non-blank (get lines i))]
+                     cursor))
+    (if j
+      (assoc :last-explicit-j explicit-j))
+    adjust-viewport-to-contain-cursor))
 
 (defn resize
   [buffer height]
@@ -279,11 +281,9 @@
       (let [new-lines (splice lines i (inc i))
             new-i (if (= i (dec (line-count buffer)))
                     (dec i)
-                    i)
-            target-line (get new-lines new-i)
-            new-j (index-of-first-non-blank target-line)]
+                    i)]
         (assoc :lines new-lines)
-        (move-cursor [new-i new-j])))))
+        (move-cursor [new-i :first-non-blank])))))
 
 (defn backspace
   [{cursor :cursor,
