@@ -98,18 +98,17 @@
   (move-cursor buffer [i :last-explicit]))
 
 (defn- adjust-cursor-to-viewport
-  [buffer]
+  [{:keys [viewport-top viewport-height]
+    [i] :cursor,
+    :as buffer}]
   (+> buffer
-      (let [height (:viewport-height buffer)
-            viewport-top (:viewport-top buffer)
-            viewport-bottom (dec (+ viewport-top height))
-            [cursor-i] (:cursor buffer)]
-        (cond
-          (< cursor-i viewport-top)
-          (move-cursor [viewport-top :last-explicit])
+    (let [viewport-bottom (dec (+ viewport-top viewport-height))]
+      (cond
+        (< i viewport-top)
+        (move-cursor [viewport-top :last-explicit])
 
-          (> cursor-i viewport-bottom)
-          (move-cursor [viewport-bottom :last-explicit])))))
+        (> i viewport-bottom)
+        (move-cursor [viewport-bottom :last-explicit])))))
 
 (defn resize
   [buffer height]
