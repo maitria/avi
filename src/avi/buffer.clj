@@ -287,12 +287,9 @@
         (move-cursor [(dec i) :first-non-blank]))
 
       :else
-      (let [new-lines (splice lines i (inc i))
-            new-i (if (= i (dec (line-count buffer)))
-                    (dec i)
-                    i)]
-        (assoc :lines new-lines)
-        (move-cursor [new-i :first-non-blank])))))
+      (do
+        (change [i 0] [(inc i) 0] "" :left)
+        (move-cursor [i :first-non-blank])))))
 
 (defn backspace
   [{cursor :cursor,
