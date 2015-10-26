@@ -254,7 +254,8 @@
   (+> buffer
     (let [[_ j :as new-cursor] (l/adjust-for-replacement cursor a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)
-      (move-cursor new-cursor j))))
+      (if new-cursor
+        (move-cursor new-cursor j)))))
 
 (defn insert-text
   [{cursor :cursor, :as lines-and-text} text]
@@ -274,10 +275,18 @@
     :as buffer}]
   {:pre [(:in-transaction? buffer)]}
   (+> buffer
-    (if (= 1 (line-count buffer))
+    (cond
+      (= 1 (line-count buffer))
       (do
         (change [i 0] [i (count (get lines i))] "" :left)
         (move-cursor [0 0] 0))
+
+      (= i (dec (line-count buffer)))
+      (do
+        (change [(dec i) (count (get lines (dec i)))] [i (count (get lines i))] "" :left)
+        (move-cursor [(dec i) :first-non-blank]))
+
+      :else
       (let [new-lines (splice lines i (inc i))
             new-i (if (= i (dec (line-count buffer)))
                     (dec i)
