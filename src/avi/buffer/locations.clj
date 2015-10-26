@@ -2,8 +2,8 @@
   (:refer-clojure :exclude [replace])
   (:require [schema.core :as s]))
 
-(def ZLineNumber (s/both s/Int (s/pred (complement neg?))))
-(def ColumnNumber (s/both s/Int (s/pred (complement neg?))))
+(def ZLineNumber (s/constrained s/Int (complement neg?)))
+(def ColumnNumber (s/constrained s/Int (complement neg?)))
 
 (def Location
   [(s/one ZLineNumber "line number (zero-based)")

@@ -5,7 +5,7 @@
             [avi.pervasive :refer :all]
             [avi.buffer.locations :as l]))
 
-(def Line (s/both s/Str (s/pred (complement (partial re-find #"\n")))))
+(def Line (s/constrained s/Str (complement (partial re-find #"\n"))))
 (def Lines [(s/one Line "first line") Line])
 
 (defn- split-lines
