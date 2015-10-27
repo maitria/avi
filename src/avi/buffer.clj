@@ -81,10 +81,22 @@
   [buffer]
   (-> buffer lines-and-cursor :lines count))
 
+(defn viewport-middle
+  [{top :viewport-top,
+    height :viewport-height,
+    :as buffer}]
+  (let [middle-of-viewport (dec (+ top (quot height 2)))
+        middle-of-file (quot (dec (line-count buffer)) 2)
+        middle (min middle-of-viewport middle-of-file)]
+    middle))
+
 (defn move-cursor
   [{:keys [lines] :as buffer} [i j] & [explicit?]]
   (+> buffer
-    (let [j (case j
+    (let [i (case i
+              :viewport-middle (viewport-middle buffer)
+              i)
+          j (case j
               :first-non-blank (index-of-first-non-blank (get lines i))
               :last-explicit   (j-within-line buffer i)
               j)]
@@ -190,14 +202,8 @@
   (move-cursor buffer [(+ top count-from-top) :last-explicit]))
 
 (defn cursor-to-middle-of-viewport
-  [{top :viewport-top,
-    height :viewport-height,
-    :as buffer}]
-  (+> buffer
-    (let [middle-of-viewport (dec (+ top (quot height 2)))
-          middle-of-file (quot (dec (line-count buffer)) 2)
-          new-line (min middle-of-viewport middle-of-file)]
-      (move-cursor [new-line :last-explicit]))))
+  [buffer]
+  (move-cursor buffer [:viewport-middle :last-explicit]))
 
 ;; Changes, undo, redo
 
