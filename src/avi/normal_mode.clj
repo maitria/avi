@@ -65,11 +65,10 @@
       (let [buffer (e/current-buffer editor)
             specified-line (dec (or repeat-count 1))
             last-line (dec (b/line-count buffer))
-            target-line (min specified-line last-line)
-            target-column (index-of-first-non-blank (b/line buffer target-line))]
-        (-> editor
-            (e/change-line (constantly target-line))
-            (change-column (constantly target-column)))))
+            target-line (min specified-line last-line)]
+        (+> editor
+          (in e/current-buffer
+            (b/move-cursor [target-line :first-non-blank])))))
 
     ("h"
       [editor]
