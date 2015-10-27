@@ -48,16 +48,16 @@
       :else
       [(color/make :blue :black) "~"])))
 
-(defmulti ^:private cursor-position :mode)
+(defmulti ^:private point-position :mode)
 
-(defmethod cursor-position :default
+(defmethod point-position :default
   [editor]
   (let [buffer (e/current-buffer editor)
-        [buffer-cursor-i buffer-cursor-j] (:cursor buffer)
+        [buffer-point-i buffer-point-j] (:point buffer)
         viewport-top (:viewport-top buffer)]
-    [(- buffer-cursor-i viewport-top) buffer-cursor-j]))
+    [(- buffer-point-i viewport-top) buffer-point-j]))
 
-(defmethod cursor-position :command-line
+(defmethod point-position :command-line
   [editor]
   (let [[height] (:size (:viewport editor))]
     [(dec height) (inc (count (:command-line editor)))]))
@@ -82,7 +82,7 @@
     {:width width
      :chars rendered-chars
      :attrs rendered-attrs
-     :cursor (cursor-position editor)}))
+     :point (point-position editor)}))
 
 (defn rendered
   [editor]

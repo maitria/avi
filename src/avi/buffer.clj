@@ -26,48 +26,48 @@
      :viewport-top 0
      :viewport-height height
      :lines lines,
-     :cursor [0 0],
+     :point [0 0],
      :last-explicit-j 0
      :undo-log ()
      :redo-log ()}))
 
 ;; Lenses
 
-(let [lines-and-cursor-keys [:viewport-top :viewport-height :lines :cursor :last-explicit-j :beep? :message]]
-  (defn lines-and-cursor
+(let [lines-and-point-keys [:viewport-top :viewport-height :lines :point :last-explicit-j :beep? :message]]
+  (defn lines-and-point
     ([buffer]
-     (select-keys buffer lines-and-cursor-keys))
+     (select-keys buffer lines-and-point-keys))
     ([buffer updated-lines]
      {:post [(or (:in-transaction? %)
                  (= (:lines buffer) (:lines %)))]}
-     (merge buffer (select-keys updated-lines lines-and-cursor-keys)))))
+     (merge buffer (select-keys updated-lines lines-and-point-keys)))))
 
 ;; --
 
 (defn write
   [{filename :name,
     :as buffer}]
-  (let [{:keys [lines]} (lines-and-cursor buffer)]
+  (let [{:keys [lines]} (lines-and-point buffer)]
     (w/write-file w/*world* filename (string/join "\n" lines)))
   buffer)
 
-(defn- adjust-viewport-to-contain-cursor
+(defn- adjust-viewport-to-contain-point
   [buffer]
   (+> buffer
     (let [height (:viewport-height buffer)
           viewport-top (:viewport-top buffer)
           viewport-bottom (dec (+ viewport-top height))
-          [cursor-i] (:cursor buffer)]
+          [point-i] (:point buffer)]
       (cond
-        (< cursor-i viewport-top)
-        (assoc :viewport-top cursor-i)
+        (< point-i viewport-top)
+        (assoc :viewport-top point-i)
 
-        (> cursor-i viewport-bottom)
-        (assoc :viewport-top (inc (- cursor-i height)))))))
+        (> point-i viewport-bottom)
+        (assoc :viewport-top (inc (- point-i height)))))))
 
 (defn line
   [buffer i]
-  (-> buffer lines-and-cursor :lines (get i)))
+  (-> buffer lines-and-point :lines (get i)))
 
 (defn j-within-line
   [buffer i]
@@ -79,7 +79,7 @@
 
 (defn line-count
   [buffer]
-  (-> buffer lines-and-cursor :lines count))
+  (-> buffer lines-and-point :lines count))
 
 (defn viewport-middle
   [{top :viewport-top,
@@ -90,11 +90,11 @@
         middle (min middle-of-viewport middle-of-file)]
     middle))
 
-(defn move-cursor
+(defn move-point
   [{:keys [lines] :as buffer} [i j] & [explicit?]]
   (+> buffer
     (let [i (case i
-              :current         (get-in buffer [:cursor 0])
+              :current         (get-in buffer [:point 0])
               :viewport-middle (viewport-middle buffer)
               i)
           j (case j
@@ -102,39 +102,39 @@
               :first-non-blank (index-of-first-non-blank (get lines i))
               :last-explicit   (j-within-line buffer i)
               j)]
-      (assoc :cursor [i j])
+      (assoc :point [i j])
       (if explicit?
         (assoc :last-explicit-j j))
-      adjust-viewport-to-contain-cursor)))
+      adjust-viewport-to-contain-point)))
 
-(defn- adjust-cursor-to-viewport
+(defn- adjust-point-to-viewport
   [{:keys [viewport-top viewport-height]
-    [i] :cursor
+    [i] :point
     :as buffer}]
   (+> buffer
     (let [viewport-bottom (dec (+ viewport-top viewport-height))]
       (cond
         (< i viewport-top)
-        (move-cursor [viewport-top :last-explicit])
+        (move-point [viewport-top :last-explicit])
 
         (> i viewport-bottom)
-        (move-cursor [viewport-bottom :last-explicit])))))
+        (move-point [viewport-bottom :last-explicit])))))
 
 (defn resize
   [buffer height]
   (+> buffer
       (assoc :viewport-height height)
-      (adjust-viewport-to-contain-cursor)))
+      (adjust-viewport-to-contain-point)))
 
 (defn scroll
   [buffer scroll-fn]
   (+> buffer
       (update-in [:viewport-top] scroll-fn)
-      (adjust-cursor-to-viewport)))
+      (adjust-point-to-viewport)))
 
 (defn on-last-line?
   [buffer]
-  (let [[i] (:cursor buffer)
+  (let [[i] (:point buffer)
         line-count (line-count buffer)]
     (= i (dec line-count))))
 
@@ -147,7 +147,7 @@
         max-top (max 0 (- line-count height))]
     (min max-top (max 0 new-top))))
 
-(defn- clamp-cursor-row
+(defn- clamp-point-row
   [{top :viewport-top,
     height :viewport-height,
     :as buffer}
@@ -155,24 +155,24 @@
   (max 0 (min (dec (line-count buffer)) new-top)))
 
 (defn- clamped-j
-  [{[i] :cursor,
+  [{[i] :point,
     :as buffer}
    j]
   (max 0 (min j (dec (count (line buffer i))))))
 
-(defn- clamp-cursor-j
-  [{[i j] :cursor,
+(defn- clamp-point-j
+  [{[i j] :point,
     :as buffer}]
-  (assoc buffer :cursor [i (clamped-j buffer j)]))
+  (assoc buffer :point [i (clamped-j buffer j)]))
 
-(defn cursor-can-move-to-column?
+(defn point-can-move-to-column?
   [buffer j]
   (= j (clamped-j buffer j)))
 
 (defn move-and-scroll-half-page
   [{top :viewport-top,
     height :viewport-height,
-    [i] :cursor,
+    [i] :point,
     :as buffer}
    which-way]
   (+> buffer
@@ -181,10 +181,10 @@
                         :down +1
                         :up -1)
             scroll-adjust (* direction distance)]
-        (move-cursor [(clamp-cursor-row buffer (+ i scroll-adjust)) :last-explicit])
+        (move-point [(clamp-point-row buffer (+ i scroll-adjust)) :last-explicit])
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
-(defn cursor-to-bottom-of-viewport
+(defn point-to-bottom-of-viewport
   [{top :viewport-top,
     height :viewport-height,
     :as buffer}
@@ -195,24 +195,24 @@
             count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
             count-from-bottom-of-file (- bottom-of-file count-from-bottom)
             new-line (max top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
-        (move-cursor [new-line :last-explicit]))))
+        (move-point [new-line :last-explicit]))))
 
-(defn cursor-to-top-of-viewport
+(defn point-to-top-of-viewport
   [{top :viewport-top,
     :as buffer}
    count-from-top]
-  (move-cursor buffer [(+ top count-from-top) :last-explicit]))
+  (move-point buffer [(+ top count-from-top) :last-explicit]))
 
 ;; Changes, undo, redo
 
 (defn start-transaction
   [{lines :lines,
-    cursor :cursor,
+    point :point,
     :as buffer}]
   (when (:in-transaction? buffer)
     (throw (Exception. "attempt to nest a transaction")))
   (+> buffer
-    (update-in [:undo-log] conj {:lines lines, :cursor cursor})
+    (update-in [:undo-log] conj {:lines lines, :point point})
     (assoc :in-transaction? true)))
 
 (defn commit
@@ -226,16 +226,16 @@
    to-log
    last-name
    {lines :lines,
-    cursor :cursor,
+    point :point,
     :as buffer}]
   (+> buffer
     (if-not (seq (from-log buffer))
       (beep/beep (str "Already at the " last-name " change"))
       (do
-        (update-in [to-log] conj {:lines lines, :cursor cursor})
+        (update-in [to-log] conj {:lines lines, :point point})
         (merge (first (from-log buffer)))
         (update-in [from-log] rest)
-        adjust-viewport-to-contain-cursor))))
+        adjust-viewport-to-contain-point))))
 
 (def undo (partial undo-or-redo :undo-log :redo-log "oldest"))
 (def redo (partial undo-or-redo :redo-log :undo-log "newest"))
@@ -244,31 +244,31 @@
 
 (s/defn change
   "All content changes happen through me!"
-  [{:keys [cursor] :as buffer}
+  [{:keys [point] :as buffer}
    a :- l/Location
    b :- l/Location
    replacement :- s/Str
    bias :- l/AdjustmentBias]
   (+> buffer
-    (let [[_ j :as new-cursor] (l/adjust-for-replacement cursor a b replacement bias)]
+    (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)
-      (if new-cursor
-        (move-cursor new-cursor true)))))
+      (if new-point
+        (move-point new-point true)))))
 
 (defn insert-text
-  [{cursor :cursor, :as lines-and-text} text]
-  (change lines-and-text cursor cursor text :right))
+  [{point :point, :as lines-and-text} text]
+  (change lines-and-text point point text :right))
 
-(defn delete-char-under-cursor
-  [{[i j] :cursor,
+(defn delete-char-under-point
+  [{[i j] :point,
     :as buffer}]
   {:pre [(:in-transaction? buffer)]}
   (+> buffer
     (change [i j] [i (inc j)] "" :left)
-    clamp-cursor-j))
+    clamp-point-j))
 
 (defn delete-current-line
-  [{[i] :cursor,
+  [{[i] :point,
     lines :lines,
     :as buffer}]
   {:pre [(:in-transaction? buffer)]}
@@ -277,23 +277,23 @@
       (= 1 (line-count buffer))
       (do
         (change [i 0] [i (count (get lines i))] "" :left)
-        (move-cursor [0 0]))
+        (move-point [0 0]))
 
       (= i (dec (line-count buffer)))
       (do
         (change [(dec i) (count (get lines (dec i)))] [i (count (get lines i))] "" :left)
-        (move-cursor [(dec i) :first-non-blank]))
+        (move-point [(dec i) :first-non-blank]))
 
       :else
       (do
         (change [i 0] [(inc i) 0] "" :left)
-        (move-cursor [i :first-non-blank])))))
+        (move-point [i :first-non-blank])))))
 
 (defn backspace
-  [{cursor :cursor,
+  [{point :point,
     lines :lines,
     :as buffer}]
   {:pre [(:in-transaction? buffer)]}
   (+> buffer
-    (if-let [pre (l/retreat cursor (lines/line-length lines))]
-      (change pre cursor "" :left))))
+    (if-let [pre (l/retreat point (lines/line-length lines))]
+      (change pre point "" :left))))

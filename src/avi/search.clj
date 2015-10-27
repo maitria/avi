@@ -21,7 +21,7 @@
 
 (defn scanner
   [succ which pred reset]
-  (fn [{:keys [lines] [start-i start-j] :cursor} re]
+  (fn [{:keys [lines] [start-i start-j] :point} re]
     (loop [n (inc (count lines))
            i start-i
            j (succ start-j)]
@@ -56,7 +56,7 @@
       (assoc ::last-direction direction)
       (if-let [[i j wrapped?] (find-occurrence direction (e/current-buffer editor) (re-pattern pattern))]
         (do
-          (in e/current-buffer (b/move-cursor [i j] true))
+          (in e/current-buffer (b/move-point [i j] true))
           (if wrapped?
             (assoc :message [:red :black (get-in directions [direction :wrap-message])])
             (assoc :message [:white :black (str (get-in directions [direction :prompt]) pattern)])))

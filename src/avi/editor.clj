@@ -85,11 +85,11 @@
 (defn change-line
   [editor i-fn]
   (+> editor
-      (let [[i] (:cursor (current-buffer editor))
+      (let [[i] (:point (current-buffer editor))
         i (i-fn i)]
         (if-not (valid-line? editor i)
           beep/beep
           (in current-buffer
-              (b/move-cursor [i :last-explicit]))))))
+              (b/move-point [i :last-explicit]))))))
 
 ;; ---------------------------------------------------------------------------

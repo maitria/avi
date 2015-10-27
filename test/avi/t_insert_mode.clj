@@ -7,8 +7,8 @@
     (editor :editing "One" :after "ixxx<Esc>") => (line 0 "xxxOne"))
   (fact "`ixyz<Esc>` inserts `xyz`"
     (editor :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => (line 0 "xyzOne"))
-  (fact "`ixyz<Esc>` leaves the cursor on `z`"
-    (editor :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => (cursor [0 2]))
+  (fact "`ixyz<Esc>` leaves the point on `z`"
+    (editor :editing "One\nTwo\nThree..." :after "ixyz<Esc>") => (point [0 2]))
 
   (facts "about `<BS>` in insert mode"
     (fact "`ixy<BS>z<Esc>` inserts `xz`"
@@ -25,8 +25,8 @@
                       "~" :blue
                       "test.txt" :black :on :white
                       ""]))
-    (fact "`i<BS>` at beginning of line leaves the cursor at join"
-      (editor :editing "One\nTwo\nThree..." :after "ji<BS>") => (cursor [0 3])))
+    (fact "`i<BS>` at beginning of line leaves the point at join"
+      (editor :editing "One\nTwo\nThree..." :after "ji<BS>") => (point [0 3])))
 
   (fact "`<Esc>` in insert mode returns to normal mode"
     (editor :after "i<Esc>") => (mode :normal))
@@ -42,7 +42,7 @@
                    "~" :blue
                    "test.txt" :black :on :white
                    ""])
-    (editor :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>") => (cursor [1 0])
+    (editor :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>") => (point [1 0])
     (editor :editing "" :after "i<Enter><Esc>")
       => (terminal [""
                     ""

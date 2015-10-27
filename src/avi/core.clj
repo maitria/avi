@@ -56,7 +56,7 @@
                 (update-terminal [_ {chars :chars,
                                      attrs :attrs,
                                      width :width,
-                                     [i j] :cursor}]
+                                     [i j] :point}]
                   (Terminal/refresh i j width chars attrs))
                 (read-file [_ filename]
                   (slurp filename))

@@ -18,12 +18,12 @@
           b/start-transaction)))
 
 (defn advance-for-append
-  [{[i j] :cursor, lines :lines :as lines-and-cursor}]
-  (assoc lines-and-cursor :cursor [i (min (count (get lines i)) (inc j))]))
+  [{[i j] :point, lines :lines :as lines-and-point}]
+  (assoc lines-and-point :point [i (min (count (get lines i)) (inc j))]))
 
 (defn move-to-eol
-  [{[i] :cursor, lines :lines :as lines-and-cursor}]
-  (assoc lines-and-cursor :cursor [i (count (get lines i))]))
+  [{[i] :point, lines :lines :as lines-and-point}]
+  (assoc lines-and-point :point [i (count (get lines i))]))
 
 (def wrap-enter-insert-mode
   (em/eventmap
@@ -31,7 +31,7 @@
       [editor repeat-count]
       (+> editor
           (enter-insert-mode)
-          (in (l/comp e/current-buffer b/lines-and-cursor)
+          (in (l/comp e/current-buffer b/lines-and-point)
             advance-for-append)))
 
     ("i"
@@ -41,7 +41,7 @@
     ("o"
       [editor repeat-count]
       (+> editor
-        (let [{:keys [lines] [i] :cursor} (e/current-buffer editor)
+        (let [{:keys [lines] [i] :point} (e/current-buffer editor)
               eol (count (get lines i))]
           (enter-insert-mode [[:keystroke "<Enter>"]])
           (in e/current-buffer
@@ -52,18 +52,18 @@
       [editor repeat-count]
       (+> editor
           (enter-insert-mode)
-          (in (l/comp e/current-buffer b/lines-and-cursor)
+          (in (l/comp e/current-buffer b/lines-and-point)
             move-to-eol)))
 
     ("O"
       [editor repeat-count]
       (+> editor
-          (let [{[i] :cursor} (e/current-buffer editor)]
+          (let [{[i] :point} (e/current-buffer editor)]
             (enter-insert-mode [[:keystroke "<Enter>"]])
             (in e/current-buffer
-              (in b/lines-and-cursor
+              (in b/lines-and-point
                 (b/change [i 0] [i 0] "\n" :left)
-                (b/move-cursor [i 0] true))))))))
+                (b/move-point [i 0] true))))))))
 
 (defn- key->text
   [key]
@@ -78,10 +78,10 @@
       beep/beep
       (in e/current-buffer
           (if (= event-data "<BS>")
-            (if (= [0 0] (:cursor (e/current-buffer editor)))
+            (if (= [0 0] (:point (e/current-buffer editor)))
               beep/beep
               b/backspace)
-            (in b/lines-and-cursor
+            (in b/lines-and-point
               (b/insert-text (key->text event-data))))))))
 
 (defn- play-script
@@ -107,10 +107,10 @@
       play-script-repeat-count-times
       (dissoc :insert-mode-state)
       (let [b (e/current-buffer editor)
-            [i j] (:cursor b)
+            [i j] (:point b)
             new-j (max (dec j) 0)]
         (in e/current-buffer
-            (b/move-cursor [i new-j] true)
+            (b/move-point [i new-j] true)
             b/commit))
       (e/enter-normal-mode))))
 

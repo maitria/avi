@@ -4,15 +4,15 @@
 (facts "about `u`"
   (fact "`xu` leaves the file the way it came"
     (editor :editing "One\nTwo\nThree..." :after "xu") => (line 0 "One"))
-  (fact "`xu` leaves the cursor at 0,0"
-    (editor :editing "One\nTwo\nThree..." :after "xu") => (cursor [0 0]))
+  (fact "`xu` leaves the point at 0,0"
+    (editor :editing "One\nTwo\nThree..." :after "xu") => (point [0 0]))
   (fact "`u` tells us it's already at the oldest change"
     (editor :editing "One" :after "u") => (message-line ["Already at the oldest change" :white :on :red]))
   (fact "`xxxuu` leaves first delete"
     (editor :editing "One\nTwo\nThree..." :after "xxxuu") => (line 0 "ne"))
   (fact "`3xu` leaves file unchanged"
     (editor :editing "One\n" :after "3xu") => (line 0 "One"))
-  (fact "`ddju` leaves cursor at 0,0"
+  (fact "`ddju` leaves point at 0,0"
     (editor :editing "One\nTwo\nThree..." :after "ddju")
       => (terminal ["One"
                     "Two"
@@ -22,9 +22,9 @@
                     "~" :blue
                     "test.txt" :black :on :white
                     ""])
-    (editor :editing "One\nTwo\nThree..." :after "ddju") => (cursor [0 0]))
-  (fact "`ddGu` adjusts viewport to cursor"
-    (editor :editing ten-lines :after "ddGu") => (cursor [0 0]))
+    (editor :editing "One\nTwo\nThree..." :after "ddju") => (point [0 0]))
+  (fact "`ddGu` adjusts viewport to point"
+    (editor :editing ten-lines :after "ddGu") => (point [0 0]))
   (fact "`2ddu` undoes both lines"
     (editor :editing "One\nTwo\nThree..." :after "2ddGu")
       => (terminal ["One"

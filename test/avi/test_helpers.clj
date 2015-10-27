@@ -128,10 +128,10 @@
       unwrap-single-value
       (checking/extended-= expected))))
 
-(defn cursor
+(defn point
   [expected-pos]
   (fn [{:keys [editor]}]
-    (checking/extended-= (:cursor (:rendition editor)) expected-pos)))
+    (checking/extended-= (:point (:rendition editor)) expected-pos)))
 
 (defn beeped
   [{:keys [editor]}]

@@ -13,18 +13,18 @@
 (defn- change-column
   [editor j-fn]
   (+> editor
-      (let [{[i j] :cursor, :as buffer} (e/current-buffer editor)
+      (let [{[i j] :point, :as buffer} (e/current-buffer editor)
         j (j-fn j)
         new-position [i j]]
-        (if (b/cursor-can-move-to-column? buffer j)
+        (if (b/point-can-move-to-column? buffer j)
           (in e/current-buffer
-              (b/move-cursor new-position true))
+              (b/move-point new-position true))
           beep/beep))))
 
 (defn- current-line 
   [editor] 
   (let [buffer (e/current-buffer editor)
-        [row] (:cursor buffer)]
+        [row] (:point buffer)]
     (b/line buffer row)))
 
 (defn- scroll
@@ -39,19 +39,19 @@
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-cursor [:current 0]))))
+          (b/move-point [:current 0]))))
 
     ("^"
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-cursor [:current :first-non-blank] true))))
+          (b/move-point [:current :first-non-blank] true))))
 
     ("$"
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-cursor [:current :end-of-line] true))))
+          (b/move-point [:current :end-of-line] true))))
 
     ("dd"
       [editor repeat-count]
@@ -69,7 +69,7 @@
             target-line (min specified-line last-line)]
         (+> editor
           (in e/current-buffer
-            (b/move-cursor [target-line :first-non-blank])))))
+            (b/move-point [target-line :first-non-blank])))))
 
     ("h"
       [editor]
@@ -101,7 +101,7 @@
               (as-> buffer
                 (reduce
                   (fn [buffer n]
-                    (b/delete-char-under-cursor buffer))
+                    (b/delete-char-under-point buffer))
                   buffer
                   (range (or repeat-count 1))))
               b/commit)))
@@ -115,19 +115,19 @@
                             (dec repeat-count)
                             last-line)]
           (in e/current-buffer
-            (b/move-cursor [target-line :first-non-blank])))))
+            (b/move-point [target-line :first-non-blank])))))
 
     ("H"
       [editor repeat-count]
       (+> editor
           (let [count (dec (or repeat-count 1))]
             (in e/current-buffer
-                (b/cursor-to-top-of-viewport count)))))
+                (b/point-to-top-of-viewport count)))))
 
     ("J"
       [editor repeat-count]
       (+> editor
-        (let [{[i j] :cursor, lines :lines} (e/current-buffer editor)
+        (let [{[i j] :point, lines :lines} (e/current-buffer editor)
               n (or repeat-count 1)
               new-line (reduce
                          #(str %1 " " %2)
@@ -143,13 +143,13 @@
       (+> editor
           (let [count (dec (or repeat-count 1))]
             (in e/current-buffer
-                (b/cursor-to-bottom-of-viewport count)))))
+                (b/point-to-bottom-of-viewport count)))))
 
     ("M"
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-cursor [:viewport-middle :last-explicit]))))
+          (b/move-point [:viewport-middle :last-explicit]))))
 
     ("<C-D>"
       [editor]
@@ -174,7 +174,7 @@
       [editor]
       (+> editor
           (let [buffer (e/current-buffer editor)
-                [i] (:cursor buffer)]
+                [i] (:point buffer)]
             (if (zero? i)
               beep/beep
               (in e/current-buffer
