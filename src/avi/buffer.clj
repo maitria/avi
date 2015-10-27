@@ -93,13 +93,9 @@
         (assoc :last-explicit-j j))
       adjust-viewport-to-contain-cursor)))
 
-(defn move-to-line
-  [buffer i]
-  (move-cursor buffer [i :last-explicit]))
-
 (defn- adjust-cursor-to-viewport
   [{:keys [viewport-top viewport-height]
-    [i] :cursor,
+    [i] :cursor
     :as buffer}]
   (+> buffer
     (let [viewport-bottom (dec (+ viewport-top viewport-height))]
@@ -171,7 +167,7 @@
                         :down +1
                         :up -1)
             scroll-adjust (* direction distance)]
-        (move-to-line (clamp-cursor-row buffer (+ i scroll-adjust)))
+        (move-cursor [(clamp-cursor-row buffer (+ i scroll-adjust)) :last-explicit])
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
 (defn cursor-to-bottom-of-viewport
@@ -185,23 +181,23 @@
             count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
             count-from-bottom-of-file (- bottom-of-file count-from-bottom)
             new-line (max top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
-        (move-to-line new-line))))
+        (move-cursor [new-line :last-explicit]))))
 
 (defn cursor-to-top-of-viewport
   [{top :viewport-top,
     :as buffer}
    count-from-top]
-  (move-to-line buffer (+ top count-from-top)))
+  (move-cursor buffer [(+ top count-from-top) :last-explicit]))
 
 (defn cursor-to-middle-of-viewport
   [{top :viewport-top,
     height :viewport-height,
     :as buffer}]
   (+> buffer
-      (let [middle-of-viewport (dec (+ top (quot height 2)))
-            middle-of-file (quot (dec (line-count buffer)) 2)
-            new-line (min middle-of-viewport middle-of-file)]
-        (move-to-line new-line))))
+    (let [middle-of-viewport (dec (+ top (quot height 2)))
+          middle-of-file (quot (dec (line-count buffer)) 2)
+          new-line (min middle-of-viewport middle-of-file)]
+      (move-cursor [new-line :last-explicit]))))
 
 ;; Changes, undo, redo
 

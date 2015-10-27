@@ -90,6 +90,6 @@
         (if-not (valid-line? editor i)
           beep/beep
           (in current-buffer
-              (b/move-to-line i))))))
+              (b/move-cursor [i :last-explicit]))))))
 
 ;; ---------------------------------------------------------------------------
