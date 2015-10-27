@@ -37,7 +37,9 @@
   (em/eventmap
     ("0"
       [editor]
-      (change-column editor (constantly 0)))
+      (+> editor
+        (in e/current-buffer
+          (b/move-cursor [:current 0]))))
 
     ("^"
       [editor]
