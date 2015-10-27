@@ -49,11 +49,9 @@
 
     ("$"
       [editor]
-      (let [buffer (e/current-buffer editor)
-            [i j] (:cursor buffer)
-            line-length (count (b/line buffer i))
-            j (max 0 (dec line-length))]
-        (change-column editor (constantly j))))
+      (+> editor
+        (in e/current-buffer
+          (b/move-cursor [:current :end-of-line] true))))
 
     ("dd"
       [editor repeat-count]

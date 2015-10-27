@@ -98,6 +98,7 @@
               :viewport-middle (viewport-middle buffer)
               i)
           j (case j
+              :end-of-line     (max 0 (dec (count (get lines i))))
               :first-non-blank (index-of-first-non-blank (get lines i))
               :last-explicit   (j-within-line buffer i)
               j)]
