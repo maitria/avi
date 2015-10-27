@@ -149,8 +149,8 @@
     ("M"
       [editor]
       (+> editor
-          (in e/current-buffer
-              b/cursor-to-middle-of-viewport)))
+        (in e/current-buffer
+          (b/move-cursor [:viewport-middle :last-explicit]))))
 
     ("<C-D>"
       [editor]

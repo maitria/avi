@@ -201,10 +201,6 @@
    count-from-top]
   (move-cursor buffer [(+ top count-from-top) :last-explicit]))
 
-(defn cursor-to-middle-of-viewport
-  [buffer]
-  (move-cursor buffer [:viewport-middle :last-explicit]))
-
 ;; Changes, undo, redo
 
 (defn start-transaction
