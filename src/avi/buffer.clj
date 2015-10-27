@@ -94,6 +94,7 @@
   [{:keys [lines] :as buffer} [i j] & [explicit?]]
   (+> buffer
     (let [i (case i
+              :current         (get-in buffer [:cursor 0])
               :viewport-middle (viewport-middle buffer)
               i)
           j (case j

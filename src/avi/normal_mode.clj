@@ -41,8 +41,9 @@
 
     ("^"
       [editor]
-      (let [position (index-of-first-non-blank (current-line editor))]
-        (change-column editor (constantly position))))
+      (+> editor
+        (in e/current-buffer
+          (b/move-cursor [:current :first-non-blank] true))))
 
     ("$"
       [editor]
