@@ -108,14 +108,13 @@
     ("G"
       [editor repeat-count]
       (+> editor
-          (let [buffer (e/current-buffer editor)
-                last-line (dec (b/line-count buffer))
-                target-line (if repeat-count
-                              (dec repeat-count)
-                              last-line)
-                target-column (index-of-first-non-blank (b/line buffer target-line))]
-            (e/change-line (constantly target-line))
-            (change-column (constantly target-column)))))
+        (let [buffer (e/current-buffer editor)
+              last-line (dec (b/line-count buffer))
+              target-line (if repeat-count
+                            (dec repeat-count)
+                            last-line)]
+          (in e/current-buffer
+            (b/move-cursor [target-line :first-non-blank])))))
 
     ("H"
       [editor repeat-count]
