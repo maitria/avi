@@ -60,10 +60,10 @@
     [i j]))
 
 (defn move-point
-  [buffer [i j]]
+  [buffer [_ motion-j :as motion]]
   (+> buffer
-    (let [j-is-last-explicit? (= j :last-explicit)
-          [i j] (resolve-motion buffer [i j])]
+    (let [j-is-last-explicit? (= motion-j :last-explicit)
+          [i j] (resolve-motion buffer motion)]
       (assoc :point [i j])
       (if-not j-is-last-explicit?
         (assoc :last-explicit-j j))
