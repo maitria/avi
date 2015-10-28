@@ -5,10 +5,15 @@
             [avi.beep :as beep]
             [avi.buffer
               [lines :as lines]
-              [locations :as l]]
+              [locations :as l]
+              [move]]
             [avi.pervasive :refer :all]
             [avi.world :as w]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [potemkin :refer [import-vars]]))
+
+(import-vars [avi.buffer.move
+                adjust-viewport-to-contain-point])
 
 (defn- try-load
   [filename]
@@ -50,20 +55,6 @@
   (let [{:keys [lines]} (lines-and-point buffer)]
     (w/write-file w/*world* filename (string/join "\n" lines)))
   buffer)
-
-(defn- adjust-viewport-to-contain-point
-  [buffer]
-  (+> buffer
-    (let [height (:viewport-height buffer)
-          viewport-top (:viewport-top buffer)
-          viewport-bottom (dec (+ viewport-top height))
-          [point-i] (:point buffer)]
-      (cond
-        (< point-i viewport-top)
-        (assoc :viewport-top point-i)
-
-        (> point-i viewport-bottom)
-        (assoc :viewport-top (inc (- point-i height)))))))
 
 (defn line
   [buffer i]
