@@ -13,6 +13,7 @@
             [potemkin :refer [import-vars]]))
 
 (import-vars [avi.buffer.move
+                j-within-line
                 adjust-viewport-to-contain-point])
 
 (defn- try-load
@@ -59,14 +60,6 @@
 (defn line
   [buffer i]
   (-> buffer lines-and-point :lines (get i)))
-
-(defn j-within-line
-  [buffer i]
-  (let [j (:last-explicit-j buffer)
-        line-length (count (line buffer i))
-        j-not-after-end (min (dec line-length) j)
-        j-within-line (max 0 j-not-after-end)]
-    j-within-line))
 
 (defn line-count
   [buffer]
