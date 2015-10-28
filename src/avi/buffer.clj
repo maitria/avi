@@ -14,7 +14,9 @@
 
 (import-vars [avi.buffer.move
                 j-within-line
-                adjust-viewport-to-contain-point])
+                viewport-middle
+                adjust-viewport-to-contain-point
+                move-point])
 
 (defn- try-load
   [filename]
@@ -64,32 +66,6 @@
 (defn line-count
   [buffer]
   (-> buffer lines-and-point :lines count))
-
-(defn viewport-middle
-  [{top :viewport-top,
-    height :viewport-height,
-    :as buffer}]
-  (let [middle-of-viewport (dec (+ top (quot height 2)))
-        middle-of-file (quot (dec (line-count buffer)) 2)
-        middle (min middle-of-viewport middle-of-file)]
-    middle))
-
-(defn move-point
-  [{:keys [lines] :as buffer} [i j] & [explicit?]]
-  (+> buffer
-    (let [i (case i
-              :current         (get-in buffer [:point 0])
-              :viewport-middle (viewport-middle buffer)
-              i)
-          j (case j
-              :end-of-line     (max 0 (dec (count (get lines i))))
-              :first-non-blank (index-of-first-non-blank (get lines i))
-              :last-explicit   (j-within-line buffer i)
-              j)]
-      (assoc :point [i j])
-      (if explicit?
-        (assoc :last-explicit-j j))
-      adjust-viewport-to-contain-point)))
 
 (defn- adjust-point-to-viewport
   [{:keys [viewport-top viewport-height]

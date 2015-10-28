@@ -52,15 +52,6 @@
     thing
     (range n)))
 
-(defn index-of-first-non-blank
-  [string]
-  (let [leading-space-count (count (re-find #"^\s*" string))
-        all-spaces? (and (> leading-space-count 0)
-                         (= leading-space-count (count string)))]
-    (if all-spaces?
-      (dec leading-space-count)
-      leading-space-count)))
-
 (defn subs-with-spaces
   "Like subs, except that it is not an error to index past the end of the
   string.  If `start` is greater, we pretend that the string was longer.  If
