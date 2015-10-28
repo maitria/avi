@@ -56,7 +56,7 @@
       (assoc ::last-direction direction)
       (if-let [[i j wrapped?] (find-occurrence direction (e/current-buffer editor) (re-pattern pattern))]
         (do
-          (in e/current-buffer (b/move-point [i j]))
+          (in e/current-buffer (b/move-point [:to [i j]]))
           (if wrapped?
             (assoc :message [:red :black (get-in directions [direction :wrap-message])])
             (assoc :message [:white :black (str (get-in directions [direction :prompt]) pattern)])))

@@ -73,10 +73,10 @@
     (let [viewport-bottom (dec (+ viewport-top viewport-height))]
       (cond
         (< i viewport-top)
-        (move-point [viewport-top :last-explicit])
+        (move-point [:to [viewport-top :last-explicit]])
 
         (> i viewport-bottom)
-        (move-point [viewport-bottom :last-explicit])))))
+        (move-point [:to [viewport-bottom :last-explicit]])))))
 
 (defn resize
   [buffer height]
@@ -139,7 +139,7 @@
                         :down +1
                         :up -1)
             scroll-adjust (* direction distance)]
-        (move-point [(clamp-point-row buffer (+ i scroll-adjust)) :last-explicit])
+        (move-point [:to [(clamp-point-row buffer (+ i scroll-adjust)) :last-explicit]])
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
 (defn point-to-bottom-of-viewport
@@ -153,13 +153,13 @@
             count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
             count-from-bottom-of-file (- bottom-of-file count-from-bottom)
             new-line (max top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
-        (move-point [new-line :last-explicit]))))
+        (move-point [:to [new-line :last-explicit]]))))
 
 (defn point-to-top-of-viewport
   [{top :viewport-top,
     :as buffer}
    count-from-top]
-  (move-point buffer [(+ top count-from-top) :last-explicit]))
+  (move-point buffer [:to [(+ top count-from-top) :last-explicit]]))
 
 ;; Changes, undo, redo
 
@@ -211,7 +211,7 @@
     (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)
       (if new-point
-        (move-point new-point)))))
+        (move-point [:to new-point])))))
 
 (defn insert-text
   [{point :point, :as lines-and-text} text]
@@ -235,17 +235,17 @@
       (= 1 (line-count buffer))
       (do
         (change [i 0] [i (count (get lines i))] "" :left)
-        (move-point [0 0]))
+        (move-point [:to [0 0]]))
 
       (= i (dec (line-count buffer)))
       (do
         (change [(dec i) (count (get lines (dec i)))] [i (count (get lines i))] "" :left)
-        (move-point [(dec i) :first-non-blank]))
+        (move-point [:to [(dec i) :first-non-blank]]))
 
       :else
       (do
         (change [i 0] [(inc i) 0] "" :left)
-        (move-point [i :first-non-blank])))))
+        (move-point [:to [i :first-non-blank]])))))
 
 (defn backspace
   [{point :point,

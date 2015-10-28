@@ -47,7 +47,7 @@
       leading-space-count)))
 
 (s/defn resolve-motion :- l/Location
-  [{:keys [lines] :as buffer} [i j]]
+  [{:keys [lines] :as buffer} [_ [i j]]]
   (let [i (case i
             :current         (get-in buffer [:point 0])
             :viewport-middle (viewport-middle buffer)
@@ -60,7 +60,7 @@
     [i j]))
 
 (defn move-point
-  [buffer [_ motion-j :as motion]]
+  [buffer [_ [_ motion-j] :as motion]]
   (+> buffer
     (let [j-is-last-explicit? (= motion-j :last-explicit)
           [i j] (resolve-motion buffer motion)]
