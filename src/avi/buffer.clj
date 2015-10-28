@@ -13,8 +13,6 @@
             [potemkin :refer [import-vars]]))
 
 (import-vars [avi.buffer.move
-                j-within-line
-                viewport-middle
                 adjust-viewport-to-contain-point
                 move-point])
 
