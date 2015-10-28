@@ -1,6 +1,9 @@
 (ns avi.buffer.move
   "Primitives for moving the point."
-  (:require [packthread.core :refer :all]))
+  (:require [avi.buffer
+              [locations :as l]]
+            [packthread.core :refer :all]
+            [schema.core :as s]))
 
 (defn adjust-viewport-to-contain-point
   [buffer]
@@ -43,19 +46,24 @@
       (dec leading-space-count)
       leading-space-count)))
 
-(defn move-point
+(s/defn resolve-motion :- l/Location
   [{:keys [lines] :as buffer} [i j]]
+  (let [i (case i
+            :current         (get-in buffer [:point 0])
+            :viewport-middle (viewport-middle buffer)
+            i)
+        j (case j
+            :end-of-line     (max 0 (dec (count (get lines i))))
+            :first-non-blank (index-of-first-non-blank (get lines i))
+            :last-explicit   (default-column buffer i)
+            j)]
+    [i j]))
+
+(defn move-point
+  [buffer [i j]]
   (+> buffer
     (let [j-is-last-explicit? (= j :last-explicit)
-          i (case i
-              :current         (get-in buffer [:point 0])
-              :viewport-middle (viewport-middle buffer)
-              i)
-          j (case j
-              :end-of-line     (max 0 (dec (count (get lines i))))
-              :first-non-blank (index-of-first-non-blank (get lines i))
-              :last-explicit   (default-column buffer i)
-              j)]
+          [i j] (resolve-motion buffer [i j])]
       (assoc :point [i j])
       (if-not j-is-last-explicit?
         (assoc :last-explicit-j j))
