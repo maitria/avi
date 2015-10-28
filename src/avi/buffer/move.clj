@@ -46,17 +46,17 @@
 (defn move-point
   [{:keys [lines] :as buffer} [i j]]
   (+> buffer
-    (let [i (case i
+    (let [j-is-last-explicit? (= j :last-explicit)
+          i (case i
               :current         (get-in buffer [:point 0])
               :viewport-middle (viewport-middle buffer)
               i)
-          explicit? (not= j :last-explicit)
           j (case j
               :end-of-line     (max 0 (dec (count (get lines i))))
               :first-non-blank (index-of-first-non-blank (get lines i))
               :last-explicit   (default-column buffer i)
               j)]
       (assoc :point [i j])
-      (if explicit?
+      (if-not j-is-last-explicit?
         (assoc :last-explicit-j j))
       adjust-viewport-to-contain-point)))
