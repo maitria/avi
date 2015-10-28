@@ -16,7 +16,7 @@
         (> point-i viewport-bottom)
         (assoc :viewport-top (inc (- point-i height)))))))
 
-(defn viewport-middle
+(defn- viewport-middle
   [{top :viewport-top,
     height :viewport-height,
     :keys [lines],
@@ -26,7 +26,7 @@
         middle (min middle-of-viewport middle-of-file)]
     middle))
 
-(defn j-within-line
+(defn- j-within-line
   [{:keys [lines last-explicit-j]} i]
   (let [j last-explicit-j
         line-length (count (get lines i))
@@ -34,7 +34,7 @@
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
 
-(defn index-of-first-non-blank
+(defn- index-of-first-non-blank
   [string]
   (let [leading-space-count (count (re-find #"^\s*" string))
         all-spaces? (and (> leading-space-count 0)
