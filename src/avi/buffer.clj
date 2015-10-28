@@ -211,7 +211,7 @@
     (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)
       (if new-point
-        (move-point new-point true)))))
+        (move-point new-point)))))
 
 (defn insert-text
   [{point :point, :as lines-and-text} text]
@@ -235,17 +235,17 @@
       (= 1 (line-count buffer))
       (do
         (change [i 0] [i (count (get lines i))] "" :left)
-        (move-point [0 0] true))
+        (move-point [0 0]))
 
       (= i (dec (line-count buffer)))
       (do
         (change [(dec i) (count (get lines (dec i)))] [i (count (get lines i))] "" :left)
-        (move-point [(dec i) :first-non-blank] true))
+        (move-point [(dec i) :first-non-blank]))
 
       :else
       (do
         (change [i 0] [(inc i) 0] "" :left)
-        (move-point [i :first-non-blank] true)))))
+        (move-point [i :first-non-blank])))))
 
 (defn backspace
   [{point :point,

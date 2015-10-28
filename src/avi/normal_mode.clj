@@ -18,7 +18,7 @@
         new-position [i j]]
         (if (b/point-can-move-to-column? buffer j)
           (in e/current-buffer
-              (b/move-point new-position true))
+              (b/move-point new-position))
           beep/beep))))
 
 (defn- current-line 
@@ -39,19 +39,19 @@
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-point [:current 0] true))))
+          (b/move-point [:current 0]))))
 
     ("^"
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-point [:current :first-non-blank] true))))
+          (b/move-point [:current :first-non-blank]))))
 
     ("$"
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-point [:current :end-of-line] true))))
+          (b/move-point [:current :end-of-line]))))
 
     ("dd"
       [editor repeat-count]
@@ -69,7 +69,7 @@
             target-line (min specified-line last-line)]
         (+> editor
           (in e/current-buffer
-            (b/move-point [target-line :first-non-blank] true)))))
+            (b/move-point [target-line :first-non-blank])))))
 
     ("h"
       [editor]
@@ -115,7 +115,7 @@
                             (dec repeat-count)
                             last-line)]
           (in e/current-buffer
-            (b/move-point [target-line :first-non-blank] true)))))
+            (b/move-point [target-line :first-non-blank])))))
 
     ("H"
       [editor repeat-count]

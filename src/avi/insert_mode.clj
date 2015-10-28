@@ -63,7 +63,7 @@
             (in e/current-buffer
               (in b/lines-and-point
                 (b/change [i 0] [i 0] "\n" :left)
-                (b/move-point [i 0] true))))))))
+                (b/move-point [i 0]))))))))
 
 (defn- key->text
   [key]
@@ -110,7 +110,7 @@
             [i j] (:point b)
             new-j (max (dec j) 0)]
         (in e/current-buffer
-            (b/move-point [i new-j] true)
+            (b/move-point [i new-j])
             b/commit))
       (e/enter-normal-mode))))
 
