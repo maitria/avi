@@ -235,17 +235,17 @@
       (= 1 (line-count buffer))
       (do
         (change [i 0] [i (count (get lines i))] "" :left)
-        (move-point [0 0]))
+        (move-point [0 0] true))
 
       (= i (dec (line-count buffer)))
       (do
         (change [(dec i) (count (get lines (dec i)))] [i (count (get lines i))] "" :left)
-        (move-point [(dec i) :first-non-blank]))
+        (move-point [(dec i) :first-non-blank] true))
 
       :else
       (do
         (change [i 0] [(inc i) 0] "" :left)
-        (move-point [i :first-non-blank])))))
+        (move-point [i :first-non-blank] true)))))
 
 (defn backspace
   [{point :point,

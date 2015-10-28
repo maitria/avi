@@ -39,7 +39,7 @@
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-point [:current 0]))))
+          (b/move-point [:current 0] true))))
 
     ("^"
       [editor]
@@ -69,7 +69,7 @@
             target-line (min specified-line last-line)]
         (+> editor
           (in e/current-buffer
-            (b/move-point [target-line :first-non-blank])))))
+            (b/move-point [target-line :first-non-blank] true)))))
 
     ("h"
       [editor]
@@ -115,7 +115,7 @@
                             (dec repeat-count)
                             last-line)]
           (in e/current-buffer
-            (b/move-point [target-line :first-non-blank])))))
+            (b/move-point [target-line :first-non-blank] true)))))
 
     ("H"
       [editor repeat-count]
