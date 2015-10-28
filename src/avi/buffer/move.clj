@@ -26,7 +26,7 @@
         middle (min middle-of-viewport middle-of-file)]
     middle))
 
-(defn- j-within-line
+(defn- default-column
   [{:keys [lines last-explicit-j]} i]
   (let [j last-explicit-j
         line-length (count (get lines i))
@@ -54,7 +54,7 @@
           j (case j
               :end-of-line     (max 0 (dec (count (get lines i))))
               :first-non-blank (index-of-first-non-blank (get lines i))
-              :last-explicit   (j-within-line buffer i)
+              :last-explicit   (default-column buffer i)
               j)]
       (assoc :point [i j])
       (if explicit?
