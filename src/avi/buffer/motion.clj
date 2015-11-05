@@ -1,4 +1,4 @@
-(ns avi.buffer.move
+(ns avi.buffer.motion
   "Primitives for moving the point."
   (:require [avi.buffer
               [locations :as l]]

@@ -6,13 +6,13 @@
             [avi.buffer
               [lines :as lines]
               [locations :as l]
-              [move]]
+              [motion]]
             [avi.pervasive :refer :all]
             [avi.world :as w]
             [schema.core :as s]
             [potemkin :refer [import-vars]]))
 
-(import-vars [avi.buffer.move
+(import-vars [avi.buffer.motion
                 adjust-viewport-to-contain-point
                 move-point])
 
