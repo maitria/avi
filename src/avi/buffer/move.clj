@@ -46,26 +46,36 @@
       (dec leading-space-count)
       leading-space-count)))
 
+(defmulti magic-placeholder-value (fn [buffer kind param] kind))
+
+(defmethod magic-placeholder-value [:row :current]
+  [buffer _ offset]
+  (+ (get-in buffer [:point 0]) (or offset 0)))
+
+(defmethod magic-placeholder-value [:row :viewport-top]
+  [{:keys [viewport-top]} _ lines-below]
+  (+ viewport-top (or lines-below 0)))
+
+(defmethod magic-placeholder-value [:row :viewport-bottom]
+  [{:keys [lines viewport-top viewport-height]} _ count-from-bottom]
+  (let [count-from-bottom (or count-from-bottom 0)
+        bottom-of-viewport (dec (+ viewport-top viewport-height))
+        bottom-of-file (dec (count lines))
+        count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
+        count-from-bottom-of-file (- bottom-of-file count-from-bottom)
+        new-line (max viewport-top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
+    new-line))
+
+(defmethod magic-placeholder-value [:row :viewport-middle]
+  [buffer _ _]
+  (viewport-middle buffer))
+
 (s/defn resolve-motion :- l/Location
   [{:keys [lines viewport-top viewport-height] :as buffer} [_ [i j]]]
-  (let [i (if (map? i)
-            (cond
-              (:viewport-top i)
-              (+ viewport-top (:viewport-top i))
-
-              (:viewport-bottom i)
-              (let [count-from-bottom (:viewport-bottom i)
-                    bottom-of-viewport (dec (+ viewport-top viewport-height))
-                    bottom-of-file (dec (count lines))
-                    count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
-                    count-from-bottom-of-file (- bottom-of-file count-from-bottom)
-                    new-line (max viewport-top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
-                new-line))
-
-            (case i
-              :current         (get-in buffer [:point 0])
-              :viewport-middle (viewport-middle buffer)
-              i))
+  (let [i (cond
+            (number? i) i
+            (map? i)    (magic-placeholder-value buffer [:row (first (keys i))] (first (vals i)))
+            :else       (magic-placeholder-value buffer [:row i] nil))
         j (case j
             :end-of-line     (max 0 (dec (count (get lines i))))
             :first-non-blank (index-of-first-non-blank (get lines i))
