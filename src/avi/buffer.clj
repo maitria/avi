@@ -155,12 +155,6 @@
             new-line (max top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
         (move-point [:to [new-line :last-explicit]]))))
 
-(defn point-to-top-of-viewport
-  [{top :viewport-top,
-    :as buffer}
-   count-from-top]
-  (move-point buffer [:to [(+ top count-from-top) :last-explicit]]))
-
 ;; Changes, undo, redo
 
 (defn start-transaction

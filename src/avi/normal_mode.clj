@@ -120,9 +120,9 @@
     ("H"
       [editor repeat-count]
       (+> editor
-          (let [count (dec (or repeat-count 1))]
+          (let [lines-from-top (dec (or repeat-count 1))]
             (in e/current-buffer
-                (b/point-to-top-of-viewport count)))))
+              (b/move-point [:to [{:viewport-top lines-from-top} :last-explicit]])))))
 
     ("J"
       [editor repeat-count]

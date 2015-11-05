@@ -47,11 +47,15 @@
       leading-space-count)))
 
 (s/defn resolve-motion :- l/Location
-  [{:keys [lines] :as buffer} [_ [i j]]]
-  (let [i (case i
-            :current         (get-in buffer [:point 0])
-            :viewport-middle (viewport-middle buffer)
-            i)
+  [{:keys [lines viewport-top] :as buffer} [_ [i j]]]
+  (let [i (if (map? i)
+            (cond
+              (:viewport-top i)
+              (+ viewport-top (:viewport-top i)))
+            (case i
+              :current         (get-in buffer [:point 0])
+              :viewport-middle (viewport-middle buffer)
+              i))
         j (case j
             :end-of-line     (max 0 (dec (count (get lines i))))
             :first-non-blank (index-of-first-non-blank (get lines i))
