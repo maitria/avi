@@ -1,4 +1,4 @@
-(ns avi.buffer.motion.to
+(ns avi.buffer.motion.goto
   (:require [avi.buffer
               [locations :as l]
               [motion :as m]]

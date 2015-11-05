@@ -8,7 +8,7 @@
   (fn [_ [motion-type]]
     motion-type))
 
-(require '[avi.buffer.motion to])
+(require '[avi.buffer.motion goto])
 
 (defn adjust-viewport-to-contain-point
   [buffer]
