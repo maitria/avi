@@ -72,17 +72,32 @@
   [buffer _ _]
   (viewport-middle buffer))
 
+(defmulti magic-column-value
+  (fn [buffer kind row param]
+    kind))
+
+(defmethod magic-column-value :end-of-line
+  [{:keys [lines]} _ row _]
+  (max 0 (dec (count (get lines row)))))
+
+(defmethod magic-column-value :first-non-blank
+  [{:keys [lines]} _ row _]
+  (index-of-first-non-blank (get lines row)))
+
+(defmethod magic-column-value :last-explicit
+  [buffer _ row _]
+  (default-column buffer row))
+
 (s/defn resolve-motion :- l/Location
-  [{:keys [lines viewport-top viewport-height] :as buffer} [_ [i j]]]
+  [buffer [_ [i j]]]
   (let [i (cond
             (number? i) i
             (map? i)    (magic-row-value buffer (first (keys i)) (first (vals i)))
             :else       (magic-row-value buffer i nil))
-        j (case j
-            :end-of-line     (max 0 (dec (count (get lines i))))
-            :first-non-blank (index-of-first-non-blank (get lines i))
-            :last-explicit   (default-column buffer i)
-            j)]
+        j (cond
+            (number? j) j
+            (map? j)    (magic-column-value buffer (first (keys j)) i (first (vals j)))
+            :else       (magic-column-value buffer j i nil))]
     [i j]))
 
 (defn move-point
