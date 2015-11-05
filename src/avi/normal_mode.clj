@@ -141,9 +141,9 @@
     ("L"
       [editor repeat-count]
       (+> editor
-          (let [count (dec (or repeat-count 1))]
-            (in e/current-buffer
-                (b/point-to-bottom-of-viewport count)))))
+        (let [count (dec (or repeat-count 1))]
+          (in e/current-buffer
+            (b/move-point [:to [{:viewport-bottom count} :last-explicit]])))))
 
     ("M"
       [editor]

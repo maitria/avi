@@ -142,19 +142,6 @@
         (move-point [:to [(clamp-point-row buffer (+ i scroll-adjust)) :last-explicit]])
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
-(defn point-to-bottom-of-viewport
-  [{top :viewport-top,
-    height :viewport-height,
-    :as buffer}
-   count-from-bottom]
-  (+> buffer
-      (let [bottom-of-viewport (dec (+ top height))
-            bottom-of-file (dec (line-count buffer))
-            count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
-            count-from-bottom-of-file (- bottom-of-file count-from-bottom)
-            new-line (max top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
-        (move-point [:to [new-line :last-explicit]]))))
-
 ;; Changes, undo, redo
 
 (defn start-transaction

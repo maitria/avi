@@ -47,11 +47,21 @@
       leading-space-count)))
 
 (s/defn resolve-motion :- l/Location
-  [{:keys [lines viewport-top] :as buffer} [_ [i j]]]
+  [{:keys [lines viewport-top viewport-height] :as buffer} [_ [i j]]]
   (let [i (if (map? i)
             (cond
               (:viewport-top i)
-              (+ viewport-top (:viewport-top i)))
+              (+ viewport-top (:viewport-top i))
+
+              (:viewport-bottom i)
+              (let [count-from-bottom (:viewport-bottom i)
+                    bottom-of-viewport (dec (+ viewport-top viewport-height))
+                    bottom-of-file (dec (count lines))
+                    count-from-bottom-of-viewport (- bottom-of-viewport count-from-bottom)
+                    count-from-bottom-of-file (- bottom-of-file count-from-bottom)
+                    new-line (max viewport-top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
+                new-line))
+
             (case i
               :current         (get-in buffer [:point 0])
               :viewport-middle (viewport-middle buffer)
