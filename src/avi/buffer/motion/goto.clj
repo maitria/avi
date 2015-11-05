@@ -63,7 +63,7 @@
     j-within-line))
 
 
-(s/defmethod m/resolve-motion :to :- l/Location
+(s/defmethod m/resolve-motion :goto :- l/Location
   [buffer [_ [i j]]]
   (let [i (cond
             (number? i) i

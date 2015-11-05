@@ -18,7 +18,7 @@
         new-position [i j]]
         (if (b/point-can-move-to-column? buffer j)
           (in e/current-buffer
-              (b/move-point [:to new-position]))
+              (b/move-point [:goto new-position]))
           beep/beep))))
 
 (defn- current-line 
@@ -39,19 +39,19 @@
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-point [:to [:current 0]]))))
+          (b/move-point [:goto [:current 0]]))))
 
     ("^"
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-point [:to [:current :first-non-blank]]))))
+          (b/move-point [:goto [:current :first-non-blank]]))))
 
     ("$"
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-point [:to [:current :end-of-line]]))))
+          (b/move-point [:goto [:current :end-of-line]]))))
 
     ("dd"
       [editor repeat-count]
@@ -69,7 +69,7 @@
             target-line (min specified-line last-line)]
         (+> editor
           (in e/current-buffer
-            (b/move-point [:to [target-line :first-non-blank]])))))
+            (b/move-point [:goto [target-line :first-non-blank]])))))
 
     ("h"
       [editor]
@@ -115,14 +115,14 @@
                             (dec repeat-count)
                             last-line)]
           (in e/current-buffer
-            (b/move-point [:to [target-line :first-non-blank]])))))
+            (b/move-point [:goto [target-line :first-non-blank]])))))
 
     ("H"
       [editor repeat-count]
       (+> editor
           (let [lines-from-top (dec (or repeat-count 1))]
             (in e/current-buffer
-              (b/move-point [:to [{:viewport-top lines-from-top} :last-explicit]])))))
+              (b/move-point [:goto [{:viewport-top lines-from-top} :last-explicit]])))))
 
     ("J"
       [editor repeat-count]
@@ -143,13 +143,13 @@
       (+> editor
         (let [count (dec (or repeat-count 1))]
           (in e/current-buffer
-            (b/move-point [:to [{:viewport-bottom count} :last-explicit]])))))
+            (b/move-point [:goto [{:viewport-bottom count} :last-explicit]])))))
 
     ("M"
       [editor]
       (+> editor
         (in e/current-buffer
-          (b/move-point [:to [:viewport-middle :last-explicit]]))))
+          (b/move-point [:goto [:viewport-middle :last-explicit]]))))
 
     ("<C-D>"
       [editor]

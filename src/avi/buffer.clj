@@ -73,10 +73,10 @@
     (let [viewport-bottom (dec (+ viewport-top viewport-height))]
       (cond
         (< i viewport-top)
-        (move-point [:to [viewport-top :last-explicit]])
+        (move-point [:goto [viewport-top :last-explicit]])
 
         (> i viewport-bottom)
-        (move-point [:to [viewport-bottom :last-explicit]])))))
+        (move-point [:goto [viewport-bottom :last-explicit]])))))
 
 (defn resize
   [buffer height]
@@ -139,7 +139,7 @@
                         :down +1
                         :up -1)
             scroll-adjust (* direction distance)]
-        (move-point [:to [(clamp-point-row buffer (+ i scroll-adjust)) :last-explicit]])
+        (move-point [:goto [(clamp-point-row buffer (+ i scroll-adjust)) :last-explicit]])
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
 ;; Changes, undo, redo
@@ -192,7 +192,7 @@
     (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)
       (if new-point
-        (move-point [:to new-point])))))
+        (move-point [:goto new-point])))))
 
 (defn insert-text
   [{point :point, :as lines-and-text} text]
@@ -216,17 +216,17 @@
       (= 1 (line-count buffer))
       (do
         (change [i 0] [i (count (get lines i))] "" :left)
-        (move-point [:to [0 0]]))
+        (move-point [:goto [0 0]]))
 
       (= i (dec (line-count buffer)))
       (do
         (change [(dec i) (count (get lines (dec i)))] [i (count (get lines i))] "" :left)
-        (move-point [:to [(dec i) :first-non-blank]]))
+        (move-point [:goto [(dec i) :first-non-blank]]))
 
       :else
       (do
         (change [i 0] [(inc i) 0] "" :left)
-        (move-point [:to [i :first-non-blank]])))))
+        (move-point [:goto [i :first-non-blank]])))))
 
 (defn backspace
   [{point :point,
