@@ -46,7 +46,9 @@
       (dec leading-space-count)
       leading-space-count)))
 
-(defmulti magic-placeholder-value (fn [buffer kind param] kind))
+(defmulti magic-placeholder-value
+  (fn [buffer kind param]
+    kind))
 
 (defmethod magic-placeholder-value [:row :current]
   [buffer _ offset]
