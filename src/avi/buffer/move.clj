@@ -50,15 +50,15 @@
   (fn [buffer kind param]
     kind))
 
-(defmethod magic-row-value [:row :current]
+(defmethod magic-row-value :current
   [buffer _ offset]
   (+ (get-in buffer [:point 0]) (or offset 0)))
 
-(defmethod magic-row-value [:row :viewport-top]
+(defmethod magic-row-value :viewport-top
   [{:keys [viewport-top]} _ lines-below]
   (+ viewport-top (or lines-below 0)))
 
-(defmethod magic-row-value [:row :viewport-bottom]
+(defmethod magic-row-value :viewport-bottom
   [{:keys [lines viewport-top viewport-height]} _ count-from-bottom]
   (let [count-from-bottom (or count-from-bottom 0)
         bottom-of-viewport (dec (+ viewport-top viewport-height))
@@ -68,7 +68,7 @@
         new-line (max viewport-top (min count-from-bottom-of-viewport count-from-bottom-of-file))]
     new-line))
 
-(defmethod magic-row-value [:row :viewport-middle]
+(defmethod magic-row-value :viewport-middle
   [buffer _ _]
   (viewport-middle buffer))
 
@@ -76,8 +76,8 @@
   [{:keys [lines viewport-top viewport-height] :as buffer} [_ [i j]]]
   (let [i (cond
             (number? i) i
-            (map? i)    (magic-row-value buffer [:row (first (keys i))] (first (vals i)))
-            :else       (magic-row-value buffer [:row i] nil))
+            (map? i)    (magic-row-value buffer (first (keys i)) (first (vals i)))
+            :else       (magic-row-value buffer i nil))
         j (case j
             :end-of-line     (max 0 (dec (count (get lines i))))
             :first-non-blank (index-of-first-non-blank (get lines i))
