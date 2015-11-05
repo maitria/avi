@@ -19,15 +19,6 @@
         (> point-i viewport-bottom)
         (assoc :viewport-top (inc (- point-i height)))))))
 
-(defn- index-of-first-non-blank
-  [string]
-  (let [leading-space-count (count (re-find #"^\s*" string))
-        all-spaces? (and (> leading-space-count 0)
-                         (= leading-space-count (count string)))]
-    (if all-spaces?
-      (dec leading-space-count)
-      leading-space-count)))
-
 (defmulti magic-row-value
   (fn [buffer kind param]
     kind))
@@ -70,7 +61,13 @@
 
 (defmethod magic-column-value :first-non-blank
   [{:keys [lines]} _ row _]
-  (index-of-first-non-blank (get lines row)))
+  (let [string (get lines row)
+        leading-space-count (count (re-find #"^\s*" string))
+        all-spaces? (and (> leading-space-count 0)
+                         (= leading-space-count (count string)))]
+    (if all-spaces?
+      (dec leading-space-count)
+      leading-space-count)))
 
 (defmethod magic-column-value :last-explicit
   [{:keys [lines last-explicit-j]} _ i _]
