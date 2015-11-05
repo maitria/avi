@@ -29,14 +29,6 @@
         middle (min middle-of-viewport middle-of-file)]
     middle))
 
-(defn- default-column
-  [{:keys [lines last-explicit-j]} i]
-  (let [j last-explicit-j
-        line-length (count (get lines i))
-        j-not-after-end (min (dec line-length) j)
-        j-within-line (max 0 j-not-after-end)]
-    j-within-line))
-
 (defn- index-of-first-non-blank
   [string]
   (let [leading-space-count (count (re-find #"^\s*" string))
@@ -85,8 +77,12 @@
   (index-of-first-non-blank (get lines row)))
 
 (defmethod magic-column-value :last-explicit
-  [buffer _ row _]
-  (default-column buffer row))
+  [{:keys [lines last-explicit-j]} _ i _]
+  (let [j last-explicit-j
+        line-length (count (get lines i))
+        j-not-after-end (min (dec line-length) j)
+        j-within-line (max 0 j-not-after-end)]
+    j-within-line))
 
 (s/defn resolve-motion :- l/Location
   [buffer [_ [i j]]]
