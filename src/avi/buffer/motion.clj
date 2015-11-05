@@ -77,7 +77,11 @@
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
 
-(s/defn resolve-motion :- l/Location
+(defmulti resolve-motion
+  (fn [_ [motion-type]]
+    motion-type))
+
+(s/defmethod resolve-motion :to :- l/Location
   [buffer [_ [i j]]]
   (let [i (cond
             (number? i) i
