@@ -19,16 +19,6 @@
         (> point-i viewport-bottom)
         (assoc :viewport-top (inc (- point-i height)))))))
 
-(defn- viewport-middle
-  [{top :viewport-top,
-    height :viewport-height,
-    :keys [lines],
-    :as buffer}]
-  (let [middle-of-viewport (dec (+ top (quot height 2)))
-        middle-of-file (quot (dec (count lines)) 2)
-        middle (min middle-of-viewport middle-of-file)]
-    middle))
-
 (defn- index-of-first-non-blank
   [string]
   (let [leading-space-count (count (re-find #"^\s*" string))
@@ -61,8 +51,14 @@
     new-line))
 
 (defmethod magic-row-value :viewport-middle
-  [buffer _ _]
-  (viewport-middle buffer))
+  [{top :viewport-top,
+    height :viewport-height,
+    :keys [lines],
+    :as buffer} _ _]
+  (let [middle-of-viewport (dec (+ top (quot height 2)))
+        middle-of-file (quot (dec (count lines)) 2)
+        middle (min middle-of-viewport middle-of-file)]
+    middle))
 
 (defmulti magic-column-value
   (fn [buffer kind row param]
