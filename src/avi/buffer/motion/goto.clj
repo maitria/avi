@@ -70,15 +70,16 @@
   [{:keys [lines]} row]
   (max 0 (min (dec (count lines)) row)))
 
+(defn- absolutize
+  [v f]
+  (cond
+    (number? v) v
+    (map? v)    (f (first (keys v)) (first (vals v)))
+    :else       (f v nil)))
+
 (s/defmethod m/resolve-motion :goto :- l/Location
   [{:keys [lines] :as buffer} [_ [i j]]]
-  (let [i (cond
-            (number? i) i
-            (map? i)    (magic-row-value buffer (first (keys i)) (first (vals i)))
-            :else       (magic-row-value buffer i nil))
+  (let [i (absolutize i #(magic-row-value buffer %1 %2))
         i (clamp-point-row buffer i)
-        j (cond
-            (number? j) j
-            (map? j)    (magic-column-value buffer (first (keys j)) i (first (vals j)))
-            :else       (magic-column-value buffer j i nil))]
+        j (absolutize j #(magic-column-value buffer %1 i %2))]
     [i j]))
