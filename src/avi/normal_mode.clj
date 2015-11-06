@@ -115,7 +115,7 @@
       (+> editor
           (let [lines-from-top (dec (or repeat-count 1))]
             (in e/current-buffer
-              (b/move-point [:goto [{:viewport-top lines-from-top} :last-explicit]])))))
+              (b/move-point [:goto [[:viewport-top lines-from-top] :last-explicit]])))))
 
     ("J"
       [editor repeat-count]
@@ -136,7 +136,7 @@
       (+> editor
         (let [count (dec (or repeat-count 1))]
           (in e/current-buffer
-            (b/move-point [:goto [{:viewport-bottom count} :last-explicit]])))))
+            (b/move-point [:goto [[:viewport-bottom count] :last-explicit]])))))
 
     ("M"
       [editor]
