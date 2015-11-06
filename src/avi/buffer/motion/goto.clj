@@ -64,11 +64,14 @@
 
 
 (s/defmethod m/resolve-motion :goto :- l/Location
-  [buffer [_ [i j]]]
+  [{:keys [lines] :as buffer} [_ [i j]]]
   (let [i (cond
             (number? i) i
             (map? i)    (magic-row-value buffer (first (keys i)) (first (vals i)))
             :else       (magic-row-value buffer i nil))
+        i (-> i
+            (min (dec (count lines)))
+            (max 0))
         j (cond
             (number? j) j
             (map? j)    (magic-column-value buffer (first (keys j)) i (first (vals j)))

@@ -63,13 +63,9 @@
 
     ("gg"
       [editor repeat-count]
-      (let [buffer (e/current-buffer editor)
-            specified-line (dec (or repeat-count 1))
-            last-line (dec (b/line-count buffer))
-            target-line (min specified-line last-line)]
-        (+> editor
-          (in e/current-buffer
-            (b/move-point [:goto [target-line :first-non-blank]])))))
+      (+> editor
+        (in e/current-buffer
+          (b/move-point [:goto [(dec (or repeat-count 1)) :first-non-blank]]))))
 
     ("h"
       [editor]
