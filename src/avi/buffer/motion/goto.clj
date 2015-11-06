@@ -66,6 +66,9 @@
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
 
+(defn- clamp-point-row
+  [{:keys [lines]} row]
+  (max 0 (min (dec (count lines)) row)))
 
 (s/defmethod m/resolve-motion :goto :- l/Location
   [{:keys [lines] :as buffer} [_ [i j]]]
@@ -73,9 +76,7 @@
             (number? i) i
             (map? i)    (magic-row-value buffer (first (keys i)) (first (vals i)))
             :else       (magic-row-value buffer i nil))
-        i (-> i
-            (min (dec (count lines)))
-            (max 0))
+        i (clamp-point-row buffer i)
         j (cond
             (number? j) j
             (map? j)    (magic-column-value buffer (first (keys j)) i (first (vals j)))

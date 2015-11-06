@@ -105,13 +105,6 @@
         max-top (max 0 (- line-count height))]
     (min max-top (max 0 new-top))))
 
-(defn- clamp-point-row
-  [{top :viewport-top,
-    height :viewport-height,
-    :as buffer}
-   new-top]
-  (max 0 (min (dec (line-count buffer)) new-top)))
-
 (defn- clamped-j
   [{[i] :point,
     :as buffer}
@@ -139,7 +132,7 @@
                         :down +1
                         :up -1)
             scroll-adjust (* direction distance)]
-        (move-point [:goto [(clamp-point-row buffer (+ i scroll-adjust)) :last-explicit]])
+        (move-point [:goto [(+ i scroll-adjust) :last-explicit]])
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
 ;; Changes, undo, redo
