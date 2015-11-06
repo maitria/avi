@@ -105,13 +105,10 @@
     ("G"
       [editor repeat-count]
       (+> editor
-        (let [buffer (e/current-buffer editor)
-              last-line (dec (b/line-count buffer))
-              target-line (if repeat-count
-                            (dec repeat-count)
-                            last-line)]
-          (in e/current-buffer
-            (b/move-point [:goto [target-line :first-non-blank]])))))
+        (in e/current-buffer
+          (if repeat-count
+            (b/move-point [:goto [(dec repeat-count) :first-non-blank]])
+            (b/move-point [:goto [:last :first-non-blank]])))))
 
     ("H"
       [editor repeat-count]

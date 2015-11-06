@@ -36,6 +36,10 @@
         middle (min middle-of-viewport middle-of-file)]
     middle))
 
+(defmethod magic-row-value :last
+  [{:keys [lines]} _ _]
+  (max 0 (dec (count lines))))
+
 (defmulti magic-column-value
   (fn [buffer kind row param]
     kind))
