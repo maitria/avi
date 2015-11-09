@@ -16,21 +16,11 @@
 
 (defn split-string-of-commands
   [key-sequence]
-  (loop [remaining key-sequence
+  (loop [remaining (or key-sequence "")
          result []]
-    (cond
-      (not (seq remaining))
-      result
-
-      (= \< (first remaining))
-      (let [key-name (apply str (concat (take-while #(not= % \>) remaining) [\>]))
-            remaining (->> remaining
-                           (drop-while #(not= % \>))
-                           rest)]
-        (recur remaining (conj result key-name)))
-
-      :else
-      (recur (rest remaining) (conj result (str (first remaining)))))))
+    (if-let [[_ key rest] (re-matches #"^(<[^<]+>|[^<])(.*)$" remaining)]
+      (recur rest (conj result key))
+      result)))
 
 (defn- events
   [string-of-commands]
