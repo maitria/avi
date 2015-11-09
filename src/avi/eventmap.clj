@@ -26,15 +26,8 @@
        (map #(vector :keystroke %))
        vec))
 
-(defn- parse-eventmap-entry
-  [entry-form]
-  (let [[event-spec args & body] entry-form]
-    {:event-spec event-spec,
-     :args args,
-     :body body}))
-
 (defn- entry-handler-fn
-  [{:keys [args body]}]
+  [args body]
   (let [arg-named (fn [the-name]
                     (some->> args
                       (filter #(= (name %) the-name))
@@ -76,10 +69,9 @@
 (defmacro eventmap
   [& mappings]
   (let [em (reduce
-             (fn [eventmap args]
-               (let [entry (parse-eventmap-entry args)
-                     event-path (events (:event-spec entry))]
-                 (assoc-in eventmap event-path (entry-handler-fn entry))))
+             (fn [eventmap [event-spec args & body]]
+               (let [event-path (events event-spec)]
+                 (assoc-in eventmap event-path (entry-handler-fn args body))))
              {}
              mappings)]
     `(invoke-event-handler ~em)))
