@@ -37,33 +37,22 @@
      :undo-log ()
      :redo-log ()}))
 
-;; Lenses
-
-(let [lines-and-point-keys [:viewport-top :viewport-height :lines :point :last-explicit-j :beep? :message]]
-  (defn lines-and-point
-    ([buffer]
-     (select-keys buffer lines-and-point-keys))
-    ([buffer updated-lines]
-     {:post [(or (:in-transaction? %)
-                 (= (:lines buffer) (:lines %)))]}
-     (merge buffer (select-keys updated-lines lines-and-point-keys)))))
-
 ;; --
 
 (defn write
   [{filename :name,
+    :keys [lines]
     :as buffer}]
-  (let [{:keys [lines]} (lines-and-point buffer)]
-    (w/write-file w/*world* filename (string/join "\n" lines)))
+  (w/write-file w/*world* filename (string/join "\n" lines))
   buffer)
 
 (defn line
   [buffer i]
-  (-> buffer lines-and-point :lines (get i)))
+  (-> buffer :lines (get i)))
 
 (defn line-count
   [buffer]
-  (-> buffer lines-and-point :lines count))
+  (-> buffer :lines count))
 
 (defn- adjust-point-to-viewport
   [{:keys [viewport-top viewport-height]

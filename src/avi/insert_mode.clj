@@ -18,21 +18,21 @@
           b/start-transaction)))
 
 (defn advance-for-append
-  [{[i j] :point, lines :lines :as lines-and-point}]
-  (assoc lines-and-point :point [i (min (count (get lines i)) (inc j))]))
+  [{[i j] :point, lines :lines :as buffer}]
+  (assoc buffer :point [i (min (count (get lines i)) (inc j))]))
 
 (defn move-to-eol
-  [{[i] :point, lines :lines :as lines-and-point}]
-  (assoc lines-and-point :point [i (count (get lines i))]))
+  [{[i] :point, lines :lines :as buffer}]
+  (assoc buffer :point [i (count (get lines i))]))
 
 (def wrap-enter-insert-mode
   (em/eventmap
     ("a"
       [editor repeat-count]
       (+> editor
-          (enter-insert-mode)
-          (in (l/comp e/current-buffer b/lines-and-point)
-            advance-for-append)))
+        (enter-insert-mode)
+        (in e/current-buffer
+          advance-for-append)))
 
     ("i"
       [editor repeat-count]
@@ -51,9 +51,9 @@
     ("A"
       [editor repeat-count]
       (+> editor
-          (enter-insert-mode)
-          (in (l/comp e/current-buffer b/lines-and-point)
-            move-to-eol)))
+        (enter-insert-mode)
+        (in e/current-buffer
+          move-to-eol)))
 
     ("O"
       [editor repeat-count]
@@ -61,9 +61,8 @@
           (let [{[i] :point} (e/current-buffer editor)]
             (enter-insert-mode [[:keystroke "<Enter>"]])
             (in e/current-buffer
-              (in b/lines-and-point
-                (b/change [i 0] [i 0] "\n" :left)
-                (b/move-point [:goto [i 0]]))))))))
+              (b/change [i 0] [i 0] "\n" :left)
+              (b/move-point [:goto [i 0]])))))))
 
 (defn- key->text
   [key]
@@ -81,8 +80,7 @@
             (if (= [0 0] (:point (e/current-buffer editor)))
               beep/beep
               b/backspace)
-            (in b/lines-and-point
-              (b/insert-text (key->text event-data))))))))
+            (b/insert-text (key->text event-data)))))))
 
 (defn- play-script
   [editor script]
