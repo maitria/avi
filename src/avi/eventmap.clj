@@ -67,7 +67,7 @@
               (assoc :pending-events [])))))))
 
 (defmacro eventmap
-  [& mappings]
+  [mappings]
   (let [em (reduce
              (fn [eventmap [event-spec f]]
                (let [event-path (events event-spec)]

@@ -27,37 +27,37 @@
 
 (def wrap-enter-insert-mode
   (em/eventmap
-    ("a" (em/eventfn [editor repeat-count]
+    {"a" (em/eventfn [editor repeat-count]
            (+> editor
-             (enter-insert-mode)
-             (in e/current-buffer
-               advance-for-append))))
+               (enter-insert-mode)
+               (in e/current-buffer
+                   advance-for-append)))
 
-    ("i" (em/eventfn [editor repeat-count]
-           (enter-insert-mode editor)))
+     "i" (em/eventfn [editor repeat-count]
+           (enter-insert-mode editor))
 
-    ("o" (em/eventfn [editor repeat-count]
+     "o" (em/eventfn [editor repeat-count]
            (+> editor
              (let [{:keys [lines] [i] :point} (e/current-buffer editor)
                    eol (count (get lines i))]
                (enter-insert-mode [[:keystroke "<Enter>"]])
                (in e/current-buffer
                    (b/change [i eol] [i eol] "\n" :left))
-               (e/change-line inc)))))
+               (e/change-line inc))))
 
-    ("A" (em/eventfn [editor repeat-count]
+     "A" (em/eventfn [editor repeat-count]
            (+> editor
              (enter-insert-mode)
              (in e/current-buffer
-               move-to-eol))))
+                 move-to-eol)))
 
-    ("O" (em/eventfn [editor repeat-count]
+     "O" (em/eventfn [editor repeat-count]
            (+> editor
              (let [{[i] :point} (e/current-buffer editor)]
                (enter-insert-mode [[:keystroke "<Enter>"]])
                (in e/current-buffer
                  (b/change [i 0] [i 0] "\n" :left)
-                 (b/move-point [:goto [i 0]]))))))))
+                 (b/move-point [:goto [i 0]])))))}))
 
 (defn- key->text
   [key]
