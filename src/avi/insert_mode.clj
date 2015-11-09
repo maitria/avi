@@ -27,42 +27,37 @@
 
 (def wrap-enter-insert-mode
   (em/eventmap
-    ("a"
-      [editor repeat-count]
-      (+> editor
-        (enter-insert-mode)
-        (in e/current-buffer
-          advance-for-append)))
+    ("a" (em/eventfn [editor repeat-count]
+           (+> editor
+             (enter-insert-mode)
+             (in e/current-buffer
+               advance-for-append))))
 
-    ("i"
-      [editor repeat-count]
-      (enter-insert-mode editor))
+    ("i" (em/eventfn [editor repeat-count]
+           (enter-insert-mode editor)))
 
-    ("o"
-      [editor repeat-count]
-      (+> editor
-        (let [{:keys [lines] [i] :point} (e/current-buffer editor)
-              eol (count (get lines i))]
-          (enter-insert-mode [[:keystroke "<Enter>"]])
-          (in e/current-buffer
-            (b/change [i eol] [i eol] "\n" :left))
-          (e/change-line inc))))
+    ("o" (em/eventfn [editor repeat-count]
+           (+> editor
+             (let [{:keys [lines] [i] :point} (e/current-buffer editor)
+                   eol (count (get lines i))]
+               (enter-insert-mode [[:keystroke "<Enter>"]])
+               (in e/current-buffer
+                   (b/change [i eol] [i eol] "\n" :left))
+               (e/change-line inc)))))
 
-    ("A"
-      [editor repeat-count]
-      (+> editor
-        (enter-insert-mode)
-        (in e/current-buffer
-          move-to-eol)))
+    ("A" (em/eventfn [editor repeat-count]
+           (+> editor
+             (enter-insert-mode)
+             (in e/current-buffer
+               move-to-eol))))
 
-    ("O"
-      [editor repeat-count]
-      (+> editor
-          (let [{[i] :point} (e/current-buffer editor)]
-            (enter-insert-mode [[:keystroke "<Enter>"]])
-            (in e/current-buffer
-              (b/change [i 0] [i 0] "\n" :left)
-              (b/move-point [:goto [i 0]])))))))
+    ("O" (em/eventfn [editor repeat-count]
+           (+> editor
+             (let [{[i] :point} (e/current-buffer editor)]
+               (enter-insert-mode [[:keystroke "<Enter>"]])
+               (in e/current-buffer
+                 (b/change [i 0] [i 0] "\n" :left)
+                 (b/move-point [:goto [i 0]]))))))))
 
 (defn- key->text
   [key]

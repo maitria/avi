@@ -26,12 +26,12 @@
        (map #(vector :keystroke %))
        vec))
 
-(defn- entry-handler-fn
-  [args body]
+(defmacro eventfn
+  [args & body]
   (let [arg-named (fn [the-name]
                     (some->> args
-                      (filter #(= (name %) the-name))
-                      first))
+                             (filter #(= (name %) the-name))
+                             first))
         editor-arg (arg-named "editor")
         repeat-arg (arg-named "repeat-count")
 
@@ -69,9 +69,9 @@
 (defmacro eventmap
   [& mappings]
   (let [em (reduce
-             (fn [eventmap [event-spec args & body]]
+             (fn [eventmap [event-spec f]]
                (let [event-path (events event-spec)]
-                 (assoc-in eventmap event-path (entry-handler-fn args body))))
+                 (assoc-in eventmap event-path f)))
              {}
              mappings)]
     `(invoke-event-handler ~em)))
