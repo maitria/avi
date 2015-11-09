@@ -16,11 +16,9 @@
 
 (defn split-string-of-commands
   [key-sequence]
-  (loop [remaining (or key-sequence "")
-         result []]
-    (if-let [[_ key rest] (re-matches #"^(<[^<]+>|[^<])(.*)$" remaining)]
-      (recur rest (conj result key))
-      result)))
+  (lazy-seq
+    (if-let [[_ key rest] (re-matches #"^(<[^<]+>|[^<])(.*)$" (or key-sequence ""))]
+      (cons key (split-string-of-commands rest)))))
 
 (defn- events
   [string-of-commands]
