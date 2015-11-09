@@ -66,7 +66,7 @@
               (event-handler-fn event)
               (assoc :pending-events [])))))))
 
-(defmacro eventmap
+(defn eventmap
   [mappings]
   (let [em (reduce
              (fn [eventmap [event-spec f]]
@@ -74,4 +74,4 @@
                  (assoc-in eventmap event-path f)))
              {}
              mappings)]
-    `(invoke-event-handler ~em)))
+    (invoke-event-handler em)))
