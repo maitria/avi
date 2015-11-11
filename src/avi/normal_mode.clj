@@ -59,8 +59,9 @@
 
      "f<.>" (em/eventfn [editor]
               (+> editor
-                (in e/current-buffer
-                  (b/move-point [:goto [:current [:to-char \x]]]))))
+                (let [ch (get (second (last (:pending-events editor))) 0)]
+                  (in e/current-buffer
+                    (b/move-point [:goto [:current [:to-char ch]]])))))
 
      "gg" (em/eventfn [editor repeat-count]
                       (+> editor

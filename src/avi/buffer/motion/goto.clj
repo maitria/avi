@@ -69,12 +69,12 @@
 (defmethod magic-column-value :to-char
   [{:keys [lines] [_ j] :point} _ i ch]
   (let [line (get lines i)]
-    (loop [j (inc j)]
-      (if-let [line-ch (get line j)]
+    (loop [nj (inc j)]
+      (if-let [line-ch (get line nj)]
         (if (= line-ch ch)
-          j
-          (recur (inc j)))
-        (recur (inc j))))))
+          nj
+          (recur (inc nj)))
+        j))))
 
 (defn- clamp-point-row
   [{:keys [lines]} row]

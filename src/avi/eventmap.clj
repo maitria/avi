@@ -1,5 +1,6 @@
 (ns avi.eventmap
-  (:require [avi.editor :as e]))
+  (:require [avi.editor :as e]
+            [packthread.core :refer :all]))
 
 (defn wrap-handler-with-repeat-loop
   [handler]
@@ -70,17 +71,19 @@
     (fn [editor event]
       (let [event-path (conj (or (:pending-events editor) []) event)
             event-handler-fn (get-in-with-wildcards eventmap event-path)]
-        (cond
-          (not event-handler-fn)
-          (responder editor event)
+        (+> editor
+          (cond
+            (not event-handler-fn)
+            (responder event)
 
-          (map? event-handler-fn)
-          (assoc editor :pending-events event-path)
+            (map? event-handler-fn)
+            (assoc :pending-events event-path)
 
-          :else
-          (-> editor
-            (event-handler-fn event)
-            (assoc :pending-events [])))))))
+            :else
+            (do
+              (assoc :pending-events event-path)
+              (event-handler-fn event)
+              (assoc :pending-events []))))))))
 
 (defn eventmap
   [mappings]
