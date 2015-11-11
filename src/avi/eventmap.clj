@@ -39,15 +39,9 @@
         body (if-not repeat-arg
                `(do ~@body)
                `(let [~repeat-arg (:count ~editor-arg)]
-                  ~@body))
-
-        repeat-loop? (not repeat-arg)
-
-        wrappers (cond-> `(wrap-handler-with-count-reset)
-                   repeat-loop? (conj `wrap-handler-with-repeat-loop))]
-    `(-> (fn [~editor-arg event#]
-           ~body)
-         ~@wrappers)))
+                  ~@body))]
+    `(fn [~editor-arg event#]
+       ~body)))
 
 (defn get-with-wildcards
   "Like get, except that a key of [:keystroke \"<.>\"] matches any key event."
@@ -85,11 +79,19 @@
               (event-handler-fn event)
               (assoc :pending-events []))))))))
 
+(defn decorate-event-handler
+  [f]
+  (+> f
+    (if-not (:no-repeat (meta f))
+      wrap-handler-with-repeat-loop)
+    wrap-handler-with-count-reset))
+
 (defn eventmap
   [mappings]
   (let [em (reduce
              (fn [eventmap [event-spec f]]
-               (let [event-path (events event-spec)]
+               (let [event-path (events event-spec)
+                     f (decorate-event-handler f)]
                  (assoc-in eventmap event-path f)))
              {}
              mappings)]
