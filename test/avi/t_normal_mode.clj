@@ -394,4 +394,6 @@
 
 (facts "about `f`"
   (fact "`fx` moves to the next `x`"
-    (editor :editing "helloxthere" :after "fx") => (point [0 5])))
+    (editor :editing "helloxthere" :after "fx") => (point [0 5])
+    (editor :editing "...x...x" :after "fx") => (point [0 3])
+    (editor :editing "...x...x" :after "3lfx") => (point [0 7])))
