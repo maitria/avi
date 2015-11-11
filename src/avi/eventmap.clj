@@ -48,17 +48,20 @@
            ~body)
          ~@wrappers)))
 
+(defn get-with-wildcards
+  [m k]
+  (or (get m k)
+      (and (= (first k) :keystroke)
+           (get m [:keystroke "<.>"]))))
+
 (defn get-in-with-wildcards
   "Like get-in, except that a key of [:keystroke \"<.>\"] matches any key
   event."
   [eventmap [path-first & path-rest :as path]]
   (if (empty? path)
     eventmap
-    (if-let [submap (get eventmap path-first)]
-      (recur submap path-rest)
-      (if-let [submap (and (= (first path-first) :keystroke)
-                           (get eventmap [:keystroke "<.>"]))]
-        (recur submap path-rest)))))
+    (if-let [submap (get-with-wildcards eventmap path-first)]
+      (recur submap path-rest))))
 
 (defn invoke-event-handler
   [eventmap]
