@@ -48,12 +48,22 @@
            ~body)
          ~@wrappers)))
 
+(defn find-in
+  [eventmap [path-first & path-rest :as path]]
+  (if (empty? path)
+    eventmap
+    (if-let [submap (get eventmap path-first)]
+      (recur submap path-rest)
+      (if-let [submap (and (= (first path-first) :keystroke)
+                           (get eventmap [:keystroke "<.>"]))]
+        (recur submap path-rest)))))
+
 (defn invoke-event-handler
   [eventmap]
   (fn [responder]
     (fn [editor event]
       (let [event-path (conj (or (:pending-events editor) []) event)
-            event-handler-fn (get-in eventmap event-path)]
+            event-handler-fn (find-in eventmap event-path)]
         (cond
           (not event-handler-fn)
           (responder editor event)
