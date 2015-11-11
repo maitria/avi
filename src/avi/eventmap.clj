@@ -49,6 +49,8 @@
          ~@wrappers)))
 
 (defn find-in
+  "Like get-in, except that a key of [:keystroke \"<.>\"] matches any key
+  event."
   [eventmap [path-first & path-rest :as path]]
   (if (empty? path)
     eventmap
