@@ -49,6 +49,7 @@
          ~@wrappers)))
 
 (defn get-with-wildcards
+  "Like get, except that a key of [:keystroke \"<.>\"] matches any key event."
   [m k]
   (or (get m k)
       (and (= (first k) :keystroke)
