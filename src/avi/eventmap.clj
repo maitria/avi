@@ -48,7 +48,7 @@
            ~body)
          ~@wrappers)))
 
-(defn find-in
+(defn get-in-with-wildcards
   "Like get-in, except that a key of [:keystroke \"<.>\"] matches any key
   event."
   [eventmap [path-first & path-rest :as path]]
@@ -65,7 +65,7 @@
   (fn [responder]
     (fn [editor event]
       (let [event-path (conj (or (:pending-events editor) []) event)
-            event-handler-fn (find-in eventmap event-path)]
+            event-handler-fn (get-in-with-wildcards eventmap event-path)]
         (cond
           (not event-handler-fn)
           (responder editor event)
