@@ -27,22 +27,6 @@
        (map #(vector :keystroke %))
        vec))
 
-(defmacro eventfn
-  [args & body]
-  (let [arg-named (fn [the-name]
-                    (some->> args
-                             (filter #(= (name %) the-name))
-                             first))
-        editor-arg (arg-named "editor")
-        repeat-arg (arg-named "repeat-count")
-
-        body (if-not repeat-arg
-               `(do ~@body)
-               `(let [~repeat-arg (:count ~editor-arg)]
-                  ~@body))]
-    `(fn [~editor-arg event#]
-       ~body)))
-
 (defn get-with-wildcards
   "Like get, except that a key of [:keystroke \"<.>\"] matches any key event."
   [m k]

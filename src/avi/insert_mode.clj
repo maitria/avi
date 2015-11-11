@@ -27,37 +27,32 @@
 
 (def wrap-enter-insert-mode
   (em/eventmap
-    {"a" ^:no-repeat (fn [editor _]
-                       (+> editor
-                         enter-insert-mode
-                         (in e/current-buffer
-                           advance-for-append)))
+    {"a" ^:no-repeat (fn+> [editor _]
+                       enter-insert-mode
+                       (in e/current-buffer
+                         advance-for-append))
 
-     "i" ^:no-repeat (fn [editor _]
-                       (enter-insert-mode editor))
+     "i" ^:no-repeat (fn+> [editor _] enter-insert-mode)
 
-     "o" ^:no-repeat (fn [editor _]
-                       (+> editor
+     "o" ^:no-repeat (fn+> [editor _]
                        (let [{:keys [lines] [i] :point} (e/current-buffer editor)
                              eol (count (get lines i))]
                          (enter-insert-mode [[:keystroke "<Enter>"]])
                          (in e/current-buffer
                              (b/change [i eol] [i eol] "\n" :left))
-                         (e/change-line inc))))
+                         (e/change-line inc)))
 
-     "A" ^:no-repeat (fn [editor _]
-                       (+> editor
-                         (enter-insert-mode)
+     "A" ^:no-repeat (fn+> [editor _]
+                       (enter-insert-mode)
+                       (in e/current-buffer
+                           move-to-eol))
+
+     "O" ^:no-repeat (fn+> [editor _]
+                       (let [{[i] :point} (e/current-buffer editor)]
+                         (enter-insert-mode [[:keystroke "<Enter>"]])
                          (in e/current-buffer
-                           move-to-eol)))
-
-     "O" ^:no-repeat (fn [editor _]
-                       (+> editor
-                         (let [{[i] :point} (e/current-buffer editor)]
-                           (enter-insert-mode [[:keystroke "<Enter>"]])
-                           (in e/current-buffer
-                               (b/change [i 0] [i 0] "\n" :left)
-                               (b/move-point [:goto [i 0]])))))}))
+                             (b/change [i 0] [i 0] "\n" :left)
+                             (b/move-point [:goto [i 0]]))))}))
 
 (defn- key->text
   [key]
