@@ -391,3 +391,7 @@
   (fact "`%` works across lines"
     (editor :editing "\n(fact \"x\"\n  (foo :bar) => 42)" :after "G$%") => (point [1 0])
     (editor :editing "(fact\n\n  (foo :bar) => 42)" :after "%") => (point [2 18])))
+
+(facts "about `f`"
+  (fact "`fx` moves to the next `x`"
+    (editor :editing "helloxthere" :after "fx") => (point [0 5])))

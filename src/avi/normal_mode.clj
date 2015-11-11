@@ -57,6 +57,11 @@
                               (n-times (or repeat-count 1) b/delete-current-line)
                               b/commit)))
 
+     "fx" (em/eventfn [editor]
+            (+> editor
+              (in e/current-buffer
+                (b/move-point [:goto [:current [:to-char \x]]]))))
+
      "gg" (em/eventfn [editor repeat-count]
                       (+> editor
                           (in e/current-buffer

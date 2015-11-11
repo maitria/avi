@@ -66,6 +66,16 @@
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
 
+(defmethod magic-column-value :to-char
+  [{:keys [lines] [_ j] :point} _ i ch]
+  (let [line (get lines i)]
+    (loop [j (inc j)]
+      (if-let [line-ch (get line j)]
+        (if (= line-ch ch)
+          j
+          (recur (inc j)))
+        (recur (inc j))))))
+
 (defn- clamp-point-row
   [{:keys [lines]} row]
   (max 0 (min (dec (count lines)) row)))
