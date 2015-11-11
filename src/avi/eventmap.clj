@@ -79,8 +79,8 @@
 
           :else
           (-> editor
-              (event-handler-fn event)
-              (assoc :pending-events [])))))))
+            (event-handler-fn event)
+            (assoc :pending-events [])))))))
 
 (defn eventmap
   [mappings]
