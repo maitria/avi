@@ -5,7 +5,7 @@
 
 (defn holds
   [result]
-  (:result result))
+  (= true (:result result)))
 
 (defmacro property
   ([descr prop]
