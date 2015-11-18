@@ -159,18 +159,20 @@
 (defn- wrap-collect-repeat-count
   [responder]
   (fn+> [editor [event-type event-data :as event]]
-    (cond
-      (= event [:keystroke "0"])
-      (if (:count editor)
-        (update-count 0)
-        (responder event))
+    (if (seq (:pending-events editor))
+      (responder event)
+      (cond
+        (= event [:keystroke "0"])
+        (if (:count editor)
+          (update-count 0)
+          (responder event))
 
-      (and (= 1 (count event-data))
-           (Character/isDigit (get event-data 0)))
-      (update-count (Integer/parseInt event-data))
+        (and (= 1 (count event-data))
+             (Character/isDigit (get event-data 0)))
+        (update-count (Integer/parseInt event-data))
 
-      :else
-      (responder event))))
+        :else
+        (responder event)))))
 
 (def responder
   (-> beep/beep-responder
