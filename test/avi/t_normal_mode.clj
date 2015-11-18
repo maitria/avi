@@ -398,4 +398,6 @@
     (editor :editing "...x...x" :after "fx") => (point [0 3])
     (editor :editing "...x...x" :after "3lfx") => (point [0 7]))
   (fact "`fy` moves to the next `y`"
-    (editor :editing "helloythere" :after "fy") => (point [0 5])))
+    (editor :editing "helloythere" :after "fy") => (point [0 5]))
+  (fact "`f0` moves to the next `0`"
+    (editor :editing "hell0t" :after "f0") => (point [0 4])))
