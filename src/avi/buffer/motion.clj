@@ -3,13 +3,10 @@
   (:require [avi.beep :as beep]
             [avi.buffer
               [locations :as l]]
+            [avi.buffer.motion
+             [goto]
+             [resolve :as resolve]]
             [packthread.core :refer :all]))
-
-(defmulti resolve-motion
-  (fn [_ [motion-type]]
-    motion-type))
-
-(require '[avi.buffer.motion goto])
 
 (defn adjust-viewport-to-contain-point
   [buffer]
@@ -29,7 +26,7 @@
   [buffer [_ [_ motion-j] :as motion]]
   (+> buffer
     (let [j-is-last-explicit? (= motion-j :last-explicit)
-          [i j :as pos] (resolve-motion buffer motion)]
+          [i j :as pos] (resolve/resolve-motion buffer motion)]
       (if-not pos
         beep/beep)
       (when pos

@@ -1,7 +1,7 @@
 (ns avi.buffer.motion.goto
   (:require [avi.buffer
-              [locations :as l]
-              [motion :as m]]
+              [locations :as l]]
+            [avi.buffer.motion.resolve :as resolve]
             [schema.core :as s]))
 
 (defmulti magic-row-value
@@ -87,7 +87,7 @@
     (coll? v)   (f (first v) (second v))
     :else       (f v nil)))
 
-(s/defmethod m/resolve-motion :goto :- (s/maybe l/Location)
+(s/defmethod resolve/resolve-motion :goto :- (s/maybe l/Location)
   [{:keys [lines] :as buffer} [_ [i j]]]
   (if-let [i (absolutize i #(magic-row-value buffer %1 %2))]
     (let [i (clamp-point-row buffer i)
