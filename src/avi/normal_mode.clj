@@ -33,127 +33,140 @@
     (in e/current-buffer
         (b/scroll update-fn))))
 
+(defn motion
+  [pattern]
+  (constantly pattern))
+
+(def motions
+  {"0" '[:goto [:current 0]]})
+
+(def top-level-motions
+  (->> motions
+    (map (fn [[k m]]
+           [k (fn+> [editor _]
+                (in e/current-buffer
+                  (b/move-point m)))]))
+    (into {})))
+
 (def wrap-normal-mode
   (em/eventmap
-    {"0" (fn+> [editor _]
-           (in e/current-buffer
-             (b/move-point [:goto [:current 0]])))
+    (merge
+      top-level-motions
+      {"^" (fn+> [editor _]
+             (in e/current-buffer
+               (b/move-point [:goto [:current :first-non-blank]])))
 
-     "^" (fn+> [editor _]
-           (in e/current-buffer
-             (b/move-point [:goto [:current :first-non-blank]])))
+       "$" (fn+> [editor _]
+             (in e/current-buffer
+               (b/move-point [:goto [:current :end-of-line]])))
 
-     "$" (fn+> [editor _]
-           (in e/current-buffer
-             (b/move-point [:goto [:current :end-of-line]])))
+       "dd" ^:no-repeat (fn+> [editor _]
+                          (let [repeat-count (:count editor)]
+                            (in e/current-buffer
+                                b/start-transaction
+                                (n-times (or repeat-count 1) b/delete-current-line)
+                                b/commit)))
 
-     "dd" ^:no-repeat (fn+> [editor _]
-                        (let [repeat-count (:count editor)]
-                          (in e/current-buffer
-                              b/start-transaction
-                              (n-times (or repeat-count 1) b/delete-current-line)
-                              b/commit)))
+       "f<.>" (fn+> [editor [_ key-name]]
+                (let [ch (get key-name 0)]
+                  (in e/current-buffer
+                    (b/move-point [:goto [:current [:to-next ch]]]))))
 
-     "f<.>" (fn+> [editor [_ key-name]]
-              (let [ch (get key-name 0)]
-                (in e/current-buffer
-                  (b/move-point [:goto [:current [:to-next ch]]]))))
+       "gg" ^:no-repeat (fn+> [editor _]
+                          (let [repeat-count (:count editor)]
+                            (in e/current-buffer
+                              (b/move-point [:goto [(dec (or repeat-count 1)) :first-non-blank]]))))
 
-     "gg" ^:no-repeat (fn+> [editor _]
-                        (let [repeat-count (:count editor)]
-                          (in e/current-buffer
-                            (b/move-point [:goto [(dec (or repeat-count 1)) :first-non-blank]]))))
+       "h" (fn+> [editor _]
+             (change-column dec))
 
-     "h" (fn+> [editor _]
-           (change-column dec))
+       "j" (fn+> [editor _]
+             (e/change-line inc))
 
-     "j" (fn+> [editor _]
-           (e/change-line inc))
+       "k" (fn+> [editor _]
+             (e/change-line dec))
 
-     "k" (fn+> [editor _]
-           (e/change-line dec))
+       "l" (fn+> [editor _]
+             (change-column inc))
 
-     "l" (fn+> [editor _]
-           (change-column inc))
+       "t<.>" (fn+> [editor [_ key-name]]
+                (let [ch (get key-name 0)]
+                  (in e/current-buffer
+                    (b/move-point [:goto [:current [:before-next ch]]]))))
 
-     "t<.>" (fn+> [editor [_ key-name]]
-              (let [ch (get key-name 0)]
-                (in e/current-buffer
-                  (b/move-point [:goto [:current [:before-next ch]]]))))
+       "u" (fn+> [editor _]
+             (in e/current-buffer
+               b/undo))
 
-     "u" (fn+> [editor _]
-           (in e/current-buffer
-             b/undo))
+       "x" ^:no-repeat (fn+> [editor _]
+                         (let [repeat-count (:count editor)]
+                           (in e/current-buffer
+                               b/start-transaction
+                               (as-> buffer
+                                 (reduce
+                                   (fn [buffer n]
+                                     (b/delete-char-under-point buffer))
+                                   buffer
+                                   (range (or repeat-count 1))))
+                               b/commit)))
 
-     "x" ^:no-repeat (fn+> [editor _]
-                       (let [repeat-count (:count editor)]
-                         (in e/current-buffer
-                             b/start-transaction
-                             (as-> buffer
-                               (reduce
-                                 (fn [buffer n]
-                                   (b/delete-char-under-point buffer))
-                                 buffer
-                                 (range (or repeat-count 1))))
-                             b/commit)))
+       "G" ^:no-repeat (fn+> [editor _]
+                         (let [repeat-count (:count editor)]
+                           (in e/current-buffer
+                             (if repeat-count
+                               (b/move-point [:goto [(dec repeat-count) :first-non-blank]])
+                               (b/move-point [:goto [:last :first-non-blank]])))))
 
-     "G" ^:no-repeat (fn+> [editor _]
-                       (let [repeat-count (:count editor)]
-                         (in e/current-buffer
-                           (if repeat-count
-                             (b/move-point [:goto [(dec repeat-count) :first-non-blank]])
-                             (b/move-point [:goto [:last :first-non-blank]])))))
+       "H" ^:no-repeat (fn+> [editor _]
+                         (let [lines-from-top (dec (or (:count editor) 1))]
+                           (in e/current-buffer
+                             (b/move-point [:goto [[:viewport-top lines-from-top] :last-explicit]]))))
 
-     "H" ^:no-repeat (fn+> [editor _]
-                       (let [lines-from-top (dec (or (:count editor) 1))]
-                         (in e/current-buffer
-                           (b/move-point [:goto [[:viewport-top lines-from-top] :last-explicit]]))))
+       "J" ^:no-repeat (fn+> [editor _]
+                         (let [{[i j] :point, lines :lines} (e/current-buffer editor)
+                               n (or (:count editor) 1)
+                               new-line (reduce
+                                          #(str %1 " " %2)
+                                          (subvec lines i (+ i n 1)))
+                               new-lines (splice lines i (+ i n 1) [new-line])]
+                           (in e/current-buffer
+                               b/start-transaction
+                               (assoc :lines new-lines)
+                               b/commit)))
 
-     "J" ^:no-repeat (fn+> [editor _]
-                       (let [{[i j] :point, lines :lines} (e/current-buffer editor)
-                             n (or (:count editor) 1)
-                             new-line (reduce
-                                        #(str %1 " " %2)
-                                        (subvec lines i (+ i n 1)))
-                             new-lines (splice lines i (+ i n 1) [new-line])]
-                         (in e/current-buffer
-                             b/start-transaction
-                             (assoc :lines new-lines)
-                             b/commit)))
+       "L" ^:no-repeat (fn+> [editor event]
+                         (let [count (dec (or (:count editor) 1))]
+                           (in e/current-buffer
+                             (b/move-point [:goto [[:viewport-bottom count] :last-explicit]]))))
 
-     "L" ^:no-repeat (fn+> [editor event]
-                       (let [count (dec (or (:count editor) 1))]
-                         (in e/current-buffer
-                           (b/move-point [:goto [[:viewport-bottom count] :last-explicit]]))))
+       "M" (fn+> [editor _]
+             (in e/current-buffer
+               (b/move-point [:goto [:viewport-middle :last-explicit]])))
 
-     "M" (fn+> [editor _]
-           (in e/current-buffer
-             (b/move-point [:goto [:viewport-middle :last-explicit]])))
+       "<C-D>" (fn+> [editor _]
+                 (let [buffer (e/current-buffer editor)]
+                   (if (b/on-last-line? buffer)
+                     beep/beep
+                     (in e/current-buffer
+                       (b/move-and-scroll-half-page :down)))))
 
-     "<C-D>" (fn+> [editor _]
-               (let [buffer (e/current-buffer editor)]
-                 (if (b/on-last-line? buffer)
-                   beep/beep
-                   (in e/current-buffer
-                     (b/move-and-scroll-half-page :down)))))
+       "<C-E>" (fn+> [editor _]
+                 (scroll inc))
 
-     "<C-E>" (fn+> [editor _]
-               (scroll inc))
+       "<C-R>" (fn+> [editor _]
+                 (in e/current-buffer
+                   b/redo))
 
-     "<C-R>" (fn+> [editor _]
-               (in e/current-buffer
-                 b/redo))
+       "<C-U>" (fn+> [editor _]
+                 (let [buffer (e/current-buffer editor)
+                       [i] (:point buffer)]
+                   (if (zero? i)
+                     beep/beep
+                     (in e/current-buffer
+                       (b/move-and-scroll-half-page :up)))))
 
-     "<C-U>" (fn+> [editor _]
-               (let [buffer (e/current-buffer editor)
-                     [i] (:point buffer)]
-                 (if (zero? i)
-                   beep/beep
-                   (in e/current-buffer
-                     (b/move-and-scroll-half-page :up)))))
-
-     "<C-Y>" (fn+> [editor _]
-               (scroll dec))}))
+       "<C-Y>" (fn+> [editor _]
+                 (scroll dec))})))
 
 (defn- update-count
   [editor digit]
