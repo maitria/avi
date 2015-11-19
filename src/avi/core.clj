@@ -23,9 +23,10 @@
 
 (defn- editor-stream
   [world args]
-  (let [initial-editor (avi.main/initial-editor (terminal-size world) args)]
+  (let [responder (avi.main/responder true)
+        initial-editor (avi.main/initial-editor (terminal-size world) args)]
     (->> (event-stream world)
-         (reductions avi.main/responder initial-editor)
+         (reductions responder initial-editor)
          (take-while (complement :finished?)))))
 
 (defn- perform-effects!

@@ -4,6 +4,7 @@
             [avi.core]
             [avi.editor :as e]
             [avi.eventmap :as em]
+            [avi.main]
             [avi.world :refer :all]
             [avi.test-helpers properties]
             [clojure.string :as string]
@@ -33,6 +34,9 @@
        (em/split-string-of-commands)
        (map event)))
 
+(def ^:private responder
+  (avi.main/responder false))
+
 (defn editor
   [& {width :width,
       file-contents :editing,
@@ -61,7 +65,7 @@
                          (avi.main/initial-editor [8 width] start-args))
         final-editor (binding [*world* test-world]
                        (reduce
-                         avi.main/responder
+                         responder
                          initial-editor
                          events))]
     {:editor final-editor
