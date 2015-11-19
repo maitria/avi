@@ -66,7 +66,7 @@
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
 
-(defn next-char
+(defn next-char-index
   [{:keys [lines] [_ j] :point} i ch]
   (let [line (get lines i)]
     (loop [nj (inc j)]
@@ -78,11 +78,11 @@
 
 (defmethod magic-column-value :to-char
   [buffer _ i ch]
-  (next-char buffer i ch))
+  (next-char-index buffer i ch))
 
 (defmethod magic-column-value :before-next
   [buffer _ i ch]
-  (some-> (next-char buffer i ch) dec))
+  (some-> (next-char-index buffer i ch) dec))
 
 (defn- clamp-point-row
   [{:keys [lines]} row]
