@@ -76,6 +76,16 @@
           (recur (inc nj)))
         nil))))
 
+(defmethod magic-column-value :before-next
+  [{:keys [lines] [_ j] :point} _ i ch]
+  (let [line (get lines i)]
+    (loop [nj (inc j)]
+      (if-let [line-ch (get line nj)]
+        (if (= line-ch ch)
+          (dec nj)
+          (recur (inc nj)))
+        nil))))
+
 (defn- clamp-point-row
   [{:keys [lines]} row]
   (max 0 (min (dec (count lines)) row)))

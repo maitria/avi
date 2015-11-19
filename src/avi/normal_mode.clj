@@ -76,6 +76,11 @@
      "l" (fn+> [editor _]
            (change-column inc))
 
+     "t<.>" (fn+> [editor [_ key-name]]
+              (let [ch (get key-name 0)]
+                (in e/current-buffer
+                  (b/move-point [:goto [:current [:before-next ch]]]))))
+
      "u" (fn+> [editor _]
            (in e/current-buffer
              b/undo))
