@@ -81,14 +81,8 @@
   (next-char buffer i ch))
 
 (defmethod magic-column-value :before-next
-  [{:keys [lines] [_ j] :point} _ i ch]
-  (let [line (get lines i)]
-    (loop [nj (inc j)]
-      (if-let [line-ch (get line nj)]
-        (if (= line-ch ch)
-          (dec nj)
-          (recur (inc nj)))
-        nil))))
+  [buffer _ i ch]
+  (some-> (next-char buffer i ch) dec))
 
 (defn- clamp-point-row
   [{:keys [lines]} row]
