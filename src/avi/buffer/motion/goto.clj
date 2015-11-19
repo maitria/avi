@@ -76,7 +76,7 @@
           (recur (inc nj)))
         nil))))
 
-(defmethod magic-column-value :to-char
+(defmethod magic-column-value :to-next
   [buffer _ i ch]
   (next-char-index buffer i ch))
 

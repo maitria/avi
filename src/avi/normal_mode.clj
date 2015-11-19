@@ -37,7 +37,7 @@
   {"f<.>" (fn+> [editor [_ key-name]]
             (let [ch (get key-name 0)]
               (in e/current-buffer
-                (b/move-point [:goto [:current [:to-char ch]]]))))
+                (b/move-point [:goto [:current [:to-next ch]]]))))
 
    "t<.>" (fn+> [editor [_ key-name]]
             (let [ch (get key-name 0)]
