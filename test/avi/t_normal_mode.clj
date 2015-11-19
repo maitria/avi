@@ -408,4 +408,6 @@
 
 (facts "about `t`"
   (fact "`tx` moves to just before the next `x`"
-    (editor :editing "helloxthere" :after "tx") => (point [0 4])))
+    (editor :editing "helloxthere" :after "tx") => (point [0 4]))
+  (fact "`tx` beeps if there's no `x`"
+    (editor :editing "..." :after "tx") => beeped))
