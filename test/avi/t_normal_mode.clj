@@ -397,6 +397,8 @@
     (editor :editing "helloxthere" :after "fx") => (point [0 5])
     (editor :editing "...x...x" :after "fx") => (point [0 3])
     (editor :editing "...x...x" :after "3lfx") => (point [0 7]))
+  (fact "`fx` beeps if there's no `x`"
+    (editor :editing "..." :after "fx") => beeped)
   (fact "`fy` moves to the next `y`"
     (editor :editing "helloythere" :after "fy") => (point [0 5]))
   (fact "`f0` moves to the next `0`"

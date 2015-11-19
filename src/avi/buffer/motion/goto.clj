@@ -74,7 +74,7 @@
         (if (= line-ch ch)
           nj
           (recur (inc nj)))
-        j))))
+        nil))))
 
 (defn- clamp-point-row
   [{:keys [lines]} row]
@@ -87,9 +87,10 @@
     (coll? v)   (f (first v) (second v))
     :else       (f v nil)))
 
-(s/defmethod m/resolve-motion :goto :- l/Location
+(s/defmethod m/resolve-motion :goto :- (s/maybe l/Location)
   [{:keys [lines] :as buffer} [_ [i j]]]
-  (let [i (absolutize i #(magic-row-value buffer %1 %2))
-        i (clamp-point-row buffer i)
-        j (absolutize j #(magic-column-value buffer %1 i %2))]
-    [i j]))
+  (if-let [i (absolutize i #(magic-row-value buffer %1 %2))]
+    (let [i (clamp-point-row buffer i)
+          j (absolutize j #(magic-column-value buffer %1 i %2))]
+      (if j
+        [i j]))))

@@ -1,6 +1,7 @@
 (ns avi.buffer.motion
   "Primitives for moving the point."
-  (:require [avi.buffer
+  (:require [avi.beep :as beep]
+            [avi.buffer
               [locations :as l]]
             [packthread.core :refer :all]))
 
@@ -28,8 +29,11 @@
   [buffer [_ [_ motion-j] :as motion]]
   (+> buffer
     (let [j-is-last-explicit? (= motion-j :last-explicit)
-          [i j] (resolve-motion buffer motion)]
-      (assoc :point [i j])
-      (if-not j-is-last-explicit?
-        (assoc :last-explicit-j j))
-      adjust-viewport-to-contain-point)))
+          [i j :as pos] (resolve-motion buffer motion)]
+      (if-not pos
+        beep/beep)
+      (when pos
+        (assoc :point pos)
+        (if-not j-is-last-explicit?
+          (assoc :last-explicit-j j))
+        adjust-viewport-to-contain-point))))
