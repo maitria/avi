@@ -66,8 +66,8 @@
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
 
-(defmethod magic-column-value :to-char
-  [{:keys [lines] [_ j] :point} _ i ch]
+(defn next-char
+  [{:keys [lines] [_ j] :point} i ch]
   (let [line (get lines i)]
     (loop [nj (inc j)]
       (if-let [line-ch (get line nj)]
@@ -75,6 +75,10 @@
           nj
           (recur (inc nj)))
         nil))))
+
+(defmethod magic-column-value :to-char
+  [buffer _ i ch]
+  (next-char buffer i ch))
 
 (defmethod magic-column-value :before-next
   [{:keys [lines] [_ j] :point} _ i ch]
