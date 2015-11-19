@@ -38,7 +38,10 @@
   (constantly pattern))
 
 (def motions
-  {"0" '[:goto [:current 0]]})
+  {"0" '[:goto [:current 0]]
+   "^" '[:goto [:current :first-non-blank]]
+   "$" '[:goto [:current :end-of-line]]
+   "M" '[:goto [:viewport-middle :last-explicit]]})
 
 (def top-level-motions
   (->> motions
@@ -52,15 +55,7 @@
   (em/eventmap
     (merge
       top-level-motions
-      {"^" (fn+> [editor _]
-             (in e/current-buffer
-               (b/move-point [:goto [:current :first-non-blank]])))
-
-       "$" (fn+> [editor _]
-             (in e/current-buffer
-               (b/move-point [:goto [:current :end-of-line]])))
-
-       "dd" ^:no-repeat (fn+> [editor _]
+      {"dd" ^:no-repeat (fn+> [editor _]
                           (let [repeat-count (:count editor)]
                             (in e/current-buffer
                                 b/start-transaction
@@ -138,10 +133,6 @@
                          (let [count (dec (or (:count editor) 1))]
                            (in e/current-buffer
                              (b/move-point [:goto [[:viewport-bottom count] :last-explicit]]))))
-
-       "M" (fn+> [editor _]
-             (in e/current-buffer
-               (b/move-point [:goto [:viewport-middle :last-explicit]])))
 
        "<C-D>" (fn+> [editor _]
                  (let [buffer (e/current-buffer editor)]
