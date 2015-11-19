@@ -33,10 +33,6 @@
     (in e/current-buffer
         (b/scroll update-fn))))
 
-(defn motion
-  [pattern]
-  (constantly pattern))
-
 (def motions
   {"0" '[:goto [:current 0]]
    "^" '[:goto [:current :first-non-blank]]
