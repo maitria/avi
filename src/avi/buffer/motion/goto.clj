@@ -12,6 +12,18 @@
   [buffer _ offset]
   (+ (get-in buffer [:point 0]) (or offset 0)))
 
+(defmethod magic-row-value :down
+  [{:keys [lines] [i] :point} _ n]
+  (let [result (+ i (or n 1))]
+    (if (get lines result)
+      result)))
+
+(defmethod magic-row-value :up
+  [{[i] :point} _ n]
+  (let [result (- i (or n 1))]
+    (if-not (neg? result)
+      result)))
+
 (defmethod magic-row-value :viewport-top
   [{:keys [viewport-top]} _ lines-below]
   (+ viewport-top (or lines-below 0)))
@@ -65,6 +77,18 @@
         j-not-after-end (min (dec line-length) j)
         j-within-line (max 0 j-not-after-end)]
     j-within-line))
+
+(defmethod magic-column-value :left
+  [{[_ j] :point} _ _ param]
+  (let [result (- j (or param 1))]
+    (if-not (neg? result)
+      result)))
+
+(defmethod magic-column-value :right
+  [{:keys [lines] [_ j] :point} _ i param]
+  (let [result (+ j (or param 1))]
+    (if (get-in lines [i result])
+      result)))
 
 (defn next-char-index
   [{:keys [lines] [_ j] :point} i ch]

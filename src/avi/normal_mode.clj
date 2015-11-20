@@ -10,23 +10,6 @@
             [avi.pervasive :refer :all]
             [avi.search]))
 
-(defn- change-column
-  [editor j-fn]
-  (+> editor
-      (let [{[i j] :point, :as buffer} (e/current-buffer editor)
-        j (j-fn j)
-        new-position [i j]]
-        (if (b/point-can-move-to-column? buffer j)
-          (in e/current-buffer
-              (b/move-point [:goto new-position]))
-          beep/beep))))
-
-(defn- current-line 
-  [editor] 
-  (let [buffer (e/current-buffer editor)
-        [row] (:point buffer)]
-    (b/line buffer row)))
-
 (defn- scroll
   [editor update-fn]
   (+> editor
@@ -38,6 +21,10 @@
     "^"  [:goto [:current :first-non-blank]]
     "$"  [:goto [:current :end-of-line]]
     "gg" [:goto [(?line 0) :first-non-blank]]
+    "h"  [:goto [:current :left]]
+    "j"  [:goto [:down :last-explicit]]
+    "k"  [:goto [:up :last-explicit]]
+    "l"  [:goto [:current :right]]
     "G"  [:goto [(?line :last) :first-non-blank]]
     "H"  [:goto [[:viewport-top (?line 0)] :last-explicit]]
     "L"  [:goto [[:viewport-bottom (?line 0)] :last-explicit]]
@@ -75,8 +62,8 @@
     (with-meta
       (fn+> [editor _]
         (let [bindings (fn [name]
-                         (when (= '?line name)
-                           (some-> (:count editor) dec)))
+                         (case name
+                           ?line  (some-> (:count editor) dec)))
               motion (substitute pattern bindings)]
           (in e/current-buffer
             (b/move-point motion))))
@@ -103,18 +90,6 @@
                 (let [ch (get key-name 0)]
                   (in e/current-buffer
                     (b/move-point [:goto [:current [:to-next ch]]]))))
-
-       "h" (fn+> [editor _]
-             (change-column dec))
-
-       "j" (fn+> [editor _]
-             (e/change-line inc))
-
-       "k" (fn+> [editor _]
-             (e/change-line dec))
-
-       "l" (fn+> [editor _]
-             (change-column inc))
 
        "t<.>" (fn+> [editor [_ key-name]]
                 (let [ch (get key-name 0)]
