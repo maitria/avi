@@ -34,17 +34,55 @@
         (b/scroll update-fn))))
 
 (def motions
-  {"0" '[:goto [:current 0]]
-   "^" '[:goto [:current :first-non-blank]]
-   "$" '[:goto [:current :end-of-line]]
-   "M" '[:goto [:viewport-middle :last-explicit]]})
+  '{"0"  [:goto [:current 0]]
+    "^"  [:goto [:current :first-non-blank]]
+    "$"  [:goto [:current :end-of-line]]
+    "gg" [:goto [?count :first-non-blank]]
+    "M"  [:goto [:viewport-middle :last-explicit]]})
+
+(defn variable?
+  [a]
+  (and (symbol? a)
+       (= (get (name a) 0) \?)))
+
+(defn variables
+  [a]
+  (cond
+    (variable? a)
+    #{a}
+
+    (coll? a)
+    (->> a (mapcat variables) (into #{}))
+
+    :else
+    #{}))
+
+(defn substitute
+  [a vars]
+  (cond
+    (variable? a)
+    (vars a)
+
+    (coll? a)
+    (into (empty a) (map #(substitute % vars) a))
+
+    :else
+    a))
+
+(defn make-move-motion
+  [pattern]
+  (let [vs (variables pattern)]
+    (with-meta
+      (fn+> [editor _]
+        (let [motion (substitute pattern {'?count (dec (or (:count editor) 1))})]
+          (in e/current-buffer
+            (b/move-point motion))))
+      (if (vs '?count)
+        {:no-repeat true}))))
 
 (def top-level-motions
   (->> motions
-    (map (fn [[k m]]
-           [k (fn+> [editor _]
-                (in e/current-buffer
-                  (b/move-point m)))]))
+    (map (juxt first (comp make-move-motion second)))
     (into {})))
 
 (def wrap-normal-mode
@@ -62,11 +100,6 @@
                 (let [ch (get key-name 0)]
                   (in e/current-buffer
                     (b/move-point [:goto [:current [:to-next ch]]]))))
-
-       "gg" ^:no-repeat (fn+> [editor _]
-                          (let [repeat-count (:count editor)]
-                            (in e/current-buffer
-                              (b/move-point [:goto [(dec (or repeat-count 1)) :first-non-blank]]))))
 
        "h" (fn+> [editor _]
              (change-column dec))
