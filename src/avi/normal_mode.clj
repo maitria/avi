@@ -39,6 +39,7 @@
     "$"  [:goto [:current :end-of-line]]
     "gg" [:goto [(?line 0) :first-non-blank]]
     "G"  [:goto [(?line :last) :first-non-blank]]
+    "H"  [:goto [[:viewport-top (?line 0)] :last-explicit]]
     "M"  [:goto [:viewport-middle :last-explicit]]})
 
 (defn variable?
@@ -134,11 +135,6 @@
                                    buffer
                                    (range (or repeat-count 1))))
                                b/commit)))
-
-       "H" ^:no-repeat (fn+> [editor _]
-                         (let [lines-from-top (dec (or (:count editor) 1))]
-                           (in e/current-buffer
-                             (b/move-point [:goto [[:viewport-top lines-from-top] :last-explicit]]))))
 
        "J" ^:no-repeat (fn+> [editor _]
                          (let [{[i j] :point, lines :lines} (e/current-buffer editor)
