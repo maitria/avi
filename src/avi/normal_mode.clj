@@ -40,6 +40,7 @@
     "gg" [:goto [(?line 0) :first-non-blank]]
     "G"  [:goto [(?line :last) :first-non-blank]]
     "H"  [:goto [[:viewport-top (?line 0)] :last-explicit]]
+    "L"  [:goto [[:viewport-bottom (?line 0)] :last-explicit]]
     "M"  [:goto [:viewport-middle :last-explicit]]})
 
 (defn variable?
@@ -147,11 +148,6 @@
                                b/start-transaction
                                (assoc :lines new-lines)
                                b/commit)))
-
-       "L" ^:no-repeat (fn+> [editor event]
-                         (let [count (dec (or (:count editor) 1))]
-                           (in e/current-buffer
-                             (b/move-point [:goto [[:viewport-bottom count] :last-explicit]]))))
 
        "<C-D>" (fn+> [editor _]
                  (let [buffer (e/current-buffer editor)]
