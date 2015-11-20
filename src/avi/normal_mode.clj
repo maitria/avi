@@ -37,7 +37,7 @@
   '{"0"  [:goto [:current 0]]
     "^"  [:goto [:current :first-non-blank]]
     "$"  [:goto [:current :end-of-line]]
-    "gg" [:goto [?count :first-non-blank]]
+    "gg" [:goto [(?line 0) :first-non-blank]]
     "M"  [:goto [:viewport-middle :last-explicit]]})
 
 (defn variable?
@@ -46,25 +46,22 @@
        (= (get (name a) 0) \?)))
 
 (defn variables
-  [a]
-  (cond
-    (variable? a)
-    #{a}
-
-    (coll? a)
-    (->> a (mapcat variables) (into #{}))
-
-    :else
-    #{}))
+  [pattern]
+  (->> pattern flatten (filter variable?) (into #{})))
 
 (defn substitute
-  [a vars]
+  [a bindings]
   (cond
     (variable? a)
-    (vars a)
+    (bindings a)
+
+    (and (list? a) (variable? (first a)))
+    (if-let [value (bindings (first a))]
+      value
+      (second a))
 
     (coll? a)
-    (into (empty a) (map #(substitute % vars) a))
+    (into (empty a) (map #(substitute % bindings) a))
 
     :else
     a))
@@ -74,7 +71,10 @@
   (let [vs (variables pattern)]
     (with-meta
       (fn+> [editor _]
-        (let [motion (substitute pattern {'?count (dec (or (:count editor) 1))})]
+        (let [bindings (fn [name]
+                         (when (= '?line name)
+                           (some-> (:count editor) dec)))
+              motion (substitute pattern bindings)]
           (in e/current-buffer
             (b/move-point motion))))
       (if (vs '?count)
