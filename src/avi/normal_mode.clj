@@ -17,18 +17,20 @@
         (b/scroll update-fn))))
 
 (def motions
-  '{"0"  [:goto [:current 0]]
-    "^"  [:goto [:current :first-non-blank]]
-    "$"  [:goto [:current :end-of-line]]
-    "gg" [:goto [(?line 0) :first-non-blank]]
-    "h"  [:goto [:current :left]]
-    "j"  [:goto [:down :last-explicit]]
-    "k"  [:goto [:up :last-explicit]]
-    "l"  [:goto [:current :right]]
-    "G"  [:goto [(?line :last) :first-non-blank]]
-    "H"  [:goto [[:viewport-top (?line 0)] :last-explicit]]
-    "L"  [:goto [[:viewport-bottom (?line 0)] :last-explicit]]
-    "M"  [:goto [:viewport-middle :last-explicit]]})
+  '{"0"    [:goto [:current 0]]
+    "^"    [:goto [:current :first-non-blank]]
+    "$"    [:goto [:current :end-of-line]]
+    "f<.>" [:goto [:current [:to-next ?char]]]
+    "gg"   [:goto [(?line 0) :first-non-blank]]
+    "h"    [:goto [:current :left]]
+    "j"    [:goto [:down :last-explicit]]
+    "k"    [:goto [:up :last-explicit]]
+    "l"    [:goto [:current :right]]
+    "t<.>" [:goto [:current [:before-next ?char]]]
+    "G"    [:goto [(?line :last) :first-non-blank]]
+    "H"    [:goto [[:viewport-top (?line 0)] :last-explicit]]
+    "L"    [:goto [[:viewport-bottom (?line 0)] :last-explicit]]
+    "M"    [:goto [:viewport-middle :last-explicit]]})
 
 (defn variable?
   [a]
@@ -60,10 +62,11 @@
   [pattern]
   (let [vs (variables pattern)]
     (with-meta
-      (fn+> [editor _]
+      (fn+> [editor [_ keyname]]
         (let [bindings (fn [name]
                          (case name
-                           ?line  (some-> (:count editor) dec)))
+                           ?char (get keyname 0)
+                           ?line (some-> (:count editor) dec)))
               motion (substitute pattern bindings)]
           (in e/current-buffer
             (b/move-point motion))))
@@ -85,16 +88,6 @@
                                 b/start-transaction
                                 (n-times (or repeat-count 1) b/delete-current-line)
                                 b/commit)))
-
-       "f<.>" (fn+> [editor [_ key-name]]
-                (let [ch (get key-name 0)]
-                  (in e/current-buffer
-                    (b/move-point [:goto [:current [:to-next ch]]]))))
-
-       "t<.>" (fn+> [editor [_ key-name]]
-                (let [ch (get key-name 0)]
-                  (in e/current-buffer
-                    (b/move-point [:goto [:current [:before-next ch]]]))))
 
        "u" (fn+> [editor _]
              (in e/current-buffer
