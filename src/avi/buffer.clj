@@ -112,10 +112,6 @@
     :as buffer}]
   (assoc buffer :point [i (clamped-j buffer j)]))
 
-(defn point-can-move-to-column?
-  [buffer j]
-  (= j (clamped-j buffer j)))
-
 (defn move-and-scroll-half-page
   [{top :viewport-top,
     height :viewport-height,
