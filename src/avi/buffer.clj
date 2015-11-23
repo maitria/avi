@@ -4,16 +4,18 @@
             [clojure.string :as string]
             [avi.beep :as beep]
             [avi.buffer
+              [change]
               [lines :as lines]
               [locations :as l]
               [motion]
               [transactions]]
             [avi.pervasive :refer :all]
             [avi.world :as w]
-            [schema.core :as s]
             [potemkin :refer [import-vars]]))
 
-(import-vars [avi.buffer.motion
+(import-vars [avi.buffer.change
+                change]
+             [avi.buffer.motion
                 adjust-viewport-to-contain-point
                 move-point
                 delete]
@@ -152,18 +154,6 @@
 
 ;; -- changing buffer contents --
 
-(s/defn change
-  "All content changes happen through me!"
-  [{:keys [point] :as buffer}
-   a :- l/Location
-   b :- l/Location
-   replacement :- s/Str
-   bias :- l/AdjustmentBias]
-  (+> buffer
-    (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
-      (update-in [:lines] lines/replace a b replacement)
-      (if new-point
-        (assoc :point new-point :last-explicit-j j)))))
 
 (defn insert-text
   [{point :point, :as lines-and-text} text]
