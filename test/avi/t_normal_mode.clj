@@ -420,3 +420,7 @@
     (editor :editing "1234" :after "lld$") => (point [0 1]))
   (fact "`df)` deletes up to and including the next `)`"
     (editor :editing "y12)x" :after "ldf)") => (line 0 "yx")))
+
+(facts "about `D`"
+  (fact "`D` deletes to the end-of-line"
+    (editor :editing "1234" :after "llD") => (line 0 "12")))

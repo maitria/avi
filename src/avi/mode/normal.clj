@@ -106,6 +106,9 @@
                                    buffer
                                    (range (or repeat-count 1))))
                                b/commit)))
+       "D" (fn+> [editor _]
+             (in e/current-buffer
+               (b/delete [:goto [:current :end-of-line]])))
 
        "J" ^:no-repeat (fn+> [editor _]
                          (let [{[i j] :point, lines :lines} (e/current-buffer editor)
