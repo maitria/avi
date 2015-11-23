@@ -11,6 +11,17 @@
              [resolve :as resolve]]
             [packthread.core :refer :all]))
 
+(defn clamped-j
+  [{[i] :point,
+    :keys [lines]}
+   j]
+  (max 0 (min j (dec (count (get lines i))))))
+
+(defn clamp-point-j
+  [{[i j] :point,
+    :as buffer}]
+  (assoc buffer :point [i (clamped-j buffer j)]))
+
 (defn adjust-column-to-line
   [{:keys [lines] [i j] :point :as buffer}]
   (+> buffer
@@ -32,12 +43,6 @@
         (> point-i viewport-bottom)
         (assoc :viewport-top (inc (- point-i height)))))))
 
-(defn adjust-point-within-line
-  [{[i j] :point :keys [lines] :as buffer}]
-  (+> buffer
-    (let [length (count (get lines i))]
-      (assoc :point [i (max 0 (min j (dec length)))]))))
-
 (defn move-point
   [buffer [_ [_ motion-j] :as motion]]
   (+> buffer
@@ -49,7 +54,7 @@
         (assoc :point pos)
         (if-not j-is-last-explicit?
           (assoc :last-explicit-j j))
-        adjust-point-within-line
+        clamp-point-j
         adjust-viewport-to-contain-point))))
 
 (defn delete
@@ -59,5 +64,5 @@
       t/start-transaction
       (c/change start end "" :left)
       t/commit
-      adjust-point-within-line
+      clamp-point-j
       adjust-viewport-to-contain-point)))

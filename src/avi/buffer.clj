@@ -16,6 +16,7 @@
 (import-vars [avi.buffer.change
                 change]
              [avi.buffer.motion
+                clamp-point-j
                 adjust-viewport-to-contain-point
                 move-point
                 delete]
@@ -100,17 +101,6 @@
   (let [line-count (line-count buffer)
         max-top (max 0 (- line-count height))]
     (min max-top (max 0 new-top))))
-
-(defn- clamped-j
-  [{[i] :point,
-    :as buffer}
-   j]
-  (max 0 (min j (dec (count (line buffer i))))))
-
-(defn- clamp-point-j
-  [{[i j] :point,
-    :as buffer}]
-  (assoc buffer :point [i (clamped-j buffer j)]))
 
 (defn move-and-scroll-half-page
   [{top :viewport-top,
