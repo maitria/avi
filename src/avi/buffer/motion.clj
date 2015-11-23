@@ -2,7 +2,9 @@
   "Primitives for moving the point."
   (:require [avi.beep :as beep]
             [avi.buffer
-              [locations :as l]]
+              [lines :as lines]
+              [locations :as l]
+              [transactions :as t]]
             [avi.buffer.motion
              [goto]
              [resolve :as resolve]]
@@ -29,6 +31,12 @@
         (> point-i viewport-bottom)
         (assoc :viewport-top (inc (- point-i height)))))))
 
+(defn adjust-point-within-line
+  [{[i j] :point :keys [lines] :as buffer}]
+  (+> buffer
+    (let [length (count (get lines i))]
+      (assoc :point [i (max 0 (min j (dec length)))]))))
+
 (defn move-point
   [buffer [_ [_ motion-j] :as motion]]
   (+> buffer
@@ -40,5 +48,13 @@
         (assoc :point pos)
         (if-not j-is-last-explicit?
           (assoc :last-explicit-j j))
-        adjust-column-to-line
+        adjust-point-within-line
         adjust-viewport-to-contain-point))))
+
+(defn delete
+  [{start :point :as buffer} motion]
+  (+> buffer
+    (let [end (resolve/resolve-motion buffer motion)]
+      t/start-transaction
+      (update-in [:lines] lines/replace start end "")
+      t/commit)))

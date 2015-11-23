@@ -58,8 +58,8 @@
     :else
     a))
 
-(defn make-move-motion
-  [pattern]
+(defn motion-handler
+  [f pattern]
   (let [vs (variables pattern)]
     (with-meta
       (fn+> [editor [_ keyname]]
@@ -69,19 +69,22 @@
                            ?line (some-> (:count editor) dec)))
               motion (substitute pattern bindings)]
           (in e/current-buffer
-            (b/move-point motion))))
+            (f motion))))
       (if (vs '?count)
         {:no-repeat true}))))
 
-(def top-level-motions
+(defn motion-handlers
+  [prefix f]
   (->> motions
-    (map (juxt first (comp make-move-motion second)))
+    (map (juxt (comp #(str prefix %) first)
+               (comp (partial motion-handler f) second)))
     (into {})))
 
 (def wrap-normal-mode
   (em/eventmap
     (merge
-      top-level-motions
+      (motion-handlers "" b/move-point)
+      (motion-handlers "d" b/delete)
       {"dd" ^:no-repeat (fn+> [editor _]
                           (let [repeat-count (:count editor)]
                             (in e/current-buffer

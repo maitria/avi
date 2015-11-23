@@ -411,3 +411,7 @@
     (editor :editing "helloxthere" :after "tx") => (point [0 4]))
   (fact "`tx` beeps if there's no `x`"
     (editor :editing "..." :after "tx") => beeped))
+
+(facts "about `d<Motion>`"
+  (fact "`d$` deletes to end-of-line"
+    (editor :editing "1234" :after "lld$") => (line 0 "12")))

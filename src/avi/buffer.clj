@@ -15,7 +15,8 @@
 
 (import-vars [avi.buffer.motion
                 adjust-viewport-to-contain-point
-                move-point]
+                move-point
+                delete]
              [avi.buffer.transactions
                 start-transaction
                 commit])
