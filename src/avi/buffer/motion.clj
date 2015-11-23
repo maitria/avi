@@ -2,6 +2,7 @@
   "Primitives for moving the point."
   (:require [avi.beep :as beep]
             [avi.buffer
+              [change :as c]
               [lines :as lines]
               [locations :as l]
               [transactions :as t]]
@@ -56,5 +57,7 @@
   (+> buffer
     (let [end (resolve/resolve-motion buffer motion)]
       t/start-transaction
-      (update-in [:lines] lines/replace start end "")
-      t/commit)))
+      (c/change start end "" :left)
+      t/commit
+      adjust-point-within-line
+      adjust-viewport-to-contain-point)))
