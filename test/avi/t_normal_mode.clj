@@ -417,4 +417,6 @@
 (facts "about `d<Motion>`"
   (fact "`d$` deletes to end-of-line"
     (editor :editing "1234" :after "lld$") => (line 0 "12")
-    (editor :editing "1234" :after "lld$") => (point [0 1])))
+    (editor :editing "1234" :after "lld$") => (point [0 1]))
+  (fact "`df)` deletes up to and including the next `)`"
+    (editor :editing "y12)x" :after "ldf)") => (line 0 "yx")))

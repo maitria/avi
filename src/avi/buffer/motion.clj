@@ -58,11 +58,12 @@
         adjust-viewport-to-contain-point))))
 
 (defn delete
-  [{start :point :as buffer} motion]
+  [{start :point :keys [lines] :as buffer} motion]
   (+> buffer
-    (let [end (resolve/resolve-motion buffer motion)]
+    (let [end (resolve/resolve-motion buffer motion)
+          end' [(first end) (inc (second end))]]
       t/start-transaction
-      (c/change start end "" :left)
+      (c/change start end' "" :left)
       t/commit
       clamp-point-j
       adjust-viewport-to-contain-point)))

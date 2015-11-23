@@ -58,7 +58,7 @@
 
 (defmethod magic-column-value :end-of-line
   [{:keys [lines]} _ row _]
-  Long/MAX_VALUE)
+  (bit-shift-right Long/MAX_VALUE 1))
 
 (defmethod magic-column-value :first-non-blank
   [{:keys [lines]} _ row _]
