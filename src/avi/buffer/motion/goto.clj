@@ -58,7 +58,7 @@
 
 (defmethod magic-column-value :end-of-line
   [{:keys [lines]} _ row _]
-  (max 0 (dec (count (get lines row)))))
+  Long/MAX_VALUE)
 
 (defmethod magic-column-value :first-non-blank
   [{:keys [lines]} _ row _]

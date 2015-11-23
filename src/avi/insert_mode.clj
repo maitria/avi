@@ -39,8 +39,8 @@
                              eol (count (get lines i))]
                          (enter-insert-mode [[:keystroke "<Enter>"]])
                          (in e/current-buffer
-                             (b/change [i eol] [i eol] "\n" :left))
-                         (e/change-line inc)))
+                             move-to-eol
+                             (b/change [i eol] [i eol] "\n" :right))))
 
      "A" ^:no-repeat (fn+> [editor _]
                        (enter-insert-mode)

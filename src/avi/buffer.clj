@@ -162,7 +162,7 @@
     (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)
       (if new-point
-        (move-point [:goto new-point])))))
+        (assoc :point new-point :last-explicit-j j)))))
 
 (defn insert-text
   [{point :point, :as lines-and-text} text]

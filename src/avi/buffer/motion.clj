@@ -8,6 +8,13 @@
              [resolve :as resolve]]
             [packthread.core :refer :all]))
 
+(defn adjust-column-to-line
+  [{:keys [lines] [i j] :point :as buffer}]
+  (+> buffer
+    (let [line-length (count (get lines i))
+          j' (max 0 (min j (dec line-length)))]
+      (assoc :point [i j']))))
+
 (defn adjust-viewport-to-contain-point
   [buffer]
   (+> buffer
@@ -33,4 +40,5 @@
         (assoc :point pos)
         (if-not j-is-last-explicit?
           (assoc :last-explicit-j j))
+        adjust-column-to-line
         adjust-viewport-to-contain-point))))
