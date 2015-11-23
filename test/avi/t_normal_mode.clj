@@ -73,8 +73,10 @@
       (editor :after "ll0") => (point [0 0])
       (editor :editing "\n" :after "0") => did-not-beep)
 
-    (fact "`$` moves to the last character on the line."
+    (fact "`$` moves to the last character on the line"
       (editor :after "$") => (point [0 2]))
+    (fact "`$jj` stays on last character of the line"
+      (editor :editing "Hi\nHello\nWha" :after "$jj") => (point [2 2]))
     (fact "`^` moves to the first non-space character"
       (editor :editing "bob" :after "$^") => (point [0 0])
       (editor :editing "  bob" :after "$^") => (point [0 2])
