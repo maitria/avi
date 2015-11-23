@@ -1,8 +1,6 @@
 (ns avi.main
   (:require [avi.beep :as beep]
-            [avi.command-line-mode]
-            [avi.insert-mode]
-            [avi.normal-mode]
+            [avi.mode command-line insert normal]
             [avi.render]
             [avi.editor :as e]))
 
@@ -13,9 +11,9 @@
 (defn responder
   [catch-errors?]
   (-> beep/unhandled-event-responder
-    avi.normal-mode/wrap-mode
-    avi.insert-mode/wrap-mode
-    avi.command-line-mode/wrap-mode
+    avi.mode.normal/wrap-mode
+    avi.mode.insert/wrap-mode
+    avi.mode.command-line/wrap-mode
     avi.search/wrap-mode
     e/wrap-handle-resize
     (cond-> catch-errors? e/wrap-handle-exceptions)

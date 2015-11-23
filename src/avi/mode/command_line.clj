@@ -1,4 +1,4 @@
-(ns avi.command-line-mode
+(ns avi.mode.command-line
   (:require [packthread.core :refer :all]
             [avi.buffer :as b]
             [avi.command-line :as cl]

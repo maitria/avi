@@ -1,4 +1,4 @@
-(ns avi.insert-mode
+(ns avi.mode.insert
   (:require [packthread.core :refer :all]
             [packthread.lenses :as l]
             [avi.beep :as beep]

@@ -1,12 +1,11 @@
-(ns avi.normal-mode
+(ns avi.mode.normal
   (:require [packthread.core :refer :all]
             [avi.beep :as beep]
             [avi.brackets :as brackets]
             [avi.buffer :as b]
-            [avi.command-line-mode :as command-line-mode]
             [avi.editor :as e]
             [avi.eventmap :as em]
-            [avi.insert-mode :as insert-mode]
+            [avi.mode command-line insert]
             [avi.pervasive :refer :all]
             [avi.search]))
 
@@ -173,8 +172,8 @@
   (-> beep/beep-responder
       wrap-normal-mode
       avi.search/wrap-normal-search-commands
-      command-line-mode/wrap-enter-command-line-mode
-      insert-mode/wrap-enter-insert-mode
+      avi.mode.command-line/wrap-enter-command-line-mode
+      avi.mode.insert/wrap-enter-insert-mode
       brackets/wrap-go-to-matching-bracket
       wrap-collect-repeat-count))
 

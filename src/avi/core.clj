@@ -3,7 +3,6 @@
   (:require [packthread.core :refer :all]
             [avi.editor :as e]
             [avi.main]
-            [avi.normal-mode]
             [avi.world :refer :all])
   (:gen-class))
 
