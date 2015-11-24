@@ -39,12 +39,12 @@
 (defn delete
   [{start :point :keys [lines] :as buffer} motion]
   (+> buffer
-    (let [end (resolve/resolve-motion buffer motion)
-          moving-left? (l/location< start end)
-          end' (if moving-left?
-                 [(first end) (inc (second end))]
-                 end)]
-      t/start-transaction
-      (c/change start end' "" :left)
-      t/commit
-      (move-point [:goto (first (sort [start end']))]))))
+    (if-let [end (resolve/resolve-motion buffer motion)]
+      (let [moving-left? (l/location< start end)
+            end' (if moving-left?
+                   [(first end) (inc (second end))]
+                   end)]
+        t/start-transaction
+        (c/change start end' "" :left)
+        t/commit
+        (move-point [:goto (first (sort [start end']))])))))
