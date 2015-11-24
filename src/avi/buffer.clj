@@ -14,10 +14,10 @@
             [potemkin :refer [import-vars]]))
 
 (import-vars [avi.buffer.change
+                adjust-viewport-to-contain-point
                 change]
              [avi.buffer.motion
                 clamp-point-j
-                adjust-viewport-to-contain-point
                 move-point
                 delete]
              [avi.buffer.transactions

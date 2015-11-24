@@ -134,3 +134,14 @@
                     "~" :blue
                     "test.txt" :black :on :white
                     ""])))
+
+(fact "viewport is adjusted to cursor when typing in insert mode"
+  (editor :editing "1\n2\n3\n4\n5\n6" :after "GA<Enter>x<Enter>y<Enter>z")
+    => (terminal ["4"
+                  "5"
+                  "6"
+                  "x"
+                  "y"
+                  "z"
+                  "test.txt" :black :on :white
+                  "--INSERT--"]))
