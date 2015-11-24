@@ -47,4 +47,5 @@
         t/start-transaction
         (c/change start end' "" :left)
         t/commit
-        (move-point [:goto (first (sort [start end']))])))))
+        (move-point [:goto (first (sort [start end']))]))
+      beep/beep)))

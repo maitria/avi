@@ -421,7 +421,8 @@
   (fact "`df)` deletes up to and including the next `)`"
     (editor :editing "y12)x" :after "ldf)") => (line 0 "yx"))
   (fact "`df)` beeps if there's no `)`"
-    (editor :editing "y12x" :after "ldf)") => (line 0 "y12x"))
+    (editor :editing "y12x" :after "ldf)") => (line 0 "y12x")
+    (editor :editing "y12x" :after "ldf)") => beeped)
   (fact "`d0` puts the cursor in column 0"
     (editor :editing "1234" :after "lld0") => (line 0 "34")
     (editor :editing "1234" :after "lld0") => (point [0 0])))
