@@ -40,7 +40,9 @@
   [{start :point :keys [lines] :as buffer} motion]
   (+> buffer
     (let [end (resolve/resolve-motion buffer motion)
-          end' [(first end) (inc (second end))]]
+          end' (if (l/location< start end)
+                 [(first end) (inc (second end))]
+                 end)]
       t/start-transaction
       (c/change start end' "" :left)
       t/commit
