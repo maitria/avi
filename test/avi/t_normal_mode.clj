@@ -418,8 +418,13 @@
   (fact "`d$` deletes to end-of-line"
     (editor :editing "1234" :after "lld$") => (line 0 "12")
     (editor :editing "1234" :after "lld$") => (point [0 1]))
-  (fact "`df)` deletes up to and including the next `)`"
-    (editor :editing "y12)x" :after "ldf)") => (line 0 "yx"))
+  (tabular
+    (fact "`dfx` deletes up to and including the next `x`"
+      (editor :editing ?text :after ?keys) => (line 0 ?line)
+      (editor :editing ?text :after ?keys) => (point ?point))
+    ?text   ?keys  ?point ?line
+    "y12)x" "ldf)" [0 1]  "yx"
+    "y12/x" "ldf/" [0 1]  "yx")
   (fact "`df)` beeps if there's no `)`"
     (editor :editing "y12x" :after "ldf)") => (line 0 "y12x")
     (editor :editing "y12x" :after "ldf)") => beeped)
