@@ -40,11 +40,11 @@
   [{start :point :keys [lines] :as buffer} motion]
   (+> buffer
     (let [end (resolve/resolve-motion buffer motion)
-          end' (if (l/location< start end)
+          moving-left? (l/location< start end)
+          end' (if moving-left?
                  [(first end) (inc (second end))]
                  end)]
       t/start-transaction
       (c/change start end' "" :left)
       t/commit
-      clamp-point-j
-      c/adjust-viewport-to-contain-point)))
+      (move-point [:goto (first (sort [start end']))]))))
