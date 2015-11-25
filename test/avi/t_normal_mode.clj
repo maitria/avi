@@ -441,7 +441,9 @@
   (fact "`dgg` deletes linewise"
     (editor :editing "a\nb\nc\nd" :after "jjdgg") => (contents "d"))
   (fact "`dH` deletes linewise"
-    (editor :editing "a\nb\nc\nd" :after "jjdH") => (contents "d")))
+    (editor :editing "a\nb\nc\nd" :after "jjdH") => (contents "d"))
+  (fact "`dL` deletes linewise"
+    (editor :editing ten-lines :after "jjdL") => (contents #"^One\nTwo\nSeven\n")))
 
 (facts "about `D`"
   (fact "`D` deletes to the end-of-line"

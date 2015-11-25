@@ -28,7 +28,7 @@
     ["t<.>" :inclusive [:goto [:current [:before-next ?char]]]]
     ["G"    nil        [:goto [(?line :last) :first-non-blank]]]
     ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :last-explicit]]]
-    ["L"    nil        [:goto [[:viewport-bottom (?line 0)] :last-explicit]]]
+    ["L"    :linewise  [:goto [[:viewport-bottom (?line 0)] :last-explicit]]]
     ["M"    nil        [:goto [:viewport-middle :last-explicit]]]])
 
 (defn variable?
