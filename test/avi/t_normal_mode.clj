@@ -414,38 +414,34 @@
   (fact "`tx` beeps if there's no `x`"
     (editor :editing "..." :after "tx") => beeped))
 
-(facts "about `d<Motion>`"
-  (fact "`d$` deletes to end-of-line"
-    (editor :editing "1234" :after "lld$") => (line 0 "12")
-    (editor :editing "1234" :after "lld$") => (point [0 1]))
-  (tabular
-    (fact "`dfx` deletes up to and including the next `x`"
-      (editor :editing ?text :after (str "ll" ?keys)) => (every-pred
-                                                           (line 0 ?line)
-                                                           (point ?pos)))
-    ?text     ?keys ?pos  ?line
-    "abcd)f"  "df)" [0 2] "abf"
-    "abcd/f"  "df/" [0 2] "abf"
-    "abcdef"  "dl"  [0 2] "abdef"
-    "abcdef"  "dh"  [0 1] "acdef"
-    "a\nb\nc" "dj" [0 0] "c")
-  (fact "`df)` beeps if there's no `)`"
-    (editor :editing "y12x" :after "ldf)") => (line 0 "y12x")
-    (editor :editing "y12x" :after "ldf)") => beeped)
-  (fact "`d0` puts the cursor in column 0"
-    (editor :editing "1234" :after "lld0") => (line 0 "34")
-    (editor :editing "1234" :after "lld0") => (point [0 0]))
-  (fact "`d^` deletes before cursor to first non-space"
-    (editor :editing "  abcdefgh" :after "5ld^") => (line 0 "  defgh")
-    (editor :editing "  abcdefgh" :after "5ld^") => (point [0 2]))
-  (fact "`dgg` deletes linewise"
-    (editor :editing "a\nb\nc\nd" :after "jjdgg") => (contents "d"))
-  (fact "`dH` deletes linewise"
-    (editor :editing "a\nb\nc\nd" :after "jjdH") => (contents "d"))
-  (fact "`dL` deletes linewise"
-    (editor :editing ten-lines :after "jjdL") => (contents #"^One\nTwo\nSeven\n"))
-  (fact "`dM` deletes linewise"
-    (editor :editing ten-lines :after "jdM") => (contents #"^One\nFour\n")))
+(tabular
+  (facts "about `d<Motion>` which work"
+    (let [result (editor :editing ?before :after ?keys)]
+      result => (contents ?after)
+      result => (point ?pos)
+      result =not=> beeped))
+
+  ?before             ?keys   ?pos  ?after
+  "abcd)f"            "lldf)" [0 2] "abf"
+  "abcd/f"            "lldf/" [0 2] "abf"
+  "abcdef"            "lldl"  [0 2] "abdef"
+  "abcdef"            "lldh"  [0 1] "acdef"
+  "a\nb\nc"           "dj"    [0 0] "c"    ; FIXME: lldj??
+  "1234"              "lld$"  [0 1] "12"
+  "1234"              "lld0"  [0 0] "34"
+  "  abcdefgh"        "5ld^"  [0 2] "  defgh"
+  "a\nb\nc\nd"        "jjdgg" [0 0] "d"    ; FIXME: more lines, cursor?
+  "a\nb\nc\nd"        "jjdH"  [0 0] "d"    ; ""
+  ten-lines           "jjdL"  [2 0] #"^One\nTwo\nSeven\n"
+  ten-lines           "jdM"   [1 0] #"^One\nFour\n")
+
+(tabular
+  (facts "about `d<Motion>` which fail"
+    (let [result (editor :editing ?contents :after ?keys)]
+      result => beeped
+      result => (contents ?contents)))
+  ?contents ?keys
+  "y12x"    "ldf)")
 
 (facts "about `D`"
   (fact "`D` deletes to the end-of-line"
