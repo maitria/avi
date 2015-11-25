@@ -434,7 +434,10 @@
     (editor :editing "y12x" :after "ldf)") => beeped)
   (fact "`d0` puts the cursor in column 0"
     (editor :editing "1234" :after "lld0") => (line 0 "34")
-    (editor :editing "1234" :after "lld0") => (point [0 0])))
+    (editor :editing "1234" :after "lld0") => (point [0 0]))
+  (fact "`d^` deletes before cursor to first non-space"
+    (editor :editing "  abcdefgh" :after "5ld^") => (line 0 "  defgh")
+    (editor :editing "  abcdefgh" :after "5ld^") => (point [0 2])))
 
 (facts "about `D`"
   (fact "`D` deletes to the end-of-line"

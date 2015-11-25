@@ -17,7 +17,7 @@
 
 (def motions
   '[["0"    :exclusive [:goto [:current 0]]]
-    ["^"    nil        [:goto [:current :first-non-blank]]]
+    ["^"    :exclusive [:goto [:current :first-non-blank]]]
     ["$"    nil        [:goto [:current :end-of-line]]]
     ["f<.>" :inclusive [:goto [:current [:to-next ?char]]]]
     ["gg"   nil        [:goto [(?line 0) :first-non-blank]]]
