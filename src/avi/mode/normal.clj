@@ -29,7 +29,7 @@
     ["G"    nil        [:goto [(?line :last) :first-non-blank]]]
     ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :last-explicit]]]
     ["L"    :linewise  [:goto [[:viewport-bottom (?line 0)] :last-explicit]]]
-    ["M"    nil        [:goto [:viewport-middle :last-explicit]]]])
+    ["M"    :linewise  [:goto [:viewport-middle :last-explicit]]]])
 
 (defn variable?
   [a]
