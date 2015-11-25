@@ -124,6 +124,13 @@
   [expected]
   (line nil expected))
 
+(defn contents
+  [expected]
+  (fn [result]
+    (checking/extended-=
+      (string/join "\n" (get-in result [:editor :buffer :lines]))
+      expected)))
+
 (defn attributes
   [[i j] expected]
   (fn [{{{:keys [width attrs]} :rendition} :editor}]

@@ -437,7 +437,9 @@
     (editor :editing "1234" :after "lld0") => (point [0 0]))
   (fact "`d^` deletes before cursor to first non-space"
     (editor :editing "  abcdefgh" :after "5ld^") => (line 0 "  defgh")
-    (editor :editing "  abcdefgh" :after "5ld^") => (point [0 2])))
+    (editor :editing "  abcdefgh" :after "5ld^") => (point [0 2]))
+  (fact "`dgg` deletes linewise"
+    (editor :editing "a\nb\nc\nd" :after "jjdgg") => (contents "d")))
 
 (facts "about `D`"
   (fact "`D` deletes to the end-of-line"

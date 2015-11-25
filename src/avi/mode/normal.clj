@@ -20,7 +20,7 @@
     ["^"    :exclusive [:goto [:current :first-non-blank]]]
     ["$"    :inclusive [:goto [:current :end-of-line]]]
     ["f<.>" :inclusive [:goto [:current [:to-next ?char]]]]
-    ["gg"   nil        [:goto [(?line 0) :first-non-blank]]]
+    ["gg"   :linewise  [:goto [(?line 0) :first-non-blank]]]
     ["h"    :exclusive [:goto [:current :left]]]
     ["j"    :linewise  [:goto [:down :last-explicit]]]
     ["k"    nil        [:goto [:up :last-explicit]]]
