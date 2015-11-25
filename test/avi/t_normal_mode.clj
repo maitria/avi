@@ -426,7 +426,7 @@
   "abcd/f"            "lldf/" [0 2] "abf"
   "abcdef"            "lldl"  [0 2] "abdef"
   "abcdef"            "lldh"  [0 1] "acdef"
-  "a\nb\nc"           "dj"    [0 0] "c"    ; FIXME: lldj??
+  "a\nb\nc"           "lldj"  [0 0] "c"
   "1234"              "lld$"  [0 1] "12"
   "1234"              "lld0"  [0 0] "34"
   "  abcdefgh"        "5ld^"  [0 2] "  defgh"
@@ -438,10 +438,13 @@
 (tabular
   (facts "about `d<Motion>` which fail"
     (let [result (editor :editing ?contents :after ?keys)]
-      result => beeped
-      result => (contents ?contents)))
+      (fact "failed delete motions beep"
+        result => beeped)
+      (fact "failed delete motions do not change file contents"
+        result => (contents ?contents))))
   ?contents ?keys
-  "y12x"    "ldf)")
+  "y12x"    "ldf)"
+  "a\nb\nc" "jjdj")
 
 (facts "about `D`"
   (fact "`D` deletes to the end-of-line"
