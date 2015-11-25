@@ -36,15 +36,26 @@
         clamp-point-j
         c/adjust-viewport-to-contain-point))))
 
+(defn resolve-range
+  [buffer motion kind]
+  (when-let [pos (resolve/resolve-motion buffer motion)]
+    (let [[start end] (sort [(:point buffer) pos])
+          start (if (= kind :linewise)
+                  [(first start) 0]
+                  start)
+          end (case kind
+                :inclusive [(first end) (inc (second end))]
+                :linewise  [(inc (first end)) 0]
+                end)]
+      [start end])))
+
 (defn delete
   [{start :point :keys [lines] :as buffer} motion kind]
   (+> buffer
-    (if-let [end (resolve/resolve-motion buffer motion)]
-      (let [end' (if (= kind :inclusive)
-                   [(first end) (inc (second end))]
-                   end)]
+    (if-let [[start end] (resolve-range buffer motion kind)]
+      (do
         t/start-transaction
-        (c/change start end' "" :left)
+        (c/change start end "" :left)
         t/commit
-        (move-point [:goto (first (sort [start end']))]))
+        (move-point [:goto start]))
       beep/beep)))

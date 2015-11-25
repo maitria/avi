@@ -427,7 +427,9 @@
     "abcd)f" "df)" [0 2] "abf"
     "abcd/f" "df/" [0 2] "abf"
     "abcdef" "dl"  [0 2] "abdef"
-    "abcdef" "dh"  [0 1] "acdef")
+    "abcdef" "dh"  [0 1] "acdef"
+    "a\nb\nc" "dj" [0 0] "c"
+    )
   (fact "`df)` beeps if there's no `)`"
     (editor :editing "y12x" :after "ldf)") => (line 0 "y12x")
     (editor :editing "y12x" :after "ldf)") => beeped)
