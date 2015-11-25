@@ -420,11 +420,13 @@
     (editor :editing "1234" :after "lld$") => (point [0 1]))
   (tabular
     (fact "`dfx` deletes up to and including the next `x`"
-      (editor :editing ?text :after ?keys) => (line 0 ?line)
-      (editor :editing ?text :after ?keys) => (point ?point))
-    ?text   ?keys  ?point ?line
-    "y12)x" "ldf)" [0 1]  "yx"
-    "y12/x" "ldf/" [0 1]  "yx")
+      (editor :editing ?text :after (str "ll" ?keys)) => (every-pred
+                                                           (line 0 ?line)
+                                                           (point ?pos)))
+    ?text    ?keys ?pos  ?line
+    "abcd)f" "df)" [0 2] "abf"
+    "abcd/f" "df/" [0 2] "abf"
+    "abcdef" "dl"  [0 2] "abdef")
   (fact "`df)` beeps if there's no `)`"
     (editor :editing "y12x" :after "ldf)") => (line 0 "y12x")
     (editor :editing "y12x" :after "ldf)") => beeped)

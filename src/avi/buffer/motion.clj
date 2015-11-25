@@ -23,7 +23,7 @@
   (assoc buffer :point [i (clamped-j buffer j)]))
 
 (defn move-point
-  [buffer [_ [_ motion-j] :as motion]]
+  [buffer [_ [_ motion-j] :as motion] & [_]]
   (+> buffer
     (let [j-is-last-explicit? (= motion-j :last-explicit)
           [i j :as pos] (resolve/resolve-motion buffer motion)]
@@ -37,11 +37,10 @@
         c/adjust-viewport-to-contain-point))))
 
 (defn delete
-  [{start :point :keys [lines] :as buffer} motion]
+  [{start :point :keys [lines] :as buffer} motion kind]
   (+> buffer
     (if-let [end (resolve/resolve-motion buffer motion)]
-      (let [moving-left? (l/location< start end)
-            end' (if moving-left?
+      (let [end' (if (= kind :inclusive)
                    [(first end) (inc (second end))]
                    end)]
         t/start-transaction

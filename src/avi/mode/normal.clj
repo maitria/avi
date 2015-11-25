@@ -16,20 +16,20 @@
         (b/scroll update-fn))))
 
 (def motions
-  '{"0"    [:goto [:current 0]]
-    "^"    [:goto [:current :first-non-blank]]
-    "$"    [:goto [:current :end-of-line]]
-    "f<.>" [:goto [:current [:to-next ?char]]]
-    "gg"   [:goto [(?line 0) :first-non-blank]]
-    "h"    [:goto [:current :left]]
-    "j"    [:goto [:down :last-explicit]]
-    "k"    [:goto [:up :last-explicit]]
-    "l"    [:goto [:current :right]]
-    "t<.>" [:goto [:current [:before-next ?char]]]
-    "G"    [:goto [(?line :last) :first-non-blank]]
-    "H"    [:goto [[:viewport-top (?line 0)] :last-explicit]]
-    "L"    [:goto [[:viewport-bottom (?line 0)] :last-explicit]]
-    "M"    [:goto [:viewport-middle :last-explicit]]})
+  '[["0"    :exclusive [:goto [:current 0]]]
+    ["^"    nil        [:goto [:current :first-non-blank]]]
+    ["$"    nil        [:goto [:current :end-of-line]]]
+    ["f<.>" :inclusive [:goto [:current [:to-next ?char]]]]
+    ["gg"   nil        [:goto [(?line 0) :first-non-blank]]]
+    ["h"    nil        [:goto [:current :left]]]
+    ["j"    nil        [:goto [:down :last-explicit]]]
+    ["k"    nil        [:goto [:up :last-explicit]]]
+    ["l"    :exclusive [:goto [:current :right]]]
+    ["t<.>" :inclusive [:goto [:current [:before-next ?char]]]]
+    ["G"    nil        [:goto [(?line :last) :first-non-blank]]]
+    ["H"    nil        [:goto [[:viewport-top (?line 0)] :last-explicit]]]
+    ["L"    nil        [:goto [[:viewport-bottom (?line 0)] :last-explicit]]]
+    ["M"    nil        [:goto [:viewport-middle :last-explicit]]]])
 
 (defn variable?
   [a]
@@ -58,7 +58,7 @@
     a))
 
 (defn motion-handler
-  [f pattern]
+  [f kind pattern]
   (let [vs (variables pattern)]
     (with-meta
       (fn+> [editor [_ keyname]]
@@ -68,15 +68,15 @@
                            ?line (some-> (:count editor) dec)))
               motion (substitute pattern bindings)]
           (in e/current-buffer
-            (f motion))))
+            (f motion kind))))
       (if (vs '?count)
         {:no-repeat true}))))
 
 (defn motion-handlers
   [prefix f]
   (->> motions
-    (map (juxt (comp #(str prefix %) first)
-               (comp (partial motion-handler f) second)))
+    (map (fn [[ks kind pattern]]
+           [(str prefix ks) (motion-handler f kind pattern)]))
     (into {})))
 
 (def wrap-normal-mode
@@ -108,7 +108,7 @@
                                b/commit)))
        "D" (fn+> [editor _]
              (in e/current-buffer
-               (b/delete [:goto [:current :end-of-line]])))
+               (b/delete [:goto [:current :end-of-line]] :inclusive)))
 
        "J" ^:no-repeat (fn+> [editor _]
                          (let [{[i j] :point, lines :lines} (e/current-buffer editor)
