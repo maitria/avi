@@ -430,8 +430,10 @@
   "1234"              "lld$"  [0 1] "12"
   "1234"              "lld0"  [0 0] "34"
   "  abcdefgh"        "5ld^"  [0 2] "  defgh"
-  "a\nb\nc\nd"        "jjdgg" [0 0] "d"    ; FIXME: more lines, cursor?
-  "a\nb\nc\nd"        "jjdH"  [0 0] "d"    ; ""
+  "a\nb\nc\nd"        "jjdgg" [0 0] "d"
+  "a\nb\nc\nd"        "jdgg"  [0 0] "c\nd"
+  "a\nb\nc\nd"        "jjdH"  [0 0] "d"
+  "a\nb\nc\nd"        "jdH"   [0 0] "c\nd"
   ten-lines           "jjdL"  [2 0] #"^One\nTwo\nSeven\n"
   ten-lines           "jdM"   [1 0] #"^One\nFour\n")
 
