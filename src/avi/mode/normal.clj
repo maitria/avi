@@ -21,7 +21,7 @@
     ["$"    nil        [:goto [:current :end-of-line]]]
     ["f<.>" :inclusive [:goto [:current [:to-next ?char]]]]
     ["gg"   nil        [:goto [(?line 0) :first-non-blank]]]
-    ["h"    nil        [:goto [:current :left]]]
+    ["h"    :exclusive [:goto [:current :left]]]
     ["j"    nil        [:goto [:down :last-explicit]]]
     ["k"    nil        [:goto [:up :last-explicit]]]
     ["l"    :exclusive [:goto [:current :right]]]
