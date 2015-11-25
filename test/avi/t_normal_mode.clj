@@ -439,7 +439,9 @@
     (editor :editing "  abcdefgh" :after "5ld^") => (line 0 "  defgh")
     (editor :editing "  abcdefgh" :after "5ld^") => (point [0 2]))
   (fact "`dgg` deletes linewise"
-    (editor :editing "a\nb\nc\nd" :after "jjdgg") => (contents "d")))
+    (editor :editing "a\nb\nc\nd" :after "jjdgg") => (contents "d"))
+  (fact "`dH` deletes linewise"
+    (editor :editing "a\nb\nc\nd" :after "jjdH") => (contents "d")))
 
 (facts "about `D`"
   (fact "`D` deletes to the end-of-line"

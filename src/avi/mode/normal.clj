@@ -27,7 +27,7 @@
     ["l"    :exclusive [:goto [:current :right]]]
     ["t<.>" :inclusive [:goto [:current [:before-next ?char]]]]
     ["G"    nil        [:goto [(?line :last) :first-non-blank]]]
-    ["H"    nil        [:goto [[:viewport-top (?line 0)] :last-explicit]]]
+    ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :last-explicit]]]
     ["L"    nil        [:goto [[:viewport-bottom (?line 0)] :last-explicit]]]
     ["M"    nil        [:goto [:viewport-middle :last-explicit]]]])
 
