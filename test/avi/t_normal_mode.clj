@@ -435,7 +435,9 @@
   "a\nb\nc\nd"        "jjdH"  [0 0] "d"
   "a\nb\nc\nd"        "jdH"   [0 0] "c\nd"
   ten-lines           "jjdL"  [2 0] #"^One\nTwo\nSeven\n"
-  ten-lines           "jdM"   [1 0] #"^One\nFour\n")
+  ten-lines           "jdM"   [1 0] #"^One\nFour\n"
+  "a\nb\nc\nd"        "Gkdk"  [1 0] "a\nd"
+  "aa\nbb\ncc\ndd"    "lj3dG" [1 0] "aa\ndd")
 
 (tabular
   (facts "about `d<Motion>` which fail"

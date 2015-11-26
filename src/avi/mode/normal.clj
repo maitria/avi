@@ -23,7 +23,7 @@
     ["gg"   :linewise  [:goto [(?line 0) :first-non-blank]]]
     ["h"    :exclusive [:goto [:current :left]]]
     ["j"    :linewise  [:goto [:down :last-explicit]]]
-    ["k"    nil        [:goto [:up :last-explicit]]]
+    ["k"    :linewise  [:goto [:up :last-explicit]]]
     ["l"    :exclusive [:goto [:current :right]]]
     ["t<.>" :inclusive [:goto [:current [:before-next ?char]]]]
     ["G"    nil        [:goto [(?line :last) :first-non-blank]]]
