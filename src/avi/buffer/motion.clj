@@ -40,16 +40,22 @@
   [{:keys [lines point] :as buffer} motion kind]
   (when-let [pos (resolve/resolve-motion buffer motion)]
     (let [[start end] (sort [point pos])
-          start (if (= kind :linewise)
-                  [(first start) 0]
-                  start)
-          end (case kind
-                :inclusive [(first end) (inc (second end))]
-                :linewise  [(inc (first end)) 0]
-                :exclusive end)
-          end (if-not (get lines (first end))
-                [(dec (first end)) (bit-shift-right Long/MAX_VALUE 1)]
-                end)]
+          [start end] (case kind
+                        :exclusive [start end]
+                        :inclusive [start [(first end) (inc (second end))]]
+                        :linewise  (let [[si sj] start
+                                         [ei ej] end]
+                                     (cond
+                                       (and (not (get lines (dec si)))
+                                            (not (get lines (inc ei))))
+                                       [[0 0] [(dec (count lines)) (count (peek lines))]]
+
+                                       (get lines (inc ei))
+                                       [[si 0] [(inc ei) 0]]
+
+                                       :else
+                                       [[(dec si) (count (get lines (dec si)))]
+                                        [ei (count (get lines ei))]])))]
       [start end])))
 
 (defn delete

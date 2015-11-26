@@ -427,6 +427,8 @@
   "abcdef"            "lldl"  [0 2] "abdef"
   "abcdef"            "lldh"  [0 1] "acdef"
   "a\nb\nc"           "lldj"  [0 0] "c"
+  "a\nb"              "dj"    [0 0] ""
+  "a\nb\nc"           "jdj"   [0 0] "a"
   "1234"              "lld$"  [0 1] "12"
   "1234"              "lld0"  [0 0] "34"
   "  abcdefgh"        "5ld^"  [0 2] "  defgh"
@@ -438,7 +440,8 @@
   ten-lines           "jdM"   [1 0] #"^One\nFour\n"
   "a\nb\nc\nd"        "Gkdk"  [1 0] "a\nd"
   "aa\nbb\ncc\ndd"    "lj3dG" [1 0] "aa\ndd"
-  "a\nb\nc\nd"        "dG"    [0 0] "")
+  "a\nb\nc\nd"        "dG"    [0 0] ""
+  "a\nb\nc\nd"        "jdk"   [0 0] "c\nd")
 
 (tabular
   (facts "about `d<Motion>` which fail"
@@ -449,7 +452,8 @@
         result => (contents ?contents))))
   ?contents ?keys
   "y12x"    "ldf)"
-  "a\nb\nc" "jjdj")
+  "a\nb\nc" "jjdj"
+  "a\nb\nc" "dk")
 
 (facts "about `D`"
   (fact "`D` deletes to the end-of-line"
