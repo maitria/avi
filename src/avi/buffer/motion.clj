@@ -37,20 +37,19 @@
         c/adjust-viewport-to-contain-point))))
 
 (defn resolve-range
-  [buffer motion kind]
+  [{:keys [lines point] :as buffer} motion kind]
   (when-let [pos (resolve/resolve-motion buffer motion)]
-    (let [[start end] (sort [(:point buffer) pos])
+    (let [[start end] (sort [point pos])
           start (if (= kind :linewise)
                   [(first start) 0]
                   start)
           end (case kind
                 :inclusive [(first end) (inc (second end))]
                 :linewise  [(inc (first end)) 0]
-                end)
-          end (if-not (get (:lines buffer) (first end))
+                :exclusive end)
+          end (if-not (get lines (first end))
                 [(dec (first end)) (bit-shift-right Long/MAX_VALUE 1)]
-                end)
-          ]
+                end)]
       [start end])))
 
 (defn delete
