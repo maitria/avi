@@ -36,9 +36,20 @@
   (and (symbol? a)
        (= (get (name a) 0) \?)))
 
-(defn variables
+(defn bindings
+  [editor [_ keyname]]
+  {'?char (get keyname 0)
+   '?line (some-> (:count editor) dec)})
+
+(def count-variables
+  #{'?line})
+
+(defn uses-count?
   [pattern]
-  (->> pattern flatten (filter variable?) (into #{})))
+  (->> pattern
+    flatten
+    (filter count-variables)
+    seq))
 
 (defn substitute
   [a bindings]
@@ -59,18 +70,13 @@
 
 (defn motion-handler
   [f kind pattern]
-  (let [vs (variables pattern)]
-    (with-meta
-      (fn+> [editor [_ keyname]]
-        (let [bindings (fn [name]
-                         (case name
-                           ?char (get keyname 0)
-                           ?line (some-> (:count editor) dec)))
-              motion (substitute pattern bindings)]
-          (in e/current-buffer
+  (with-meta
+    (fn+> [editor event]
+      (let [motion (substitute pattern (bindings editor event))]
+        (in e/current-buffer
             (f motion kind))))
-      (if (vs '?line)
-        {:no-repeat true}))))
+    (if (uses-count? pattern)
+      {:no-repeat true})))
 
 (defn motion-handlers
   [prefix f]
