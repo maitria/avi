@@ -27,9 +27,9 @@
     ["l"    :exclusive [:goto [:current :right]]]
     ["t<.>" :inclusive [:goto [:current [:before-next ?char]]]]
     ["G"    :linewise  [:goto [(?line :last) :first-non-blank]]]
-    ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :last-explicit]]]
-    ["L"    :linewise  [:goto [[:viewport-bottom (?line 0)] :last-explicit]]]
-    ["M"    :linewise  [:goto [:viewport-middle :last-explicit]]]])
+    ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :first-non-blank]]]
+    ["L"    :linewise  [:goto [[:viewport-bottom (?line 0)] :first-non-blank]]]
+    ["M"    :linewise  [:goto [:viewport-middle :first-non-blank]]]])
 
 (defn variable?
   [a]

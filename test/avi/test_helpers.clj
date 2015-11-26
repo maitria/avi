@@ -18,6 +18,18 @@
   (str "One\nTwo\nThree\nFour\nFive\nSix\n"
        "Seven\nEight\nNine\nTen"))
 
+(def ten-lines-indented
+  (str "  One\n"
+       "  Two\n"
+       "  Three\n"
+       "  Four\n"
+       "  Five\n"
+       "  Six\n"
+       "  Seven\n"
+       "  Eight\n"
+       "  Nine\n"
+       "  Ten"))
+
 (defn- event
   [event-name]
   (let [event-type (if (.startsWith event-name "<Resize ")

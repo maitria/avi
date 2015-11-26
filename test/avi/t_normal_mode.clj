@@ -233,7 +233,7 @@
     (fact "`L` moves to the last line when buffer has fewer lines than the buffer viewport"
       (editor :editing "One\nTwo\nThree" :after "L") => (point [2 0]))
     (fact "`L` moves to the last line on the buffer viewport when the file is longer"
-      (editor :editing ten-lines :after "L") => (point [5 0])
+      (editor :editing ten-lines-indented :after "L") => (point [5 2])
       (editor :editing ten-lines :after "L")
         => (terminal ["One"
                       "Two"
@@ -244,7 +244,7 @@
                       "test.txt" :black :on :white
                       ""]))
     (fact "`L` will move to count line from bottom of viewport"
-      (editor :editing ten-lines :after "<C-E>2L") => (point [4 0]))
+      (editor :editing ten-lines-indented :after "<C-E>2L") => (point [4 2]))
     (fact "`L` will move to count line from bottom of file when file is shorter"
       (editor :editing "One\nTwo\nThree" :after "2L") => (point [1 0]))
     (fact "`L` will not move above top of viewport"
@@ -261,7 +261,7 @@
 
   (facts "about `H`"
     (fact "`H` moves to the first line in the buffer viewport"
-      (editor :editing ten-lines :after "GH") => (point [0 0])
+      (editor :editing ten-lines-indented :after "G$H") => (point [0 2])
       (editor :editing ten-lines :after "GH")
         => (terminal ["Five"
                       "Six"
@@ -278,7 +278,7 @@
 
   (facts "about `M`"
     (fact "`M` moves to the middle line of the viewport when buffer has more lines than the buffer viewport"
-      (editor :editing ten-lines :after "M") => (point [2 0])
+      (editor :editing ten-lines-indented :after "M") => (point [2 2])
       (editor :editing ten-lines :after "M")
         => (terminal ["One"
                       "Two"
