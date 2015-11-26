@@ -26,7 +26,7 @@
     ["k"    :linewise  [:goto [:up :last-explicit]]]
     ["l"    :exclusive [:goto [:current :right]]]
     ["t<.>" :inclusive [:goto [:current [:before-next ?char]]]]
-    ["G"    nil        [:goto [(?line :last) :first-non-blank]]]
+    ["G"    :linewise  [:goto [(?line :last) :first-non-blank]]]
     ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :last-explicit]]]
     ["L"    :linewise  [:goto [[:viewport-bottom (?line 0)] :last-explicit]]]
     ["M"    :linewise  [:goto [:viewport-middle :last-explicit]]]])
@@ -69,7 +69,7 @@
               motion (substitute pattern bindings)]
           (in e/current-buffer
             (f motion kind))))
-      (if (vs '?count)
+      (if (vs '?line)
         {:no-repeat true}))))
 
 (defn motion-handlers

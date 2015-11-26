@@ -416,10 +416,10 @@
 
 (tabular
   (facts "about `d<Motion>` which work"
-    (let [result (editor :editing ?before :after ?keys)]
-      result => (contents ?after)
-      result => (point ?pos)
-      result =not=> beeped))
+    (let [result #(editor :editing ?before :after ?keys)]
+      (result) => (contents ?after)
+      (result) => (point ?pos)
+      (result) =not=> beeped))
 
   ?before             ?keys   ?pos  ?after
   "abcd)f"            "lldf)" [0 2] "abf"
@@ -437,7 +437,8 @@
   ten-lines           "jjdL"  [2 0] #"^One\nTwo\nSeven\n"
   ten-lines           "jdM"   [1 0] #"^One\nFour\n"
   "a\nb\nc\nd"        "Gkdk"  [1 0] "a\nd"
-  "aa\nbb\ncc\ndd"    "lj3dG" [1 0] "aa\ndd")
+  "aa\nbb\ncc\ndd"    "lj3dG" [1 0] "aa\ndd"
+  "a\nb\nc\nd"        "dG"    [0 0] "")
 
 (tabular
   (facts "about `d<Motion>` which fail"

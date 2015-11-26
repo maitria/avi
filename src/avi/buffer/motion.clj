@@ -46,7 +46,11 @@
           end (case kind
                 :inclusive [(first end) (inc (second end))]
                 :linewise  [(inc (first end)) 0]
-                end)]
+                end)
+          end (if-not (get (:lines buffer) (first end))
+                [(dec (first end)) (bit-shift-right Long/MAX_VALUE 1)]
+                end)
+          ]
       [start end])))
 
 (defn delete
