@@ -2,18 +2,29 @@
   (:require [avi.nfa :refer :all]
             [midje.sweet :refer :all]))
 
-(defn accepts
-  [nfa inputs]
-  (accept? nfa (reduce
-                 (fn [state input]
-                   (if (= state :reject)
-                     :reject
-                     (advance nfa state input :reject)))
-                 (start nfa)
-                 inputs)))
+(tabular
+  (facts "about NFAs"
+    (let [nfa ?nfa
+          final-state (reduce
+                        (fn [s input]
+                          (if (= :reject s)
+                            :reject
+                            (advance nfa s input :reject)))
+                        (start nfa)
+                        ?inputs)
+          result (cond
+                   (= :reject final-state)
+                   :reject
 
-(facts "about match nfa"
-  (fact "it doesn't start in an accept state"
-    (accepts (match "1") []) => falsey)
-  (fact "it accepts the supplied value"
-    (accepts (match "1") ["1"]) => truthy))
+                   (accept? nfa final-state)
+                   :accept
+
+                   :else
+                   nil)]
+      result => ?result))
+
+  ?nfa        ?inputs   ?result
+  (match "1") []        nil   
+  (match "1") ["1"]     :accept
+  (match "1") ["2"]     :reject
+  (match "1") ["1" "2"] :reject)
