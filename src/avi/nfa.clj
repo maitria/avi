@@ -5,6 +5,13 @@
   [accumulator _]
   accumulator)
 
+(defn- merge-transitions
+  [as bs]
+  (merge-with
+    (partial merge-with merge)
+    as
+    bs))
+
 (defn match
   ([value]
    (match value null-reducer))
@@ -26,6 +33,18 @@
   {:start (:start nfa)
    :accept (set/union (:start nfa) (:accept nfa))
    :transitions (:transitions nfa)})
+
+(defn alt
+  ([a]
+   a)
+  ([a b]
+   {:start (set/union (:start a) (:start b))
+    :accept (set/union (:accept a) (:accept b))
+    :transitions (merge-transitions
+                   (:transitions a)
+                   (:transitions b))})
+  ([a b & cs]
+   (reduce alt (concat [a b] cs))))
 
 (defn start
   [nfa]

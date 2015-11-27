@@ -26,17 +26,35 @@
           result (characterize-state nfa state)]
       result => ?result))
 
-  ?nfa             ?inputs  ?result
-  (match 1)        []       :pending
-  (match 1)        [1]      :accept
-  (match 1)        [2]      :reject
-  (match 1)        [1 2]    :reject
-  (any)            []       :pending
-  (any)            [1]      :accept
-  (any)            [2]      :accept
-  (any)            [1 2]    :reject
-  (opt (match 1))  []       :accept
-  (opt (match 1))  [1]      :accept
-  (opt (match 1))  [2]      :reject
-  (opt (match 1))  [1 1]    :reject
-  (opt (match 1))  [1 2]    :reject)
+  ?nfa                       ?inputs  ?result
+  (match 1)                  []       :pending
+  (match 1)                  [1]      :accept
+  (match 1)                  [2]      :reject
+  (match 1)                  [1 2]    :reject
+
+  (any)                      []       :pending
+  (any)                      [1]      :accept
+  (any)                      [2]      :accept
+  (any)                      [1 2]    :reject
+
+  (opt (match 1))            []       :accept
+  (opt (match 1))            [1]      :accept
+  (opt (match 1))            [2]      :reject
+  (opt (match 1))            [1 1]    :reject
+  (opt (match 1))            [1 2]    :reject
+
+  (alt (match 1))            []       :pending
+  (alt (match 1))            [1]      :accept
+  (alt (match 1))            [2]      :reject
+  (alt (match 1))            [1 1]    :reject
+  (alt (match 1))            [1 2]    :reject
+  (alt (match 1) (match 2))  []       :pending
+  (alt (match 1) (match 2))  [1]      :accept
+  (alt (match 1) (match 2))  [2]      :accept
+  (alt (match 1) (match 2))  [3]      :reject
+  (alt (match 1) (match 2))  [1 1]    :reject
+  (alt (match 1) (match 2))  [1 3]    :reject
+  (alt (match 1) (match 2))  [3 1]    :reject
+  (alt (match 1) (match 2))  [3 3]    :reject
+
+  )
