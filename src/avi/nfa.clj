@@ -1,4 +1,5 @@
-(ns avi.nfa)
+(ns avi.nfa
+  (:require [clojure.set :as set]))
 
 (defn match
   ([value]
@@ -17,19 +18,21 @@
     (into {})))
 
 (defn accept?
-  [nfa]
-  false)
+  [nfa state]
+  (not (empty? (set/intersection
+                 (:accept nfa)
+                 (into #{} (keys state))))))
 
 (defn advance
   [nfa state input reject-value]
-  (let [state' (->> (for [x (concat
-                              (get-in nfa [:transitions ::any])
-                              (get-in nfa [:transitions input]))
-                          [s v] state
-                          :when (contains? x s)
-                          :let [[s' reducers] (get x s)]
+  (let [state' (->> (for [[s targets] (concat
+                                        (get-in nfa [:transitions ::any])
+                                        (get-in nfa [:transitions input]))
+                          :when (contains? state s)
+                          :let [v (get state s)]
+                          [s' reducers] targets
                           reducer reducers
-                          :let [v' (reducer v)]]
+                          :let [v' (reducer v input)]]
                       [s' v'])
                     (into {}))]
     (if (empty? state')
