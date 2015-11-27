@@ -23,12 +23,17 @@
                    nil)]
       result => ?result))
 
-  ?nfa        ?inputs   ?result
-  (match "1") []        nil   
-  (match "1") ["1"]     :accept
-  (match "1") ["2"]     :reject
-  (match "1") ["1" "2"] :reject
-  (any)       []        nil
-  (any)       ["1"]     :accept
-  (any)       ["2"]     :accept
-  (any)       ["1" "2"] :reject)
+  ?nfa              ?inputs   ?result
+  (match "1")       []        nil   
+  (match "1")       ["1"]     :accept
+  (match "1")       ["2"]     :reject
+  (match "1")       ["1" "2"] :reject
+  (any)             []        nil
+  (any)             ["1"]     :accept
+  (any)             ["2"]     :accept
+  (any)             ["1" "2"] :reject
+  (opt (match "1")) []        :accept
+  (opt (match "1")) ["1"]     :accept
+  (opt (match "1")) ["2"]     :reject
+  (opt (match "1")) ["1" "1"] :reject
+  (opt (match "1")) ["1" "2"] :reject)

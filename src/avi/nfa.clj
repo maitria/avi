@@ -21,6 +21,12 @@
   ([reducer]
    (match ::any reducer)))
 
+(defn opt
+  [nfa]
+  {:start (:start nfa)
+   :accept (set/union (:start nfa) (:accept nfa))
+   :transitions (:transitions nfa)})
+
 (defn start
   [nfa]
   (->> (:start nfa)
