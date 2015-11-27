@@ -1,15 +1,25 @@
 (ns avi.nfa
   (:require [clojure.set :as set]))
 
+(defn- null-reducer
+  [accumulator _]
+  accumulator)
+
 (defn match
   ([value]
-   (match value (fn [a _] a)))
+   (match value null-reducer))
   ([value reducer]
    (let [s1 (gensym)
          s2 (gensym)]
      {:start #{s1}
       :accept #{s2}
       :transitions {value {s1 {s2 [reducer]}}}})))
+
+(defn any
+  ([]
+   (match ::any null-reducer))
+  ([reducer]
+   (match ::any reducer)))
 
 (defn start
   [nfa]
