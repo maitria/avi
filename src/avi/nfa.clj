@@ -102,6 +102,13 @@
                  (:accept nfa)
                  (into #{} (keys state))))))
 
+(defn accept-value
+  [nfa state]
+  (->> state
+    (filter (comp (:accept nfa) first))
+    (map second)
+    first))
+
 (defn advance
   [nfa state input reject-value]
   (let [state' (->> (for [[s targets] (concat

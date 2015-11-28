@@ -20,7 +20,7 @@
     :else               :pending))
 
 (tabular
-  (facts "about NFAs"
+  (facts "about NFAs accepting inputs"
     (let [nfa ?nfa
           state (state-after-inputs nfa ?inputs)
           result (characterize-state nfa state)]
@@ -70,6 +70,37 @@
   (chain (match 1) (match 2))  [1 2]    :accept
   (chain (match 1) (match 2))  [1 2 3]  :reject
   (chain (match 1) (match 2))  [3]      :reject
-  (chain (match 1) (match 2))  [1 3]    :reject
+  (chain (match 1) (match 2))  [1 3]    :reject)
 
-  )
+(defn f
+  [v d]
+  (+ (* 10 (or v 0)) d))
+
+(tabular
+  (facts "about NFAs reducing values"
+    (let [nfa ?nfa
+          state (state-after-inputs nfa ?inputs)
+          result (characterize-state nfa state)
+          value (accept-value nfa state)]
+      result => :accept
+      value => ?value))
+
+  ?nfa                             ?inputs  ?value
+  (match 1 f)                      [1]      1
+  (match 2 f)                      [2]      2
+
+  (any f)                          [1]      1
+  (any f)                          [7]      7
+
+  (maybe (match 1 f))              []       nil
+  (maybe (match 1 f))              [1]      1
+
+  (choice (match 1 f) (match 2 f)) [1]      1
+  (choice (match 1 f) (match 2 f)) [2]      2
+
+  (kleene (match 7 f))             [7]      7
+  (kleene (match 7 f))             [7 7]    77
+  (kleene (match 7 f))             [7 7 7]  777
+  (kleene (any f))                 [8 6 7]  867
+
+  (chain (match 1 f) (match 2 f))  [1 2]    12)
