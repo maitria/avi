@@ -37,11 +37,11 @@
   (any)                      [2]      :accept
   (any)                      [1 2]    :reject
 
-  (opt (match 1))            []       :accept
-  (opt (match 1))            [1]      :accept
-  (opt (match 1))            [2]      :reject
-  (opt (match 1))            [1 1]    :reject
-  (opt (match 1))            [1 2]    :reject
+  (maybe (match 1))          []       :accept
+  (maybe (match 1))          [1]      :accept
+  (maybe (match 1))          [2]      :reject
+  (maybe (match 1))          [1 1]    :reject
+  (maybe (match 1))          [1 2]    :reject
 
   (alt (match 1))            []       :pending
   (alt (match 1))            [1]      :accept

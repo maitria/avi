@@ -39,7 +39,7 @@
   ([reducer]
    (match ::any reducer)))
 
-(defn opt
+(defn maybe
   [nfa]
   {:start (:start nfa)
    :accept (set/union (:start nfa) (:accept nfa))
