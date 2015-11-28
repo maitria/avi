@@ -57,7 +57,7 @@
   ([a b & cs]
    (reduce alt (concat [a b] cs))))
 
-(defn kleen
+(defn kleene
   ([nfa]
    {:start (:start nfa)
     :accept (:start nfa)
