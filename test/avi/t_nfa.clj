@@ -43,19 +43,19 @@
   (maybe (match 1))            [1 1]    :reject
   (maybe (match 1))            [1 2]    :reject
 
-  (alt (match 1))              []       :pending
-  (alt (match 1))              [1]      :accept
-  (alt (match 1))              [2]      :reject
-  (alt (match 1))              [1 1]    :reject
-  (alt (match 1))              [1 2]    :reject
-  (alt (match 1) (match 2))    []       :pending
-  (alt (match 1) (match 2))    [1]      :accept
-  (alt (match 1) (match 2))    [2]      :accept
-  (alt (match 1) (match 2))    [3]      :reject
-  (alt (match 1) (match 2))    [1 1]    :reject
-  (alt (match 1) (match 2))    [1 3]    :reject
-  (alt (match 1) (match 2))    [3 1]    :reject
-  (alt (match 1) (match 2))    [3 3]    :reject
+  (choice (match 1))           []       :pending
+  (choice (match 1))           [1]      :accept
+  (choice (match 1))           [2]      :reject
+  (choice (match 1))           [1 1]    :reject
+  (choice (match 1))           [1 2]    :reject
+  (choice (match 1) (match 2)) []       :pending
+  (choice (match 1) (match 2)) [1]      :accept
+  (choice (match 1) (match 2)) [2]      :accept
+  (choice (match 1) (match 2)) [3]      :reject
+  (choice (match 1) (match 2)) [1 1]    :reject
+  (choice (match 1) (match 2)) [1 3]    :reject
+  (choice (match 1) (match 2)) [3 1]    :reject
+  (choice (match 1) (match 2)) [3 3]    :reject
 
   (kleene (match 1))           []       :accept
   (kleene (match 1))           [1]      :accept

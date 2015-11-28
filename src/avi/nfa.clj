@@ -45,7 +45,7 @@
    :accept (set/union (:start nfa) (:accept nfa))
    :transitions (:transitions nfa)})
 
-(defn alt
+(defn choice
   ([a]
    a)
   ([a b]
@@ -55,7 +55,7 @@
                    (:transitions a)
                    (:transitions b))})
   ([a b & cs]
-   (reduce alt (concat [a b] cs))))
+   (reduce choice (concat [a b] cs))))
 
 (defn kleene
   ([nfa]
