@@ -6,11 +6,22 @@
   accumulator)
 
 (defn- merge-transitions
-  [as bs]
-  (merge-with
-    (partial merge-with merge)
-    as
-    bs))
+  [& xs]
+  (apply merge-with (partial merge-with into) xs))
+
+(defn- mapcat-transitions
+  [f xs]
+  (->>
+    (for [[value froms] xs
+          [from tos] froms
+          [to reducers] tos
+          reducer reducers]
+      (f value from to reducer))
+    (reduce concat)
+    (reduce
+      (fn [xs [value from to reducer]]
+        (update-in xs [value from to] conj reducer))
+      {})))
 
 (defn match
   ([value]
@@ -45,6 +56,21 @@
                    (:transitions b))})
   ([a b & cs]
    (reduce alt (concat [a b] cs))))
+
+(defn kleen
+  ([nfa]
+   {:start (:start nfa)
+    :accept (:start nfa)
+
+    ;; any transition which is x -> a, a ∈ accept, is replace with all
+    ;; x -> s ∀ s ∈ start
+    :transitions (mapcat-transitions
+                   (fn [value from to reducer]
+                     (if ((:accept nfa) to)
+                       (for [s (:start nfa)]
+                         [value from s reducer])
+                       [[value from to reducer]]))
+                   (:transitions nfa))}))
 
 (defn start
   [nfa]

@@ -57,4 +57,12 @@
   (alt (match 1) (match 2))  [3 1]    :reject
   (alt (match 1) (match 2))  [3 3]    :reject
 
+  (kleen (match 1))          []       :accept
+  (kleen (match 1))          [1]      :accept
+  (kleen (match 1))          [1 1]    :accept
+  (kleen (match 1))          [1 1 1]  :accept
+  (kleen (match 1))          [2]      :reject
+  (kleen (match 1))          [1 2]    :reject
+  (kleen (match 1))          [1 1 2]  :reject
+
   )
