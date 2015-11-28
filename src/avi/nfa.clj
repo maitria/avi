@@ -14,13 +14,12 @@
   (->>
     (for [[value froms] xs
           [from tos] froms
-          [to reducers] tos
-          reducer reducers]
-      (f value from to reducer))
+          [to reducers] tos]
+      (f value from to reducers))
     (reduce concat)
     (reduce
-      (fn [xs [value from to reducer]]
-        (update-in xs [value from to] conj reducer))
+      (fn [xs [value from to reducers]]
+        (assoc-in xs [value from to] reducers))
       {})))
 
 (defn match
@@ -65,11 +64,11 @@
     ;; any transition which is x -> a, a ∈ accept, is replace with all
     ;; x -> s ∀ s ∈ start
     :transitions (mapcat-transitions
-                   (fn [value from to reducer]
+                   (fn [value from to reducers]
                      (if ((:accept nfa) to)
                        (for [s (:start nfa)]
-                         [value from s reducer])
-                       [[value from to reducer]]))
+                         [value from s reducers])
+                       [[value from to reducers]]))
                    (:transitions nfa))}))
 
 (defn chain
@@ -79,11 +78,11 @@
    {:start (:start a)
     :accept (:accept b)
     :transitions (mapcat-transitions
-                   (fn [value from to reducer]
+                   (fn [value from to reducers]
                      (if ((:accept a) to)
                        (for [s (:start b)]
-                         [value from s reducer])
-                       [[value from to reducer]]))
+                         [value from s reducers])
+                       [[value from to reducers]]))
                    (merge-transitions
                      (:transitions a)
                      (:transitions b)))})
@@ -117,8 +116,7 @@
                           :when (contains? state s)
                           :let [v (get state s)]
                           [s' reducers] targets
-                          reducer reducers
-                          :let [v' (reducer v input)]]
+                          :let [v' (reduce #(%2 %1 input) v reducers)]]
                       [s' v'])
                     (into {}))]
     (if (empty? state')
