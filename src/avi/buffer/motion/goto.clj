@@ -108,8 +108,8 @@
   [buffer _ i ch]
   (some-> (next-char-index buffer i ch) dec))
 
-(defmethod magic-column-value :to-previous
-  [{:keys [lines] [_ j] :point} _ i ch]
+(defn previous-char-index
+  [{:keys [lines] [_ j] :point} i ch]
   (let [line (get lines i)]
     (loop [nj (dec j)]
       (if-let [line-ch (get line nj)]
@@ -117,6 +117,14 @@
           nj
           (recur (dec nj)))
         nil))))
+
+(defmethod magic-column-value :to-previous
+  [buffer _ i ch]
+  (previous-char-index buffer i ch))
+
+(defmethod magic-column-value :after-previous
+  [buffer _ i ch]
+  (some-> (previous-char-index buffer i ch) inc))
 
 (defn- clamp-point-row
   [{:keys [lines]} row]

@@ -415,6 +415,10 @@
   (fact "`Fx` beeps if there is no previous `x`"
     (editor :editing "helloxthere" :after "3lFx") => beeped))
 
+(facts "about `T`"
+  (fact "`Tx` moves to just after the previous `x`"
+    (editor :editing "helloxthere" :after "$Tx") => (point [0 6])))
+
 (facts "about `t`"
   (fact "`tx` moves to just before the next `x`"
     (editor :editing "helloxthere" :after "tx") => (point [0 4]))

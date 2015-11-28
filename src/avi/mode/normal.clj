@@ -30,7 +30,8 @@
     ["G"    :linewise  [:goto [(?line :last) :first-non-blank]]]
     ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :first-non-blank]]]
     ["L"    :linewise  [:goto [[:viewport-bottom (?line 0)] :first-non-blank]]]
-    ["M"    :linewise  [:goto [:viewport-middle :first-non-blank]]]])
+    ["M"    :linewise  [:goto [:viewport-middle :first-non-blank]]]
+    ["T<.>" :exclusive [:goto [:current [:after-previous ?char]]]]])
 
 (defn variable?
   [a]
