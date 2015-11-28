@@ -22,21 +22,18 @@
         (assoc-in xs [value from to] reducers))
       {})))
 
-(defn match
-  ([value]
-   (match value null-reducer))
-  ([value reducer]
-   (let [s1 (gensym)
-         s2 (gensym)]
-     {:start #{s1}
-      :accept #{s2}
-      :transitions {value {s1 {s2 [reducer]}}}})))
+(declare on)
 
-(defn any
-  ([]
-   (match ::any null-reducer))
-  ([reducer]
-   (match ::any reducer)))
+(defn match
+  [value]
+  (let [s1 (gensym)
+        s2 (gensym)]
+    {:start #{s1}
+     :accept #{s2}
+     :transitions {value {s1 {s2 []}}}}))
+
+(def any
+  (match ::any))
 
 (defn maybe
   [nfa]
@@ -88,6 +85,15 @@
                      (:transitions b)))})
   ([a b & cs]
    (reduce chain (concat [a b] cs))))
+
+(defn on
+  [nfa f]
+  (update-in nfa [:transitions] (partial
+                                  mapcat-transitions
+                                  (fn [value from to reducers]
+                                    (if ((:accept nfa) to)
+                                      [[value from to (conj reducers f)]]
+                                      [[value from to reducers]])))))
 
 (defn start
   [nfa]

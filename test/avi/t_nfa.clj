@@ -32,10 +32,10 @@
   (match 1)                    [2]      :reject
   (match 1)                    [1 2]    :reject
 
-  (any)                        []       :pending
-  (any)                        [1]      :accept
-  (any)                        [2]      :accept
-  (any)                        [1 2]    :reject
+  any                          []       :pending
+  any                          [1]      :accept
+  any                          [2]      :accept
+  any                          [1 2]    :reject
 
   (maybe (match 1))            []       :accept
   (maybe (match 1))            [1]      :accept
@@ -85,22 +85,22 @@
       result => :accept
       value => ?value))
 
-  ?nfa                             ?inputs  ?value
-  (match 1 f)                      [1]      1
-  (match 2 f)                      [2]      2
+  ?nfa                                       ?inputs  ?value
+  (on (match 1) f)                           [1]      1
+  (on (match 2) f)                           [2]      2
 
-  (any f)                          [1]      1
-  (any f)                          [7]      7
+  (on any f)                                 [1]      1
+  (on any f)                                 [7]      7
 
-  (maybe (match 1 f))              []       nil
-  (maybe (match 1 f))              [1]      1
+  (maybe (on (match 1) f))                   []       nil
+  (maybe (on (match 1) f))                   [1]      1
 
-  (choice (match 1 f) (match 2 f)) [1]      1
-  (choice (match 1 f) (match 2 f)) [2]      2
+  (choice (on (match 1) f) (on (match 2) f)) [1]      1
+  (choice (on (match 1) f) (on (match 2) f)) [2]      2
 
-  (kleene (match 7 f))             [7]      7
-  (kleene (match 7 f))             [7 7]    77
-  (kleene (match 7 f))             [7 7 7]  777
-  (kleene (any f))                 [8 6 7]  867
+  (kleene (on (match 7) f))                  [7]      7
+  (kleene (on (match 7) f))                  [7 7]    77
+  (kleene (on (match 7) f))                  [7 7 7]  777
+  (kleene (on any f))                        [8 6 7]  867
 
-  (chain (match 1 f) (match 2 f))  [1 2]    12)
+  (chain (on (match 1) f) (on (match 2) f))  [1 2]    12)
