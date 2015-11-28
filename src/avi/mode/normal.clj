@@ -87,73 +87,76 @@
            [(str prefix ks) (motion-handler f kind pattern)]))
     (into {})))
 
+(def non-motion-commands
+  {"dd" ^:no-repeat (fn+> [editor _]
+                      (let [repeat-count (:count editor)]
+                        (in e/current-buffer
+                            b/start-transaction
+                            (n-times (or repeat-count 1) b/delete-current-line)
+                            b/commit)))
+
+   "u" (fn+> [editor _]
+         (in e/current-buffer
+           b/undo))
+
+   "x" ^:no-repeat (fn+> [editor _]
+                     (let [repeat-count (:count editor)]
+                       (in e/current-buffer
+                           b/start-transaction
+                           (as-> buffer
+                             (reduce
+                               (fn [buffer n]
+                                 (b/delete-char-under-point buffer))
+                               buffer
+                               (range (or repeat-count 1))))
+                           b/commit)))
+   "D" (fn+> [editor _]
+         (in e/current-buffer
+           (b/delete [:goto [:current :end-of-line]] :inclusive)))
+
+   "J" ^:no-repeat (fn+> [editor _]
+                     (let [{[i j] :point, lines :lines} (e/current-buffer editor)
+                           n (or (:count editor) 1)
+                           new-line (reduce
+                                      #(str %1 " " %2)
+                                      (subvec lines i (+ i n 1)))
+                           new-lines (splice lines i (+ i n 1) [new-line])]
+                       (in e/current-buffer
+                           b/start-transaction
+                           (assoc :lines new-lines)
+                           b/commit)))
+
+   "<C-D>" (fn+> [editor _]
+             (let [buffer (e/current-buffer editor)]
+               (if (b/on-last-line? buffer)
+                 beep/beep
+                 (in e/current-buffer
+                   (b/move-and-scroll-half-page :down)))))
+
+   "<C-E>" (fn+> [editor _]
+             (scroll inc))
+
+   "<C-R>" (fn+> [editor _]
+             (in e/current-buffer
+               b/redo))
+
+   "<C-U>" (fn+> [editor _]
+             (let [buffer (e/current-buffer editor)
+                   [i] (:point buffer)]
+               (if (zero? i)
+                 beep/beep
+                 (in e/current-buffer
+                   (b/move-and-scroll-half-page :up)))))
+
+   "<C-Y>" (fn+> [editor _]
+             (scroll dec))})
+
 (def wrap-normal-mode
   (em/eventmap
     (merge
       (motion-handlers "" b/move-point)
       (motion-handlers "d" b/delete)
-      {"dd" ^:no-repeat (fn+> [editor _]
-                          (let [repeat-count (:count editor)]
-                            (in e/current-buffer
-                                b/start-transaction
-                                (n-times (or repeat-count 1) b/delete-current-line)
-                                b/commit)))
-
-       "u" (fn+> [editor _]
-             (in e/current-buffer
-               b/undo))
-
-       "x" ^:no-repeat (fn+> [editor _]
-                         (let [repeat-count (:count editor)]
-                           (in e/current-buffer
-                               b/start-transaction
-                               (as-> buffer
-                                 (reduce
-                                   (fn [buffer n]
-                                     (b/delete-char-under-point buffer))
-                                   buffer
-                                   (range (or repeat-count 1))))
-                               b/commit)))
-       "D" (fn+> [editor _]
-             (in e/current-buffer
-               (b/delete [:goto [:current :end-of-line]] :inclusive)))
-
-       "J" ^:no-repeat (fn+> [editor _]
-                         (let [{[i j] :point, lines :lines} (e/current-buffer editor)
-                               n (or (:count editor) 1)
-                               new-line (reduce
-                                          #(str %1 " " %2)
-                                          (subvec lines i (+ i n 1)))
-                               new-lines (splice lines i (+ i n 1) [new-line])]
-                           (in e/current-buffer
-                               b/start-transaction
-                               (assoc :lines new-lines)
-                               b/commit)))
-
-       "<C-D>" (fn+> [editor _]
-                 (let [buffer (e/current-buffer editor)]
-                   (if (b/on-last-line? buffer)
-                     beep/beep
-                     (in e/current-buffer
-                       (b/move-and-scroll-half-page :down)))))
-
-       "<C-E>" (fn+> [editor _]
-                 (scroll inc))
-
-       "<C-R>" (fn+> [editor _]
-                 (in e/current-buffer
-                   b/redo))
-
-       "<C-U>" (fn+> [editor _]
-                 (let [buffer (e/current-buffer editor)
-                       [i] (:point buffer)]
-                   (if (zero? i)
-                     beep/beep
-                     (in e/current-buffer
-                       (b/move-and-scroll-half-page :up)))))
-
-       "<C-Y>" (fn+> [editor _]
-                 (scroll dec))})))
+      non-motion-commands)))
 
 (defn- update-count
   [editor digit]
