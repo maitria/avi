@@ -408,6 +408,10 @@
   (fact "`f1` moves to the next `1`"
     (editor :editing "he1lo" :after "f1") => (point [0 2])))
 
+(facts "about `F`"
+  (fact "`Fx` moves to the previous `x`"
+    (editor :editing "helloxthere" :after "$Fx") => (point [0 5])))
+
 (facts "about `t`"
   (fact "`tx` moves to just before the next `x`"
     (editor :editing "helloxthere" :after "tx") => (point [0 4]))

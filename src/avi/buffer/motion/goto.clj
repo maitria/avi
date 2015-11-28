@@ -108,6 +108,16 @@
   [buffer _ i ch]
   (some-> (next-char-index buffer i ch) dec))
 
+(defmethod magic-column-value :to-previous
+  [{:keys [lines] [_ j] :point} _ i ch]
+  (let [line (get lines i)]
+    (loop [nj (dec j)]
+      (if-let [line-ch (get line nj)]
+        (if (= line-ch ch)
+          nj
+          (recur (dec nj)))
+        nil))))
+
 (defn- clamp-point-row
   [{:keys [lines]} row]
   (max 0 (min (dec (count lines)) row)))

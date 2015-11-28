@@ -26,6 +26,7 @@
     ["k"    :linewise  [:goto [:up :last-explicit]]]
     ["l"    :exclusive [:goto [:current :right]]]
     ["t<.>" :inclusive [:goto [:current [:before-next ?char]]]]
+    ["F<.>" :exclusive [:goto [:current [:to-previous ?char]]]]
     ["G"    :linewise  [:goto [(?line :last) :first-non-blank]]]
     ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :first-non-blank]]]
     ["L"    :linewise  [:goto [[:viewport-bottom (?line 0)] :first-non-blank]]]
