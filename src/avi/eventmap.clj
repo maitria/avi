@@ -1,5 +1,7 @@
 (ns avi.eventmap
-  (:require [avi.editor :as e]
+  (:require [avi.beep :as beep]
+            [avi.editor :as e]
+            [avi.nfa :as nfa]
             [packthread.core :refer :all]))
 
 (defn wrap-handler-with-repeat-loop
@@ -27,42 +29,6 @@
        (map #(vector :keystroke %))
        vec))
 
-(defn get-with-wildcards
-  "Like get, except that a key of [:keystroke \"<.>\"] matches any key event."
-  [m k]
-  (or (get m k)
-      (and (= (first k) :keystroke)
-           (get m [:keystroke "<.>"]))))
-
-(defn get-in-with-wildcards
-  "Like get-in, except that a key of [:keystroke \"<.>\"] matches any key
-  event."
-  [eventmap [path-first & path-rest :as path]]
-  (if (empty? path)
-    eventmap
-    (if-let [submap (get-with-wildcards eventmap path-first)]
-      (recur submap path-rest))))
-
-(defn invoke-event-handler
-  [eventmap]
-  (fn [responder]
-    (fn [editor event]
-      (let [event-path (conj (or (:pending-events editor) []) event)
-            event-handler-fn (get-in-with-wildcards eventmap event-path)]
-        (+> editor
-          (cond
-            (not event-handler-fn)
-            (responder event)
-
-            (map? event-handler-fn)
-            (assoc :pending-events event-path)
-
-            :else
-            (do
-              (assoc :pending-events event-path)
-              (event-handler-fn event)
-              (assoc :pending-events []))))))))
-
 (defn decorate-event-handler
   [f]
   (+> f
@@ -70,13 +36,37 @@
       wrap-handler-with-repeat-loop)
     wrap-handler-with-count-reset))
 
+(defn- eventmap->nfa
+  [mappings]
+  (->> mappings
+    (map (fn [[event-string handler]]
+           (->> event-string
+                events
+                (map (fn [ev]
+                       (if (= [:keystroke "<.>"] ev)
+                         (nfa/any)
+                         (nfa/match ev))))
+                (apply nfa/chain)
+                (#(nfa/on % (constantly handler))))))
+    (apply nfa/choice)))
+
 (defn eventmap
   [mappings]
-  (let [em (reduce
-             (fn [eventmap [event-spec f]]
-               (let [event-path (events event-spec)
-                     f (decorate-event-handler f)]
-                 (assoc-in eventmap event-path f)))
-             {}
-             mappings)]
-    (invoke-event-handler em)))
+  (let [nfa (eventmap->nfa (map (juxt first (comp decorate-event-handler second)) mappings))]
+    (fn [responder]
+      (fn [editor event]
+        (let [state (or (:eventmap-state editor) (nfa/start nfa))
+              state' (nfa/advance nfa state event :reject)]
+          (cond
+            (= state' :reject)
+            (+> editor
+              (dissoc :eventmap-state)
+              (responder event))
+
+            (nfa/accept? nfa state')
+            (+> editor
+              ((nfa/accept-value nfa state') event)
+              (dissoc :eventmap-state))
+
+            :else
+            (assoc editor :eventmap-state state')))))))

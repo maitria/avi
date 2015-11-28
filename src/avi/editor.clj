@@ -24,7 +24,7 @@
   (fn [handler]
     (fn [editor event]
       (if (and (= event [:keystroke keystroke])
-               (not (seq (:pending-events editor))))
+               (not (:eventmap-state editor)))
         (a-fn editor)
         (handler editor event)))))
 

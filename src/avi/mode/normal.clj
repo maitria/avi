@@ -156,7 +156,8 @@
     (merge
       (motion-handlers "" b/move-point)
       (motion-handlers "d" b/delete)
-      non-motion-commands)))
+      non-motion-commands
+      avi.mode.insert/mappings-which-enter-insert-mode)))
 
 (defn- update-count
   [editor digit]
@@ -167,7 +168,7 @@
 (defn- wrap-collect-repeat-count
   [responder]
   (fn+> [editor [event-type event-data :as event]]
-    (if (seq (:pending-events editor))
+    (if (:eventmap-state editor)
       (responder event)
       (cond
         (= event [:keystroke "0"])
@@ -187,7 +188,6 @@
       wrap-normal-mode
       avi.search/wrap-normal-search-commands
       avi.mode.command-line/wrap-enter-command-line-mode
-      avi.mode.insert/wrap-enter-insert-mode
       brackets/wrap-go-to-matching-bracket
       wrap-collect-repeat-count))
 
