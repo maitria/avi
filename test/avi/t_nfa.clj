@@ -94,9 +94,13 @@
 
   (maybe (on (match 1) f))                   []       nil
   (maybe (on (match 1) f))                   [1]      1
+  (on (maybe (match 1)) f)                   []       nil
+  (on (maybe (match 1)) f)                   [1]      1
 
   (choice (on (match 1) f) (on (match 2) f)) [1]      1
   (choice (on (match 1) f) (on (match 2) f)) [2]      2
+  (on (choice (match 1) (match 2)) f)        [1]      1
+  (on (choice (match 1) (match 2)) f)        [2]      2
 
   (kleene (on (match 7) f))                  [7]      7
   (kleene (on (match 7) f))                  [7 7]    77
