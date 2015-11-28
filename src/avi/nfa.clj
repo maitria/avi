@@ -32,7 +32,8 @@
      :accept #{s2}
      :transitions {value {s1 {s2 []}}}}))
 
-(def any
+(defn any
+  []
   (match ::any))
 
 (defn maybe
