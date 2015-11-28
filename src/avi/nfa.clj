@@ -72,6 +72,24 @@
                        [[value from to reducer]]))
                    (:transitions nfa))}))
 
+(defn chain
+  ([a]
+   a)
+  ([a b]
+   {:start (:start a)
+    :accept (:accept b)
+    :transitions (mapcat-transitions
+                   (fn [value from to reducer]
+                     (if ((:accept a) to)
+                       (for [s (:start b)]
+                         [value from s reducer])
+                       [[value from to reducer]]))
+                   (merge-transitions
+                     (:transitions a)
+                     (:transitions b)))})
+  ([a b & cs]
+   (reduce chain (concat [a b] cs))))
+
 (defn start
   [nfa]
   (->> (:start nfa)
