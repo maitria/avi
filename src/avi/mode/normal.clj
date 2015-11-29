@@ -40,8 +40,8 @@
        (= (get (name a) 0) \?)))
 
 (defn bindings
-  [editor [_ keyname]]
-  {'?char (get keyname 0)
+  [editor spec]
+  {'?char (:char spec)
    '?line (some-> (:count editor) dec)})
 
 (def count-variables
@@ -74,8 +74,8 @@
 (defn motion-handler
   [f kind pattern]
   (with-meta
-    (fn+> [editor event]
-      (let [motion (substitute pattern (bindings editor event))]
+    (fn+> [editor spec]
+      (let [motion (substitute pattern (bindings editor spec))]
         (in e/current-buffer
             (f motion kind))))
     (if (uses-count? pattern)
@@ -154,15 +154,15 @@
 
 (defn wrap-handler-with-repeat-loop
   [handler]
-  (fn [editor event]
+  (fn [editor spec]
     (let [repeat-count (or (:count editor) 1)]
-      (nth (iterate #(handler % event) editor) repeat-count))))
+      (nth (iterate #(handler % spec) editor) repeat-count))))
 
 (defn wrap-handler-with-count-reset
   [handler]
-  (fn [editor event]
+  (fn [editor spec]
     (-> editor
-        (handler event)
+        (handler spec)
         (assoc :count nil))))
 
 (defn decorate-event-handler
@@ -180,10 +180,12 @@
                 ev/events
                 (map (fn [ev]
                        (if (= [:keystroke "<.>"] ev)
-                         nfa/any
+                         (nfa/on nfa/any (fn [v [_ key-string]]
+                                           (assoc v :char (get key-string 0))))
                          (nfa/match ev))))
                 (apply nfa/chain)
-                (#(nfa/on % (constantly {:handler handler}))))))
+                (#(nfa/on % (fn [v _]
+                              (assoc v :handler handler)))))))
     (apply nfa/choice)))
 
 (def normal-nfa
@@ -210,7 +212,7 @@
 
         (nfa/accept? normal-nfa state')
         (let [value (nfa/accept-value normal-nfa state')]
-          ((:handler value) event))
+          ((:handler value) value))
 
         :else
         (assoc :normal-state state')))))
