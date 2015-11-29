@@ -56,8 +56,7 @@
         :else
         (assoc :point new-point)))))
 
-(def wrap-go-to-matching-bracket
-  (e/keystroke-middleware "%"
-    (fn+> [editor]
-      (in e/current-buffer
-        go-to-matching-bracket))))
+(def normal-commands
+  {"%" (fn+> [editor _]
+         (in e/current-buffer
+           go-to-matching-bracket))})

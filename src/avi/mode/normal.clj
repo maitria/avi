@@ -214,6 +214,7 @@
       (motion-handlers "d" b/delete)
       non-motion-commands
       avi.search/normal-search-commands
+      brackets/normal-commands
       avi.mode.insert/mappings-which-enter-insert-mode)))
 
 (defn- update-count
@@ -244,7 +245,6 @@
   (-> beep/beep-responder
       wrap-normal-mode
       avi.mode.command-line/wrap-enter-command-line-mode
-      brackets/wrap-go-to-matching-bracket
       wrap-collect-repeat-count))
 
 (def wrap-mode (e/mode-middleware :normal responder))
