@@ -14,12 +14,12 @@
   (->>
     (for [[value froms] xs
           [from tos] froms
-          [to reducers] tos]
-      (f value from to reducers))
+          [to reducer] tos]
+      (f value from to reducer))
     (reduce concat)
     (reduce
-      (fn [xs [value from to reducers]]
-        (assoc-in xs [value from to] reducers))
+      (fn [xs [value from to reducer]]
+        (assoc-in xs [value from to] reducer))
       {})))
 
 (defn- states
@@ -42,8 +42,8 @@
               nfa' {:start (->> (:start nfa) (map mapping) (into #{}))
                     :accept (->> (:accept nfa) (map mapping) (into #{}))
                     :transitions (mapcat-transitions
-                                   (fn [value from to reducers]
-                                     [[value (mapping from) (mapping to) reducers]])
+                                   (fn [value from to reducer]
+                                     [[value (mapping from) (mapping to) reducer]])
                                    (:transitions nfa))}]
           [(+ n (count mapping)) (conj done nfa')]))
       [0 []]
@@ -53,7 +53,7 @@
   [value]
   {:start #{0}
    :accept #{1}
-   :transitions {value {0 {1 []}}}})
+   :transitions {value {0 {1 null-reducer}}}})
 
 (def any
   (match ::any))
@@ -85,11 +85,11 @@
     ;; any transition which is x -> a, a ∈ accept, is replace with all
     ;; x -> s ∀ s ∈ start
     :transitions (mapcat-transitions
-                   (fn [value from to reducers]
+                   (fn [value from to reducer]
                      (if ((:accept nfa) to)
                        (for [s (:start nfa)]
-                         [value from s reducers])
-                       [[value from to reducers]]))
+                         [value from s reducer])
+                       [[value from to reducer]]))
                    (:transitions nfa))}))
 
 (defn chain
@@ -100,11 +100,11 @@
      {:start (:start a)
       :accept (:accept b)
       :transitions (mapcat-transitions
-                     (fn [value from to reducers]
+                     (fn [value from to reducer]
                        (if ((:accept a) to)
                          (for [s (:start b)]
-                           [value from s reducers])
-                         [[value from to reducers]]))
+                           [value from s reducer])
+                         [[value from to reducer]]))
                      (merge-transitions
                        (:transitions a)
                        (:transitions b)))}))
@@ -115,10 +115,10 @@
   [nfa f]
   (update-in nfa [:transitions] (partial
                                   mapcat-transitions
-                                  (fn [value from to reducers]
+                                  (fn [value from to reducer]
                                     (if ((:accept nfa) to)
-                                      [[value from to (conj reducers f)]]
-                                      [[value from to reducers]])))))
+                                      [[value from to #(f (reducer %1 %2) %2)]]
+                                      [[value from to reducer]])))))
 
 (defn start
   [nfa]
@@ -146,8 +146,8 @@
                                         (get-in nfa [:transitions input]))
                           :when (contains? state s)
                           :let [v (get state s)]
-                          [s' reducers] targets
-                          :let [v' (reduce #(%2 %1 input) v reducers)]]
+                          [s' reducer] targets
+                          :let [v' (reducer v input)]]
                       [s' v'])
                     (into {}))]
     (if (empty? state')
