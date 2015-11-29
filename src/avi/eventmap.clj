@@ -44,7 +44,7 @@
                 events
                 (map (fn [ev]
                        (if (= [:keystroke "<.>"] ev)
-                         (nfa/any)
+                         nfa/any
                          (nfa/match ev))))
                 (apply nfa/chain)
                 (#(nfa/on % (constantly handler))))))

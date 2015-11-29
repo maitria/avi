@@ -22,18 +22,40 @@
         (assoc-in xs [value from to] reducers))
       {})))
 
-(declare on)
+(defn- states
+  [nfa]
+  (->> (for [[_ froms] (:transitions nfa)
+             [from tos] froms
+             [to _] tos]
+         [from to])
+    (apply concat)
+    (into #{})))
+
+(defn- renumber
+  "Renumber the states in each NFA so that no two NFAs share a state number."
+  [nfas]
+  (second
+    (reduce
+      (fn [[n done] nfa]
+        (let [original (states nfa)
+              mapping (zipmap original (map (partial + n) (range)))
+              nfa' {:start (->> (:start nfa) (map mapping) (into #{}))
+                    :accept (->> (:accept nfa) (map mapping) (into #{}))
+                    :transitions (mapcat-transitions
+                                   (fn [value from to reducers]
+                                     [[value (mapping from) (mapping to) reducers]])
+                                   (:transitions nfa))}]
+          [(+ n (count mapping)) (conj done nfa')]))
+      [0 []]
+      nfas)))
 
 (defn match
   [value]
-  (let [s1 (gensym)
-        s2 (gensym)]
-    {:start #{s1}
-     :accept #{s2}
-     :transitions {value {s1 {s2 []}}}}))
+  {:start #{0}
+   :accept #{1}
+   :transitions {value {0 {1 []}}}})
 
-(defn any
-  []
+(def any
   (match ::any))
 
 (defn maybe
@@ -46,11 +68,12 @@
   ([a]
    a)
   ([a b]
-   {:start (set/union (:start a) (:start b))
-    :accept (set/union (:accept a) (:accept b))
-    :transitions (merge-transitions
-                   (:transitions a)
-                   (:transitions b))})
+   (let [[a b] (renumber [a b])]
+     {:start (set/union (:start a) (:start b))
+      :accept (set/union (:accept a) (:accept b))
+      :transitions (merge-transitions
+                     (:transitions a)
+                     (:transitions b))}))
   ([a b & cs]
    (reduce choice (concat [a b] cs))))
 
@@ -73,17 +96,18 @@
   ([a]
    a)
   ([a b]
-   {:start (:start a)
-    :accept (:accept b)
-    :transitions (mapcat-transitions
-                   (fn [value from to reducers]
-                     (if ((:accept a) to)
-                       (for [s (:start b)]
-                         [value from s reducers])
-                       [[value from to reducers]]))
-                   (merge-transitions
-                     (:transitions a)
-                     (:transitions b)))})
+   (let [[a b] (renumber [a b])]
+     {:start (:start a)
+      :accept (:accept b)
+      :transitions (mapcat-transitions
+                     (fn [value from to reducers]
+                       (if ((:accept a) to)
+                         (for [s (:start b)]
+                           [value from s reducers])
+                         [[value from to reducers]]))
+                     (merge-transitions
+                       (:transitions a)
+                       (:transitions b)))}))
   ([a b & cs]
    (reduce chain (concat [a b] cs))))
 
