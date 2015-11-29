@@ -68,18 +68,18 @@
     (cl/mode-middleware :backward-search (partial process-search :backward))))
 
 (defn next-occurrence
-  [{:keys [::last-direction] :as editor}]
+  [{:keys [::last-direction] :as editor} _]
   (process-search last-direction editor ""))
 
 (defn previous-occurrence
-  [{:keys [::last-direction] :as editor}]
+  [{:keys [::last-direction] :as editor} _]
   (+> (process-search (get-in directions [last-direction :opposite]) editor "")
     (assoc ::last-direction last-direction))) 
 
-(def wrap-normal-search-commands
-  (comp
-    (e/keystroke-middleware "n" next-occurrence)
-    (e/keystroke-middleware "N" previous-occurrence)
-    (e/keystroke-middleware "/" #(cl/enter % :forward-search "/"))
-    (e/keystroke-middleware "?" #(cl/enter % :backward-search "?"))))
-
+(def normal-search-commands
+  {"n" next-occurrence
+   "N" previous-occurrence
+   "/" (fn+> [editor _]
+         (cl/enter :forward-search "/"))
+   "?" (fn+> [editor _]
+         (cl/enter :backward-search "?"))})

@@ -206,12 +206,14 @@
 
             :else
             (assoc editor :eventmap-state state')))))))
+
 (def wrap-normal-mode
   (eventmap
     (merge
       (motion-handlers "" b/move-point)
       (motion-handlers "d" b/delete)
       non-motion-commands
+      avi.search/normal-search-commands
       avi.mode.insert/mappings-which-enter-insert-mode)))
 
 (defn- update-count
@@ -241,7 +243,6 @@
 (def responder
   (-> beep/beep-responder
       wrap-normal-mode
-      avi.search/wrap-normal-search-commands
       avi.mode.command-line/wrap-enter-command-line-mode
       brackets/wrap-go-to-matching-bracket
       wrap-collect-repeat-count))
