@@ -183,7 +183,7 @@
                          nfa/any
                          (nfa/match ev))))
                 (apply nfa/chain)
-                (#(nfa/on % (constantly handler))))))
+                (#(nfa/on % (constantly {:handler handler}))))))
     (apply nfa/choice)))
 
 (def normal-nfa
@@ -209,7 +209,8 @@
         (responder event)
 
         (nfa/accept? normal-nfa state')
-        ((nfa/accept-value normal-nfa state') event)
+        (let [value (nfa/accept-value normal-nfa state')]
+          ((:handler value) event))
 
         :else
         (assoc :normal-state state')))))
