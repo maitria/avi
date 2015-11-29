@@ -23,8 +23,7 @@
   [keystroke a-fn]
   (fn [handler]
     (fn [editor event]
-      (if (and (= event [:keystroke keystroke])
-               (not (:eventmap-state editor)))
+      (if (= event [:keystroke keystroke])
         (a-fn editor)
         (handler editor event)))))
 

@@ -201,21 +201,21 @@
 (defn wrap-normal-mode
   [responder]
   (fn [editor event]
-    (let [state (or (:eventmap-state editor) (nfa/start normal-nfa))
+    (let [state (or (:normal-state editor) (nfa/start normal-nfa))
           state' (nfa/advance normal-nfa state event :reject)]
       (cond
         (= state' :reject)
         (+> editor
-            (dissoc :eventmap-state)
+            (dissoc :normal-state)
             (responder event))
 
         (nfa/accept? normal-nfa state')
         (+> editor
             ((nfa/accept-value normal-nfa state') event)
-            (dissoc :eventmap-state))
+            (dissoc :normal-state))
 
         :else
-        (assoc editor :eventmap-state state')))))
+        (assoc editor :normal-state state')))))
 
 (defn- update-count
   [editor digit]
@@ -226,7 +226,7 @@
 (defn- wrap-collect-repeat-count
   [responder]
   (fn+> [editor [event-type event-data :as event]]
-    (if (:eventmap-state editor)
+    (if (:normal-state editor)
       (responder event)
       (cond
         (= event [:keystroke "0"])
