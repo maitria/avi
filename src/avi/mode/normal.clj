@@ -200,22 +200,19 @@
 
 (defn wrap-normal-mode
   [responder]
-  (fn [editor event]
+  (fn+> [editor event]
+    (dissoc :normal-state)
     (let [state (or (:normal-state editor) (nfa/start normal-nfa))
           state' (nfa/advance normal-nfa state event :reject)]
       (cond
         (= state' :reject)
-        (+> editor
-            (dissoc :normal-state)
-            (responder event))
+        (responder event)
 
         (nfa/accept? normal-nfa state')
-        (+> editor
-            ((nfa/accept-value normal-nfa state') event)
-            (dissoc :normal-state))
+        ((nfa/accept-value normal-nfa state') event)
 
         :else
-        (assoc editor :normal-state state')))))
+        (assoc :normal-state state')))))
 
 (defn- update-count
   [editor digit]
