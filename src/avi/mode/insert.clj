@@ -3,7 +3,6 @@
             [packthread.lenses :as l]
             [avi.beep :as beep]
             [avi.editor :as e]
-            [avi.eventmap :as em]
             [avi.buffer :as b]
             [avi.pervasive :refer :all]))
 

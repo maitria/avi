@@ -4,8 +4,9 @@
             [avi.brackets :as brackets]
             [avi.buffer :as b]
             [avi.editor :as e]
-            [avi.eventmap :as em]
+            [avi.events :as ev]
             [avi.mode command-line insert]
+            [avi.nfa :as nfa]
             [avi.pervasive :refer :all]
             [avi.search]))
 
@@ -151,8 +152,62 @@
    "<C-Y>" (fn+> [editor _]
              (scroll dec))})
 
+(defn wrap-handler-with-repeat-loop
+  [handler]
+  (fn [editor event]
+    (let [repeat-count (or (:count editor) 1)]
+      (nth (iterate #(handler % event) editor) repeat-count))))
+
+(defn wrap-handler-with-count-reset
+  [handler]
+  (fn [editor event]
+    (-> editor
+        (handler event)
+        (assoc :count nil))))
+
+(defn decorate-event-handler
+  [f]
+  (+> f
+    (if-not (:no-repeat (meta f))
+      wrap-handler-with-repeat-loop)
+    wrap-handler-with-count-reset))
+
+(defn- eventmap->nfa
+  [mappings]
+  (->> mappings
+    (map (fn [[event-string handler]]
+           (->> event-string
+                ev/events
+                (map (fn [ev]
+                       (if (= [:keystroke "<.>"] ev)
+                         nfa/any
+                         (nfa/match ev))))
+                (apply nfa/chain)
+                (#(nfa/on % (constantly handler))))))
+    (apply nfa/choice)))
+
+(defn eventmap
+  [mappings]
+  (let [nfa (eventmap->nfa (map (juxt first (comp decorate-event-handler second)) mappings))]
+    (fn [responder]
+      (fn [editor event]
+        (let [state (or (:eventmap-state editor) (nfa/start nfa))
+              state' (nfa/advance nfa state event :reject)]
+          (cond
+            (= state' :reject)
+            (+> editor
+              (dissoc :eventmap-state)
+              (responder event))
+
+            (nfa/accept? nfa state')
+            (+> editor
+              ((nfa/accept-value nfa state') event)
+              (dissoc :eventmap-state))
+
+            :else
+            (assoc editor :eventmap-state state')))))))
 (def wrap-normal-mode
-  (em/eventmap
+  (eventmap
     (merge
       (motion-handlers "" b/move-point)
       (motion-handlers "d" b/delete)

@@ -3,7 +3,7 @@
   (:require [avi.color :as color]
             [avi.core]
             [avi.editor :as e]
-            [avi.eventmap :as em]
+            [avi.events :as ev]
             [avi.main]
             [avi.world :refer :all]
             [avi.test-helpers properties]
@@ -43,7 +43,7 @@
 (defn- make-events
   [string-of-commands]
   (->> string-of-commands
-       (em/split-string-of-commands)
+       (ev/split-string-of-commands)
        (map event)))
 
 (def ^:private responder
