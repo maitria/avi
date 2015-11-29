@@ -188,17 +188,23 @@
                               (assoc v :handler handler)))))))
     (apply nfa/choice)))
 
-(def normal-nfa
+(def motion-nfa
   (build-nfa
-    (->> (merge
-           (motion-handlers "" b/move-point)
-           (motion-handlers "d" b/delete)
-           non-motion-commands
-           avi.mode.command-line/normal-commands
-           avi.search/normal-search-commands
-           brackets/normal-commands
-           avi.mode.insert/mappings-which-enter-insert-mode)
+    (->> (motion-handlers "" b/move-point)
       (map (juxt first (comp decorate-event-handler second))))))
+
+(def normal-nfa
+  (nfa/choice
+    motion-nfa
+    (build-nfa
+      (->> (merge
+             (motion-handlers "d" b/delete)
+             non-motion-commands
+             avi.mode.command-line/normal-commands
+             avi.search/normal-search-commands
+             brackets/normal-commands
+             avi.mode.insert/mappings-which-enter-insert-mode)
+        (map (juxt first (comp decorate-event-handler second)))))))
 
 (defn wrap-normal-mode
   [responder]
