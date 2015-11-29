@@ -172,7 +172,7 @@
       wrap-handler-with-repeat-loop)
     wrap-handler-with-count-reset))
 
-(defn- eventmap->nfa
+(defn- build-nfa
   [mappings]
   (->> mappings
     (map (fn [[event-string handler]]
@@ -186,37 +186,36 @@
                 (#(nfa/on % (constantly handler))))))
     (apply nfa/choice)))
 
-(defn eventmap
-  [mappings]
-  (let [nfa (eventmap->nfa (map (juxt first (comp decorate-event-handler second)) mappings))]
-    (fn [responder]
-      (fn [editor event]
-        (let [state (or (:eventmap-state editor) (nfa/start nfa))
-              state' (nfa/advance nfa state event :reject)]
-          (cond
-            (= state' :reject)
-            (+> editor
-              (dissoc :eventmap-state)
-              (responder event))
+(def normal-nfa
+  (build-nfa
+    (->> (merge
+           (motion-handlers "" b/move-point)
+           (motion-handlers "d" b/delete)
+           non-motion-commands
+           avi.mode.command-line/normal-commands
+           avi.search/normal-search-commands
+           brackets/normal-commands
+           avi.mode.insert/mappings-which-enter-insert-mode)
+      (map (juxt first (comp decorate-event-handler second))))))
 
-            (nfa/accept? nfa state')
-            (+> editor
-              ((nfa/accept-value nfa state') event)
-              (dissoc :eventmap-state))
+(defn wrap-normal-mode
+  [responder]
+  (fn [editor event]
+    (let [state (or (:eventmap-state editor) (nfa/start normal-nfa))
+          state' (nfa/advance normal-nfa state event :reject)]
+      (cond
+        (= state' :reject)
+        (+> editor
+            (dissoc :eventmap-state)
+            (responder event))
 
-            :else
-            (assoc editor :eventmap-state state')))))))
+        (nfa/accept? normal-nfa state')
+        (+> editor
+            ((nfa/accept-value normal-nfa state') event)
+            (dissoc :eventmap-state))
 
-(def wrap-normal-mode
-  (eventmap
-    (merge
-      (motion-handlers "" b/move-point)
-      (motion-handlers "d" b/delete)
-      non-motion-commands
-      avi.mode.command-line/normal-commands
-      avi.search/normal-search-commands
-      brackets/normal-commands
-      avi.mode.insert/mappings-which-enter-insert-mode)))
+        :else
+        (assoc editor :eventmap-state state')))))
 
 (defn- update-count
   [editor digit]
