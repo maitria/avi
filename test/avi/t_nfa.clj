@@ -102,6 +102,8 @@
   (on (choice (match 1) (match 2)) f)        [1]      1
   (on (choice (match 1) (match 2)) f)        [2]      2
 
+  (chain (on any f) any)                     [7 9]    7
+
   (kleene (on (match 7) f))                  [7]      7
   (kleene (on (match 7) f))                  [7 7]    77
   (kleene (on (match 7) f))                  [7 7 7]  777
