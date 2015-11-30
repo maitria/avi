@@ -164,25 +164,28 @@
     (if-not (:no-repeat (meta f))
       wrap-handler-with-repeat-loop)))
 
+(defn- event-nfa
+  [event]
+  (cond
+    (= [:keystroke "<.>"] event)
+    (nfa/on nfa/any (fn [v [_ key-string]]
+                      (assoc v :char (get key-string 0))))
+
+    ;; It's not the "0" motion if we have a count (it's
+    ;; part of the count).
+    (= [:keystroke "0"] event)
+    (nfa/prune (nfa/match [:keystroke "0"]) :count)
+
+    :else
+    (nfa/match event)))
+
 (defn- build-nfa
   [mappings]
   (->> mappings
     (map (fn [[event-string handler]]
            (->> event-string
                 ev/events
-                (map (fn [ev]
-                       (cond
-                         (= [:keystroke "<.>"] ev)
-                         (nfa/on nfa/any (fn [v [_ key-string]]
-                                           (assoc v :char (get key-string 0))))
-
-                         ;; It's not the "0" motion if we have a count (it's
-                         ;; part of the count).
-                         (= [:keystroke "0"] ev)
-                         (nfa/prune (nfa/match [:keystroke "0"]) :count)
-
-                         :else
-                         (nfa/match ev))))
+                (map event-nfa)
                 (apply nfa/chain)
                 (#(nfa/on % (fn [v _]
                               (assoc v :handler handler)))))))
