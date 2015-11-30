@@ -192,9 +192,16 @@
     (apply nfa/choice)))
 
 (def motion-nfa
-  (build-nfa
-    (->> (motion-handlers "" b/move-point)
-      (map (juxt first (comp decorate-event-handler second))))))
+  (->> motions
+    (map (fn [[event-string kind pattern]]
+           (nfa/on (->> event-string
+                     ev/events
+                     (map event-nfa)
+                     (apply nfa/chain))
+                   (fn motion-reducer [v _]
+                     (assoc v
+                       :handler (decorate-event-handler (motion-handler b/move-point kind pattern)))))))
+    (apply nfa/choice)))
 
 (defn count-digits-nfa
   [from to]
