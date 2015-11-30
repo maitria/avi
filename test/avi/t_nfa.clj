@@ -81,7 +81,12 @@
   (chain (kleene (match 1)) (match 2)) [2]      :accept
   (chain (kleene (match 1)) (match 2)) [1 2]    :accept
   (chain (kleene (match 1)) (match 2)) [1 1]    :pending
-  (chain (kleene (match 1)) (match 2)) [1 1 2]  :accept)
+  (chain (kleene (match 1)) (match 2)) [1 1 2]  :accept
+  (chain (match 1) (kleene (match 2))) []       :pending
+  (chain (match 1) (kleene (match 2))) [1]      :accept
+  (chain (match 1) (kleene (match 2))) [1 2]    :accept
+  (chain (match 1) (kleene (match 2))) [1 2 2]  :accept
+  (chain (match 1) (kleene (match 2))) [1 2 1]  :reject)
 
 (defn f
   [v d]
