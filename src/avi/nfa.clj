@@ -120,8 +120,19 @@
                                   mapcat-transitions
                                   (fn [value from to reducer]
                                     (if ((:accept nfa) to)
-                                      [[value from to #(f (reducer %1 %2) %2)]]
+                                      [[value from to (fn [acc input]
+                                                        (let [result (reducer acc input)]
+                                                          (if (= result ::prune)
+                                                            ::prune
+                                                            (f result input))))]]
                                       [[value from to reducer]])))))
+
+(defn prune
+  [nfa f]
+  (on nfa (fn [v _]
+            (if (f v)
+              ::prune
+              v))))
 
 (defn start
   [nfa]
@@ -150,7 +161,8 @@
                           :when (contains? state s)
                           :let [v (get state s)]
                           [s' reducer] targets
-                          :let [v' (reducer v input)]]
+                          :let [v' (reducer v input)]
+                          :when (not= v' ::prune)]
                       [s' v'])
                     (into {}))]
     (if (empty? state')

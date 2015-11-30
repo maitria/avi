@@ -19,6 +19,10 @@
     (accept? nfa state) :accept
     :else               :pending))
 
+(defn f
+  [v d]
+  (+ (* 10 (or v 0)) d))
+
 (tabular
   (facts "about NFAs accepting inputs"
     (let [nfa ?nfa
@@ -86,11 +90,14 @@
   (chain (match 1) (kleene (match 2))) [1]      :accept
   (chain (match 1) (kleene (match 2))) [1 2]    :accept
   (chain (match 1) (kleene (match 2))) [1 2 2]  :accept
-  (chain (match 1) (kleene (match 2))) [1 2 1]  :reject)
+  (chain (match 1) (kleene (match 2))) [1 2 1]  :reject
 
-(defn f
-  [v d]
-  (+ (* 10 (or v 0)) d))
+  (chain (kleene (on (match 1) f))
+         (prune (match 2) #(= % 1)))   [1 2]    :reject
+  (chain (kleene (on (match 1) f))
+         (prune (match 2) #(= % 1)))   [1 1 2]  :accept
+  (chain (kleene (on (match 1) f))
+         (prune (match 2) #(= % 1)))   [2]      :accept)
 
 (tabular
   (facts "about NFAs reducing values"
