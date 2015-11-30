@@ -17,7 +17,8 @@
         (b/scroll update-fn))))
 
 (def operations
-  {:move-point [b/move-point ""]})
+  {:move-point [b/move-point ""]
+   :delete     [b/delete     "d"]})
 
 (def motions
   '[["0"    :exclusive [:goto [:current 0]]]
@@ -203,6 +204,17 @@
                               (assoc v :handler handler)))))))
     (apply nfa/choice)))
 
+(def operator-nfa
+  (nfa/maybe
+    (->> operations
+      (filter (fn [[_ [_ prefix]]]
+                (not= "" prefix)))
+      (map (fn [[key [f prefix]]]
+             (nfa/on (nfa/match [:keystroke prefix])
+                     (fn [v _]
+                       (assoc v :operation key)))))
+      (apply nfa/choice))))
+
 (def motion-nfa
   (->> motions
     (map (fn [[event-string kind pattern]]
@@ -244,10 +256,9 @@
   (nfa/chain
     count-nfa
     (nfa/choice
-      motion-nfa
+      (nfa/chain (nfa/maybe operator-nfa) motion-nfa)
       (build-nfa
         (->> (merge
-               (motion-handlers "d" b/delete)
                non-motion-commands
                avi.mode.command-line/normal-commands
                avi.search/normal-search-commands
