@@ -11,7 +11,8 @@
                  [potemkin "0.4.1"]]
   :profiles {:dev {:dependencies [[midje "1.7.0"]
                                   [org.clojure/test.check "0.7.0"]
-                                  [com.gfredericks/test.chuck "0.1.18"]]}
+                                  [com.gfredericks/test.chuck "0.1.18"]]
+                   :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}
              :uberjar {:aot :all}}
   :repl-options {:init-ns avi.repl}
   :aliases {"install" ^{:doc "Install avi on this machine"}
