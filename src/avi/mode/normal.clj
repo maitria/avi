@@ -175,12 +175,13 @@
   [mappings]
   (->> mappings
     (map (fn [[event-string handler]]
-           (->> event-string
-                ev/events
-                (map event-nfa)
-                (apply nfa/chain)
-                (#(nfa/on % (fn [v _]
-                              (assoc v :handler handler)))))))
+           (let [handler (decorate-event-handler handler)]
+             (->> event-string
+                  ev/events
+                  (map event-nfa)
+                  (apply nfa/chain)
+                  (#(nfa/on % (fn [v _]
+                                (assoc v :handler handler))))))))
     (apply nfa/choice)))
 
 (def operator-nfa
@@ -236,14 +237,11 @@
     count-nfa
     (nfa/choice
       (nfa/chain (nfa/maybe operator-nfa) motion-nfa)
-      (map->nfa
-        (->> (merge
-               non-motion-commands
-               avi.mode.command-line/normal-commands
-               avi.search/normal-search-commands
-               brackets/normal-commands
-               avi.mode.insert/mappings-which-enter-insert-mode)
-          (map (juxt first (comp decorate-event-handler second))))))))
+      (map->nfa non-motion-commands)
+      (map->nfa avi.mode.command-line/normal-commands)
+      (map->nfa avi.search/normal-search-commands)
+      (map->nfa brackets/normal-commands)
+      (map->nfa avi.mode.insert/mappings-which-enter-insert-mode))))
 
 (defn normal-responder
   [editor event]
