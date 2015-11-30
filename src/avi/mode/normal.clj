@@ -32,11 +32,6 @@
     ["M"    :linewise  [:goto [:viewport-middle :first-non-blank]]]
     ["T<.>" :exclusive [:goto [:current [:after-previous ?char]]]]])
 
-(defn variable?
-  [a]
-  (and (symbol? a)
-       (= (get (name a) 0) \?)))
-
 (defn bindings
   [spec]
   {'?char (:char spec)
@@ -55,10 +50,10 @@
 (defn substitute
   [a bindings]
   (cond
-    (variable? a)
+    (contains? bindings a)
     (bindings a)
 
-    (and (list? a) (variable? (first a)))
+    (and (list? a) (contains? bindings (first a)))
     (if-let [value (bindings (first a))]
       value
       (second a))
