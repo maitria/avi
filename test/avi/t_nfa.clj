@@ -75,7 +75,13 @@
   (chain (maybe (match 1)) (match 2))  []       :pending
   (chain (maybe (match 1)) (match 2))  [1]      :pending
   (chain (maybe (match 1)) (match 2))  [1 2]    :accept
-  (chain (maybe (match 1)) (match 2))  [2]      :accept)
+  (chain (maybe (match 1)) (match 2))  [2]      :accept
+  (chain (kleene (match 1)) (match 2)) []       :pending
+  (chain (kleene (match 1)) (match 2)) [1]      :pending
+  (chain (kleene (match 1)) (match 2)) [2]      :accept
+  (chain (kleene (match 1)) (match 2)) [1 2]    :accept
+  (chain (kleene (match 1)) (match 2)) [1 1]    :pending
+  (chain (kleene (match 1)) (match 2)) [1 1 2]  :accept)
 
 (defn f
   [v d]

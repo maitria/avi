@@ -60,8 +60,8 @@
 
 (defn maybe
   [nfa]
-  {:start (set/union (:start nfa) (:accept nfa))
-   :accept (:accept nfa)
+  {:start (:start nfa)
+   :accept (set/union (:start nfa) (:accept nfa))
    :transitions (:transitions nfa)})
 
 (defn choice
@@ -103,10 +103,11 @@
       :accept (:accept b)
       :transitions (mapcat-transitions
                      (fn [value from to reducer]
-                       (if ((:accept a) to)
-                         (for [s (:start b)]
-                           [value from s reducer])
-                         [[value from to reducer]]))
+                       (concat
+                         [[value from to reducer]]
+                         (if ((:accept a) to)
+                           (for [s (:start b)]
+                             [value from s reducer]))))
                      (merge-transitions
                        (:transitions a)
                        (:transitions b)))}))
