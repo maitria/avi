@@ -16,6 +16,9 @@
     (in e/current-buffer
         (b/scroll update-fn))))
 
+(def operations
+  {:move-point [b/move-point ""]})
+
 (def motions
   '[["0"    :exclusive [:goto [:current 0]]]
     ["^"    :exclusive [:goto [:current :first-non-blank]]]
@@ -80,6 +83,15 @@
             (f motion kind))))
     (if (uses-count? pattern)
       {:no-repeat true})))
+
+(defn new-motion-handler
+  [editor {:keys [count operation motion kind auto-repeat?] :as spec}]
+  (+> editor
+    (let [operator (first (operations operation))]
+      (in e/current-buffer
+        (if auto-repeat?
+          (n-times (or count 1) #(operator % motion kind))
+          (operator motion kind))))))
 
 (defn motion-handlers
   [prefix f]
@@ -198,9 +210,14 @@
                      ev/events
                      (map event-nfa)
                      (apply nfa/chain))
-                   (fn motion-reducer [v _]
-                     (assoc v
-                       :handler (decorate-event-handler (motion-handler b/move-point kind pattern)))))))
+                   (let [auto-repeat? (not (uses-count? pattern))]
+                     (fn motion-reducer [v _]
+                       (-> v
+                         (assoc :auto-repeat? auto-repeat?
+                                :handler new-motion-handler
+                                :kind kind
+                                :motion (substitute pattern (bindings v)))
+                         (update-in [:operation] #(or % :move-point))))))))
     (apply nfa/choice)))
 
 (defn count-digits-nfa
