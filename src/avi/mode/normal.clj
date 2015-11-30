@@ -10,12 +10,6 @@
             [avi.pervasive :refer :all]
             [avi.search]))
 
-(defn- scroll
-  [editor update-fn]
-  (+> editor
-    (in e/current-buffer
-        (b/scroll update-fn))))
-
 (def operations
   {:move-point [b/move-point ""]
    :delete     [b/delete     "d"]})
@@ -75,16 +69,6 @@
     :else
     a))
 
-(defn motion-handler
-  [f kind pattern]
-  (with-meta
-    (fn+> [editor spec]
-      (let [motion (substitute pattern (bindings spec))]
-        (in e/current-buffer
-            (f motion kind))))
-    (if (uses-count? pattern)
-      {:no-repeat true})))
-
 (defn new-motion-handler
   [editor {:keys [count operation motion kind auto-repeat?] :as spec}]
   (+> editor
@@ -93,13 +77,6 @@
         (if auto-repeat?
           (n-times (or count 1) #(operator % motion kind))
           (operator motion kind))))))
-
-(defn motion-handlers
-  [prefix f]
-  (->> motions
-    (map (fn [[ks kind pattern]]
-           [(str prefix ks) (motion-handler f kind pattern)]))
-    (into {})))
 
 (def non-motion-commands
   {"dd" ^:no-repeat (fn+> [editor spec]
@@ -148,7 +125,8 @@
                    (b/move-and-scroll-half-page :down)))))
 
    "<C-E>" (fn+> [editor _]
-             (scroll inc))
+             (in e/current-buffer
+               (b/scroll inc)))
 
    "<C-R>" (fn+> [editor _]
              (in e/current-buffer
@@ -163,7 +141,8 @@
                    (b/move-and-scroll-half-page :up)))))
 
    "<C-Y>" (fn+> [editor _]
-             (scroll dec))})
+             (in e/current-buffer
+               (b/scroll dec)))})
 
 (defn wrap-handler-with-repeat-loop
   [handler]
@@ -192,7 +171,7 @@
     :else
     (nfa/match event)))
 
-(defn- build-nfa
+(defn- map->nfa
   [mappings]
   (->> mappings
     (map (fn [[event-string handler]]
@@ -257,7 +236,7 @@
     count-nfa
     (nfa/choice
       (nfa/chain (nfa/maybe operator-nfa) motion-nfa)
-      (build-nfa
+      (map->nfa
         (->> (merge
                non-motion-commands
                avi.mode.command-line/normal-commands
@@ -266,15 +245,15 @@
                avi.mode.insert/mappings-which-enter-insert-mode)
           (map (juxt first (comp decorate-event-handler second))))))))
 
-(defn wrap-normal-mode
-  [responder]
-  (fn+> [editor event]
+(defn normal-responder
+  [editor event]
+  (+> editor
     (dissoc :normal-state)
     (let [state (or (:normal-state editor) (nfa/start normal-nfa))
           state' (nfa/advance normal-nfa state event :reject)]
       (cond
         (= state' :reject)
-        (responder event)
+        beep/beep
 
         (nfa/accept? normal-nfa state')
         (let [value (nfa/accept-value normal-nfa state')]
@@ -283,8 +262,4 @@
         :else
         (assoc :normal-state state')))))
 
-(def responder
-  (-> beep/beep-responder
-      wrap-normal-mode))
-
-(def wrap-mode (e/mode-middleware :normal responder))
+(def wrap-mode (e/mode-middleware :normal normal-responder))
