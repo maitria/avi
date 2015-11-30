@@ -42,7 +42,7 @@
 (defn bindings
   [editor spec]
   {'?char (:char spec)
-   '?line (some-> (:count editor) dec)})
+   '?line (some-> (:count spec) dec)})
 
 (def count-variables
   #{'?line})
@@ -89,8 +89,8 @@
     (into {})))
 
 (def non-motion-commands
-  {"dd" ^:no-repeat (fn+> [editor _]
-                      (let [repeat-count (:count editor)]
+  {"dd" ^:no-repeat (fn+> [editor spec]
+                      (let [repeat-count (:count spec)]
                         (in e/current-buffer
                             b/start-transaction
                             (n-times (or repeat-count 1) b/delete-current-line)
@@ -100,8 +100,8 @@
          (in e/current-buffer
            b/undo))
 
-   "x" ^:no-repeat (fn+> [editor _]
-                     (let [repeat-count (:count editor)]
+   "x" ^:no-repeat (fn+> [editor spec]
+                     (let [repeat-count (:count spec)]
                        (in e/current-buffer
                            b/start-transaction
                            (as-> buffer
@@ -115,9 +115,9 @@
          (in e/current-buffer
            (b/delete [:goto [:current :end-of-line]] :inclusive)))
 
-   "J" ^:no-repeat (fn+> [editor _]
+   "J" ^:no-repeat (fn+> [editor spec]
                      (let [{[i j] :point, lines :lines} (e/current-buffer editor)
-                           n (or (:count editor) 1)
+                           n (or (:count spec) 1)
                            new-line (reduce
                                       #(str %1 " " %2)
                                       (subvec lines i (+ i n 1)))
@@ -155,22 +155,14 @@
 (defn wrap-handler-with-repeat-loop
   [handler]
   (fn [editor spec]
-    (let [repeat-count (or (:count editor) 1)]
+    (let [repeat-count (or (:count spec) 1)]
       (nth (iterate #(handler % spec) editor) repeat-count))))
-
-(defn wrap-handler-with-count-reset
-  [handler]
-  (fn [editor spec]
-    (-> editor
-        (handler spec)
-        (assoc :count nil))))
 
 (defn decorate-event-handler
   [f]
   (+> f
     (if-not (:no-repeat (meta f))
-      wrap-handler-with-repeat-loop)
-    wrap-handler-with-count-reset))
+      wrap-handler-with-repeat-loop)))
 
 (defn- build-nfa
   [mappings]
@@ -179,9 +171,17 @@
            (->> event-string
                 ev/events
                 (map (fn [ev]
-                       (if (= [:keystroke "<.>"] ev)
+                       (cond
+                         (= [:keystroke "<.>"] ev)
                          (nfa/on nfa/any (fn [v [_ key-string]]
                                            (assoc v :char (get key-string 0))))
+
+                         ;; It's not the "0" motion if we have a count (it's
+                         ;; part of the count).
+                         (= [:keystroke "0"] ev)
+                         (nfa/prune (nfa/match [:keystroke "0"]) :count)
+
+                         :else
                          (nfa/match ev))))
                 (apply nfa/chain)
                 (#(nfa/on % (fn [v _]
@@ -193,18 +193,40 @@
     (->> (motion-handlers "" b/move-point)
       (map (juxt first (comp decorate-event-handler second))))))
 
+(defn count-digits-nfa
+  [from to]
+  (nfa/on (->> (range from (inc to))
+            (map str)
+            (map (partial vector :keystroke))
+            (map nfa/match)
+            (apply nfa/choice))
+          (fn [v [_ key-string]]
+            (let [old-value (or (:count v) 0)
+                  new-value (+ (* 10 old-value)
+                               (Integer/parseInt key-string))]
+              (assoc v :count new-value)))))
+
+(def count-nfa
+  (nfa/maybe
+    (nfa/chain
+      (count-digits-nfa 1 9)
+      (nfa/kleene
+        (count-digits-nfa 0 9)))))
+
 (def normal-nfa
-  (nfa/choice
-    motion-nfa
-    (build-nfa
-      (->> (merge
-             (motion-handlers "d" b/delete)
-             non-motion-commands
-             avi.mode.command-line/normal-commands
-             avi.search/normal-search-commands
-             brackets/normal-commands
-             avi.mode.insert/mappings-which-enter-insert-mode)
-        (map (juxt first (comp decorate-event-handler second)))))))
+  (nfa/chain
+    count-nfa
+    (nfa/choice
+      motion-nfa
+      (build-nfa
+        (->> (merge
+               (motion-handlers "d" b/delete)
+               non-motion-commands
+               avi.mode.command-line/normal-commands
+               avi.search/normal-search-commands
+               brackets/normal-commands
+               avi.mode.insert/mappings-which-enter-insert-mode)
+          (map (juxt first (comp decorate-event-handler second))))))))
 
 (defn wrap-normal-mode
   [responder]
@@ -223,33 +245,8 @@
         :else
         (assoc :normal-state state')))))
 
-(defn- update-count
-  [editor digit]
-  (let [old-count (or (:count editor) 0)
-        new-count (+ (* 10 old-count) digit)]
-    (assoc editor :count new-count)))
-
-(defn- wrap-collect-repeat-count
-  [responder]
-  (fn+> [editor [event-type event-data :as event]]
-    (if (:normal-state editor)
-      (responder event)
-      (cond
-        (= event [:keystroke "0"])
-        (if (:count editor)
-          (update-count 0)
-          (responder event))
-
-        (and (= 1 (count event-data))
-             (Character/isDigit (get event-data 0)))
-        (update-count (Integer/parseInt event-data))
-
-        :else
-        (responder event)))))
-
 (def responder
   (-> beep/beep-responder
-      wrap-normal-mode
-      wrap-collect-repeat-count))
+      wrap-normal-mode))
 
 (def wrap-mode (e/mode-middleware :normal responder))

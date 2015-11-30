@@ -18,9 +18,7 @@
   (fact "`0` can be used in a repeat count."
     (editor :editing "0000000000111111111" :after "10l") => (point [0 10]))
   (fact "The repeat goes away after a command is executed."
-    (editor :editing "0123456789x" :after "4ll") => (point [0 5]))
-  (fact "None of the digits clear the repeat count."
-    (:count (:editor (editor :after "1234567890"))) => 1234567890))
+    (editor :editing "0123456789x" :after "4ll") => (point [0 5])))
 
 (facts "regarding point movement"
   (fact "The point starts on line 1, column 0."
@@ -274,7 +272,7 @@
     (fact "`H` moves to the count line in the buffer viewport"
       (editor :editing ten-lines :after "G3H") => (point [2 0]))
     (fact "`H` will not move below the bottom of the buffer viewport"
-      (editor :editing ten-lines :after "10H") => (point [5 0]))
+      (editor :editing ten-lines :after "11H") => (point [5 0]))
 
   (facts "about `M`"
     (fact "`M` moves to the middle line of the viewport when buffer has more lines than the buffer viewport"

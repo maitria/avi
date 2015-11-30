@@ -14,7 +14,6 @@
   {:mode :normal
    :buffer (b/open filename (- lines 2))
    :viewport {:size [lines columns]}
-   :count nil
    :beep? false})
 
 ;; -- Building middlewares ---------------------------------------------------

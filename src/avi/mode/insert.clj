@@ -7,11 +7,11 @@
             [avi.pervasive :refer :all]))
 
 (defn enter-insert-mode
-  [editor & [script]]
+  [editor spec & [script]]
   (+> editor
       (assoc :mode :insert,
              :message [:white :black "--INSERT--"]
-             :insert-mode-state {:count (or (:count editor) 1)
+             :insert-mode-state {:count (or (:count spec) 1)
                                  :script (or script [])})
       (in e/current-buffer
           b/start-transaction)))
@@ -25,29 +25,30 @@
   (assoc buffer :point [i (count (get lines i))]))
 
 (def mappings-which-enter-insert-mode
-  {"a" ^:no-repeat (fn+> [editor _]
-                     enter-insert-mode
+  {"a" ^:no-repeat (fn+> [editor spec]
+                     (enter-insert-mode spec)
                      (in e/current-buffer
                        advance-for-append))
 
-   "i" ^:no-repeat (fn+> [editor _] enter-insert-mode)
+   "i" ^:no-repeat (fn+> [editor spec]
+                     (enter-insert-mode spec))
 
-   "o" ^:no-repeat (fn+> [editor _]
+   "o" ^:no-repeat (fn+> [editor spec]
                      (let [{:keys [lines] [i] :point} (e/current-buffer editor)
                            eol (count (get lines i))]
-                       (enter-insert-mode [[:keystroke "<Enter>"]])
+                       (enter-insert-mode spec [[:keystroke "<Enter>"]])
                        (in e/current-buffer
                            move-to-eol
                            (b/change [i eol] [i eol] "\n" :right))))
 
-   "A" ^:no-repeat (fn+> [editor _]
-                     (enter-insert-mode)
+   "A" ^:no-repeat (fn+> [editor spec]
+                     (enter-insert-mode spec)
                      (in e/current-buffer
                          move-to-eol))
 
-   "O" ^:no-repeat (fn+> [editor _]
+   "O" ^:no-repeat (fn+> [editor spec]
                      (let [{[i] :point} (e/current-buffer editor)]
-                       (enter-insert-mode [[:keystroke "<Enter>"]])
+                       (enter-insert-mode spec [[:keystroke "<Enter>"]])
                        (in e/current-buffer
                            (b/change [i 0] [i 0] "\n" :left)
                            (b/move-point [:goto [i 0]]))))})
