@@ -40,7 +40,7 @@
        (= (get (name a) 0) \?)))
 
 (defn bindings
-  [editor spec]
+  [spec]
   {'?char (:char spec)
    '?line (some-> (:count spec) dec)})
 
@@ -75,7 +75,7 @@
   [f kind pattern]
   (with-meta
     (fn+> [editor spec]
-      (let [motion (substitute pattern (bindings editor spec))]
+      (let [motion (substitute pattern (bindings spec))]
         (in e/current-buffer
             (f motion kind))))
     (if (uses-count? pattern)
