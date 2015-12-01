@@ -85,3 +85,15 @@
         t/commit
         (move-point [:goto start]))
       beep/beep)))
+
+(defmulti invoke-motion
+  (fn [buffer params]
+    (:operator params)))
+
+(defmethod invoke-motion :move-point
+  [buffer {:keys [motion]}]
+  (move-point buffer motion))
+
+(defmethod invoke-motion :delete
+  [buffer {:keys [motion kind]}]
+  (delete buffer motion kind))

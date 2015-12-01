@@ -10,7 +10,7 @@
             [avi.pervasive :refer :all]
             [avi.search]))
 
-(def operations
+(def operators
   {:move-point [b/move-point ""]
    :delete     [b/delete     "d"]})
 
@@ -65,13 +65,12 @@
     a))
 
 (defn new-motion-handler
-  [editor {:keys [count operation motion kind auto-repeat?] :as spec}]
+  [editor {:keys [count auto-repeat?] :as spec}]
   (+> editor
-    (let [operator (first (operations operation))]
-      (in e/current-buffer
-        (if auto-repeat?
-          (n-times (or count 1) #(operator % motion kind))
-          (operator motion kind))))))
+    (in e/current-buffer
+      (if auto-repeat?
+        (n-times (or count 1) #(b/invoke-motion % spec))
+        (b/invoke-motion spec)))))
 
 (def non-motion-commands
   {"dd" ^:no-repeat (fn+> [editor spec]
@@ -181,13 +180,13 @@
 
 (def operator-nfa
   (nfa/maybe
-    (->> operations
+    (->> operators
       (filter (fn [[_ [_ prefix]]]
                 (not= "" prefix)))
       (map (fn [[key [f prefix]]]
              (nfa/on (nfa/match [:keystroke prefix])
                      (fn [v _]
-                       (assoc v :operation key)))))
+                       (assoc v :operator key)))))
       (apply nfa/choice))))
 
 (def motion-nfa
@@ -204,7 +203,7 @@
                                 :handler new-motion-handler
                                 :kind kind
                                 :motion (substitute pattern (bindings v)))
-                         (update-in [:operation] #(or % :move-point))))))))
+                         (update-in [:operator] #(or % :move-point))))))))
     (apply nfa/choice)))
 
 (defn count-digits-nfa
