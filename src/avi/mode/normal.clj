@@ -11,8 +11,8 @@
             [avi.search]))
 
 (def operators
-  {:move-point [b/move-point ""]
-   :delete     [b/delete     "d"]})
+  [[""  :move-point]
+   ["d" :delete]])
 
 (def motions
   '[["0"    :exclusive [:goto [:current 0]]]
@@ -181,12 +181,12 @@
 (def operator-nfa
   (nfa/maybe
     (->> operators
-      (filter (fn [[_ [_ prefix]]]
+      (filter (fn [[prefix _]]
                 (not= "" prefix)))
-      (map (fn [[key [f prefix]]]
+      (map (fn [[prefix kw]]
              (nfa/on (nfa/match [:keystroke prefix])
                      (fn [v _]
-                       (assoc v :operator key)))))
+                       (assoc v :operator kw)))))
       (apply nfa/choice))))
 
 (def motion-nfa
@@ -196,14 +196,15 @@
                      ev/events
                      (map event-nfa)
                      (apply nfa/chain))
-                   (let [auto-repeat? (not (uses-count? pattern))]
+                   (let [auto-repeat? (not (uses-count? pattern))
+                         default-operator (second (first operators))]
                      (fn motion-reducer [v _]
                        (-> v
                          (assoc :auto-repeat? auto-repeat?
                                 :handler new-motion-handler
                                 :kind kind
                                 :motion (substitute pattern (bindings v)))
-                         (update-in [:operator] #(or % :move-point))))))))
+                         (update-in [:operator] #(or % default-operator))))))))
     (apply nfa/choice)))
 
 (defn count-digits-nfa
