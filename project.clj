@@ -1,4 +1,4 @@
-(defproject avi "0.1.7-SNAPSHOT"
+(defproject avi "0.1.7"
   :description "a lively vi"
   :url "http://github.com/maitria/avi"
   :license {:name "avi license"
