@@ -42,9 +42,7 @@
 
 (defn enter-normal-mode
   [editor]
-  (+> editor
-    (assoc :mode :normal :message nil)
-    (dissoc :command-line :prompt)))
+  (assoc editor :mode :normal :message nil))
 
 (defn mode-middleware
   [mode mode-responder]

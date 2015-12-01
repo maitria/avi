@@ -12,6 +12,12 @@
          ::pre-history (get-in editor [::command-line-history mode-kw])
          ::post-history '()))
 
+(defn exit
+  [editor]
+  (+> editor
+    e/enter-normal-mode
+    (dissoc :command-line :prompt ::pre-history ::post-history)))
+
 (defn- append-to-command-line
   [editor s]
   (assoc editor :command-line (str (:command-line editor) s)))
@@ -28,11 +34,11 @@
     (fn+> [editor]
       (let [command-line (:command-line editor)]
         (if (zero? (count command-line))
-          (e/enter-normal-mode)
+          exit
           (assoc :command-line (subs command-line 0 (dec (count command-line)))))))))
 
 (def wrap-handle-escape
-  (e/keystroke-middleware "<Esc>" e/enter-normal-mode))
+  (e/keystroke-middleware "<Esc>" exit))
 
 (defn wrap-handle-history-movement
   [responder key from to]
@@ -50,9 +56,8 @@
     (fn+> [editor]
       (let [{:keys [command-line mode]} editor]
         (cond-> (not= "" command-line) (update-in [::command-line-history mode] conj command-line))
-        e/enter-normal-mode
-        (command-fn (:command-line editor))
-        (dissoc :command-line :prompt ::pre-history ::post-history)))))
+        exit
+        (command-fn (:command-line editor))))))
 
 (defn- responder
   [command-fn]
