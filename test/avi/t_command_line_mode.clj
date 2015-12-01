@@ -15,7 +15,9 @@
   (fact "characters typed after `:` can be deleted with backspace"
     (editor :after ":abc<BS><BS>") => (point [7 2]))
   (fact "<BS> at position zero on the command-line cancels"
-    (editor :after ":<BS>") => (mode :normal)))
+    (editor :after ":<BS>") => (mode :normal))
+  (fact "`<Esc>` cancels command-line mode"
+    (editor :after ":xx<Esc>") => (mode :normal)))
 (facts "regarding `:q`"
   (fact "Avi doesn't start in the 'finished' state"
     (editor) => unfinished?)

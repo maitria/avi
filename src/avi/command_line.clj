@@ -31,6 +31,9 @@
           (e/enter-normal-mode)
           (assoc :command-line (subs command-line 0 (dec (count command-line)))))))))
 
+(def wrap-handle-escape
+  (e/keystroke-middleware "<Esc>" e/enter-normal-mode))
+
 (defn wrap-handle-history-movement
   [responder key from to]
   ((e/keystroke-middleware key
@@ -56,6 +59,7 @@
   (-> beep/beep-responder
       wrap-command-line-insert
       wrap-handle-backspace
+      wrap-handle-escape
       (wrap-handle-history-movement "<C-P>" ::pre-history ::post-history)
       (wrap-handle-history-movement "<C-N>" ::post-history ::pre-history)
       ((command-wrapper command-fn))
