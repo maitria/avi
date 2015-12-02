@@ -22,16 +22,22 @@
     :as buffer}]
   (assoc buffer :point [i (clamped-j buffer j)]))
 
+(defn explicit-column?
+  [motion]
+  (not (->> motion
+         flatten
+         (filter (partial = :last-explicit))
+         seq)))
+
 (defn move-point
-  [buffer [_ [_ motion-j] :as motion] & [_]]
+  [buffer motion & [_]]
   (+> buffer
-    (let [j-is-last-explicit? (= motion-j :last-explicit)
-          [i j :as pos] (resolve/resolve-motion buffer motion)]
+    (let [[i j :as pos] (resolve/resolve-motion buffer motion)]
       (if-not pos
         beep/beep)
       (when pos
         (assoc :point pos)
-        (if-not j-is-last-explicit?
+        (if (explicit-column? motion)
           (assoc :last-explicit-j j))
         clamp-point-j
         c/adjust-viewport-to-contain-point))))
