@@ -470,3 +470,7 @@
 (facts "about `D`"
   (fact "`D` deletes to the end-of-line"
     (editor :editing "1234" :after "llD") => (line 0 "12")))
+
+(facts "about `w`"
+  (fact "`w` moves forward a word"
+    (editor :editing "hello world" :after "w") => (point [0 6])))

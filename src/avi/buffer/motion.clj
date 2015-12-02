@@ -8,7 +8,8 @@
               [transactions :as t]]
             [avi.buffer.motion
              [goto]
-             [resolve :as resolve]]
+             [resolve :as resolve]
+             [word]]
             [packthread.core :refer :all]))
 
 (defn clamped-j

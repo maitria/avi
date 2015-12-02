@@ -25,6 +25,7 @@
     ["k"    :linewise  [:goto [:up :last-explicit]]]
     ["l"    :exclusive [:goto [:current :right]]]
     ["t<.>" :inclusive [:goto [:current [:before-next ?char]]]]
+    ["w"    :exclusive [:word :start [:forward (?count 1)]]]
     ["F<.>" :exclusive [:goto [:current [:to-previous ?char]]]]
     ["G"    :linewise  [:goto [(?line :last) :first-non-blank]]]
     ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :first-non-blank]]]
@@ -35,10 +36,11 @@
 (defn bindings
   [spec]
   {'?char (:char spec)
+   '?count (:count spec)
    '?line (some-> (:count spec) dec)})
 
 (def count-variables
-  #{'?line})
+  #{'?count '?line})
 
 (defn uses-count?
   [pattern]
