@@ -472,5 +472,6 @@
     (editor :editing "1234" :after "llD") => (line 0 "12")))
 
 (facts "about `w`"
-  (fact "`w` moves forward a word"
-    (editor :editing "hello world" :after "w") => (point [0 6])))
+  (fact "`w` moves to the beginning of the next word"
+    (editor :editing "hello world" :after "w") => (point [0 6])
+    (editor :editing "      world" :after "w") => (point [0 6])))
