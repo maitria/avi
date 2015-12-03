@@ -475,4 +475,6 @@
   (fact "`w` moves to the beginning of the next word"
     (editor :editing "hello world" :after "w") => (point [0 6])
     (editor :editing "      world" :after "w") => (point [0 6])
-    (editor :editing "ab cd ef gh" :after "3w") => (point [0 9])))
+    (editor :editing "ab cd ef gh" :after "3w") => (point [0 9]))
+  (fact "`w` will advance lines if necessary"
+    (editor :editing "ab cd\nef gh" :after "3w") => (point [1 3])))
