@@ -12,7 +12,7 @@
            (Character/isDigit (int ch))
            (#{\_} ch))))
 
-(defmethod resolve/resolve-motion :word ; :- (s/maybe l/Location)
+(s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{:keys [lines] [i j] :point} [_ _ [_ count]]]
   (nth (->> (l/forward [i j] (lines/line-length lines))
          (iterate (fn [stream]
