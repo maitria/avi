@@ -14,15 +14,15 @@
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{:keys [lines] [i j] :point} [_ _ [_ n]]]
-  (let [word-starts (concat
-                      (->> (l/forward [i j] (lines/line-length lines))
-                        (iterate (fn [stream]
-                                   (->> stream
-                                     (drop-while (comp word-char? #(get-in lines %)))
-                                     (drop-while (complement (comp word-char? #(get-in lines %)))))))
-                        (map first)
-                        (take-while (complement nil?)))
-                      (repeat [(dec (count lines)) (dec (count (peek lines)))]))
-        pos (nth word-starts n nil)]
-    (if-not (= pos [i j])
-      pos)))
+  (let [last-location [(dec (count lines)) (dec (count (peek lines)))]
+        word-starts (->> (l/forward [i j] (lines/line-length lines))
+                      (iterate (fn [stream]
+                                 (->> stream
+                                   (drop-while (comp word-char? #(get-in lines %)))
+                                   (drop-while (complement (comp word-char? #(get-in lines %)))))))
+                      (map first)
+                      (take-while (complement nil?)))
+        locations (concat word-starts (repeat last-location))
+        location (nth locations n)]
+    (if-not (= location [i j])
+      location)))
