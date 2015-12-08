@@ -13,12 +13,18 @@
            (#{\_} ch))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
-  [{:keys [lines] [i j] :point} [_ _ [_ count]]]
-  (nth (->> (l/forward [i j] (lines/line-length lines))
-         (iterate (fn [stream]
-                    (->> stream
-                      (drop-while (comp word-char? #(get-in lines %)))
-                      (drop-while (complement (comp word-char? #(get-in lines %)))))))
-         (map first)
-         (take-while (complement nil?)))
-       count))
+  [{:keys [lines] [i j] :point} [_ _ [_ n]]]
+  (let [word-starts (concat
+                      (->> (l/forward [i j] (lines/line-length lines))
+                        (iterate (fn [stream]
+                                   (->> stream
+                                     (drop-while (comp word-char? #(get-in lines %)))
+                                     (drop-while (complement (comp word-char? #(get-in lines %)))))))
+                        (map first)
+                        (take-while (complement nil?)))
+                      [::last-word-start])]
+    (if-let [word-start (nth word-starts n nil)]
+      (if (= ::last-word-start word-start)
+        [(dec (count lines))
+         (dec (count (peek lines)))]
+        word-start))))
