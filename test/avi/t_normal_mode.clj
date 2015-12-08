@@ -480,4 +480,6 @@
     (editor :editing "ab cd\nef gh" :after "3w") => (point [1 3]))
   (fact "`w` will move to the end of file"
     (editor :editing "hello" :after "w") => (point [0 4])
-    (editor :editing "h" :after "w") => beeped))
+    (editor :editing "h" :after "w") => beeped)
+  (fact "`{count}w` stops at end-of-file"
+    (editor :editing "hello world" :after "5w") => (point [0 10])))
