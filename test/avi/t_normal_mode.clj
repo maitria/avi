@@ -479,4 +479,5 @@
   (fact "`w` will advance lines if necessary"
     (editor :editing "ab cd\nef gh" :after "3w") => (point [1 3]))
   (fact "`w` will move to the end of file"
-    (editor :editing "hello" :after "w") => (point [0 4])))
+    (editor :editing "hello" :after "w") => (point [0 4])
+    (editor :editing "h" :after "w") => beeped))
