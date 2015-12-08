@@ -484,4 +484,6 @@
   (fact "`{count}w` stops at end-of-file"
     (editor :editing "hello world" :after "5w") => (point [0 10]))
   (fact "`dw` deletes to end of current word"
-    (editor :editing "hello world" :after "ldw") => (line 0 "hworld")))
+    (editor :editing "hello world" :after "ldw") => (line 0 "hworld")
+    (editor :editing "hello world" :after "ldw") => (point [0 1])))
+
