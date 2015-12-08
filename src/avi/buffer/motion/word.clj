@@ -22,10 +22,7 @@
                                      (drop-while (complement (comp word-char? #(get-in lines %)))))))
                         (map first)
                         (take-while (complement nil?)))
-                      [::last-word-start])
-        word-start (nth word-starts n nil)
-        pos (if (= ::last-word-start word-start)
-              [(dec (count lines)) (dec (count (peek lines)))]
-              word-start)]
+                      [[(dec (count lines)) (dec (count (peek lines)))]])
+        pos (nth word-starts n nil)]
     (if-not (= pos [i j])
       pos)))
