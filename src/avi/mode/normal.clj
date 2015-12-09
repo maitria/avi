@@ -179,9 +179,9 @@
   (->> mappings
     (map (fn [[event-string handler]]
            (let [handler (decorate-event-handler handler)]
-             (->> (event-string-nfa event-string)
-                  (#(nfa/on % (fn [v _]
-                                (assoc v :handler handler))))))))
+             (nfa/on (event-string-nfa event-string)
+                     (fn [v _]
+                       (assoc v :handler handler))))))
     (apply nfa/choice)))
 
 (def operator-nfa
