@@ -51,7 +51,7 @@
                        (enter-insert-mode spec [[:keystroke "<Enter>"]])
                        (in e/current-buffer
                            (b/change [i 0] [i 0] "\n" :left)
-                           (b/move-point [:goto [i 0]]))))})
+                           (b/move-point {:motion [:goto [i 0]]}))))})
 
 (defn- key->text
   [key]
@@ -97,7 +97,7 @@
             [i j] (:point b)
             new-j (max (dec j) 0)]
         (in e/current-buffer
-            (b/move-point [:goto [i new-j]])
+            (b/move-point {:motion [:goto [i new-j]]})
             b/commit))
       (e/enter-normal-mode))))
 

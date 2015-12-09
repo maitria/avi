@@ -31,7 +31,7 @@
          seq)))
 
 (defn move-point
-  [buffer motion & [_]]
+  [buffer {:keys [motion]}]
   (+> buffer
     (let [[i j :as pos] (resolve/resolve-motion buffer motion)]
       (if-not pos
@@ -90,7 +90,7 @@
         t/start-transaction
         (c/change start end "" :left)
         t/commit
-        (move-point [:goto start]))
+        (move-point {:motion [:goto start]}))
       beep/beep)))
 
 (defmulti invoke-motion
@@ -98,8 +98,8 @@
     (:operator params)))
 
 (defmethod invoke-motion :move-point
-  [buffer {:keys [motion]}]
-  (move-point buffer motion))
+  [buffer params]
+  (move-point buffer params))
 
 (defmethod invoke-motion :delete
   [buffer {:keys [motion kind]}]
