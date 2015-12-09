@@ -141,7 +141,7 @@
     :else       (f v nil)))
 
 (s/defmethod resolve/resolve-motion :goto :- (s/maybe l/Location)
-  [{:keys [lines] :as buffer} [_ [i j]]]
+  [{:keys [lines] :as buffer} {[_ [i j]] :motion}]
   (if-let [i (absolutize i #(magic-row-value buffer %1 %2))]
     (let [i (clamp-point-row buffer i)
           j (absolutize j #(magic-column-value buffer %1 i %2))]

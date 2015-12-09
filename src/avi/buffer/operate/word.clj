@@ -13,7 +13,7 @@
            (#{\_} ch))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
-  [{:keys [lines] [i j] :point} [_ _ [_ n]]]
+  [{:keys [lines] [i j] :point} {[_ _ [_ n]] :motion}]
   (let [last-location [(dec (count lines)) (dec (count (peek lines)))]
         word-starts (->> (l/forward [i j] (lines/line-length lines))
                       (iterate (fn [stream]

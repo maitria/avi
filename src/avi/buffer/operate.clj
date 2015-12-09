@@ -24,21 +24,21 @@
   (assoc buffer :point [i (clamped-j buffer j)]))
 
 (defn explicit-column?
-  [motion]
+  [{motion :motion}]
   (not (->> motion
          flatten
          (filter (partial = :last-explicit))
          seq)))
 
 (defn move-point
-  [buffer {:keys [motion]}]
+  [buffer operation]
   (+> buffer
-    (let [[i j :as pos] (resolve/resolve-motion buffer motion)]
+    (let [[i j :as pos] (resolve/resolve-motion buffer operation)]
       (if-not pos
         beep/beep)
       (when pos
         (assoc :point pos)
-        (if (explicit-column? motion)
+        (if (explicit-column? operation)
           (assoc :last-explicit-j j))
         clamp-point-j
         c/adjust-viewport-to-contain-point))))
@@ -76,16 +76,16 @@
      [ei (count (get lines ei))]]))
 
 (defn resolve-range
-  [{:keys [lines point] :as buffer} motion kind]
-  (when-let [pos (resolve/resolve-motion buffer motion)]
+  [{:keys [lines point] :as buffer} {:keys [kind] :as operation}]
+  (when-let [pos (resolve/resolve-motion buffer operation)]
     (-> [point pos]
       sort
       (adjust-for-motion-kind lines kind))))
 
 (defn delete
-  [{start :point :keys [lines] :as buffer} {:keys [motion kind]}]
+  [{start :point :keys [lines] :as buffer} operation]
   (+> buffer
-    (if-let [[start end] (resolve-range buffer motion kind)]
+    (if-let [[start end] (resolve-range buffer operation)]
       (do
         t/start-transaction
         (c/change start end "" :left)
