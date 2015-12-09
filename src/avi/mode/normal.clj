@@ -15,23 +15,23 @@
    "d" {:operator :delete}})
 
 (def motions
-  '[["0"    {:kind :exclusive, :motion [:goto [:current 0]]}]
-    ["^"    {:kind :exclusive, :motion [:goto [:current :first-non-blank]]}]
-    ["$"    {:kind :inclusive, :motion [:goto [:current :end-of-line]]}]
-    ["f<.>" {:kind :inclusive, :motion [:goto [:current [:to-next ?char]]]}]
-    ["gg"   {:kind :linewise,  :motion [:goto [(?line 0) :first-non-blank]]}]
-    ["h"    {:kind :exclusive, :motion [:goto [:current :left]]}]
-    ["j"    {:kind :linewise,  :motion [:goto [:down :last-explicit]]}]
-    ["k"    {:kind :linewise,  :motion [:goto [:up :last-explicit]]}]
-    ["l"    {:kind :exclusive, :motion [:goto [:current :right]]}]
-    ["t<.>" {:kind :inclusive, :motion [:goto [:current [:before-next ?char]]]}]
-    ["w"    {:kind :exclusive, :motion [:word :start [:forward (?count 1)]]}]
-    ["F<.>" {:kind :exclusive, :motion [:goto [:current [:to-previous ?char]]]}]
-    ["G"    {:kind :linewise,  :motion [:goto [(?line :last) :first-non-blank]]}]
-    ["H"    {:kind :linewise,  :motion [:goto [[:viewport-top (?line 0)] :first-non-blank]]}]
-    ["L"    {:kind :linewise,  :motion [:goto [[:viewport-bottom (?line 0)] :first-non-blank]]}]
-    ["M"    {:kind :linewise,  :motion [:goto [:viewport-middle :first-non-blank]]}]
-    ["T<.>" {:kind :exclusive, :motion [:goto [:current [:after-previous ?char]]]}]])
+  '{"0"    {:kind :exclusive, :motion [:goto [:current 0]]}
+    "^"    {:kind :exclusive, :motion [:goto [:current :first-non-blank]]}
+    "$"    {:kind :inclusive, :motion [:goto [:current :end-of-line]]}
+    "f<.>" {:kind :inclusive, :motion [:goto [:current [:to-next ?char]]]}
+    "gg"   {:kind :linewise,  :motion [:goto [(?line 0) :first-non-blank]]}
+    "h"    {:kind :exclusive, :motion [:goto [:current :left]]}
+    "j"    {:kind :linewise,  :motion [:goto [:down :last-explicit]]}
+    "k"    {:kind :linewise,  :motion [:goto [:up :last-explicit]]}
+    "l"    {:kind :exclusive, :motion [:goto [:current :right]]}
+    "t<.>" {:kind :inclusive, :motion [:goto [:current [:before-next ?char]]]}
+    "w"    {:kind :exclusive, :motion [:word :start [:forward (?count 1)]]}
+    "F<.>" {:kind :exclusive, :motion [:goto [:current [:to-previous ?char]]]}
+    "G"    {:kind :linewise,  :motion [:goto [(?line :last) :first-non-blank]]}
+    "H"    {:kind :linewise,  :motion [:goto [[:viewport-top (?line 0)] :first-non-blank]]}
+    "L"    {:kind :linewise,  :motion [:goto [[:viewport-bottom (?line 0)] :first-non-blank]]}
+    "M"    {:kind :linewise,  :motion [:goto [:viewport-middle :first-non-blank]]}
+    "T<.>" {:kind :exclusive, :motion [:goto [:current [:after-previous ?char]]]} })
 
 (defn bindings
   [spec]
