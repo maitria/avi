@@ -167,15 +167,19 @@
     :else
     (nfa/match event)))
 
+(defn- event-string-nfa
+  [event-string]
+  (->> event-string
+    ev/events
+    (map event-nfa)
+    (apply nfa/chain)))
+
 (defn- map->nfa
   [mappings]
   (->> mappings
     (map (fn [[event-string handler]]
            (let [handler (decorate-event-handler handler)]
-             (->> event-string
-                  ev/events
-                  (map event-nfa)
-                  (apply nfa/chain)
+             (->> (event-string-nfa event-string)
                   (#(nfa/on % (fn [v _]
                                 (assoc v :handler handler))))))))
     (apply nfa/choice)))
@@ -195,10 +199,7 @@
   (let [default-operator-spec (get operators "")]
     (->> motions
       (map (fn [[event-string spec]]
-             (nfa/on (->> event-string
-                       ev/events
-                       (map event-nfa)
-                       (apply nfa/chain))
+             (nfa/on (event-string-nfa event-string)
                      (fn motion-reducer [v _]
                        (merge
                          default-operator-spec
