@@ -83,7 +83,7 @@
       (adjust-for-motion-kind lines kind))))
 
 (defn delete
-  [{start :point :keys [lines] :as buffer} motion kind]
+  [{start :point :keys [lines] :as buffer} {:keys [motion kind]}]
   (+> buffer
     (if-let [[start end] (resolve-range buffer motion kind)]
       (do
@@ -102,5 +102,5 @@
   (move-point buffer params))
 
 (defmethod invoke-motion :delete
-  [buffer {:keys [motion kind]}]
-  (delete buffer motion kind))
+  [buffer params]
+  (delete buffer params))
