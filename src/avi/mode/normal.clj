@@ -15,23 +15,23 @@
    "d" {:operator :delete}})
 
 (def motions
-  '[["0"    :exclusive [:goto [:current 0]]]
-    ["^"    :exclusive [:goto [:current :first-non-blank]]]
-    ["$"    :inclusive [:goto [:current :end-of-line]]]
-    ["f<.>" :inclusive [:goto [:current [:to-next ?char]]]]
-    ["gg"   :linewise  [:goto [(?line 0) :first-non-blank]]]
-    ["h"    :exclusive [:goto [:current :left]]]
-    ["j"    :linewise  [:goto [:down :last-explicit]]]
-    ["k"    :linewise  [:goto [:up :last-explicit]]]
-    ["l"    :exclusive [:goto [:current :right]]]
-    ["t<.>" :inclusive [:goto [:current [:before-next ?char]]]]
-    ["w"    :exclusive [:word :start [:forward (?count 1)]]]
-    ["F<.>" :exclusive [:goto [:current [:to-previous ?char]]]]
-    ["G"    :linewise  [:goto [(?line :last) :first-non-blank]]]
-    ["H"    :linewise  [:goto [[:viewport-top (?line 0)] :first-non-blank]]]
-    ["L"    :linewise  [:goto [[:viewport-bottom (?line 0)] :first-non-blank]]]
-    ["M"    :linewise  [:goto [:viewport-middle :first-non-blank]]]
-    ["T<.>" :exclusive [:goto [:current [:after-previous ?char]]]]])
+  '[["0"    {:kind :exclusive, :motion [:goto [:current 0]]}]
+    ["^"    {:kind :exclusive, :motion [:goto [:current :first-non-blank]]}]
+    ["$"    {:kind :inclusive, :motion [:goto [:current :end-of-line]]}]
+    ["f<.>" {:kind :inclusive, :motion [:goto [:current [:to-next ?char]]]}]
+    ["gg"   {:kind :linewise,  :motion [:goto [(?line 0) :first-non-blank]]}]
+    ["h"    {:kind :exclusive, :motion [:goto [:current :left]]}]
+    ["j"    {:kind :linewise,  :motion [:goto [:down :last-explicit]]}]
+    ["k"    {:kind :linewise,  :motion [:goto [:up :last-explicit]]}]
+    ["l"    {:kind :exclusive, :motion [:goto [:current :right]]}]
+    ["t<.>" {:kind :inclusive, :motion [:goto [:current [:before-next ?char]]]}]
+    ["w"    {:kind :exclusive, :motion [:word :start [:forward (?count 1)]]}]
+    ["F<.>" {:kind :exclusive, :motion [:goto [:current [:to-previous ?char]]]}]
+    ["G"    {:kind :linewise,  :motion [:goto [(?line :last) :first-non-blank]]}]
+    ["H"    {:kind :linewise,  :motion [:goto [[:viewport-top (?line 0)] :first-non-blank]]}]
+    ["L"    {:kind :linewise,  :motion [:goto [[:viewport-bottom (?line 0)] :first-non-blank]]}]
+    ["M"    {:kind :linewise,  :motion [:goto [:viewport-middle :first-non-blank]]}]
+    ["T<.>" {:kind :exclusive, :motion [:goto [:current [:after-previous ?char]]]}]])
 
 (defn bindings
   [spec]
@@ -192,23 +192,21 @@
       (apply nfa/choice))))
 
 (def motion-nfa
-  (->> motions
-    (map (fn [[event-string kind pattern]]
-           (nfa/on (->> event-string
-                     ev/events
-                     (map event-nfa)
-                     (apply nfa/chain))
-                   (let [auto-repeat? (not (uses-count? pattern))
-                         default-operator-spec (get operators "")]
+  (let [default-operator-spec (get operators "")]
+    (->> motions
+      (map (fn [[event-string spec]]
+             (nfa/on (->> event-string
+                       ev/events
+                       (map event-nfa)
+                       (apply nfa/chain))
                      (fn motion-reducer [v _]
                        (merge
                          default-operator-spec
                          v
-                         {:auto-repeat? auto-repeat?
-                          :handler motion-handler
-                          :kind kind
-                          :motion (substitute pattern (bindings v))}))))))
-    (apply nfa/choice)))
+                         {:auto-repeat? (not (uses-count? (:motion spec)))
+                          :handler motion-handler}
+                         (update-in spec [:motion] substitute (bindings v)))))))
+      (apply nfa/choice))))
 
 (defn count-digits-nfa
   [from to]
