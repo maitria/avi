@@ -1,7 +1,7 @@
-(ns avi.buffer.motion.goto
+(ns avi.buffer.operate.goto
   (:require [avi.buffer
               [locations :as l]]
-            [avi.buffer.motion.resolve :as resolve]
+            [avi.buffer.operate.resolve :as resolve]
             [schema.core :as s]))
 
 (defmulti magic-row-value

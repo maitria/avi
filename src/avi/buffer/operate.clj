@@ -1,4 +1,4 @@
-(ns avi.buffer.motion
+(ns avi.buffer.operate
   "Primitives for moving the point."
   (:require [avi.beep :as beep]
             [avi.buffer
@@ -6,7 +6,7 @@
               [lines :as lines]
               [locations :as l]
               [transactions :as t]]
-            [avi.buffer.motion
+            [avi.buffer.operate
              [goto]
              [resolve :as resolve]
              [word]]

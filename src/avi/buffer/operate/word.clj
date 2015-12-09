@@ -1,8 +1,8 @@
-(ns avi.buffer.motion.word
+(ns avi.buffer.operate.word
   (:require [avi.buffer
               [lines :as lines]
               [locations :as l]]
-            [avi.buffer.motion.resolve :as resolve]
+            [avi.buffer.operate.resolve :as resolve]
             [schema.core :as s]))
 
 (defn word-char?

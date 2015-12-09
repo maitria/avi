@@ -7,7 +7,7 @@
               [change]
               [lines :as lines]
               [locations :as l]
-              [motion]
+              [operate]
               [transactions]]
             [avi.pervasive :refer :all]
             [avi.world :as w]
@@ -16,7 +16,7 @@
 (import-vars [avi.buffer.change
                 adjust-viewport-to-contain-point
                 change]
-             [avi.buffer.motion
+             [avi.buffer.operate
                 clamp-point-j
                 move-point
                 delete
