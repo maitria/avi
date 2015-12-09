@@ -11,8 +11,8 @@
             [avi.search]))
 
 (def operators
-  [[""  {:operator :move-point}]
-   ["d" {:operator :delete}]])
+  {""  {:operator :move-point}
+   "d" {:operator :delete}})
 
 (def motions
   '[["0"    :exclusive [:goto [:current 0]]]
@@ -199,7 +199,7 @@
                      (map event-nfa)
                      (apply nfa/chain))
                    (let [auto-repeat? (not (uses-count? pattern))
-                         default-operator-spec (second (first operators))]
+                         default-operator-spec (get operators "")]
                      (fn motion-reducer [v _]
                        (merge
                          default-operator-spec
