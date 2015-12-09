@@ -20,7 +20,7 @@
                 clamp-point-j
                 move-point
                 delete
-                invoke-motion]
+                operate]
              [avi.buffer.transactions
                 start-transaction
                 commit])

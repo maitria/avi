@@ -93,14 +93,14 @@
         (move-point {:motion [:goto start]}))
       beep/beep)))
 
-(defmulti invoke-motion
+(defmulti operate
   (fn [buffer params]
     (:operator params)))
 
-(defmethod invoke-motion :move-point
+(defmethod operate :move-point
   [buffer params]
   (move-point buffer params))
 
-(defmethod invoke-motion :delete
+(defmethod operate :delete
   [buffer params]
   (delete buffer params))

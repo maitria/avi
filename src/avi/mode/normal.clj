@@ -71,8 +71,8 @@
   (+> editor
     (in e/current-buffer
       (if auto-repeat?
-        (n-times (or count 1) #(b/invoke-motion % spec))
-        (b/invoke-motion spec)))))
+        (n-times (or count 1) #(b/operate % spec))
+        (b/operate spec)))))
 
 (def non-motion-commands
   {"dd" ^:no-repeat (fn+> [editor spec]
