@@ -86,9 +86,12 @@
 
 (defmethod magic-column-value :right
   [{:keys [lines] [_ j] :point} _ i param]
-  (let [result (+ j (or param 1))]
-    (if (get-in lines [i result])
-      result)))
+  (let [column (+ j (or param 1))
+        column (if (get-in lines [i column])
+                 column
+                 (max 0 (dec (count (get lines i)))))]
+    (if-not (= j column)
+      column)))
 
 (defn next-char-index
   [{:keys [lines] [_ j] :point} i ch]

@@ -56,8 +56,10 @@
       (editor :after "l") => (point [0 1])
       (editor :after "ll") => (point [0 2]))
     (fact "`l` won't move beyond the end of the line."
-      (editor :after "lll") => (point [0 2])
-      (editor :after "lll") => beeped))
+      (editor :editing "One\n.." :after "lll") => (point [0 2])
+      (editor :editing "One\n.." :after "lll") => beeped)
+      (editor :editing "One\n.." :after "9l") => (point [0 2])
+      (editor :editing "One\n.." :after "9l") =not=> beeped)
 
   (facts "about `h`"
     (fact "`h` moves to the left one character."
@@ -486,4 +488,3 @@
   (fact "`dw` deletes to end of current word"
     (editor :editing "hello world" :after "ldw") => (line 0 "hworld")
     (editor :editing "hello world" :after "ldw") => (point [0 1])))
-

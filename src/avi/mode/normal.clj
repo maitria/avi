@@ -23,7 +23,7 @@
     "h"    {:kind :exclusive, :motion [:goto [:current :left]]}
     "j"    {:kind :linewise,  :motion [:goto [:down :last-explicit]]}
     "k"    {:kind :linewise,  :motion [:goto [:up :last-explicit]]}
-    "l"    {:kind :exclusive, :motion [:goto [:current :right]]}
+    "l"    {:kind :exclusive, :motion [:goto [:current [:right (?count 1)]]]}
     "t<.>" {:kind :inclusive, :motion [:goto [:current [:before-next ?char]]]}
     "w"    {:kind :exclusive, :motion [:word :start [:forward (?count 1)]]}
     "F<.>" {:kind :exclusive, :motion [:goto [:current [:to-previous ?char]]]}
