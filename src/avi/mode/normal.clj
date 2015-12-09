@@ -66,7 +66,7 @@
     :else
     a))
 
-(defn new-motion-handler
+(defn motion-handler
   [editor {:keys [count auto-repeat?] :as spec}]
   (+> editor
     (in e/current-buffer
@@ -203,7 +203,7 @@
                      (fn motion-reducer [v _]
                        (-> v
                          (assoc :auto-repeat? auto-repeat?
-                                :handler new-motion-handler
+                                :handler motion-handler
                                 :kind kind
                                 :motion (substitute pattern (bindings v)))
                          (update-in [:operator] #(or % default-operator))))))))
