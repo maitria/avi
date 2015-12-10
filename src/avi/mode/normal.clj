@@ -26,13 +26,14 @@
     "l"    {:span :exclusive, :motion [:right], :auto-repeat? false}
     "t<.>" {:span :inclusive, :motion [:move-to-char {:offset -1}]}
     "w"    {:span :exclusive, :motion [:word :start :forward], :auto-repeat? false}
-    "F<.>" {:span :exclusive, :motion [:goto [:current [:to-previous ?char]]]}
+    "F<.>" {:span :exclusive, :motion [:move-to-char {:direction -1}]}
     "G"    {:span :linewise,  :motion [:goto-line {:default-line :last}], :auto-repeat? false}
     "H"    {:span :linewise,  :motion [:goto-line {:from :viewport-top}], :auto-repeat? false}
     "L"    {:span :linewise,  :motion [:goto-line {:from :viewport-bottom
                                                    :multiplier -1}], :auto-repeat? false}
     "M"    {:span :linewise,  :motion [:goto [:viewport-middle :first-non-blank]]}
-    "T<.>" {:span :exclusive, :motion [:goto [:current [:after-previous ?char]]]} })
+    "T<.>" {:span :exclusive, :motion [:move-to-char {:direction -1
+                                                      :offset 1}]}})
 
 (defn bindings
   [spec]

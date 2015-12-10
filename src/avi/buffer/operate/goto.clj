@@ -57,32 +57,14 @@
       result)))
 
 (defn next-char-index
-  [{:keys [lines] [_ j] :point} i ch]
+  [{:keys [lines] [_ j] :point} i direction ch]
   (let [line (get lines i)]
-    (loop [nj (inc j)]
+    (loop [nj (+ j direction)]
       (if-let [line-ch (get line nj)]
         (if (= line-ch ch)
           nj
-          (recur (inc nj)))
+          (recur (+ nj direction)))
         nil))))
-
-(defn previous-char-index
-  [{:keys [lines] [_ j] :point} i ch]
-  (let [line (get lines i)]
-    (loop [nj (dec j)]
-      (if-let [line-ch (get line nj)]
-        (if (= line-ch ch)
-          nj
-          (recur (dec nj)))
-        nil))))
-
-(defmethod magic-column-value :to-previous
-  [buffer _ i ch]
-  (previous-char-index buffer i ch))
-
-(defmethod magic-column-value :after-previous
-  [buffer _ i ch]
-  (some-> (previous-char-index buffer i ch) inc))
 
 (defn- clamp-point-row
   [{:keys [lines]} row]
@@ -148,8 +130,9 @@
 
 (defmethod resolve/resolve-motion :move-to-char
   [{[i] :point :as buffer} {:keys [char]
-                            [_ {:keys [offset]
-                                :or {offset 0}}] :motion}]
-  (if-let [j (some-> (next-char-index buffer i char)
+                            [_ {:keys [direction offset]
+                                :or {direction +1
+                                     offset 0}}] :motion}]
+  (if-let [j (some-> (next-char-index buffer i direction char)
                 (+ offset))]
     [i j]))
