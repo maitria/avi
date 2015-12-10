@@ -34,7 +34,7 @@
          (filter (partial = :last-explicit))
          seq)))
 
-(defmulti adjust-for-motion-kind
+(defmulti adjust-for-span
   "Per vim docs, \"inclusive\" motions include the last character of the range
   (which we exclude by default because of the way we track the point).
   \"Exclusive\" motions do what we normally do, and \"linewise\" motions
@@ -42,17 +42,17 @@
 
   Linewise gets difficult: we want to take either a preceeding _or_ a trailing
   newline with the change or deletion _if we have one_."
-  (fn [range lines kind] kind))
+  (fn [range lines span] span))
 
-(defmethod adjust-for-motion-kind :exclusive
+(defmethod adjust-for-span :exclusive
   [range _ _]
   range)
 
-(defmethod adjust-for-motion-kind :inclusive
+(defmethod adjust-for-span :inclusive
   [[start [ei ej]] _ _]
   [start [ei (inc ej)]])
 
-(defmethod adjust-for-motion-kind :linewise
+(defmethod adjust-for-span :linewise
   [[[si sj] [ei ej]] lines _]
   (cond
     (and (not (get lines (dec si)))
@@ -67,11 +67,11 @@
      [ei (count (get lines ei))]]))
 
 (defn resolve-range
-  [{:keys [lines point] :as buffer} {:keys [kind] :as operation}]
+  [{:keys [lines point] :as buffer} {:keys [span] :as operation}]
   (when-let [pos (resolve/resolve-motion buffer operation)]
     (-> [point pos]
       sort
-      (adjust-for-motion-kind lines kind))))
+      (adjust-for-span lines span))))
 
 (defmethod operate :move-point
   [buffer operation]
