@@ -18,10 +18,6 @@
     (if (get lines result)
       result)))
 
-(defmethod magic-row-value :viewport-top
-  [{:keys [viewport-top]} _ lines-below]
-  (+ viewport-top (or lines-below 0)))
-
 (defmethod magic-row-value :viewport-bottom
   [{:keys [lines viewport-top viewport-height]} _ count-from-bottom]
   (let [count-from-bottom (or count-from-bottom 0)
@@ -149,10 +145,15 @@
       [i column])))
 
 (defmethod resolve/resolve-motion :goto-line
-  [{:keys [lines] :as buffer} {line-number :count, [_ {:keys [default-line]}] :motion}]
+  [{:keys [lines viewport-top] :as buffer}
+   {count-register :count,
+    [_ {:keys [from default-line]}] :motion}]
   (let [default-line (if (= default-line :last)
                        (dec (count lines))
                        default-line)
-        i (or (some-> line-number dec) default-line)
+        i (or (some-> count-register dec) default-line)
+        i (if (= from :viewport-top)
+            (+ i viewport-top)
+            i)
         i (clamp-point-row buffer i)]
     [i (first-non-blank buffer i)]))
