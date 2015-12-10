@@ -25,7 +25,7 @@
     "k"    {:span :linewise,  :motion [:up], :auto-repeat? false}
     "l"    {:span :exclusive, :motion [:right], :auto-repeat? false}
     "t<.>" {:span :inclusive, :motion [:goto [:current [:before-next ?char]]]}
-    "w"    {:span :exclusive, :motion [:word :start [:forward (?count 1)]]}
+    "w"    {:span :exclusive, :motion [:word :start :forward], :auto-repeat? false}
     "F<.>" {:span :exclusive, :motion [:goto [:current [:to-previous ?char]]]}
     "G"    {:span :linewise,  :motion [:goto [(?line :last) :first-non-blank]]}
     "H"    {:span :linewise,  :motion [:goto [[:viewport-top (?line 0)] :first-non-blank]]}
@@ -36,7 +36,6 @@
 (defn bindings
   [spec]
   {'?char (:char spec)
-   '?count (:count spec)
    '?line (some-> (:count spec) dec)})
 
 (def count-variables
