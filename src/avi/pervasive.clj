@@ -1,5 +1,4 @@
-(ns avi.pervasive
-  (:require [avi.assert :refer :all]))
+(ns avi.pervasive)
 
 (defn- subcollection
   [collection & rest-of-args]
@@ -31,11 +30,6 @@
   including splice-end.
 
   It is not an error for end to be well past the end of the collection."
-  {:test (examples
-           (example (= "xa" (splice "a" 0 0 "x")))
-           (example (= "a" (splice "a" 1 42)))
-           (example (= [1] (splice [1] 1 42)))
-           (example (= "xxaxx" (splice "xxxxxx" 2 4 "a"))))}
   ([collection splice-start splice-end]
    (splice collection splice-start splice-end (empty collection)))
   ([collection splice-start splice-end replacements]
