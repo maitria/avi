@@ -21,9 +21,9 @@
     "f<.>" {:span :inclusive, :motion [:goto [:current [:to-next ?char]]]}
     "gg"   {:span :linewise,  :motion [:goto [(?line 0) :first-non-blank]]}
     "h"    {:span :exclusive, :motion [:goto [:current :left]]}
-    "j"    {:span :linewise,  :motion [:down]}
-    "k"    {:span :linewise,  :motion [:up]}
-    "l"    {:span :exclusive, :motion [:goto [:current [:right (?count 1)]]]}
+    "j"    {:span :linewise,  :motion [:down], :auto-repeat? false}
+    "k"    {:span :linewise,  :motion [:up], :auto-repeat? false}
+    "l"    {:span :exclusive, :motion [:right], :auto-repeat? false}
     "t<.>" {:span :inclusive, :motion [:goto [:current [:before-next ?char]]]}
     "w"    {:span :exclusive, :motion [:word :start [:forward (?count 1)]]}
     "F<.>" {:span :exclusive, :motion [:goto [:current [:to-previous ?char]]]}

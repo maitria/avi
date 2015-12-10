@@ -70,15 +70,6 @@
     (if-not (neg? result)
       result)))
 
-(defmethod magic-column-value :right
-  [{:keys [lines] [_ j] :point} _ i param]
-  (let [column (+ j (or param 1))
-        column (if (get-in lines [i column])
-                 column
-                 (max 0 (dec (count (get lines i)))))]
-    (if-not (= j column)
-      column)))
-
 (defn next-char-index
   [{:keys [lines] [_ j] :point} i ch]
   (let [line (get lines i)]
@@ -143,7 +134,16 @@
       [(clamp-point-row buffer new-i)])))
 
 (defmethod resolve/resolve-motion :up
-  [{[i] :point :as buffer} {:keys [count]}]
+  [{[i] :point} {:keys [count]}]
   (let [result (- i (or count 1))]
     (if-not (neg? result)
       [result])))
+
+(defmethod resolve/resolve-motion :right
+  [{:keys [lines] [i j] :point} {n :count}]
+  (let [column (+ j (or n 1))
+        column (if (get-in lines [i column])
+                 column
+                 (max 0 (dec (count (get lines i)))))]
+    (if-not (= j column)
+      [i column])))
