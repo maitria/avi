@@ -38,12 +38,6 @@
   [text :- s/Str]
   (text-lines text))
 
-(defn- ensure-lines-count
-  [lines i]
-  (if (< i (count lines))
-    lines
-    (recur (conj lines "") i)))
-
 (s/defn before :- [Line]
   [lines :- [Line]
    [i j] :- l/Location]
