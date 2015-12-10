@@ -66,10 +66,6 @@
           (recur (inc nj)))
         nil))))
 
-(defmethod magic-column-value :before-next
-  [buffer _ i ch]
-  (some-> (next-char-index buffer i ch) dec))
-
 (defn previous-char-index
   [{:keys [lines] [_ j] :point} i ch]
   (let [line (get lines i)]
@@ -151,6 +147,9 @@
     [i (first-non-blank buffer i)]))
 
 (defmethod resolve/resolve-motion :move-to-char
-  [{[i] :point :as buffer} {:keys [char]}]
-  (if-let [j (next-char-index buffer i char)]
+  [{[i] :point :as buffer} {:keys [char]
+                            [_ {:keys [offset]
+                                :or {offset 0}}] :motion}]
+  (if-let [j (some-> (next-char-index buffer i char)
+                (+ offset))]
     [i j]))

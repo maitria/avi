@@ -24,7 +24,7 @@
     "j"    {:span :linewise,  :motion [:down], :auto-repeat? false}
     "k"    {:span :linewise,  :motion [:up], :auto-repeat? false}
     "l"    {:span :exclusive, :motion [:right], :auto-repeat? false}
-    "t<.>" {:span :inclusive, :motion [:goto [:current [:before-next ?char]]]}
+    "t<.>" {:span :inclusive, :motion [:move-to-char {:offset -1}]}
     "w"    {:span :exclusive, :motion [:word :start :forward], :auto-repeat? false}
     "F<.>" {:span :exclusive, :motion [:goto [:current [:to-previous ?char]]]}
     "G"    {:span :linewise,  :motion [:goto-line {:default-line :last}], :auto-repeat? false}
