@@ -18,16 +18,6 @@
     (if (get lines result)
       result)))
 
-(defmethod magic-row-value :viewport-middle
-  [{top :viewport-top,
-    height :viewport-height,
-    :keys [lines],
-    :as buffer} _ _]
-  (let [middle-of-viewport (dec (+ top (quot height 2)))
-        middle-of-file (quot (dec (count lines)) 2)
-        middle (min middle-of-viewport middle-of-file)]
-    middle))
-
 (defmulti magic-column-value
   (fn [buffer kind row param]
     kind))
@@ -124,6 +114,10 @@
                                viewport-top
                                (+ i (min (dec (+ viewport-top viewport-height))
                                          (dec (count lines)))))
+            :viewport-middle (let [middle-of-viewport (dec (+ viewport-top (quot viewport-height 2)))
+                                   middle-of-file (quot (dec (count lines)) 2)
+                                   middle (min middle-of-viewport middle-of-file)]
+                               middle)
             i)
         i (clamp-point-row buffer i)]
     [i (first-non-blank buffer i)]))

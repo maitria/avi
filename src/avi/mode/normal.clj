@@ -55,7 +55,8 @@
                                  :multiplier -1}],
             :auto-repeat? false}
     "M"    {:span :linewise,
-            :motion [:goto [:viewport-middle :first-non-blank]]}
+            :motion [:goto-line {:from :viewport-middle
+                                 :multiplier 0}]}
     "T<.>" {:span :exclusive,
             :motion [:move-to-char {:direction -1
                                     :offset 1}]}})
