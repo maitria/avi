@@ -18,12 +18,6 @@
     (if (get lines result)
       result)))
 
-(defmethod magic-row-value :up
-  [{[i] :point} _ n]
-  (let [result (- i (or n 1))]
-    (if-not (neg? result)
-      result)))
-
 (defmethod magic-row-value :viewport-top
   [{:keys [viewport-top]} _ lines-below]
   (+ viewport-top (or lines-below 0)))
@@ -69,14 +63,6 @@
     (if all-spaces?
       (dec leading-space-count)
       leading-space-count)))
-
-(defmethod magic-column-value :last-explicit
-  [{:keys [lines last-explicit-j]} _ i _]
-  (let [j last-explicit-j
-        line-length (count (get lines i))
-        j-not-after-end (min (dec line-length) j)
-        j-within-line (max 0 j-not-after-end)]
-    j-within-line))
 
 (defmethod magic-column-value :left
   [{[_ j] :point} _ _ param]
@@ -140,16 +126,24 @@
     (coll? v)   (f (first v) (second v))
     :else       (f v nil)))
 
-(s/defmethod resolve/resolve-motion :goto :- (s/maybe l/Location)
+(defmethod resolve/resolve-motion :goto
   [{:keys [lines] :as buffer} {[_ [i j]] :motion}]
-  (if-let [i (absolutize i #(magic-row-value buffer %1 %2))]
-    (let [i (clamp-point-row buffer i)
-          j (absolutize j #(magic-column-value buffer %1 i %2))]
-      (if j
-        [i j]))))
+  (if-let [i (some->> (absolutize i #(magic-row-value buffer %1 %2))
+               (clamp-point-row buffer))]
+    (if-not j
+      [i]
+      (let [j (absolutize j #(magic-column-value buffer %1 i %2))]
+        (if j
+          [i j])))))
 
 (defmethod resolve/resolve-motion :down
   [{:keys [lines] [i] :point :as buffer} {:keys [count]}]
   (let [new-i (+ i (or count 1))]
     (if (get lines new-i)
       [(clamp-point-row buffer new-i)])))
+
+(defmethod resolve/resolve-motion :up
+  [{[i] :point :as buffer} {:keys [count]}]
+  (let [result (- i (or count 1))]
+    (if-not (neg? result)
+      [result])))

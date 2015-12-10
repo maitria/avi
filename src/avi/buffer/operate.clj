@@ -27,13 +27,6 @@
     :as buffer}]
   (assoc buffer :point [i (clamped-j buffer j)]))
 
-(defn explicit-column?
-  [{motion :motion}]
-  (not (->> motion
-         flatten
-         (filter (partial = :last-explicit))
-         seq)))
-
 (defmulti adjust-for-span
   "Per vim docs, \"inclusive\" motions include the last character of the range
   (which we exclude by default because of the way we track the point).

@@ -70,11 +70,11 @@
       (cond
         (< i viewport-top)
         (operate {:operator :move-point
-                  :motion [:goto [viewport-top :last-explicit]]})
+                  :motion [:goto [viewport-top]]})
 
         (> i viewport-bottom)
         (operate {:operator :move-point
-                  :motion [:goto [viewport-bottom :last-explicit]]})))))
+                  :motion [:goto [viewport-bottom]]})))))
 
 (defn resize
   [buffer height]
@@ -116,7 +116,7 @@
                         :up -1)
             scroll-adjust (* direction distance)]
         (operate {:operator :move-point
-                  :motion [:goto [(+ i scroll-adjust) :last-explicit]]})
+                  :motion [:goto [(+ i scroll-adjust)]]})
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
 ;; -- undo & redo --

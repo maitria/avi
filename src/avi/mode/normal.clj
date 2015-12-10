@@ -22,7 +22,7 @@
     "gg"   {:span :linewise,  :motion [:goto [(?line 0) :first-non-blank]]}
     "h"    {:span :exclusive, :motion [:goto [:current :left]]}
     "j"    {:span :linewise,  :motion [:down]}
-    "k"    {:span :linewise,  :motion [:goto [:up :last-explicit]]}
+    "k"    {:span :linewise,  :motion [:up]}
     "l"    {:span :exclusive, :motion [:goto [:current [:right (?count 1)]]]}
     "t<.>" {:span :inclusive, :motion [:goto [:current [:before-next ?char]]]}
     "w"    {:span :exclusive, :motion [:word :start [:forward (?count 1)]]}
