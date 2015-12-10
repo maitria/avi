@@ -149,7 +149,7 @@
       [i column])))
 
 (defmethod resolve/resolve-motion :goto-line
-  [{:keys [lines] :as buffer} {line-number :count, [_ default-line] :motion}]
+  [{:keys [lines] :as buffer} {line-number :count, [_ {:keys [default-line]}] :motion}]
   (let [default-line (if (= default-line :last)
                        (dec (count lines))
                        default-line)

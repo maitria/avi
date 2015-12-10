@@ -19,7 +19,7 @@
     "^"    {:span :exclusive, :motion [:goto [:current :first-non-blank]]}
     "$"    {:span :inclusive, :motion [:goto [:current :end-of-line]]}
     "f<.>" {:span :inclusive, :motion [:goto [:current [:to-next ?char]]]}
-    "gg"   {:span :linewise,  :motion [:goto-line 0], :auto-repeat? false}
+    "gg"   {:span :linewise,  :motion [:goto-line {:default-line 0}], :auto-repeat? false}
     "h"    {:span :exclusive, :motion [:goto [:current :left]]}
     "j"    {:span :linewise,  :motion [:down], :auto-repeat? false}
     "k"    {:span :linewise,  :motion [:up], :auto-repeat? false}
@@ -27,7 +27,7 @@
     "t<.>" {:span :inclusive, :motion [:goto [:current [:before-next ?char]]]}
     "w"    {:span :exclusive, :motion [:word :start :forward], :auto-repeat? false}
     "F<.>" {:span :exclusive, :motion [:goto [:current [:to-previous ?char]]]}
-    "G"    {:span :linewise,  :motion [:goto-line :last], :auto-repeat? false}
+    "G"    {:span :linewise,  :motion [:goto-line {:default-line :last}], :auto-repeat? false}
     "H"    {:span :linewise,  :motion [:goto [[:viewport-top (?line 0)] :first-non-blank]]}
     "L"    {:span :linewise,  :motion [:goto [[:viewport-bottom (?line 0)] :first-non-blank]]}
     "M"    {:span :linewise,  :motion [:goto [:viewport-middle :first-non-blank]]}
@@ -58,6 +58,9 @@
     (if-let [value (bindings (first a))]
       value
       (second a))
+
+    (map? a)
+    a
 
     (coll? a)
     (into (empty a) (map #(substitute % bindings) a))
