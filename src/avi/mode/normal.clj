@@ -28,8 +28,9 @@
     "w"    {:span :exclusive, :motion [:word :start :forward], :auto-repeat? false}
     "F<.>" {:span :exclusive, :motion [:goto [:current [:to-previous ?char]]]}
     "G"    {:span :linewise,  :motion [:goto-line {:default-line :last}], :auto-repeat? false}
-    "H"    {:span :linewise,  :motion [:goto-line {:default-line 0 :from :viewport-top}], :auto-repeat? false}
-    "L"    {:span :linewise,  :motion [:goto [[:viewport-bottom (?line 0)] :first-non-blank]]}
+    "H"    {:span :linewise,  :motion [:goto-line {:from :viewport-top}], :auto-repeat? false}
+    "L"    {:span :linewise,  :motion [:goto-line {:from :viewport-bottom
+                                                   :multiplier -1}], :auto-repeat? false}
     "M"    {:span :linewise,  :motion [:goto [:viewport-middle :first-non-blank]]}
     "T<.>" {:span :exclusive, :motion [:goto [:current [:after-previous ?char]]]} })
 
