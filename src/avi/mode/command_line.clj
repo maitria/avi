@@ -36,7 +36,6 @@
       (line-number? command-line)
       (in e/current-buffer
         (b/operate {:operator :move-point
-                    :span :linewise
                     :motion [:goto [(dec (Long/parseLong command-line)) :first-non-blank]]}))
 
       :else
