@@ -75,12 +75,8 @@
                      (let [repeat-count (:count spec)]
                        (in e/current-buffer
                            b/start-transaction
-                           (as-> buffer
-                             (reduce
-                               (fn [buffer n]
-                                 (b/delete-char-under-point buffer))
-                               buffer
-                               (range (or repeat-count 1))))
+                           (n-times (or repeat-count 1)
+                                    b/delete-char-under-point)
                            b/commit)))
    "D" (fn+> [editor _]
          (in e/current-buffer
