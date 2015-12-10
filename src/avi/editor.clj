@@ -81,15 +81,4 @@
   (and (>= i 0)
        (< i (b/line-count (current-buffer editor)))))
 
-(defn change-line
-  [editor i-fn]
-  (+> editor
-      (let [[i] (:point (current-buffer editor))
-        i (i-fn i)]
-        (if-not (valid-line? editor i)
-          beep/beep
-          (in current-buffer
-              (b/operate {:operator :move-point
-                          :motion [:goto [i :last-explicit]]}))))))
-
 ;; ---------------------------------------------------------------------------

@@ -34,7 +34,10 @@
       identity
 
       (line-number? command-line)
-      (e/change-line (constantly (dec (Long/parseLong command-line))))
+      (in e/current-buffer
+        (b/operate {:operator :move-point
+                    :span :linewise
+                    :motion [:goto [(dec (Long/parseLong command-line)) :first-non-blank]]}))
 
       :else
       (assoc :message [:white :red (str ":" command-line " is not a thing")]))))
