@@ -18,7 +18,7 @@
   '{"0"    {:span :exclusive, :motion [:goto [:current 0]]}
     "^"    {:span :exclusive, :motion [:goto [:current :first-non-blank]]}
     "$"    {:span :inclusive, :motion [:goto [:current :end-of-line]]}
-    "f<.>" {:span :inclusive, :motion [:goto [:current [:to-next ?char]]]}
+    "f<.>" {:span :inclusive, :motion [:move-to-char]}
     "gg"   {:span :linewise,  :motion [:goto-line {:default-line 0}], :auto-repeat? false}
     "h"    {:span :exclusive, :motion [:goto [:current :left]]}
     "j"    {:span :linewise,  :motion [:down], :auto-repeat? false}
