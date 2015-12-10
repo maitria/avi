@@ -24,36 +24,28 @@
     "f<.>" {:span :inclusive,
             :motion [:move-to-char]}
     "gg"   {:span :linewise,
-            :motion [:goto-line {:default-line 0}],
-            :auto-repeat? false}
+            :motion [:goto-line {:default-line 0}]}
     "h"    {:span :exclusive,
             :motion [:goto [:current :left]]}
     "j"    {:span :linewise,
-            :motion [:down],
-            :auto-repeat? false}
+            :motion [:down]}
     "k"    {:span :linewise,
-            :motion [:up],
-            :auto-repeat? false}
+            :motion [:up]}
     "l"    {:span :exclusive,
-            :motion [:right],
-            :auto-repeat? false}
+            :motion [:right]}
     "t<.>" {:span :inclusive,
             :motion [:move-to-char {:offset -1}]}
     "w"    {:span :exclusive,
-            :motion [:word :start :forward],
-            :auto-repeat? false}
+            :motion [:word :start :forward]}
     "F<.>" {:span :exclusive,
             :motion [:move-to-char {:direction -1}]}
     "G"    {:span :linewise,
-            :motion [:goto-line {:default-line :last}],
-            :auto-repeat? false}
+            :motion [:goto-line {:default-line :last}]}
     "H"    {:span :linewise,
-            :motion [:goto-line {:from :viewport-top}],
-            :auto-repeat? false}
+            :motion [:goto-line {:from :viewport-top}]}
     "L"    {:span :linewise,
             :motion [:goto-line {:from :viewport-bottom
-                                 :multiplier -1}],
-            :auto-repeat? false}
+                                 :multiplier -1}]}
     "M"    {:span :linewise,
             :motion [:goto-line {:from :viewport-middle
                                  :multiplier 0}]}
@@ -62,12 +54,10 @@
                                     :offset 1}]}})
 
 (defn motion-handler
-  [editor {:keys [count auto-repeat?] :as spec}]
+  [editor spec]
   (+> editor
     (in e/current-buffer
-      (if auto-repeat?
-        (n-times (or count 1) #(b/operate % spec))
-        (b/operate spec)))))
+      (b/operate spec))))
 
 (def non-motion-commands
   {"dd" ^:no-repeat (fn+> [editor spec]
@@ -199,8 +189,7 @@
                        (merge
                          default-operator-spec
                          v
-                         {:auto-repeat? true
-                          :handler motion-handler}
+                         {:handler motion-handler}
                          spec)))))
       (apply nfa/choice))))
 
