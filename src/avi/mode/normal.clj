@@ -35,25 +35,6 @@
     "T<.>" {:span :exclusive, :motion [:move-to-char {:direction -1
                                                       :offset 1}]}})
 
-(defn bindings
-  [spec]
-  {'?char (:char spec)})
-
-(defn substitute
-  [a bindings]
-  (cond
-    (contains? bindings a)
-    (bindings a)
-
-    (map? a)
-    a
-
-    (coll? a)
-    (into (empty a) (map #(substitute % bindings) a))
-
-    :else
-    a))
-
 (defn motion-handler
   [editor {:keys [count auto-repeat?] :as spec}]
   (+> editor
@@ -194,7 +175,7 @@
                          v
                          {:auto-repeat? true
                           :handler motion-handler}
-                         (update-in spec [:motion] substitute (bindings v)))))))
+                         spec)))))
       (apply nfa/choice))))
 
 (defn count-digits-nfa
