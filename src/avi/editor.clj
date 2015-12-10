@@ -89,6 +89,7 @@
         (if-not (valid-line? editor i)
           beep/beep
           (in current-buffer
-              (b/move-point {:motion [:goto [i :last-explicit]]}))))))
+              (b/operate {:operator :move-point
+                          :motion [:goto [i :last-explicit]]}))))))
 
 ;; ---------------------------------------------------------------------------

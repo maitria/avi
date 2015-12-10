@@ -12,6 +12,10 @@
              [word]]
             [packthread.core :refer :all]))
 
+(defmulti operate
+  (fn [buffer params]
+    (:operator params)))
+
 (defn clamped-j
   [{[i] :point,
     :keys [lines]}
@@ -29,19 +33,6 @@
          flatten
          (filter (partial = :last-explicit))
          seq)))
-
-(defn move-point
-  [buffer operation]
-  (+> buffer
-    (let [[i j :as pos] (resolve/resolve-motion buffer operation)]
-      (if-not pos
-        beep/beep)
-      (when pos
-        (assoc :point pos)
-        (if (explicit-column? operation)
-          (assoc :last-explicit-j j))
-        clamp-point-j
-        c/adjust-viewport-to-contain-point))))
 
 (defmulti adjust-for-motion-kind
   "Per vim docs, \"inclusive\" motions include the last character of the range
@@ -90,16 +81,22 @@
         t/start-transaction
         (c/change start end "" :left)
         t/commit
-        (move-point {:motion [:goto start]}))
+        (operate {:operator :move-point
+                  :motion [:goto start]}))
       beep/beep)))
 
-(defmulti operate
-  (fn [buffer params]
-    (:operator params)))
-
 (defmethod operate :move-point
-  [buffer params]
-  (move-point buffer params))
+  [buffer operation]
+  (+> buffer
+    (let [[i j :as pos] (resolve/resolve-motion buffer operation)]
+      (if-not pos
+        beep/beep)
+      (when pos
+        (assoc :point pos)
+        (if (explicit-column? operation)
+          (assoc :last-explicit-j j))
+        clamp-point-j
+        c/adjust-viewport-to-contain-point))))
 
 (defmethod operate :delete
   [buffer params]

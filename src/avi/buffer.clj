@@ -18,7 +18,6 @@
                 change]
              [avi.buffer.operate
                 clamp-point-j
-                move-point
                 delete
                 operate]
              [avi.buffer.transactions
@@ -71,10 +70,12 @@
     (let [viewport-bottom (dec (+ viewport-top viewport-height))]
       (cond
         (< i viewport-top)
-        (move-point {:motion [:goto [viewport-top :last-explicit]]})
+        (operate {:operator :move-point
+                  :motion [:goto [viewport-top :last-explicit]]})
 
         (> i viewport-bottom)
-        (move-point {:motion [:goto [viewport-bottom :last-explicit]]})))))
+        (operate {:operator :move-point
+                  :motion [:goto [viewport-bottom :last-explicit]]})))))
 
 (defn resize
   [buffer height]
@@ -115,7 +116,8 @@
                         :down +1
                         :up -1)
             scroll-adjust (* direction distance)]
-        (move-point {:motion [:goto [(+ i scroll-adjust) :last-explicit]]})
+        (operate {:operator :move-point
+                  :motion [:goto [(+ i scroll-adjust) :last-explicit]]})
         (scroll (constantly (clamp-viewport-top buffer (+ top scroll-adjust)))))))
 
 ;; -- undo & redo --
@@ -164,17 +166,20 @@
       (= 1 (line-count buffer))
       (do
         (change [i 0] [i (count (get lines i))] "" :left)
-        (move-point {:motion [:goto [0 0]]}))
+        (operate {:operator :move-point
+                  :motion [:goto [0 0]]}))
 
       (= i (dec (line-count buffer)))
       (do
         (change [(dec i) (count (get lines (dec i)))] [i (count (get lines i))] "" :left)
-        (move-point {:motion [:goto [(dec i) :first-non-blank]]}))
+        (operate {:operator :move-point
+                  :motion [:goto [(dec i) :first-non-blank]]}))
 
       :else
       (do
         (change [i 0] [(inc i) 0] "" :left)
-        (move-point {:motion [:goto [i :first-non-blank]]})))))
+        (operate {:operator :move-point
+                  :motion [:goto [i :first-non-blank]]})))))
 
 (defn backspace
   [{point :point,
