@@ -42,10 +42,6 @@
         middle (min middle-of-viewport middle-of-file)]
     middle))
 
-(defmethod magic-row-value :last
-  [{:keys [lines]} _ _]
-  (max 0 (dec (count lines))))
-
 (defmulti magic-column-value
   (fn [buffer kind row param]
     kind))
@@ -54,8 +50,8 @@
   [{:keys [lines]} _ row _]
   (bit-shift-right Long/MAX_VALUE 1))
 
-(defmethod magic-column-value :first-non-blank
-  [{:keys [lines]} _ row _]
+(defn first-non-blank
+  [{:keys [lines]} row]
   (let [string (get lines row)
         leading-space-count (count (re-find #"^\s*" string))
         all-spaces? (and (> leading-space-count 0)
@@ -63,6 +59,10 @@
     (if all-spaces?
       (dec leading-space-count)
       leading-space-count)))
+
+(defmethod magic-column-value :first-non-blank
+  [buffer _ row _]
+  (first-non-blank buffer row))
 
 (defmethod magic-column-value :left
   [{[_ j] :point} _ _ param]
@@ -147,3 +147,12 @@
                  (max 0 (dec (count (get lines i)))))]
     (if-not (= j column)
       [i column])))
+
+(defmethod resolve/resolve-motion :goto-line
+  [{:keys [lines] :as buffer} {line-number :count, [_ default-line] :motion}]
+  (let [default-line (if (= default-line :last)
+                       (dec (count lines))
+                       default-line)
+        i (or (some-> line-number dec) default-line)
+        i (clamp-point-row buffer i)]
+    [i (first-non-blank buffer i)]))
