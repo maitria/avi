@@ -73,18 +73,6 @@
       sort
       (adjust-for-motion-kind lines kind))))
 
-(defn delete
-  [{start :point :keys [lines] :as buffer} operation]
-  (+> buffer
-    (if-let [[start end] (resolve-range buffer operation)]
-      (do
-        t/start-transaction
-        (c/change start end "" :left)
-        t/commit
-        (operate {:operator :move-point
-                  :motion [:goto start]}))
-      beep/beep)))
-
 (defmethod operate :move-point
   [buffer operation]
   (+> buffer
@@ -99,5 +87,13 @@
         c/adjust-viewport-to-contain-point))))
 
 (defmethod operate :delete
-  [buffer params]
-  (delete buffer params))
+  [{start :point :keys [lines] :as buffer} operation]
+  (+> buffer
+    (if-let [[start end] (resolve-range buffer operation)]
+      (do
+        t/start-transaction
+        (c/change start end "" :left)
+        t/commit
+        (operate {:operator :move-point
+                  :motion [:goto start]}))
+      beep/beep)))

@@ -99,8 +99,9 @@
                            b/commit)))
    "D" (fn+> [editor _]
          (in e/current-buffer
-           (b/delete {:kind :inclusive
-                      :motion [:goto [:current :end-of-line]]})))
+           (b/operate {:operator :delete
+                       :kind :inclusive
+                       :motion [:goto [:current :end-of-line]]})))
 
    "J" ^:no-repeat (fn+> [editor spec]
                      (let [{[i j] :point, lines :lines} (e/current-buffer editor)

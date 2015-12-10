@@ -18,7 +18,6 @@
                 change]
              [avi.buffer.operate
                 clamp-point-j
-                delete
                 operate]
              [avi.buffer.transactions
                 start-transaction
