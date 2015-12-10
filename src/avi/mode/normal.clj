@@ -36,29 +36,13 @@
 
 (defn bindings
   [spec]
-  {'?char (:char spec)
-   '?line (some-> (:count spec) dec)})
-
-(def count-variables
-  #{'?count '?line})
-
-(defn uses-count?
-  [pattern]
-  (->> pattern
-    flatten
-    (filter count-variables)
-    seq))
+  {'?char (:char spec)})
 
 (defn substitute
   [a bindings]
   (cond
     (contains? bindings a)
     (bindings a)
-
-    (and (list? a) (contains? bindings (first a)))
-    (if-let [value (bindings (first a))]
-      value
-      (second a))
 
     (map? a)
     a
@@ -207,7 +191,7 @@
                        (merge
                          default-operator-spec
                          v
-                         {:auto-repeat? (not (uses-count? (:motion spec)))
+                         {:auto-repeat? true
                           :handler motion-handler}
                          (update-in spec [:motion] substitute (bindings v)))))))
       (apply nfa/choice))))
