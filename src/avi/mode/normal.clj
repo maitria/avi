@@ -26,7 +26,7 @@
     "gg"   {:span :linewise,
             :motion [:goto-line {:default-line 0}]}
     "h"    {:span :exclusive,
-            :motion [:goto [:current :left]]}
+            :motion [:left]}
     "j"    {:span :linewise,
             :motion [:down]}
     "k"    {:span :linewise,
