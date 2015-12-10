@@ -67,21 +67,24 @@
      [ei (count (get lines ei))]]))
 
 (defn resolve-range
-  [{:keys [lines point] :as buffer} {:keys [span] :as operation}]
-  (when-let [pos (resolve/resolve-motion buffer operation)]
-    (-> [point pos]
-      sort
-      (adjust-for-span lines span))))
+  [{:keys [lines point last-explicit-j] :as buffer} {:keys [span] :as operation}]
+  (when-let [[i j :as pos] (resolve/resolve-motion buffer operation)]
+    (let [j (or j last-explicit-j)]
+      (-> [point [i j]]
+        sort
+        (adjust-for-span lines span)))))
 
 (defmethod operate :move-point
-  [buffer operation]
+  [{:keys [last-explicit-j] :as buffer} operation]
   (+> buffer
-    (let [[i j :as pos] (resolve/resolve-motion buffer operation)]
+    (let [[i j :as pos] (resolve/resolve-motion buffer operation)
+          set-last-explicit? (not (nil? j))
+          j (or j last-explicit-j)]
       (if-not pos
         beep/beep)
       (when pos
-        (assoc :point pos)
-        (if (explicit-column? operation)
+        (assoc :point [i j])
+        (if set-last-explicit?
           (assoc :last-explicit-j j))
         clamp-point-j
         c/adjust-viewport-to-contain-point))))

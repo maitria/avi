@@ -147,3 +147,9 @@
           j (absolutize j #(magic-column-value buffer %1 i %2))]
       (if j
         [i j]))))
+
+(defmethod resolve/resolve-motion :down
+  [{:keys [lines] [i] :point :as buffer} {:keys [count]}]
+  (let [new-i (+ i (or count 1))]
+    (if (get lines new-i)
+      [(clamp-point-row buffer new-i)])))
