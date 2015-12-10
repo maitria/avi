@@ -117,7 +117,7 @@
             :viewport-middle (let [middle-of-viewport (dec (+ viewport-top (quot viewport-height 2)))
                                    middle-of-file (quot (dec (count lines)) 2)
                                    middle (min middle-of-viewport middle-of-file)]
-                               middle)
+                               (+ i middle))
             i)
         i (clamp-point-row buffer i)]
     [i (first-non-blank buffer i)]))
