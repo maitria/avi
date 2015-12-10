@@ -104,15 +104,13 @@
                        :motion [:goto [:current :end-of-line]]})))
 
    "J" ^:no-repeat (fn+> [editor spec]
-                     (let [{[i j] :point, lines :lines} (e/current-buffer editor)
-                           n (or (:count spec) 1)
-                           new-line (reduce
-                                      #(str %1 " " %2)
-                                      (subvec lines i (+ i n 1)))
-                           new-lines (splice lines i (+ i n 1) [new-line])]
+                     (let [n (or (:count spec) 1)]
                        (in e/current-buffer
                            b/start-transaction
-                           (assoc :lines new-lines)
+                           (n-times n (fn [{:keys [lines] [i j] :point :as buffer}]
+                                        (+> buffer
+                                          (let [start-j (count (get lines i))]
+                                            (b/change [i start-j] [(inc i) 0] " " :left)))))
                            b/commit)))
 
    "<C-D>" (fn+> [editor _]
