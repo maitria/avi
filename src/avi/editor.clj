@@ -74,11 +74,4 @@
       (catch Throwable e
         (merge editor (ex-data e))))))
 
-;; -- Movement helpers -------------------------------------------------------
-
-(defn- valid-line?
-  [editor i]
-  (and (>= i 0)
-       (< i (b/line-count (current-buffer editor)))))
-
 ;; ---------------------------------------------------------------------------
