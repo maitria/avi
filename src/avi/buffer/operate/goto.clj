@@ -12,12 +12,6 @@
   [buffer _ offset]
   (+ (get-in buffer [:point 0]) (or offset 0)))
 
-(defmethod magic-row-value :down
-  [{:keys [lines] [i] :point} _ n]
-  (let [result (+ i (or n 1))]
-    (if (get lines result)
-      result)))
-
 (defmulti magic-column-value
   (fn [buffer kind row param]
     kind))
