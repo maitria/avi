@@ -3,6 +3,7 @@
               [lines :as lines]
               [locations :as l]]
             [avi.buffer.operate.resolve :as resolve]
+            [avi.nfa :as nfa]
             [schema.core :as s]))
 
 (defn word-char?
@@ -12,53 +13,45 @@
            (Character/isDigit (int ch))
            (#{\_} ch))))
 
-(defn nth-or-last
-  "Return the nth element, or the last if n >= (count coll)."
-  [[head & tail] n]
-  (if (or (zero? n) (not (seq tail)))
-    head
-    (recur tail (dec n))))
+(defn classify
+  [ch]
+  (cond
+    (or (nil? ch) (Character/isWhitespace ch)) :ws
+    (word-char? ch)                            :word
+    :else                                      :other))
+
+(def ws (nfa/match :ws))
+(def ws+ (nfa/chain ws (nfa/kleene ws)))
+(def word (nfa/match :word))
+(def word+ (nfa/chain word (nfa/kleene word)))
+(def other (nfa/match :other))
+(def other+ (nfa/chain other (nfa/kleene other)))
+
+(def first-of-next-word-nfa
+  (nfa/choice
+    (nfa/chain ws+ (nfa/choice word other))
+    (nfa/chain other+ (nfa/choice word (nfa/chain ws+ other)))
+    (nfa/chain word+ (nfa/choice other (nfa/chain ws+ word)))))
 
 (defn last-location
   [{:keys [lines]}]
   [(dec (count lines)) (dec (count (peek lines)))])
 
-(defn at-zero-length-line?
-  [stream]
-  (and (seq stream)
-       (let [[[i j] [i2 _]] stream]
-         (and (zero? j) (not= i i2)))))
-
-(defn next-word
-  [lines stream]
-  (let [this-word-skipped (drop-while (comp word-char? #(get-in lines %)) stream)]
-    (loop [stream this-word-skipped]
-      (cond
-        (not (seq stream))
-        nil
-
-        (at-zero-length-line? stream)
-        stream
-
-        (word-char? (get-in lines (first stream)))
-        stream
-
-        :else
-        (recur (rest stream))))))
-
-(defn word-starts
-  [{:keys [lines] [i j] :point}]
-  (->> (l/forward [i j] (lines/line-length lines))
-    (iterate (partial next-word lines))
-    (map first)
-    (take-while (complement nil?))))
-
-(defn word-locations
-  [buffer]
-  (concat (word-starts buffer) [(last-location buffer)]))
-
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
-  [{[i j] :point :as buffer} {n :count}]
-  (let [location (nth-or-last (word-locations buffer) (or n 1))]
-    (if-not (= location [i j])
-      location)))
+  [{:keys [lines point] :as buffer} {n :count}]
+  (loop [[i j] point
+         n (or n 1)]
+    (if (zero? n)
+      (if-not (= point [i j])
+        [i j])
+      (recur
+        (loop [[[i j] :as stream] (l/forward [i j] (lines/line-length lines))
+               state (nfa/start first-of-next-word-nfa)]
+          (if-not stream
+            (last-location buffer)
+            (let [state' (nfa/advance first-of-next-word-nfa state (classify (get-in lines [i j])) :reject)]
+              (assert (not= state' :reject))
+              (if (nfa/accept? first-of-next-word-nfa state')
+                [i j]
+                (recur (next stream) state')))))
+        (dec n)))))
