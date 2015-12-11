@@ -60,7 +60,15 @@
           (recur (next stream) state'))))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
-  [{:keys [lines point] :as buffer} {n :count}]
+  [{:keys [lines point] :as buffer} {:keys [operator] n :count}]
   (let [point' (n-times point (or n 1) (partial next-word buffer))]
-    (if-not (= point point')
+    (cond
+      (= point point')
+      nil
+
+      (and (not= operator :move-point)
+           (not= (first point) (first point')))
+      [(first point) (count (get lines (first point)))]
+
+      :else
       point')))
