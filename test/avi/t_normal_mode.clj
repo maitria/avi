@@ -440,6 +440,7 @@
   "abcd/f"            "lldf/" [0 2] "abf"
   "abcdef"            "lldl"  [0 2] "abdef"
   "abcdef"            "lldh"  [0 1] "acdef"
+  "abcdef"            "$dl"   [0 4] "abcde"
   "a\nb\nc"           "lldj"  [0 0] "c"
   "a\nb"              "dj"    [0 0] ""
   "a\nb\nc"           "jdj"   [0 0] "a"
