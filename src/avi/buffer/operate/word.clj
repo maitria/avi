@@ -30,8 +30,12 @@
 (def first-of-next-word-nfa
   (nfa/choice
     (nfa/chain ws+ (nfa/choice word other))
-    (nfa/chain other+ (nfa/choice word (nfa/chain ws+ other)))
-    (nfa/chain word+ (nfa/choice other (nfa/chain ws+ word)))))
+    (nfa/chain other+ (nfa/choice
+                        (nfa/chain (nfa/kleene ws) word)
+                        (nfa/chain ws+ other)))
+    (nfa/chain word+ (nfa/choice
+                       (nfa/chain (nfa/kleene ws) other)
+                       (nfa/chain ws+ word)))))
 
 (defn last-location
   [{:keys [lines]}]

@@ -483,7 +483,11 @@
     "hello world"  "w"     [0 6]
     "      world"  "w"     [0 6]
     "ab cd ef gh"  "3w"    [0 9]
-    "ab cd\nef gh" "3w"    [1 3])
+    "ab cd\nef gh" "3w"    [1 3]
+    "ab* cd"       "w"     [0 2]
+    "ab *cd"       "w"     [0 3]
+    "*)ab"         "w"     [0 2]
+    "*)  ab"       "w"     [0 4])
   (future-fact "`w` stops on zero-length lines"
     (editor :editing "ab\n\ncd" :after "w") => (point [1 0]))
   (fact "`w` will move to the end of file"
