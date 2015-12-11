@@ -72,12 +72,13 @@
            b/undo))
 
    "x" ^:no-repeat (fn+> [editor spec]
-                     (let [repeat-count (:count spec)]
-                       (in e/current-buffer
-                           b/start-transaction
-                           (n-times (or repeat-count 1)
-                                    b/delete-char-under-point)
-                           b/commit)))
+                     (in e/current-buffer
+                       (b/operate (merge
+                                    spec
+                                    {:operator :delete
+                                     :span :exclusive
+                                     :motion [:right]}))))
+
    "D" (fn+> [editor _]
          (in e/current-buffer
            (b/operate {:operator :delete

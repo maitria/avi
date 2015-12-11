@@ -78,11 +78,12 @@
       [result])))
 
 (defmethod resolve/resolve-motion :right
-  [{:keys [lines] [i j] :point} {n :count}]
+  [{:keys [lines] [i j] :point} {:keys [operator] n :count}]
   (let [column (+ j (or n 1))
-        column (if (get-in lines [i column])
-                 column
-                 (max 0 (dec (count (get lines i)))))]
+        max-j (cond-> (count (get lines i))
+                (= :move-point operator)
+                dec)
+        column (max 0 (min column max-j))]
     (if-not (= j column)
       [i column])))
 

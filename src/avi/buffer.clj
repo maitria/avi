@@ -142,18 +142,9 @@
 
 ;; -- changing buffer contents --
 
-
 (defn insert-text
   [{point :point, :as lines-and-text} text]
   (change lines-and-text point point text :right))
-
-(defn delete-char-under-point
-  [{[i j] :point,
-    :as buffer}]
-  {:pre [(:in-transaction? buffer)]}
-  (+> buffer
-    (change [i j] [i (inc j)] "" :left)
-    clamp-point-j))
 
 (defn delete-current-line
   [{[i] :point,
