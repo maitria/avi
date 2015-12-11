@@ -19,17 +19,20 @@
     head
     (recur tail (dec n))))
 
+(defn last-location
+  [{:keys [lines]}]
+  [(dec (count lines)) (dec (count (peek lines)))])
+
 (defn word-positions
-  [{:keys [lines] [i j] :point}]
-  (let [last-location [(dec (count lines)) (dec (count (peek lines)))]
-        word-starts (->> (l/forward [i j] (lines/line-length lines))
+  [{:keys [lines] [i j] :point :as buffer}]
+  (let [word-starts (->> (l/forward [i j] (lines/line-length lines))
                          (iterate (fn [stream]
                                     (->> stream
                                          (drop-while (comp word-char? #(get-in lines %)))
                                          (drop-while (complement (comp word-char? #(get-in lines %)))))))
                          (map first)
                          (take-while (complement nil?)))]
-    (concat word-starts [last-location])))
+    (concat word-starts [(last-location buffer)])))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{[i j] :point :as buffer} {n :count}]
