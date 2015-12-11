@@ -23,13 +23,16 @@
   [{:keys [lines]}]
   [(dec (count lines)) (dec (count (peek lines)))])
 
+(defn next-word
+  [lines stream]
+  (->> stream
+    (drop-while (comp word-char? #(get-in lines %)))
+    (drop-while (complement (comp word-char? #(get-in lines %))))))
+
 (defn word-starts
   [{:keys [lines] [i j] :point}]
   (->> (l/forward [i j] (lines/line-length lines))
-    (iterate (fn [stream]
-               (->> stream
-                    (drop-while (comp word-char? #(get-in lines %)))
-                    (drop-while (complement (comp word-char? #(get-in lines %)))))))
+    (iterate (partial next-word lines))
     (map first)
     (take-while (complement nil?))))
 
