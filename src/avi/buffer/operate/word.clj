@@ -19,17 +19,20 @@
     head
     (recur tail (dec n))))
 
-(s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
-  [{:keys [lines] [i j] :point} {n :count}]
+(defn word-positions
+  [{:keys [lines] [i j] :point}]
   (let [last-location [(dec (count lines)) (dec (count (peek lines)))]
         word-starts (->> (l/forward [i j] (lines/line-length lines))
-                      (iterate (fn [stream]
-                                 (->> stream
-                                   (drop-while (comp word-char? #(get-in lines %)))
-                                   (drop-while (complement (comp word-char? #(get-in lines %)))))))
-                      (map first)
-                      (take-while (complement nil?)))
-        locations (concat word-starts [last-location])
-        location (nth-or-last locations (or n 1))]
+                         (iterate (fn [stream]
+                                    (->> stream
+                                         (drop-while (comp word-char? #(get-in lines %)))
+                                         (drop-while (complement (comp word-char? #(get-in lines %)))))))
+                         (map first)
+                         (take-while (complement nil?)))]
+    (concat word-starts [last-location])))
+
+(s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
+  [{[i j] :point :as buffer} {n :count}]
+  (let [location (nth-or-last (word-positions buffer) (or n 1))]
     (if-not (= location [i j])
       location)))
