@@ -41,6 +41,18 @@
   [{:keys [lines]}]
   [(dec (count lines)) (dec (count (peek lines)))])
 
+(defn next-word
+  [{:keys [lines] :as buffer} [i j]]
+  (loop [[[i j] :as stream] (l/forward [i j] (lines/line-length lines))
+         state (nfa/start first-of-next-word-nfa)]
+    (if-not stream
+      (last-location buffer)
+      (let [state' (nfa/advance first-of-next-word-nfa state (classify (get-in lines [i j])) :reject)]
+        (assert (not= state' :reject))
+        (if (nfa/accept? first-of-next-word-nfa state')
+          [i j]
+          (recur (next stream) state'))))))
+
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{:keys [lines point] :as buffer} {n :count}]
   (loop [[i j] point
@@ -48,14 +60,4 @@
     (if (zero? n)
       (if-not (= point [i j])
         [i j])
-      (recur
-        (loop [[[i j] :as stream] (l/forward [i j] (lines/line-length lines))
-               state (nfa/start first-of-next-word-nfa)]
-          (if-not stream
-            (last-location buffer)
-            (let [state' (nfa/advance first-of-next-word-nfa state (classify (get-in lines [i j])) :reject)]
-              (assert (not= state' :reject))
-              (if (nfa/accept? first-of-next-word-nfa state')
-                [i j]
-                (recur (next stream) state')))))
-        (dec n)))))
+      (recur (next-word buffer [i j]) (dec n)))))
