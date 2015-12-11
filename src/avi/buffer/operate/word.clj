@@ -25,9 +25,20 @@
 
 (defn next-word
   [lines stream]
-  (->> stream
-    (drop-while (comp word-char? #(get-in lines %)))
-    (drop-while (complement (comp word-char? #(get-in lines %))))))
+  (let [this-word-skipped (drop-while (comp word-char? #(get-in lines %)) stream)]
+    (loop [[[i j] & tail :as stream] this-word-skipped]
+      (cond
+        (not (seq stream))
+        nil
+
+        (and (zero? j) (not= i (ffirst tail)))
+        stream
+
+        (word-char? (get-in lines (first stream)))
+        stream
+
+        :else
+        (recur tail)))))
 
 (defn word-starts
   [{:keys [lines] [i j] :point}]
@@ -37,7 +48,7 @@
     (take-while (complement nil?))))
 
 (defn word-locations
-  [{:keys [lines] [i j] :point :as buffer}]
+  [buffer]
   (concat (word-starts buffer) [(last-location buffer)]))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
