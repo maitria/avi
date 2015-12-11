@@ -23,16 +23,19 @@
   [{:keys [lines]}]
   [(dec (count lines)) (dec (count (peek lines)))])
 
+(defn word-starts
+  [{:keys [lines] [i j] :point}]
+  (->> (l/forward [i j] (lines/line-length lines))
+    (iterate (fn [stream]
+               (->> stream
+                    (drop-while (comp word-char? #(get-in lines %)))
+                    (drop-while (complement (comp word-char? #(get-in lines %)))))))
+    (map first)
+    (take-while (complement nil?))))
+
 (defn word-positions
   [{:keys [lines] [i j] :point :as buffer}]
-  (let [word-starts (->> (l/forward [i j] (lines/line-length lines))
-                         (iterate (fn [stream]
-                                    (->> stream
-                                         (drop-while (comp word-char? #(get-in lines %)))
-                                         (drop-while (complement (comp word-char? #(get-in lines %)))))))
-                         (map first)
-                         (take-while (complement nil?)))]
-    (concat word-starts [(last-location buffer)])))
+  (concat (word-starts buffer) [(last-location buffer)]))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{[i j] :point :as buffer} {n :count}]
