@@ -23,22 +23,28 @@
   [{:keys [lines]}]
   [(dec (count lines)) (dec (count (peek lines)))])
 
+(defn at-zero-length-line?
+  [stream]
+  (and (seq stream)
+       (let [[[i j] [i2 _]] stream]
+         (and (zero? j) (not= i i2)))))
+
 (defn next-word
   [lines stream]
   (let [this-word-skipped (drop-while (comp word-char? #(get-in lines %)) stream)]
-    (loop [[[i j] & tail :as stream] this-word-skipped]
+    (loop [stream this-word-skipped]
       (cond
         (not (seq stream))
         nil
 
-        (and (zero? j) (not= i (ffirst tail)))
+        (at-zero-length-line? stream)
         stream
 
         (word-char? (get-in lines (first stream)))
         stream
 
         :else
-        (recur tail)))))
+        (recur (rest stream))))))
 
 (defn word-starts
   [{:keys [lines] [i j] :point}]
