@@ -476,12 +476,14 @@
     (editor :editing "1234" :after "llD") => (line 0 "12")))
 
 (facts "about `w`"
-  (fact "`w` moves to the beginning of the next word"
-    (editor :editing "hello world" :after "w") => (point [0 6])
-    (editor :editing "      world" :after "w") => (point [0 6])
-    (editor :editing "ab cd ef gh" :after "3w") => (point [0 9]))
-  (fact "`w` will advance lines if necessary"
-    (editor :editing "ab cd\nef gh" :after "3w") => (point [1 3]))
+  (tabular
+    (fact "`w` moves to the beginning of the next word"
+      (editor :editing ?content :after ?after) => (point ?pos))
+    ?content       ?after  ?pos
+    "hello world"  "w"     [0 6]
+    "      world"  "w"     [0 6]
+    "ab cd ef gh"  "3w"    [0 9]
+    "ab cd\nef gh" "3w"    [1 3])
   (fact "`w` stops on zero-length lines"
     (editor :editing "ab\n\ncd" :after "w") => (point [1 0]))
   (fact "`w` will move to the end of file"
