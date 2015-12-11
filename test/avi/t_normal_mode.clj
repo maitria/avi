@@ -488,7 +488,7 @@
     "ab *cd"       "w"     [0 3]
     "*)ab"         "w"     [0 2]
     "*)  ab"       "w"     [0 4])
-  (future-fact "`w` stops on zero-length lines"
+  (fact "`w` stops on zero-length lines"
     (editor :editing "ab\n\ncd" :after "w") => (point [1 0]))
   (fact "`w` will move to the end of file"
     (editor :editing "hello" :after "w") => (point [0 4])

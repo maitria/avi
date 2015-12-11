@@ -41,6 +41,10 @@
   [{:keys [lines]}]
   [(dec (count lines)) (dec (count (peek lines)))])
 
+(defn at-zero-length-line?
+  [[[i1 j1] [i2 _]]]
+  (and (= 0 j1) (not= i1 i2)))
+
 (defn next-word
   [{:keys [lines] :as buffer} [i j]]
   (loop [[[i j] :as stream] (l/forward [i j] (lines/line-length lines))
@@ -49,7 +53,8 @@
       (last-location buffer)
       (let [state' (nfa/advance first-of-next-word-nfa state (classify (get-in lines [i j])) :reject)]
         (assert (not= state' :reject))
-        (if (nfa/accept? first-of-next-word-nfa state')
+        (if (or (nfa/accept? first-of-next-word-nfa state')
+                (at-zero-length-line? stream))
           [i j]
           (recur (next stream) state'))))))
 
