@@ -33,12 +33,12 @@
     (map first)
     (take-while (complement nil?))))
 
-(defn word-positions
+(defn word-locations
   [{:keys [lines] [i j] :point :as buffer}]
   (concat (word-starts buffer) [(last-location buffer)]))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{[i j] :point :as buffer} {n :count}]
-  (let [location (nth-or-last (word-positions buffer) (or n 1))]
+  (let [location (nth-or-last (word-locations buffer) (or n 1))]
     (if-not (= location [i j])
       location)))
