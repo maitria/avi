@@ -4,6 +4,7 @@
               [locations :as l]]
             [avi.buffer.operate.resolve :as resolve]
             [avi.nfa :as nfa]
+            [avi.pervasive :refer :all]
             [schema.core :as s]))
 
 (defn word-char?
@@ -60,9 +61,6 @@
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{:keys [lines point] :as buffer} {n :count}]
-  (loop [[i j] point
-         n (or n 1)]
-    (if (zero? n)
-      (if-not (= point [i j])
-        [i j])
-      (recur (next-word buffer [i j]) (dec n)))))
+  (let [point' (n-times point (or n 1) (partial next-word buffer))]
+    (if-not (= point point')
+      point')))
