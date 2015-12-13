@@ -39,19 +39,23 @@
                        (nfa/chain ws+ word)))))
 
 (defn last-location
-  [{:keys [lines]}]
-  [(dec (count lines)) (dec (count (peek lines)))])
+  [{:keys [lines]} {:keys [operator]}]
+  (let [i (dec (count lines))
+        j (cond-> (count (peek lines))
+            (= operator :move-point)
+            dec)]
+    [i j]))
 
 (defn at-zero-length-line?
   [[[i1 j1] [i2 _]]]
   (and (= 0 j1) (not= i1 i2)))
 
 (defn next-word
-  [{:keys [lines] :as buffer} [i j]]
+  [{:keys [lines] :as buffer} operation [i j]]
   (loop [[[i j] :as stream] (l/forward [i j] (lines/line-length lines))
          state (nfa/start first-of-next-word-nfa)]
     (if-not stream
-      (last-location buffer)
+      (last-location buffer operation)
       (let [state' (nfa/advance first-of-next-word-nfa state (classify (get-in lines [i j])) :reject)]
         (assert (not= state' :reject))
         (if (or (nfa/accept? first-of-next-word-nfa state')
@@ -60,8 +64,8 @@
           (recur (next stream) state'))))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
-  [{:keys [lines point] :as buffer} {:keys [operator] n :count}]
-  (let [point' (n-times point (or n 1) (partial next-word buffer))]
+  [{:keys [lines point] :as buffer} {:keys [operator] n :count :as operation}]
+  (let [point' (n-times point (or n 1) (partial next-word buffer operation))]
     (cond
       (= point point')
       nil

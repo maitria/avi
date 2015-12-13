@@ -499,4 +499,6 @@
     (editor :editing "hello world" :after "ldw") => (line 0 "hworld")
     (editor :editing "hello world" :after "ldw") => (point [0 1]))
   (fact "`dw` doesn't delete past end-of-line"
-    (editor :editing "hello\n  world" :after "ldw") => (contents "h\n  world")))
+    (editor :editing "hello\n  world" :after "ldw") => (contents "h\n  world"))
+  (fact "`dw` deletes to end-of-file"
+    (editor :editing "hello" :after "ldw") => (contents "h")))
