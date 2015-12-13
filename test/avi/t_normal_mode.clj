@@ -498,6 +498,9 @@
   (fact "`dw` deletes to end of current word"
     (editor :editing "hello world" :after "ldw") => (line 0 "hworld")
     (editor :editing "hello world" :after "ldw") => (point [0 1]))
+  (fact "`dw` obeys {count}"
+     (editor :editing "hello world there" :after "l2dw") => (line 0 "hthere")
+     (editor :editing "hello world there" :after "l2dw") => (point [0 1]))
   (fact "`dw` doesn't delete past end-of-line"
     (editor :editing "hello\n  world" :after "ldw") => (contents "h\n  world"))
   (fact "`dw` deletes to end-of-file"
