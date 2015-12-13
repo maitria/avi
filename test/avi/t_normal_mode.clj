@@ -510,4 +510,5 @@
   (facts "about `W`"
     (editor :editing ?content :after ?after) => (point ?pos))
   ?content       ?after ?pos
-  "hello world"  "W"    [0 6])
+  "hello world"  "W"    [0 6]
+  "hel)) wordl"  "W"    [0 6])

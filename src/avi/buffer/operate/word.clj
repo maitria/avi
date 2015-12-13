@@ -21,6 +21,13 @@
     (word-char? ch)                            :word
     :else                                      :other))
 
+(defn classify-big
+  [ch]
+  (case (classify ch)
+    :ws    :ws
+    :word  :other
+    :other :other))
+
 (def ws (nfa/match :ws))
 (def ws+ (nfa/chain ws (nfa/kleene ws)))
 (def word (nfa/match :word))
@@ -51,17 +58,20 @@
   (and (= 0 j1) (not= i1 i2)))
 
 (defn next-word
-  [{:keys [lines] :as buffer} operation [i j]]
-  (loop [[[i j] :as stream] (l/forward [i j] (lines/line-length lines))
-         state (nfa/start first-of-next-word-nfa)]
-    (if-not stream
-      (last-location buffer operation)
-      (let [state' (nfa/advance first-of-next-word-nfa state (classify (get-in lines [i j])) :reject)]
-        (assert (not= state' :reject))
-        (if (or (nfa/accept? first-of-next-word-nfa state')
-                (at-zero-length-line? stream))
-          [i j]
-          (recur (next stream) state'))))))
+  [{:keys [lines] :as buffer} {[_ {:keys [big?]}] :motion, :as operation} [i j]]
+  (let [classifier (if big?
+                     classify-big
+                     classify)]
+    (loop [[[i j] :as stream] (l/forward [i j] (lines/line-length lines))
+           state (nfa/start first-of-next-word-nfa)]
+      (if-not stream
+        (last-location buffer operation)
+        (let [state' (nfa/advance first-of-next-word-nfa state (classifier (get-in lines [i j])) :reject)]
+          (assert (not= state' :reject))
+          (if (or (nfa/accept? first-of-next-word-nfa state')
+                  (at-zero-length-line? stream))
+            [i j]
+            (recur (next stream) state')))))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{:keys [lines point] :as buffer} {:keys [operator] n :count :as operation}]

@@ -55,7 +55,8 @@
                                     :offset 1}]}
     "W"    {:span :exclusive,
             :motion [:word {:direction :forward
-                            :position-in-word :start}]}})
+                            :position-in-word :start
+                            :big? true}]}})
 
 (defn motion-handler
   [editor spec]
