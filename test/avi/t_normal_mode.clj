@@ -505,3 +505,9 @@
     (editor :editing "hello\n  world" :after "ldw") => (contents "h\n  world"))
   (fact "`dw` deletes to end-of-file"
     (editor :editing "hello" :after "ldw") => (contents "h")))
+
+(tabular
+  (facts "about `W`"
+    (editor :editing ?content :after ?after) => (point ?pos))
+  ?content       ?after ?pos
+  "hello world"  "W"    [0 6])

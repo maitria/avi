@@ -36,7 +36,8 @@
     "t<.>" {:span :inclusive,
             :motion [:move-to-char {:offset -1}]}
     "w"    {:span :exclusive,
-            :motion [:word :start :forward]}
+            :motion [:word {:direction :forward
+                            :position-in-word :start}]}
     "F<.>" {:span :exclusive,
             :motion [:move-to-char {:direction -1}]}
     "G"    {:span :linewise,
@@ -51,7 +52,10 @@
                                  :multiplier 0}]}
     "T<.>" {:span :exclusive,
             :motion [:move-to-char {:direction -1
-                                    :offset 1}]}})
+                                    :offset 1}]}
+    "W"    {:span :exclusive,
+            :motion [:word {:direction :forward
+                            :position-in-word :start}]}})
 
 (defn motion-handler
   [editor spec]
