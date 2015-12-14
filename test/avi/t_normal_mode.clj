@@ -66,7 +66,9 @@
       (editor :after "llh") => (point [0 1]))
     (fact "`h` won't move before the beginning of the line."
       (editor :after "h") => (point [0 0])
-      (editor :after "h") => beeped))
+      (editor :after "h") => beeped)
+    (fact "`{count}h` moves as far left as possible"
+      (editor :editing "abcdefgh" :after "$99h") => (point [0 0])))
 
   (facts "about moving to the beginning or end of line"
     (fact "`0` moves to the first character on the line."
