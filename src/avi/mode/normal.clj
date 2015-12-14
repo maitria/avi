@@ -94,10 +94,9 @@
                      (let [n (or (:count spec) 1)]
                        (in e/current-buffer
                            b/start-transaction
-                           (n-times n (fn [{:keys [lines] [i] :point :as buffer}]
-                                        (+> buffer
-                                          (let [start-j (count (get lines i))]
-                                            (b/change [i start-j] [(inc i) 0] " " :left)))))
+                           (n-times n (fn+> [{:keys [lines] [i] :point :as buffer}]
+                                        (let [start-j (count (get lines i))]
+                                          (b/change [i start-j] [(inc i) 0] " " :left))))
                            b/commit)))
 
    "<C-D>" (fn+> [editor _]
