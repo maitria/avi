@@ -459,7 +459,8 @@
   "a\nb\nc\nd"        "Gkdk"  [1 0] "a\nd"
   "aa\nbb\ncc\ndd"    "lj3dG" [1 0] "aa\ndd"
   "a\nb\nc\nd"        "dG"    [0 0] ""
-  "a\nb\nc\nd"        "jdk"   [0 0] "c\nd")
+  "a\nb\nc\nd"        "jdk"   [0 0] "c\nd"
+  "a\nb\nc\nd"        "dju"   [0 0] "a\nb\nc\nd")
 
 (tabular
   (facts "about `d<Motion>` which fail"
