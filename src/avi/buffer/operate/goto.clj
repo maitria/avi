@@ -2,6 +2,7 @@
   (:require [avi.buffer
               [locations :as l]]
             [avi.buffer.operate.resolve :as resolve]
+            [avi.pervasive :refer :all]
             [schema.core :as s]))
 
 (defmulti magic-row-value
@@ -35,7 +36,7 @@
   (first-non-blank buffer row))
 
 (defn next-char-index
-  [{:keys [lines] [_ j] :point} i direction ch]
+  [{:keys [lines]} [i j] direction ch]
   (let [line (get lines i)]
     (loop [nj (+ j direction)]
       (if-let [line-ch (get line nj)]
@@ -118,10 +119,16 @@
     [i (first-non-blank buffer i)]))
 
 (defmethod resolve/resolve-motion :move-to-char
-  [{[i] :point :as buffer} {:keys [char]
+  [{[i j] :point :as buffer} {ch :char
+                            n :count
                             [_ {:keys [direction offset]
                                 :or {direction +1
                                      offset 0}}] :motion}]
-  (if-let [j (some-> (next-char-index buffer i direction char)
-                (+ offset))]
+  (if-let [j (n-times
+               j
+               (or n 1)
+               (fn [j]
+                 (if j
+                   (some-> (next-char-index buffer [i j] direction ch)
+                      (+ offset)))))]
     [i j]))

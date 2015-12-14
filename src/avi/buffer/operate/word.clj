@@ -57,6 +57,17 @@
   [[[i1 j1] [i2 _]]]
   (and (= 0 j1) (not= i1 i2)))
 
+(defn nfa-process
+  [nfa classifier input-stream]
+  (reductions
+    (fn [[state _] input]
+      (let [state' (nfa/advance nfa state (classifier input) ::reject)]
+        (if (= state' ::reject)
+          (reduced [state' input])
+          [state' input])))
+    (nfa/start nfa)
+    input-stream))
+
 (defn next-word
   [{:keys [lines] :as buffer} {[_ {:keys [big?]}] :motion, :as operation} [i j]]
   (let [classifier (if big?
