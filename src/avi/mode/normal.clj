@@ -91,14 +91,14 @@
                        :motion [:goto [:current :end-of-line]]})))
 
    "J" ^:no-repeat (fn+> [editor spec]
-                     (let [n (or (:count spec) 1)]
+                     (let [n (or (:count spec) 2)]
                        (in e/current-buffer
                            b/start-transaction
-                           (n-times n (fn+> [{:keys [lines] [i] :point :as buffer}]
-                                        (let [start-j (count (get lines i))]
-                                          (b/change [i start-j] [(inc i) 0] " " :left)
-                                          (b/operate {:operator :move-point
-                                                      :motion [:goto [i start-j]]}))))
+                           (n-times (dec n) (fn+> [{:keys [lines] [i] :point :as buffer}]
+                                              (let [start-j (count (get lines i))]
+                                                (b/change [i start-j] [(inc i) 0] " " :left)
+                                                (b/operate {:operator :move-point
+                                                            :motion [:goto [i start-j]]}))))
                            b/commit)))
 
    "<C-D>" (fn+> [editor _]

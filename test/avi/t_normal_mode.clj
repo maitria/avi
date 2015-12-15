@@ -346,39 +346,15 @@
                     "test.txt" :black :on :white
                     ""])))
 
-(facts "about `J`"
-  (fact "`J` joins lines"
-    (editor :editing "One\nTwo\nThree..." :after "J")
-      => (terminal ["One Two"
-                    "Three..."
-                    "~" :blue
-                    "~" :blue
-                    "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
-  (fact "`J` leaves the cursor on the join space"
-    (editor :editing "One\nTwo\nThree..." :after "J") => (point [0 3]))
-  (fact "`3J` joins three lines"
-    (editor :editing "One\nTwo\nThree\nFour\nFive" :after "3J")
-      => (terminal ["One Two Three Four"
-                    "Five"
-                    "~" :blue
-                    "~" :blue
-                    "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
-  (fact "`3Ju` leaves file in original state"
-    (editor :editing "One\nTwo\nThree\nFour\nFive" :after "3Ju")
-      => (terminal ["One"
-                    "Two"
-                    "Three"
-                    "Four"
-                    "Five"
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""])))
+(tabular
+  (facts "about `J`"
+    (let [result (editor :editing "One\nTwo\nThree\nFour" :after ?keys)]
+      result => (contents ?after)
+      result => (point ?pos)))
+  ?keys ?pos  ?after
+  "J"   [0 3] "One Two\nThree\nFour"
+  "3J"  [0 7] "One Two Three\nFour"
+  "3Ju" [0 0]  "One\nTwo\nThree\nFour")
 
 (facts "about `%`"
   (fact "`%` moves to a matching closing bracket"
