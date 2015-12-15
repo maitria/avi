@@ -68,9 +68,9 @@
 
 (defmethod resolve/resolve-motion :down
   [{:keys [lines] [i] :point :as buffer} {:keys [count]}]
-  (let [new-i (+ i (or count 1))]
-    (if (get lines new-i)
-      [(clamp-point-row buffer new-i)])))
+  (let [new-i (clamp-point-row buffer (+ i (or count 1)))]
+    (if (not= i new-i)
+      [new-i])))
 
 (defmethod resolve/resolve-motion :up
   [{[i] :point} {:keys [count]}]

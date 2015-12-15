@@ -463,7 +463,8 @@
   "a\nb\nc\nd"        "dG"      [0 0] ""
   "a\nb\nc\nd"        "jdk"     [0 0] "c\nd"
   "a\nb\nc\nd"        "3Gdku"   [2 0] "a\nb\nc\nd"
-  "abcdefghi"         "$99dh"   [0 0] "i")
+  "abcdefghi"         "$99dh"   [0 0] "i"
+  "a\nb\nc\nd"        "2j3dj"   [1 0] "a\nb")
 
 (tabular
   (facts "about `d<Motion>` which fail"
