@@ -351,9 +351,10 @@
     (let [result (editor :editing "One\nTwo\nThree\nFour" :after ?keys)]
       result => (contents ?after)
       result => (point ?pos)))
-  ?keys ?pos  ?after
-  "J"   [0 3] "One Two\nThree\nFour"
-  "3J"  [0 7] "One Two Three\nFour"
+  ?keys ?pos   ?after
+  "J"   [0 3]  "One Two\nThree\nFour"
+  "3J"  [0 7]  "One Two Three\nFour"
+  "4J"  [0 13] "One Two Three Four"
   "3Ju" [0 0]  "One\nTwo\nThree\nFour")
 
 (facts "about `%`"
