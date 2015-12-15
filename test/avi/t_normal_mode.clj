@@ -357,6 +357,8 @@
                     "~" :blue
                     "test.txt" :black :on :white
                     ""]))
+  (fact "`J` leaves the cursor on the join space"
+    (editor :editing "One\nTwo\nThree..." :after "J") => (point [0 3]))
   (fact "`3J` joins three lines"
     (editor :editing "One\nTwo\nThree\nFour\nFive" :after "3J")
       => (terminal ["One Two Three Four"
