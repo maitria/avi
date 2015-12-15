@@ -475,7 +475,7 @@
         result => (contents ?contents))))
   ?contents ?keys
   "y12x"    "ldf)"
-  "a\nb\nc" "jjdj"
+  "a\nb\nc" "Gdj"
   "a\nb\nc" "dk")
 
 (facts "about `D`"
