@@ -74,10 +74,10 @@
       [clamped-i])))
 
 (defmethod resolve/resolve-motion :up
-  [{[i] :point} {:keys [count]}]
-  (let [result (- i (or count 1))]
-    (if-not (neg? result)
-      [result])))
+  [{[i] :point :as buffer} {:keys [count]}]
+  (let [new-i (clamp-point-row buffer (- i (or count 1)))]
+    (if-not (neg? (dec i))
+      [new-i])))
 
 (defmethod resolve/resolve-motion :right
   [{:keys [lines] [i j] :point} {:keys [operator] n :count}]
