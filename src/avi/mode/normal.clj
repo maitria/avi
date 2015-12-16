@@ -28,6 +28,10 @@
                             :position-in-word :end}]}
     "gg"   {:span :linewise,
             :motion [:goto-line {:default-line 0}]}
+    "gE"   {:span :inclusive,
+            :motion [:word {:direction :backward
+                            :position-in-word :end
+                            :big? true}]}
     "h"    {:span :exclusive,
             :motion [:left]}
     "j"    {:span :linewise,
