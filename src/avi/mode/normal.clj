@@ -23,6 +23,9 @@
             :motion [:goto [:current :end-of-line]]}
     "f<.>" {:span :inclusive,
             :motion [:move-to-char]}
+    "ge"   {:span :inclusive,
+            :motion [:word {:direction :backward
+                            :position-in-word :end}]}
     "gg"   {:span :linewise,
             :motion [:goto-line {:default-line 0}]}
     "h"    {:span :exclusive,

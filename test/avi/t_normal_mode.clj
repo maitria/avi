@@ -500,3 +500,11 @@
   "hello world"  "W"    [0 6]
   "hel)) wordl"  "W"    [0 6]
   "      eorld"  "W"    [0 6])
+
+(tabular
+  (facts "about `ge`"
+    (editor :editing ?content :after ?after) => (point ?pos))
+  ?content      ?after ?pos
+  "hello  "     "$ge"  [0 4]
+  "hello world" "$ge"  [0 4]
+  "hello world" "$5ge" [0 0])

@@ -69,11 +69,13 @@
     input-stream))
 
 (defn next-word
-  [{:keys [lines] :as buffer} {[_ {:keys [big?]}] :motion, :as operation} [i j]]
+  [{:keys [lines] :as buffer} {[_ {:keys [big? direction]}] :motion, :as operation} [i j]]
   (let [classifier (if big?
                      classify-big
                      classify)]
-    (loop [[[i j] :as stream] (l/forward [i j] (lines/line-length lines))
+    (loop [[[i j] :as stream] ((if (= direction :backward)
+                                 l/backward
+                                 l/forward) [i j] (lines/line-length lines))
            state (nfa/start first-of-next-word-nfa)]
       (if-not stream
         (last-location buffer operation)
