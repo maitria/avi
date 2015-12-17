@@ -239,9 +239,9 @@
   (+> editor
     (dissoc :normal-state)
     (let [state (or (:normal-state editor) (nfa/start normal-nfa))
-          state' (nfa/advance normal-nfa state event :reject)]
+          state' (nfa/advance normal-nfa state event)]
       (cond
-        (= state' :reject)
+        (nfa/reject? state')
         beep/beep
 
         (nfa/accept? normal-nfa state')

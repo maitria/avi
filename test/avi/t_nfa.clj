@@ -6,16 +6,16 @@
   [nfa inputs]
   (reduce
     (fn [s input]
-      (if (= :reject s)
-        :reject
-        (advance nfa s input :reject)))
+      (if (reject? s)
+        s
+        (advance nfa s input)))
     (start nfa)
     inputs))
 
 (defn- characterize-state
   [nfa state]
   (cond
-    (= :reject state)   :reject
+    (reject? state)     :reject
     (accept? nfa state) :accept
     :else               :pending))
 

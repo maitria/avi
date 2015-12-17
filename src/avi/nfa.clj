@@ -150,6 +150,10 @@
                  (:accept nfa)
                  (into #{} (keys state))))))
 
+(defn reject?
+  [state]
+  (= state ::reject))
+
 (defn accept-value
   [nfa state]
   (->> state
@@ -158,7 +162,7 @@
     first))
 
 (defn advance
-  [nfa state input reject-value]
+  [nfa state input]
   (let [state' (->> (for [[s targets] (concat
                                         (get-in nfa [:transitions ::any])
                                         (get-in nfa [:transitions input]))
@@ -170,5 +174,5 @@
                       [s' v'])
                     (into {}))]
     (if (empty? state')
-      reject-value
+      ::reject
       state')))

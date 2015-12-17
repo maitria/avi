@@ -61,8 +61,8 @@
   [nfa classifier input-stream]
   (reductions
     (fn [[state _] input]
-      (let [state' (nfa/advance nfa state (classifier input) ::reject)]
-        (if (= state' ::reject)
+      (let [state' (nfa/advance nfa state (classifier input))]
+        (if (nfa/reject? state')
           (reduced [state' input])
           [state' input])))
     (nfa/start nfa)
@@ -79,8 +79,8 @@
            state (nfa/start first-of-next-word-nfa)]
       (if-not stream
         (last-location buffer operation)
-        (let [state' (nfa/advance first-of-next-word-nfa state (classifier (get-in lines [i j])) :reject)]
-          (assert (not= state' :reject))
+        (let [state' (nfa/advance first-of-next-word-nfa state (classifier (get-in lines [i j])))]
+          (assert (not (nfa/reject? state')))
           (if (or (nfa/accept? first-of-next-word-nfa state')
                   (at-zero-length-line? stream))
             [i j]
