@@ -133,3 +133,20 @@
   (kleene (on any f))                        [8 6 7]  867
 
   (chain (on (match 1) f) (on (match 2) f))  [1 2]    12)
+
+(tabular
+  (facts "about positive lookaheads"
+    (let [nfa ?nfa
+          state (state-after-inputs nfa ?inputs)
+          result (characterize-state nfa state)]
+      result => ?result))
+
+  ?nfa                                       ?inputs  ?result
+  (lookahead (match 1))                      []       :pending
+  (lookahead (match 1))                      [1]      :accept
+  (lookahead (match 1))                      [2]      :reject
+
+  (chain (match 1) (lookahead (match 2)))    []       :pending
+  (chain (match 1) (lookahead (match 2)))    [1]      :pending
+  (chain (match 1) (lookahead (match 2)))    [1 2]    :accept
+  (chain (match 1) (lookahead (match 2)))    [1 3]    :reject)

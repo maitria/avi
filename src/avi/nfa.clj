@@ -114,6 +114,10 @@
   ([a b & cs]
    (reduce chain (concat [a b] cs))))
 
+(defn lookahead
+  [a]
+  a)
+
 (defn on
   [nfa f]
   (update-in nfa [:transitions] (partial
