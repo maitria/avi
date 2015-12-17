@@ -62,9 +62,7 @@
   (reductions
     (fn [[state _] input]
       (let [state' (nfa/advance nfa state (classifier input))]
-        (if (nfa/reject? state')
-          (reduced [state' input])
-          [state' input])))
+        [state' input]))
     (nfa/start nfa)
     input-stream))
 

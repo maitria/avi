@@ -120,16 +120,19 @@
 
 (defn on
   [nfa f]
-  (update-in nfa [:transitions] (partial
-                                  mapcat-transitions
-                                  (fn [value from to reducer]
-                                    (if ((:accept nfa) to)
-                                      [[value from to (fn [acc input]
-                                                        (let [result (reducer acc input)]
-                                                          (if (= result ::prune)
-                                                            ::prune
-                                                            (f result input))))]]
-                                      [[value from to reducer]])))))
+  (update-in
+    nfa
+    [:transitions]
+    (partial
+      mapcat-transitions
+      (fn [value from to reducer]
+        (if ((:accept nfa) to)
+          [[value from to (fn [acc input]
+                            (let [result (reducer acc input)]
+                              (if (= result ::prune)
+                                ::prune
+                                (f result input))))]]
+          [[value from to reducer]])))))
 
 (defn prune
   [nfa f]

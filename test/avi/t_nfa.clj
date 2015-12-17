@@ -5,10 +5,7 @@
 (defn- state-after-inputs
   [nfa inputs]
   (reduce
-    (fn [s input]
-      (if (reject? s)
-        s
-        (advance nfa s input)))
+    (partial advance nfa)
     (start nfa)
     inputs))
 
