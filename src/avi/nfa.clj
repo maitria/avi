@@ -152,7 +152,7 @@
 
 (defn reject?
   [state]
-  (= state ::reject))
+  (empty? state))
 
 (defn accept-value
   [nfa state]
@@ -173,6 +173,4 @@
                           :when (not= v' ::prune)]
                       [s' v'])
                     (into {}))]
-    (if (empty? state')
-      ::reject
-      state')))
+    state'))
