@@ -11,7 +11,7 @@
    :transitions {s/Any {StateNumber {StateNumber s/Any}}}})
 
 (def MatchState
-  {s/Int s/Any})
+  {s/Int {:value s/Any}})
 
 (defn- null-reducer
   [accumulator _]
@@ -149,7 +149,10 @@
                             (let [result (reducer acc input)]
                               (if (= result ::prune)
                                 ::prune
-                                (f result input))))]]
+                                (let [result-value (f (:value result) input)]
+                                  (if (= result-value ::prune)
+                                    ::prune
+                                    (assoc result :value result-value))))))]]
           [[value from to reducer]])))))
 
 (s/defn prune :- NFA
@@ -162,7 +165,7 @@
 (s/defn start :- MatchState
   [nfa :- NFA]
   (->> (:start nfa)
-    (map #(vector % nil))
+    (map #(vector % {:value nil}))
     (into {})))
 
 (s/defn accept? :- s/Bool
@@ -182,7 +185,8 @@
   (->> state
     (filter (comp (:accept nfa) first))
     (map second)
-    first))
+    first
+    :value))
 
 (s/defn advance :- MatchState
   [nfa :- NFA
