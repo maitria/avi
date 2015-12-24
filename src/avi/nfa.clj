@@ -1,5 +1,17 @@
 (ns avi.nfa
-  (:require [clojure.set :as set]))
+  (:require [clojure.set :as set]
+            [schema.core :as s]))
+
+(def StateNumber
+  s/Int)
+
+(def NFA
+  {:start #{StateNumber}
+   :accept #{StateNumber}
+   :transitions {s/Any {StateNumber {StateNumber s/Any}}}})
+
+(def MatchState
+  {s/Int s/Any})
 
 (defn- null-reducer
   [accumulator _]
@@ -31,9 +43,9 @@
     (apply concat)
     (into #{})))
 
-(defn- renumber
+(s/defn ^:private renumber :- [NFA]
   "Renumber the states in each NFA so that no two NFAs share a state number."
-  [nfas]
+  [nfas :- [NFA]]
   (second
     (reduce
       (fn [[n done] nfa]
@@ -49,8 +61,8 @@
       [0 []]
       nfas)))
 
-(defn match
-  [value]
+(s/defn match :- NFA
+  [value :- s/Any]
   {:start #{0}
    :accept #{1}
    :transitions {value {0 {1 null-reducer}}}})
@@ -58,27 +70,30 @@
 (def any
   (match ::any))
 
-(defn maybe
-  [nfa]
+(s/defn maybe :- NFA
+  [nfa :- NFA]
   {:start (:start nfa)
    :accept (set/union (:start nfa) (:accept nfa))
    :transitions (:transitions nfa)})
 
-(defn choice
-  ([a]
+(s/defn choice :- NFA
+  ([a :- NFA]
    a)
-  ([a b]
+  ([a :- NFA
+    b :- NFA]
    (let [[a b] (renumber [a b])]
      {:start (set/union (:start a) (:start b))
       :accept (set/union (:accept a) (:accept b))
       :transitions (merge-transitions
                      (:transitions a)
                      (:transitions b))}))
-  ([a b & cs]
+  ([a :- NFA
+    b :- NFA
+    & cs :- [NFA]]
    (reduce choice (concat [a b] cs))))
 
-(defn kleene
-  ([nfa]
+(s/defn kleene :- NFA
+  ([nfa :- NFA]
    {:start (:start nfa)
     :accept (:start nfa)
 
@@ -92,10 +107,11 @@
                        [[value from to reducer]]))
                    (:transitions nfa))}))
 
-(defn chain
-  ([a]
+(s/defn chain :- NFA
+  ([a :- NFA]
    a)
-  ([a b]
+  ([a :- NFA
+    b :- NFA]
    (let [[a b] (renumber [a b])]
      {:start (if (seq (set/intersection (:start a) (:accept a)))
                (set/union (:start a) (:start b))
@@ -111,15 +127,17 @@
                      (merge-transitions
                        (:transitions a)
                        (:transitions b)))}))
-  ([a b & cs]
+  ([a :- NFA
+    b :- NFA
+    & cs :- [NFA]]
    (reduce chain (concat [a b] cs))))
 
-(defn lookahead
-  [a]
+(s/defn lookahead :- NFA
+  [a :- NFA]
   a)
 
-(defn on
-  [nfa f]
+(s/defn on :- NFA
+  [nfa :- NFA f]
   (update-in
     nfa
     [:transitions]
@@ -134,38 +152,43 @@
                                 (f result input))))]]
           [[value from to reducer]])))))
 
-(defn prune
-  [nfa f]
+(s/defn prune :- NFA
+  [nfa :- NFA f]
   (on nfa (fn [v _]
             (if (f v)
               ::prune
               v))))
 
-(defn start
-  [nfa]
+(s/defn start :- MatchState
+  [nfa :- NFA]
   (->> (:start nfa)
     (map #(vector % nil))
     (into {})))
 
-(defn accept?
-  [nfa state]
+(s/defn accept? :- s/Bool
+  [nfa :- NFA
+   state :- MatchState]
   (not (empty? (set/intersection
                  (:accept nfa)
                  (into #{} (keys state))))))
 
-(defn reject?
-  [state]
+(s/defn reject? :- s/Bool
+  [state :- MatchState]
   (empty? state))
 
-(defn accept-value
-  [nfa state]
+(s/defn accept-value :- s/Any
+  [nfa :- NFA
+   state :- MatchState]
   (->> state
     (filter (comp (:accept nfa) first))
     (map second)
     first))
 
-(defn advance
-  [nfa state input stream-mark]
+(s/defn advance :- MatchState
+  [nfa :- NFA
+   state :- MatchState
+   input :- s/Any
+   stream-mark :- s/Any]
   (let [state' (->> (for [[s targets] (concat
                                         (get-in nfa [:transitions ::any])
                                         (get-in nfa [:transitions input]))
