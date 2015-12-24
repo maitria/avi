@@ -165,7 +165,7 @@
     first))
 
 (defn advance
-  [nfa state input]
+  [nfa state input stream-mark]
   (let [state' (->> (for [[s targets] (concat
                                         (get-in nfa [:transitions ::any])
                                         (get-in nfa [:transitions input]))

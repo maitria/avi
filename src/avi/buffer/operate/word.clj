@@ -57,15 +57,6 @@
   [[[i1 j1] [i2 _]]]
   (and (= 0 j1) (not= i1 i2)))
 
-(defn nfa-process
-  [nfa classifier input-stream]
-  (reductions
-    (fn [[state _] input]
-      (let [state' (nfa/advance nfa state (classifier input))]
-        [state' input]))
-    (nfa/start nfa)
-    input-stream))
-
 (defn next-word
   [{:keys [lines] :as buffer} {[_ {:keys [big? direction]}] :motion, :as operation} [i j]]
   (let [classifier (if big?
@@ -77,7 +68,9 @@
            state (nfa/start first-of-next-word-nfa)]
       (if-not stream
         (last-location buffer operation)
-        (let [state' (nfa/advance first-of-next-word-nfa state (classifier (get-in lines [i j])))]
+        (let [stream-mark [i j]
+              input (classifier (get-in lines [i j]))
+              state' (nfa/advance first-of-next-word-nfa state input stream-mark)]
           (assert (not (nfa/reject? state')))
           (if (or (nfa/accept? first-of-next-word-nfa state')
                   (at-zero-length-line? stream))

@@ -5,7 +5,7 @@
 (defn- state-after-inputs
   [nfa inputs]
   (reduce
-    (partial advance nfa)
+    #(advance nfa %1 %2 nil)
     (start nfa)
     inputs))
 
