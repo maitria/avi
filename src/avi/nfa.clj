@@ -206,14 +206,15 @@
    {:keys [states]} :- MatchState
    input :- s/Any
    stream-mark :- s/Any]
-  (let [state' {:states (->> (for [[s targets] (concat
-                                                 (get-in nfa [:transitions ::any])
-                                                 (get-in nfa [:transitions input]))
-                                   :when (contains? states s)
-                                   :let [v (get states s)]
-                                   [s' reducer] targets
-                                   :let [v' (reducer v input)]
-                                   :when (not= v' ::prune)]
-                               [s' v'])
-                             (into {}))}]
-    (assoc state' :status (characterize nfa (:states state')))))
+  (let [states' (->> (for [[s targets] (concat
+                                         (get-in nfa [:transitions ::any])
+                                         (get-in nfa [:transitions input]))
+                           :when (contains? states s)
+                           :let [v (get states s)]
+                           [s' reducer] targets
+                           :let [v' (reducer v input)]
+                           :when (not= v' ::prune)]
+                       [s' v'])
+                     (into {}))]
+    {:states states'
+     :status (characterize nfa states')}))
