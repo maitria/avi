@@ -9,13 +9,6 @@
     (start nfa)
     inputs))
 
-(defn- characterize-state
-  [nfa state]
-  (cond
-    (reject? state) :reject
-    (accept? state) :accept
-    :else           :pending))
-
 (defn f
   [v d]
   (+ (* 10 (or v 0)) d))
@@ -24,7 +17,7 @@
   (facts "about NFAs accepting inputs"
     (let [nfa ?nfa
           state (state-after-inputs nfa ?inputs)
-          result (characterize-state nfa state)]
+          result (:status state)]
       result => ?result))
 
   ?nfa                                 ?inputs  ?result
@@ -100,7 +93,7 @@
   (facts "about NFAs reducing values"
     (let [nfa ?nfa
           state (state-after-inputs nfa ?inputs)
-          result (characterize-state nfa state)
+          result (:status state)
           value (accept-value nfa state)]
       result => :accept
       value => ?value))
@@ -135,7 +128,7 @@
   (facts "about positive lookaheads"
     (let [nfa ?nfa
           state (state-after-inputs nfa ?inputs)
-          result (characterize-state nfa state)]
+          result (:status state)]
       result => ?result))
 
   ?nfa                                       ?inputs  ?result
