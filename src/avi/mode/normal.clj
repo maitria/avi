@@ -239,7 +239,7 @@
   (+> editor
     (dissoc :normal-state)
     (let [state (or (:normal-state editor) (nfa/start normal-nfa))
-          state' (nfa/advance normal-nfa state event nil)]
+          state' (nfa/advance state event nil)]
       (cond
         (nfa/reject? state')
         beep/beep

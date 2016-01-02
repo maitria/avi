@@ -11,7 +11,8 @@
    :transitions {s/Any {StateNumber {StateNumber s/Any}}}})
 
 (def MatchState
-  {:states {s/Int {:value s/Any}}
+  {:nfa NFA
+   :states {s/Int {:value s/Any}}
    :status (s/enum :pending :accept :reject)})
 
 (defn- null-reducer
@@ -179,7 +180,8 @@
   (let [states (->> (:start nfa)
                  (map #(vector % {:value nil}))
                  (into {}))]
-    {:states states
+    {:nfa nfa
+     :states states
      :status (characterize nfa states)}))
 
 (s/defn accept? :- s/Bool
@@ -201,8 +203,7 @@
     :value))
 
 (s/defn advance :- MatchState
-  [nfa :- NFA
-   {:keys [states]} :- MatchState
+  [{:keys [nfa states] :as state} :- MatchState
    input :- s/Any
    stream-mark :- s/Any]
   (let [states' (->> (for [[s targets] (concat
@@ -215,5 +216,6 @@
                            :when (not= v' ::prune)]
                        [s' v'])
                      (into {}))]
-    {:states states'
-     :status (characterize nfa states')}))
+    (assoc state
+           :states states'
+           :status (characterize nfa states'))))
