@@ -12,9 +12,9 @@
 (defn- characterize-state
   [nfa state]
   (cond
-    (reject? state)     :reject
-    (accept? nfa state) :accept
-    :else               :pending))
+    (reject? state) :reject
+    (accept? state) :accept
+    :else           :pending))
 
 (defn f
   [v d]

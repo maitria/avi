@@ -72,7 +72,7 @@
               input (classifier (get-in lines [i j]))
               state' (nfa/advance first-of-next-word-nfa state input stream-mark)]
           (assert (not (nfa/reject? state')))
-          (if (or (nfa/accept? first-of-next-word-nfa state')
+          (if (or (nfa/accept? state')
                   (at-zero-length-line? stream))
             [i j]
             (recur (next stream) state')))))))

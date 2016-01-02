@@ -183,8 +183,7 @@
      :status (characterize nfa states)}))
 
 (s/defn accept? :- s/Bool
-  [nfa :- NFA
-   {:keys [status]} :- MatchState]
+  [{:keys [status]} :- MatchState]
   (= status :accept))
 
 (s/defn reject? :- s/Bool
