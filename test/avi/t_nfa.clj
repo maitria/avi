@@ -13,77 +13,86 @@
   (+ (* 10 (or v 0)) d))
 
 (tabular
-  (facts "about NFAs accepting inputs"
+  (facts "about NFAs"
     (state-after-inputs ?nfa ?inputs) => (contains ?result))
 
-  ?nfa                                 ?inputs  ?result
-  (match 1)                            []       {:status :pending}
-  (match 1)                            [1]      {:status :accept}
-  (match 1)                            [2]      {:status :reject}
-  (match 1)                            [1 2]    {:status :reject}
+  ?nfa                                         ?inputs  ?result
+  (match 1)                                    []       {:status :pending}
+  (match 1)                                    [1]      {:status :accept}
+  (match 1)                                    [2]      {:status :reject}
+  (match 1)                                    [1 2]    {:status :reject}
 
-  any                                  []       {:status :pending}
-  any                                  [1]      {:status :accept}
-  any                                  [2]      {:status :accept}
-  any                                  [1 2]    {:status :reject}
+  any                                          []       {:status :pending}
+  any                                          [1]      {:status :accept}
+  any                                          [2]      {:status :accept}
+  any                                          [1 2]    {:status :reject}
 
-  (maybe (match 1))                    []       {:status :accept}
-  (maybe (match 1))                    [1]      {:status :accept}
-  (maybe (match 1))                    [2]      {:status :reject}
-  (maybe (match 1))                    [1 1]    {:status :reject}
-  (maybe (match 1))                    [1 2]    {:status :reject}
+  (maybe (match 1))                            []       {:status :accept}
+  (maybe (match 1))                            [1]      {:status :accept}
+  (maybe (match 1))                            [2]      {:status :reject}
+  (maybe (match 1))                            [1 1]    {:status :reject}
+  (maybe (match 1))                            [1 2]    {:status :reject}
 
-  (choice (match 1))                   []       {:status :pending}
-  (choice (match 1))                   [1]      {:status :accept}
-  (choice (match 1))                   [2]      {:status :reject}
-  (choice (match 1))                   [1 1]    {:status :reject}
-  (choice (match 1))                   [1 2]    {:status :reject}
-  (choice (match 1) (match 2))         []       {:status :pending}
-  (choice (match 1) (match 2))         [1]      {:status :accept}
-  (choice (match 1) (match 2))         [2]      {:status :accept}
-  (choice (match 1) (match 2))         [3]      {:status :reject}
-  (choice (match 1) (match 2))         [1 1]    {:status :reject}
-  (choice (match 1) (match 2))         [1 3]    {:status :reject}
-  (choice (match 1) (match 2))         [3 1]    {:status :reject}
-  (choice (match 1) (match 2))         [3 3]    {:status :reject}
+  (choice (match 1))                           []       {:status :pending}
+  (choice (match 1))                           [1]      {:status :accept}
+  (choice (match 1))                           [2]      {:status :reject}
+  (choice (match 1))                           [1 1]    {:status :reject}
+  (choice (match 1))                           [1 2]    {:status :reject}
+  (choice (match 1) (match 2))                 []       {:status :pending}
+  (choice (match 1) (match 2))                 [1]      {:status :accept}
+  (choice (match 1) (match 2))                 [2]      {:status :accept}
+  (choice (match 1) (match 2))                 [3]      {:status :reject}
+  (choice (match 1) (match 2))                 [1 1]    {:status :reject}
+  (choice (match 1) (match 2))                 [1 3]    {:status :reject}
+  (choice (match 1) (match 2))                 [3 1]    {:status :reject}
+  (choice (match 1) (match 2))                 [3 3]    {:status :reject}
 
-  (kleene (match 1))                   []       {:status :accept}
-  (kleene (match 1))                   [1]      {:status :accept}
-  (kleene (match 1))                   [1 1]    {:status :accept}
-  (kleene (match 1))                   [1 1 1]  {:status :accept}
-  (kleene (match 1))                   [2]      {:status :reject}
-  (kleene (match 1))                   [1 2]    {:status :reject}
-  (kleene (match 1))                   [1 1 2]  {:status :reject}
+  (kleene (match 1))                           []       {:status :accept}
+  (kleene (match 1))                           [1]      {:status :accept}
+  (kleene (match 1))                           [1 1]    {:status :accept}
+  (kleene (match 1))                           [1 1 1]  {:status :accept}
+  (kleene (match 1))                           [2]      {:status :reject}
+  (kleene (match 1))                           [1 2]    {:status :reject}
+  (kleene (match 1))                           [1 1 2]  {:status :reject}
 
-  (chain (match 1) (match 2))          []       {:status :pending}
-  (chain (match 1) (match 2))          [1]      {:status :pending}
-  (chain (match 1) (match 2))          [1 2]    {:status :accept}
-  (chain (match 1) (match 2))          [1 2 3]  {:status :reject}
-  (chain (match 1) (match 2))          [3]      {:status :reject}
-  (chain (match 1) (match 2))          [1 3]    {:status :reject}
+  (chain (match 1) (match 2))                  []       {:status :pending}
+  (chain (match 1) (match 2))                  [1]      {:status :pending}
+  (chain (match 1) (match 2))                  [1 2]    {:status :accept}
+  (chain (match 1) (match 2))                  [1 2 3]  {:status :reject}
+  (chain (match 1) (match 2))                  [3]      {:status :reject}
+  (chain (match 1) (match 2))                  [1 3]    {:status :reject}
 
-  (chain (maybe (match 1)) (match 2))  []       {:status :pending}
-  (chain (maybe (match 1)) (match 2))  [1]      {:status :pending}
-  (chain (maybe (match 1)) (match 2))  [1 2]    {:status :accept}
-  (chain (maybe (match 1)) (match 2))  [2]      {:status :accept}
-  (chain (kleene (match 1)) (match 2)) []       {:status :pending}
-  (chain (kleene (match 1)) (match 2)) [1]      {:status :pending}
-  (chain (kleene (match 1)) (match 2)) [2]      {:status :accept}
-  (chain (kleene (match 1)) (match 2)) [1 2]    {:status :accept}
-  (chain (kleene (match 1)) (match 2)) [1 1]    {:status :pending}
-  (chain (kleene (match 1)) (match 2)) [1 1 2]  {:status :accept}
-  (chain (match 1) (kleene (match 2))) []       {:status :pending}
-  (chain (match 1) (kleene (match 2))) [1]      {:status :accept}
-  (chain (match 1) (kleene (match 2))) [1 2]    {:status :accept}
-  (chain (match 1) (kleene (match 2))) [1 2 2]  {:status :accept}
-  (chain (match 1) (kleene (match 2))) [1 2 1]  {:status :reject}
+  (chain (maybe (match 1)) (match 2))          []       {:status :pending}
+  (chain (maybe (match 1)) (match 2))          [1]      {:status :pending}
+  (chain (maybe (match 1)) (match 2))          [1 2]    {:status :accept}
+  (chain (maybe (match 1)) (match 2))          [2]      {:status :accept}
+  (chain (kleene (match 1)) (match 2))         []       {:status :pending}
+  (chain (kleene (match 1)) (match 2))         [1]      {:status :pending}
+  (chain (kleene (match 1)) (match 2))         [2]      {:status :accept}
+  (chain (kleene (match 1)) (match 2))         [1 2]    {:status :accept}
+  (chain (kleene (match 1)) (match 2))         [1 1]    {:status :pending}
+  (chain (kleene (match 1)) (match 2))         [1 1 2]  {:status :accept}
+  (chain (match 1) (kleene (match 2)))         []       {:status :pending}
+  (chain (match 1) (kleene (match 2)))         [1]      {:status :accept}
+  (chain (match 1) (kleene (match 2)))         [1 2]    {:status :accept}
+  (chain (match 1) (kleene (match 2)))         [1 2 2]  {:status :accept}
+  (chain (match 1) (kleene (match 2)))         [1 2 1]  {:status :reject}
 
   (chain (kleene (on (match 1) f))
-         (prune (match 2) #(= % 1)))   [1 2]    {:status :reject}
+         (prune (match 2) #(= % 1)))           [1 2]    {:status :reject}
   (chain (kleene (on (match 1) f))
-         (prune (match 2) #(= % 1)))   [1 1 2]  {:status :accept}
+         (prune (match 2) #(= % 1)))           [1 1 2]  {:status :accept}
   (chain (kleene (on (match 1) f))
-         (prune (match 2) #(= % 1)))   [2]      {:status :accept})
+         (prune (match 2) #(= % 1)))           [2]      {:status :accept}
+
+  (lookahead (match 1))                        []       {:status :pending}
+  (lookahead (match 1))                        [1]      {:status :accept}
+  (lookahead (match 1))                        [2]      {:status :reject}
+
+  (chain (match 1) (lookahead (match 2)))      []       {:status :pending}
+  (chain (match 1) (lookahead (match 2)))      [1]      {:status :pending}
+  (chain (match 1) (lookahead (match 2)))      [1 2]    {:status :accept}
+  (chain (match 1) (lookahead (match 2)))      [1 3]    {:status :reject})
 
 (tabular
   (facts "about NFAs reducing values"
@@ -119,20 +128,3 @@
   (kleene (on any f))                        [8 6 7]  867
 
   (chain (on (match 1) f) (on (match 2) f))  [1 2]    12)
-
-(tabular
-  (facts "about positive lookaheads"
-    (let [nfa ?nfa
-          state (state-after-inputs nfa ?inputs)
-          result (:status state)]
-      result => ?result))
-
-  ?nfa                                       ?inputs  ?result
-  (lookahead (match 1))                      []       :pending
-  (lookahead (match 1))                      [1]      :accept
-  (lookahead (match 1))                      [2]      :reject
-
-  (chain (match 1) (lookahead (match 2)))    []       :pending
-  (chain (match 1) (lookahead (match 2)))    [1]      :pending
-  (chain (match 1) (lookahead (match 2)))    [1 2]    :accept
-  (chain (match 1) (lookahead (match 2)))    [1 3]    :reject)
