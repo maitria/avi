@@ -11,7 +11,8 @@
    :transitions {s/Any {StateNumber {StateNumber s/Any}}}})
 
 (def MatchState
-  {:states {s/Int {:value s/Any}}})
+  {:states {s/Int {:value s/Any}}
+   :status (s/enum :pending :accept :reject)})
 
 (defn- null-reducer
   [accumulator _]
@@ -162,22 +163,33 @@
               ::prune
               v))))
 
+(defn- characterize
+  [nfa sub-states]
+  (cond
+    (empty? sub-states)
+    :reject
+
+    (not (empty? (set/intersection (:accept nfa) (into #{} (keys sub-states)))))
+    :accept
+
+    :else               :pending))
+
 (s/defn start :- MatchState
   [nfa :- NFA]
-  {:states (->> (:start nfa)
-             (map #(vector % {:value nil}))
-             (into {}))})
+  (let [states (->> (:start nfa)
+                 (map #(vector % {:value nil}))
+                 (into {}))]
+    {:states states
+     :status (characterize nfa states)}))
 
 (s/defn accept? :- s/Bool
   [nfa :- NFA
-   {:keys [states]} :- MatchState]
-  (not (empty? (set/intersection
-                 (:accept nfa)
-                 (into #{} (keys states))))))
+   {:keys [status]} :- MatchState]
+  (= status :accept))
 
 (s/defn reject? :- s/Bool
-  [{:keys [states]} :- MatchState]
-  (empty? states))
+  [{:keys [status]} :- MatchState]
+  (= status :reject))
 
 (s/defn accept-value :- s/Any
   [nfa :- NFA
@@ -204,4 +216,4 @@
                                    :when (not= v' ::prune)]
                                [s' v'])
                              (into {}))}]
-    state'))
+    (assoc state' :status (characterize nfa (:states state')))))
