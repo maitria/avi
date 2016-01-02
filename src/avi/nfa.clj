@@ -204,8 +204,7 @@
 
 (s/defn advance :- MatchState
   [{:keys [nfa states] :as state} :- MatchState
-   input :- s/Any
-   stream-mark :- s/Any]
+   [stream-mark input]]
   (let [states' (->> (for [[s targets] (concat
                                          (get-in nfa [:transitions ::any])
                                          (get-in nfa [:transitions input]))

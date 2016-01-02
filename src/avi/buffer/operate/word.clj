@@ -70,7 +70,7 @@
         (last-location buffer operation)
         (let [stream-mark [i j]
               input (classifier (get-in lines [i j]))
-              state' (nfa/advance state input stream-mark)]
+              state' (nfa/advance state [stream-mark input])]
           (assert (not (nfa/reject? state')))
           (if (or (nfa/accept? state')
                   (at-zero-length-line? stream))
