@@ -11,7 +11,7 @@
    :transitions {s/Any {StateNumber {StateNumber s/Any}}}})
 
 (def MatchState
-  {s/Int {:value s/Any}})
+  {:states {s/Int {:value s/Any}}})
 
 (defn- null-reducer
   [accumulator _]
@@ -164,25 +164,26 @@
 
 (s/defn start :- MatchState
   [nfa :- NFA]
-  (->> (:start nfa)
-    (map #(vector % {:value nil}))
-    (into {})))
+  {:states (->> (:start nfa)
+             (map #(vector % {:value nil}))
+             (into {}))})
 
 (s/defn accept? :- s/Bool
   [nfa :- NFA
-   state :- MatchState]
+   {:keys [states]} :- MatchState]
   (not (empty? (set/intersection
                  (:accept nfa)
-                 (into #{} (keys state))))))
+                 (into #{} (keys states))))))
 
 (s/defn reject? :- s/Bool
-  [state :- MatchState]
-  (empty? state))
+  [{:keys [states]} :- MatchState]
+  (empty? states))
 
 (s/defn accept-value :- s/Any
   [nfa :- NFA
    state :- MatchState]
   (->> state
+    :states
     (filter (comp (:accept nfa) first))
     (map second)
     first
@@ -190,17 +191,17 @@
 
 (s/defn advance :- MatchState
   [nfa :- NFA
-   state :- MatchState
+   {:keys [states]} :- MatchState
    input :- s/Any
    stream-mark :- s/Any]
-  (let [state' (->> (for [[s targets] (concat
-                                        (get-in nfa [:transitions ::any])
-                                        (get-in nfa [:transitions input]))
-                          :when (contains? state s)
-                          :let [v (get state s)]
-                          [s' reducer] targets
-                          :let [v' (reducer v input)]
-                          :when (not= v' ::prune)]
-                      [s' v'])
-                    (into {}))]
+  (let [state' {:states (->> (for [[s targets] (concat
+                                                 (get-in nfa [:transitions ::any])
+                                                 (get-in nfa [:transitions input]))
+                                   :when (contains? states s)
+                                   :let [v (get states s)]
+                                   [s' reducer] targets
+                                   :let [v' (reducer v input)]
+                                   :when (not= v' ::prune)]
+                               [s' v'])
+                             (into {}))}]
     state'))
