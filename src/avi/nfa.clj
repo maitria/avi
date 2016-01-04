@@ -13,7 +13,8 @@
 (def MatchState
   {:nfa NFA
    :states {s/Int {:value s/Any}}
-   :status (s/enum :pending :accept :reject)})
+   :status (s/enum :pending :accept :reject)
+   (s/optional-key :value) s/Any})
 
 (defn- null-reducer
   [accumulator _]
@@ -214,7 +215,15 @@
                            :let [v' (reducer v input)]
                            :when (not= v' ::prune)]
                        [s' v'])
-                     (into {}))]
-    (assoc state
-           :states states'
-           :status (characterize nfa states'))))
+                     (into {}))
+        status (characterize nfa states')]
+    (cond-> (assoc state
+                   :states states'
+                   :status status)
+      (= status :accept)
+      (assoc :value
+             (->> states'
+               (filter (comp (:accept nfa) first))
+               (map second)
+               first
+               :value)))))

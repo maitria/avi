@@ -92,39 +92,30 @@
   (chain (match 1) (lookahead (match 2)))      []       {:status :pending}
   (chain (match 1) (lookahead (match 2)))      [1]      {:status :pending}
   (chain (match 1) (lookahead (match 2)))      [1 2]    {:status :accept}
-  (chain (match 1) (lookahead (match 2)))      [1 3]    {:status :reject})
+  (chain (match 1) (lookahead (match 2)))      [1 3]    {:status :reject}
+  
+  ;; NFAs reducing values
+  (on (match 1) f)                             [1]      {:status :accept, :value 1}
+  (on (match 2) f)                             [2]      {:status :accept, :value 2}
 
-(tabular
-  (facts "about NFAs reducing values"
-    (let [nfa ?nfa
-          state (state-after-inputs nfa ?inputs)
-          result (:status state)
-          value (accept-value nfa state)]
-      result => :accept
-      value => ?value))
+  (on any f)                                   [1]      {:status :accept, :value 1}
+  (on any f)                                   [7]      {:status :accept, :value 7}
 
-  ?nfa                                       ?inputs  ?value
-  (on (match 1) f)                           [1]      1
-  (on (match 2) f)                           [2]      2
+  (maybe (on (match 1) f))                     []       {:status :accept}
+  (maybe (on (match 1) f))                     [1]      {:status :accept, :value 1}
+  (on (maybe (match 1)) f)                     []       {:status :accept}
+  (on (maybe (match 1)) f)                     [1]      {:status :accept, :value 1}
 
-  (on any f)                                 [1]      1
-  (on any f)                                 [7]      7
+  (choice (on (match 1) f) (on (match 2) f))   [1]      {:status :accept, :value 1}
+  (choice (on (match 1) f) (on (match 2) f))   [2]      {:status :accept, :value 2}
+  (on (choice (match 1) (match 2)) f)          [1]      {:status :accept, :value 1}
+  (on (choice (match 1) (match 2)) f)          [2]      {:status :accept, :value 2}
 
-  (maybe (on (match 1) f))                   []       nil
-  (maybe (on (match 1) f))                   [1]      1
-  (on (maybe (match 1)) f)                   []       nil
-  (on (maybe (match 1)) f)                   [1]      1
+  (chain (on any f) any)                       [7 9]    {:status :accept, :value 7}
 
-  (choice (on (match 1) f) (on (match 2) f)) [1]      1
-  (choice (on (match 1) f) (on (match 2) f)) [2]      2
-  (on (choice (match 1) (match 2)) f)        [1]      1
-  (on (choice (match 1) (match 2)) f)        [2]      2
+  (kleene (on (match 7) f))                    [7]      {:status :accept, :value 7}
+  (kleene (on (match 7) f))                    [7 7]    {:status :accept, :value 77}
+  (kleene (on (match 7) f))                    [7 7 7]  {:status :accept, :value 777}
+  (kleene (on any f))                          [8 6 7]  {:status :accept, :value 867}
 
-  (chain (on any f) any)                     [7 9]    7
-
-  (kleene (on (match 7) f))                  [7]      7
-  (kleene (on (match 7) f))                  [7 7]    77
-  (kleene (on (match 7) f))                  [7 7 7]  777
-  (kleene (on any f))                        [8 6 7]  867
-
-  (chain (on (match 1) f) (on (match 2) f))  [1 2]    12)
+  (chain (on (match 1) f) (on (match 2) f))    [1 2]    {:status :accept, :value 12})
