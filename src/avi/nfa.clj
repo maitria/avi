@@ -194,14 +194,8 @@
   (= status :reject))
 
 (s/defn accept-value :- s/Any
-  [nfa :- NFA
-   state :- MatchState]
-  (->> state
-    :states
-    (filter (comp (:accept nfa) first))
-    (map second)
-    first
-    :value))
+  [state :- MatchState]
+  (:value state))
 
 (s/defn advance :- MatchState
   [{:keys [nfa states] :as state} :- MatchState

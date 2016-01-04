@@ -245,7 +245,7 @@
         beep/beep
 
         (nfa/accept? state')
-        (let [value (nfa/accept-value normal-nfa state')]
+        (let [value (nfa/accept-value state')]
           ((:handler value) value))
 
         :else
