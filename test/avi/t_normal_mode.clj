@@ -523,4 +523,6 @@
   ?content        ?after ?pos
   "hello world"   "e"    [0 4]
   "  hello wor"   "e"    [0 6]
-  "))//? world"   "e"    [0 4])
+  "))//? world"   "e"    [0 4]
+  "  ))//? wor"   "e"    [0 6]
+  "    "          "e"    [0 3])
