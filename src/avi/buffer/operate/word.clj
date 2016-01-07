@@ -41,7 +41,7 @@
                        (nfa/chain (nfa/kleene ws) other)
                        (nfa/chain ws+ word)))))
 
-(defn last-location
+(defn last-possible
   [{:keys [lines]} {:keys [operator]}]
   (let [i (dec (count lines))
         j (cond-> (count (peek lines))
@@ -58,7 +58,7 @@
     (if-not stream
       (if (= direction :backward)
         [0 0]
-        (last-location buffer operation))
+        (last-possible buffer operation))
       (let [stream-mark [i j]
             input (classify (get-in lines [i j]) big?)
             state' (nfa/advance state [stream-mark input])]
