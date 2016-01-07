@@ -65,9 +65,10 @@
 
 (defn next-word
   [{:keys [lines] :as buffer} {[_ {:keys [big? direction]}] :motion, :as operation} [i j]]
-  (let [stream ((if (= direction :backward)
-                  l/backward
-                  l/forward) [i j] (lines/line-length lines))
+  (let [stream-generator (if (= direction :backward)
+                           l/backward
+                           l/forward)
+        stream (stream-generator [i j] (lines/line-length lines))
         classify #(classify (get-in lines %) big?)]
     (or
       (end-of-eager-match first-of-next-word-nfa stream classify)
