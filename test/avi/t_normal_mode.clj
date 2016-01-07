@@ -537,4 +537,5 @@
     (editor :editing ?content :after ?after) => (point ?pos))
 
   ?content        ?after ?pos
-  "he//o world"   "E"    [0 4])
+  "he//o world"   "E"    [0 4]
+  "  he//o wor"   "E"    [0 6])
