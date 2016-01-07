@@ -55,11 +55,11 @@
    (reduce choice (concat [a b] cs))))
 
 (defn kleene
-  ([nfa]
-   (vec (concat
-          [[:split 1 (+ 2 (count nfa))]]
-          nfa
-          [[:goto (- (inc (count nfa)))]]))))
+  [nfa]
+  (vec (concat
+         [[:split 1 (+ 2 (count nfa))]]
+         nfa
+         [[:goto (- (inc (count nfa)))]])))
 
 (defn chain
   [& nfas]
