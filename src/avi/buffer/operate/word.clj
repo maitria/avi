@@ -42,12 +42,14 @@
                        (nfa/chain ws+ word)))))
 
 (defn last-possible
-  [{:keys [lines]} {:keys [operator]}]
-  (let [i (dec (count lines))
-        j (cond-> (count (peek lines))
-            (= operator :move-point)
-            dec)]
-    [i j]))
+  [{:keys [lines]} {:keys [operator] [_ {:keys [direction]}] :motion}]
+  (if (= direction :backward)
+    [0 0]
+    (let [i (dec (count lines))
+          j (cond-> (count (peek lines))
+              (= operator :move-point)
+              dec)]
+      [i j])))
 
 (defn next-word
   [{:keys [lines] :as buffer} {[_ {:keys [big? direction]}] :motion, :as operation} [i j]]
@@ -56,9 +58,7 @@
                                l/forward) [i j] (lines/line-length lines))
          state (nfa/start first-of-next-word-nfa)]
     (if-not stream
-      (if (= direction :backward)
-        [0 0]
-        (last-possible buffer operation))
+      (last-possible buffer operation)
       (let [stream-mark [i j]
             input (classify (get-in lines [i j]) big?)
             state' (nfa/advance state [stream-mark input])]
