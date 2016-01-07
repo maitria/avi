@@ -522,4 +522,5 @@
     (editor :editing ?content :after ?after) => (point ?pos))
   ?content        ?after ?pos
   "hello world"   "e"    [0 4]
-  "  hello wor"   "e"    [0 6])
+  "  hello wor"   "e"    [0 6]
+  "))//? world"   "e"    [0 4])
