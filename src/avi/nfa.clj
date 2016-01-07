@@ -126,7 +126,7 @@
 (defn start
   [nfa]
   (make-state nfa
-              (->> (advance* nfa [0 nil] nil nil true)
+              (->> (advance* nfa [0 {:value nil, :end nil}] nil nil true)
                 (into {}))))
 
 (defn advance

@@ -27,7 +27,7 @@
   any                                          [2]      {:status :accept, :end 0}
   any                                          [1 2]    {:status :reject}
 
-  (maybe (match 1))                            []       {:status :accept}
+  (maybe (match 1))                            []       {:status :accept, :end nil}
   (maybe (match 1))                            [1]      {:status :accept, :end 0}
   (maybe (match 1))                            [2]      {:status :reject}
   (maybe (match 1))                            [1 1]    {:status :reject}
@@ -47,7 +47,7 @@
   (choice (match 1) (match 2))                 [3 1]    {:status :reject}
   (choice (match 1) (match 2))                 [3 3]    {:status :reject}
 
-  (kleene (match 1))                           []       {:status :accept}
+  (kleene (match 1))                           []       {:status :accept, :end nil}
   (kleene (match 1))                           [1]      {:status :accept, :end 0}
   (kleene (match 1))                           [1 1]    {:status :accept, :end 1}
   (kleene (match 1))                           [1 1 1]  {:status :accept, :end 2}
@@ -101,9 +101,9 @@
   (on any f)                                   [1]      {:status :accept, :end 0, :value 1}
   (on any f)                                   [7]      {:status :accept, :end 0, :value 7}
 
-  (maybe (on (match 1) f))                     []       {:status :accept}
+  (maybe (on (match 1) f))                     []       {:status :accept, :end nil}
   (maybe (on (match 1) f))                     [1]      {:status :accept, :end 0, :value 1}
-  (on (maybe (match 1)) f)                     []       {:status :accept}
+  (on (maybe (match 1)) f)                     []       {:status :accept, :end nil}
   (on (maybe (match 1)) f)                     [1]      {:status :accept, :end 0, :value 1}
 
   (choice (on (match 1) f) (on (match 2) f))   [1]      {:status :accept, :end 0, :value 1}
