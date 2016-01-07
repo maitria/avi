@@ -1,223 +1,117 @@
-(ns avi.nfa
-  (:require [clojure.set :as set]
-            [schema.core :as s]))
+(ns avi.nfa)
 
-(def StateNumber
-  s/Int)
-
-(def NFA
-  {:start #{StateNumber}
-   :accept #{StateNumber}
-   :transitions {s/Any {StateNumber {StateNumber s/Any}}}})
-
-(def MatchState
-  {:nfa NFA
-   :states {s/Int {:value s/Any}}
-   :status (s/enum :pending :accept :reject)
-   (s/optional-key :value) s/Any})
-
-(defn- null-reducer
-  [accumulator _]
-  accumulator)
-
-(defn- merge-transitions
-  [& xs]
-  (apply merge-with (partial merge-with into) xs))
-
-(defn- mapcat-transitions
-  [f xs]
-  (->>
-    (for [[value froms] xs
-          [from tos] froms
-          [to reducer] tos]
-      (f value from to reducer))
-    (reduce concat)
-    (reduce
-      (fn [xs [value from to reducer]]
-        (assoc-in xs [value from to] reducer))
-      {})))
-
-(defn- states
-  [nfa]
-  (->> (for [[_ froms] (:transitions nfa)
-             [from tos] froms
-             [to _] tos]
-         [from to])
-    (apply concat)
-    (into #{})))
-
-(s/defn ^:private renumber :- [NFA]
-  "Renumber the states in each NFA so that no two NFAs share a state number."
-  [nfas :- [NFA]]
-  (second
-    (reduce
-      (fn [[n done] nfa]
-        (let [original (states nfa)
-              mapping (zipmap original (map (partial + n) (range)))
-              nfa' {:start (->> (:start nfa) (map mapping) (into #{}))
-                    :accept (->> (:accept nfa) (map mapping) (into #{}))
-                    :transitions (mapcat-transitions
-                                   (fn [value from to reducer]
-                                     [[value (mapping from) (mapping to) reducer]])
-                                   (:transitions nfa))}]
-          [(+ n (count mapping)) (conj done nfa')]))
-      [0 []]
-      nfas)))
-
-(s/defn match :- NFA
-  [value :- s/Any]
-  {:start #{0}
-   :accept #{1}
-   :transitions {value {0 {1 null-reducer}}}})
+(defn match
+  [value]
+  [[:match value]])
 
 (def any
-  (match ::any))
+  [[:match ::any]])
 
-(s/defn maybe :- NFA
-  [nfa :- NFA]
-  {:start (:start nfa)
-   :accept (set/union (:start nfa) (:accept nfa))
-   :transitions (:transitions nfa)})
+(defn maybe
+  [nfa]
+  (into
+    [[:split 1 (inc (count nfa))]]
+    nfa))
 
-(s/defn choice :- NFA
-  ([a :- NFA]
+(defn choice
+  ([a]
    a)
-  ([a :- NFA
-    b :- NFA]
-   (let [[a b] (renumber [a b])]
-     {:start (set/union (:start a) (:start b))
-      :accept (set/union (:accept a) (:accept b))
-      :transitions (merge-transitions
-                     (:transitions a)
-                     (:transitions b))}))
-  ([a :- NFA
-    b :- NFA
-    & cs :- [NFA]]
+  ([a b]
+   (vec (concat
+          [[:split 1 (+ 2 (count a))]]
+          a
+          [[:goto (inc (count b))]]
+          b)))
+  ([a b & cs]
    (reduce choice (concat [a b] cs))))
 
-(s/defn kleene :- NFA
-  ([nfa :- NFA]
-   {:start (:start nfa)
-    :accept (:start nfa)
+(defn kleene
+  ([nfa]
+   (vec (concat
+          [[:split 1 (+ 2 (count nfa))]]
+          nfa
+          [[:goto (- (inc (count nfa)))]]))))
 
-    ;; any transition which is x -> a, a ∈ accept, is replace with all
-    ;; x -> s ∀ s ∈ start
-    :transitions (mapcat-transitions
-                   (fn [value from to reducer]
-                     (if ((:accept nfa) to)
-                       (for [s (:start nfa)]
-                         [value from s reducer])
-                       [[value from to reducer]]))
-                   (:transitions nfa))}))
+(defn chain
+  [& nfas]
+  (reduce into [] nfas))
 
-(s/defn chain :- NFA
-  ([a :- NFA]
-   a)
-  ([a :- NFA
-    b :- NFA]
-   (let [[a b] (renumber [a b])]
-     {:start (if (seq (set/intersection (:start a) (:accept a)))
-               (set/union (:start a) (:start b))
-               (:start a))
-      :accept (:accept b)
-      :transitions (mapcat-transitions
-                     (fn [value from to reducer]
-                       (concat
-                         [[value from to reducer]]
-                         (if ((:accept a) to)
-                           (for [s (:start b)]
-                             [value from s reducer]))))
-                     (merge-transitions
-                       (:transitions a)
-                       (:transitions b)))}))
-  ([a :- NFA
-    b :- NFA
-    & cs :- [NFA]]
-   (reduce chain (concat [a b] cs))))
-
-(s/defn lookahead :- NFA
-  [a :- NFA]
+(defn lookahead
+  [a]
   a)
 
-(s/defn on :- NFA
-  [nfa :- NFA f]
-  (update-in
-    nfa
-    [:transitions]
-    (partial
-      mapcat-transitions
-      (fn [value from to reducer]
-        (if ((:accept nfa) to)
-          [[value from to (fn [acc input]
-                            (let [result (reducer acc input)]
-                              (if (= result ::prune)
-                                ::prune
-                                (let [result-value (f (:value result) input)]
-                                  (if (= result-value ::prune)
-                                    ::prune
-                                    (assoc result :value result-value))))))]]
-          [[value from to reducer]])))))
+(defn on
+  [nfa f]
+  (vec (concat nfa [[:on f]])))
 
-(s/defn prune :- NFA
-  [nfa :- NFA f]
-  (on nfa (fn [v _]
-            (if (f v)
-              ::prune
-              v))))
+(defn prune
+  [nfa f]
+  (vec (concat nfa [[:prune f]])))
 
 (defn- characterize
-  [nfa sub-states]
+  [nfa threads]
   (cond
-    (empty? sub-states)
-    :reject
+    (empty? threads)                :reject
+    (contains? threads (count nfa)) :accept
+    :else                           :pending))
 
-    (not (empty? (set/intersection (:accept nfa) (into #{} (keys sub-states)))))
-    :accept
-
-    :else               :pending))
-
-(s/defn start :- MatchState
-  [nfa :- NFA]
-  (let [states (->> (:start nfa)
-                 (map #(vector % {:value nil}))
-                 (into {}))]
-    {:nfa nfa
-     :states states
-     :status (characterize nfa states)}))
-
-(s/defn accept? :- s/Bool
-  [{:keys [status]} :- MatchState]
+(defn accept?
+  [{:keys [status]}]
   (= status :accept))
 
-(s/defn reject? :- s/Bool
-  [{:keys [status]} :- MatchState]
+(defn reject?
+  [{:keys [status]}]
   (= status :reject))
 
-(s/defn accept-value :- s/Any
-  [state :- MatchState]
+(defn accept-value
+  [state]
   (:value state))
 
-(s/defn advance :- MatchState
-  [{:keys [nfa states] :as state} :- MatchState
-   [stream-mark input]]
-  (let [states' (->> (for [[s targets] (concat
-                                         (get-in nfa [:transitions ::any])
-                                         (get-in nfa [:transitions input]))
-                           :when (contains? states s)
-                           :let [v (get states s)]
-                           [s' reducer] targets
-                           :let [v' (reducer v input)]
-                           :when (not= v' ::prune)]
-                       [s' v'])
-                     (into {}))
-        status (characterize nfa states')]
-    (cond-> (assoc state
-                   :states states'
-                   :status status)
-      (= status :accept)
-      (assoc :value
-             (->> states'
-               (filter (comp (:accept nfa) first))
-               (map second)
-               first
-               :value)))))
+(defn- advance*
+  [nfa [pc value] input consumed?]
+  (let [[opcode a b] (get nfa pc)]
+    (case opcode
+      :split
+      (into [] (concat
+                 (advance* nfa [(+ pc a) value] input consumed?)
+                 (advance* nfa [(+ pc b) value] input consumed?)))
+
+      :goto
+      (recur nfa [(+ pc a) value] input consumed?)
+
+      :match
+      (if consumed?
+        [[pc value]]
+        (when (or (= a ::any) (= a input))
+          (recur nfa [(inc pc) value] input true)))
+
+      :on
+      (recur nfa [(inc pc) (update-in value [:value] a input)] input consumed?)
+
+      :prune
+      (when-not (a (:value value))
+        (recur nfa [(inc pc) value] input consumed?))
+
+      nil
+      (when consumed?
+        [[pc value]]))))
+
+(defn start
+  [nfa]
+  (let [threads (->> (advance* nfa [0 nil] nil true)
+                  (into {}))]
+    {:nfa nfa
+     :threads threads
+     :status (characterize nfa threads)}))
+
+(defn advance
+  [{:keys [nfa threads] :as state} [stream-mark input]]
+  (let [threads' (->> (for [[pc value] threads
+                            [pc value] (advance* nfa [pc value] input false)]
+                        [pc value])
+                  (into {}))
+        status (characterize nfa threads')]
+    (assoc state
+           :threads threads'
+           :status status
+           :value (get-in threads' [(count nfa) :value]))))

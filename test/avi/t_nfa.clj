@@ -10,7 +10,7 @@
 
 (defn f
   [v d]
-  (+ (* 10 (or v 0)) d))
+  (+ (* 10 (or v 0)) (or d 0)))
 
 (tabular
   (facts "about NFAs"
