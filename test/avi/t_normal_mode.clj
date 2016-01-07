@@ -527,4 +527,7 @@
   "  ))//? wor"   "e"    [0 6]
   "    "          "e"    [0 3]
   "foo"           "e"    [0 2]
-  "???"           "e"    [0 2])
+  "???"           "e"    [0 2]
+  "hello\nworld"  "e"    [0 4]
+  "  \n\nwat"     "e"    [2 2] ; `e` does not stop on zero-length lines
+  "  \n hi"       "e"    [1 2])
