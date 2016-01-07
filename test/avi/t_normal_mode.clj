@@ -543,3 +543,10 @@
   "  he//o wor"   "E"    [0 6]
   "  \n\nw?t"     "E"    [2 2]
   "  \n hi"       "E"    [1 2])
+
+(tabular
+  (facts "about `b`"
+    (editor :editing ?content :after ?after) => (point ?pos))
+
+  ?content      ?after ?pos
+  "hello world" "$b"   [0 6])

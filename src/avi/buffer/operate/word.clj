@@ -70,7 +70,7 @@
   [{:keys [lines] :as buffer} {[_ {:keys [position-in-word big? direction]}] :motion, :as operation} [i j]]
   (let [nfa-type (case [position-in-word direction]
                    ([:start :forward] [:end :backward]) :first
-                   ([:end :forward]) :last)
+                   ([:end :forward] [:start :backward]) :last)
         nfa (nfas nfa-type)
         stream-generator (if (= direction :backward)
                            l/backward
