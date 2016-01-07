@@ -114,25 +114,24 @@
       nil     (when consumed?
                 [[pc value]]))))
 
+(defn- make-state
+  [nfa threads]
+  (with-meta
+    {:threads threads
+     :status (characterize nfa threads)
+     :value (get-in threads [(count nfa) :value])}
+    {:nfa nfa}))
+
 (defn start
   [nfa]
-  (let [threads (->> (advance* nfa [0 nil] nil true)
-                  (into {}))]
-    (with-meta
-      {:threads threads
-       :status (characterize nfa threads)}
-      {:nfa nfa})))
+  (make-state nfa
+              (->> (advance* nfa [0 nil] nil true)
+                (into {}))))
 
 (defn advance
   [{:keys [threads] :as state} [stream-mark input]]
   (let [nfa (:nfa (meta state))
-        threads' (->> (for [[pc value] threads
-                            [pc value] (advance* nfa [pc value] input false)]
-                        [pc value])
-                  (into {}))
-        status (characterize nfa threads')]
-    (with-meta
-      {:threads threads'
-       :status status
-       :value (get-in threads' [(count nfa) :value])}
-      {:nfa nfa})))
+        threads' (->> threads
+                   (mapcat #(advance* nfa % input false))
+                   (into {}))]
+    (make-state nfa threads')))
