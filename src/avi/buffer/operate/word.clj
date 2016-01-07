@@ -51,21 +51,27 @@
               dec)]
       [i j])))
 
-(defn next-word
-  [{:keys [lines] :as buffer} {[_ {:keys [big? direction]}] :motion, :as operation} [i j]]
-  (loop [[[i j] :as stream] ((if (= direction :backward)
-                               l/backward
-                               l/forward) [i j] (lines/line-length lines))
+(defn end-of-eager-match
+  [nfa stream classify]
+  (loop [[[i j] :as stream] stream 
          state (nfa/start first-of-next-word-nfa)]
-    (if-not stream
-      (last-possible buffer operation)
-      (let [stream-mark [i j]
-            input (classify (get-in lines [i j]) big?)
-            state' (nfa/advance state [stream-mark input])]
+    (when stream
+      (let [input (classify [i j])
+            state' (nfa/advance state [[i j] input])]
         (assert (not (nfa/reject? state')))
         (if (nfa/accept? state')
-          [i j]
+          (:end state')
           (recur (next stream) state'))))))
+
+(defn next-word
+  [{:keys [lines] :as buffer} {[_ {:keys [big? direction]}] :motion, :as operation} [i j]]
+  (let [stream ((if (= direction :backward)
+                  l/backward
+                  l/forward) [i j] (lines/line-length lines))
+        classify #(classify (get-in lines %) big?)]
+    (or
+      (end-of-eager-match first-of-next-word-nfa stream classify)
+      (last-possible buffer operation))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{:keys [lines point] :as buffer} {:keys [operator] n :count :as operation}]
