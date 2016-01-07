@@ -100,30 +100,19 @@
   [nfa [pc value] input consumed?]
   (let [[opcode a b] (get nfa pc)]
     (case opcode
-      :split
-      (into [] (concat
-                 (advance* nfa [(+ pc a) value] input consumed?)
-                 (advance* nfa [(+ pc b) value] input consumed?)))
-
-      :goto
-      (recur nfa [(+ pc a) value] input consumed?)
-
-      :match
-      (if consumed?
-        [[pc value]]
-        (when (or (= a ::any) (= a input))
-          (recur nfa [(inc pc) value] input true)))
-
-      :on
-      (recur nfa [(inc pc) (update-in value [:value] a input)] input consumed?)
-
-      :prune
-      (when-not (a (:value value))
-        (recur nfa [(inc pc) value] input consumed?))
-
-      nil
-      (when consumed?
-        [[pc value]]))))
+      :split  (->> [a b]
+                (mapcat #(advance* nfa [(+ pc %) value] input consumed?))
+                vec)
+      :goto   (recur nfa [(+ pc a) value] input consumed?)
+      :match (if consumed?
+               [[pc value]]
+               (when (or (= a ::any) (= a input))
+                 (recur nfa [(inc pc) value] input true)))
+      :on    (recur nfa [(inc pc) (update-in value [:value] a input)] input consumed?)
+      :prune (when-not (a (:value value))
+               (recur nfa [(inc pc) value] input consumed?))
+      nil    (when consumed?
+               [[pc value]]))))
 
 (defn start
   [nfa]
