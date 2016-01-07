@@ -479,7 +479,8 @@
     (fact "`w` stops on zero-length lines"
       (editor :editing ?content :after ?after) => (point ?pos))
     ?content       ?after  ?pos
-    "ab\n\ncd"     "w"     [1 0])
+    "ab\n\ncd"     "w"     [1 0]
+    "  \n\ncd"     "w"     [1 0])
   (fact "`w` will move to the end of file"
     (editor :editing "hello" :after "w") => (point [0 4])
     (editor :editing "h" :after "w") => beeped)

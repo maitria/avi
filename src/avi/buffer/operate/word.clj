@@ -40,7 +40,7 @@
 
 (def first-of-next-word-nfa
   (nfa/choice
-    (nfa/chain ws+ (nfa/choice word other))
+    (nfa/chain ws+ (nfa/choice word other (nfa/chain nl nl)))
     (nfa/chain other+ (nfa/choice
                         (nfa/chain (nfa/kleene ws) word)
                         (nfa/chain ws+ other)))
