@@ -17,18 +17,21 @@
 (defn classify
   [ch]
   (cond
-    (or (nil? ch) (Character/isWhitespace ch)) :ws
-    (word-char? ch)                            :word
-    :else                                      :other))
+    (nil? ch)                   :nl
+    (Character/isWhitespace ch) :ws
+    (word-char? ch)             :word
+    :else                       :other))
 
 (defn classify-big
   [ch]
   (case (classify ch)
+    :nl    :nl
     :ws    :ws
     :word  :other
     :other :other))
 
-(def ws (nfa/match :ws))
+(def nl (nfa/match :nl))
+(def ws (nfa/choice (nfa/match :ws) nl))
 (def ws+ (nfa/chain ws (nfa/kleene ws)))
 (def word (nfa/match :word))
 (def word+ (nfa/chain word (nfa/kleene word)))
@@ -43,7 +46,8 @@
                         (nfa/chain ws+ other)))
     (nfa/chain word+ (nfa/choice
                        (nfa/chain (nfa/kleene ws) other)
-                       (nfa/chain ws+ word)))))
+                       (nfa/chain nl nl)
+                       (nfa/chain ws+ (nfa/choice word (nfa/chain nl nl)))))))
 
 (defn last-location
   [{:keys [lines]} {:keys [operator]}]
@@ -52,10 +56,6 @@
             (= operator :move-point)
             dec)]
     [i j]))
-
-(defn at-zero-length-line?
-  [[[i1 j1] [i2 _]]]
-  (and (= 0 j1) (not= i1 i2)))
 
 (defn next-word
   [{:keys [lines] :as buffer} {[_ {:keys [big? direction]}] :motion, :as operation} [i j]]
@@ -67,13 +67,14 @@
                                  l/forward) [i j] (lines/line-length lines))
            state (nfa/start first-of-next-word-nfa)]
       (if-not stream
-        (last-location buffer operation)
+        (if (= direction :backward)
+          [0 0]
+          (last-location buffer operation))
         (let [stream-mark [i j]
               input (classifier (get-in lines [i j]))
               state' (nfa/advance state [stream-mark input])]
           (assert (not (nfa/reject? state')))
-          (if (or (nfa/accept? state')
-                  (at-zero-length-line? stream))
+          (if (nfa/accept? state')
             [i j]
             (recur (next stream) state')))))))
 
