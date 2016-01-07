@@ -104,32 +104,35 @@
                 (mapcat #(advance* nfa [(+ pc %) value] input consumed?))
                 vec)
       :goto   (recur nfa [(+ pc a) value] input consumed?)
-      :match (if consumed?
-               [[pc value]]
-               (when (or (= a ::any) (= a input))
-                 (recur nfa [(inc pc) value] input true)))
-      :on    (recur nfa [(inc pc) (update-in value [:value] a input)] input consumed?)
-      :prune (when-not (a (:value value))
-               (recur nfa [(inc pc) value] input consumed?))
-      nil    (when consumed?
-               [[pc value]]))))
+      :match  (if consumed?
+                [[pc value]]
+                (when (or (= a ::any) (= a input))
+                  (recur nfa [(inc pc) value] input true)))
+      :on     (recur nfa [(inc pc) (update-in value [:value] a input)] input consumed?)
+      :prune  (when-not (a (:value value))
+                (recur nfa [(inc pc) value] input consumed?))
+      nil     (when consumed?
+                [[pc value]]))))
 
 (defn start
   [nfa]
   (let [threads (->> (advance* nfa [0 nil] nil true)
                   (into {}))]
-    {:nfa nfa
-     :threads threads
-     :status (characterize nfa threads)}))
+    (with-meta
+      {:threads threads
+       :status (characterize nfa threads)}
+      {:nfa nfa})))
 
 (defn advance
-  [{:keys [nfa threads] :as state} [stream-mark input]]
-  (let [threads' (->> (for [[pc value] threads
+  [{:keys [threads] :as state} [stream-mark input]]
+  (let [nfa (:nfa (meta state))
+        threads' (->> (for [[pc value] threads
                             [pc value] (advance* nfa [pc value] input false)]
                         [pc value])
                   (into {}))
         status (characterize nfa threads')]
-    (assoc state
-           :threads threads'
-           :status status
-           :value (get-in threads' [(count nfa) :value]))))
+    (with-meta
+      {:threads threads'
+       :status status
+       :value (get-in threads' [(count nfa) :value])}
+      {:nfa nfa})))
