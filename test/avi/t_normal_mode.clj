@@ -530,7 +530,9 @@
   "???"           "e"    [0 2]
   "hello\nworld"  "e"    [0 4]
   "  \n\nwat"     "e"    [2 2] ; `e` does not stop on zero-length lines
-  "  \n hi"       "e"    [1 2])
+  "  \n hi"       "e"    [1 2]
+  "hello??"       "e"    [0 4]
+  ".?//.wo"       "e"    [0 4])
 
 (tabular
   (facts "about `E`"
@@ -538,4 +540,6 @@
 
   ?content        ?after ?pos
   "he//o world"   "E"    [0 4]
-  "  he//o wor"   "E"    [0 6])
+  "  he//o wor"   "E"    [0 6]
+  "  \n\nw?t"     "E"    [2 2]
+  "  \n hi"       "E"    [1 2])
