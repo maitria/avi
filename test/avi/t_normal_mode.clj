@@ -522,10 +522,14 @@
     (editor :editing ?content :after ?after) => (point ?pos))
   ?content        ?after ?pos
   "hello world"   "e"    [0 4]
+  "hello world"   "2e"   [0 10]
   "  hello wor"   "e"    [0 6]
+  "  hello wor"   "ee"   [0 10]
   "))//? world"   "e"    [0 4]
+  "))//? !!<>?"   "2e"   [0 10]
   "  ))//? wor"   "e"    [0 6]
   "    "          "e"    [0 3]
+  "    "          "2e"   [0 3]
   "foo"           "e"    [0 2]
   "???"           "e"    [0 2]
   "hello\nworld"  "e"    [0 4]
@@ -548,5 +552,6 @@
   (facts "about `b`"
     (editor :editing ?content :after ?after) => (point ?pos))
 
-  ?content      ?after ?pos
-  "hello world" "$b"   [0 6])
+  ?content        ?after ?pos
+  "hello world"   "$b"   [0 6]
+  "a hello world" "$bb"  [0 2])
