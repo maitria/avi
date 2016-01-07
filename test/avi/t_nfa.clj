@@ -49,8 +49,8 @@
 
   (kleene (match 1))                           []       {:status :accept}
   (kleene (match 1))                           [1]      {:status :accept, :end 0}
-  (kleene (match 1))                           [1 1]    {:status :accept}
-  (kleene (match 1))                           [1 1 1]  {:status :accept}
+  (kleene (match 1))                           [1 1]    {:status :accept, :end 1}
+  (kleene (match 1))                           [1 1 1]  {:status :accept, :end 2}
   (kleene (match 1))                           [2]      {:status :reject}
   (kleene (match 1))                           [1 2]    {:status :reject}
   (kleene (match 1))                           [1 1 2]  {:status :reject}
@@ -64,26 +64,26 @@
 
   (chain (maybe (match 1)) (match 2))          []       {:status :pending}
   (chain (maybe (match 1)) (match 2))          [1]      {:status :pending}
-  (chain (maybe (match 1)) (match 2))          [1 2]    {:status :accept}
-  (chain (maybe (match 1)) (match 2))          [2]      {:status :accept}
+  (chain (maybe (match 1)) (match 2))          [1 2]    {:status :accept, :end 1}
+  (chain (maybe (match 1)) (match 2))          [2]      {:status :accept, :end 0}
   (chain (kleene (match 1)) (match 2))         []       {:status :pending}
   (chain (kleene (match 1)) (match 2))         [1]      {:status :pending}
-  (chain (kleene (match 1)) (match 2))         [2]      {:status :accept}
-  (chain (kleene (match 1)) (match 2))         [1 2]    {:status :accept}
+  (chain (kleene (match 1)) (match 2))         [2]      {:status :accept, :end 0}
+  (chain (kleene (match 1)) (match 2))         [1 2]    {:status :accept, :end 1}
   (chain (kleene (match 1)) (match 2))         [1 1]    {:status :pending}
-  (chain (kleene (match 1)) (match 2))         [1 1 2]  {:status :accept}
+  (chain (kleene (match 1)) (match 2))         [1 1 2]  {:status :accept, :end 2}
   (chain (match 1) (kleene (match 2)))         []       {:status :pending}
-  (chain (match 1) (kleene (match 2)))         [1]      {:status :accept}
-  (chain (match 1) (kleene (match 2)))         [1 2]    {:status :accept}
-  (chain (match 1) (kleene (match 2)))         [1 2 2]  {:status :accept}
+  (chain (match 1) (kleene (match 2)))         [1]      {:status :accept, :end 0}
+  (chain (match 1) (kleene (match 2)))         [1 2]    {:status :accept, :end 1}
+  (chain (match 1) (kleene (match 2)))         [1 2 2]  {:status :accept, :end 2}
   (chain (match 1) (kleene (match 2)))         [1 2 1]  {:status :reject}
 
   (chain (kleene (on (match 1) f))
          (prune (match 2) #(= % 1)))           [1 2]    {:status :reject}
   (chain (kleene (on (match 1) f))
-         (prune (match 2) #(= % 1)))           [1 1 2]  {:status :accept}
+         (prune (match 2) #(= % 1)))           [1 1 2]  {:status :accept, :end 2}
   (chain (kleene (on (match 1) f))
-         (prune (match 2) #(= % 1)))           [2]      {:status :accept}
+         (prune (match 2) #(= % 1)))           [2]      {:status :accept, :end 0}
 
   (lookahead (match 1))                        []       {:status :pending}
   (lookahead (match 1))                        [1]      {:status :accept}
@@ -95,27 +95,27 @@
   (chain (match 1) (lookahead (match 2)))      [1 3]    {:status :reject}
   
   ;; NFAs reducing values
-  (on (match 1) f)                             [1]      {:status :accept, :value 1}
-  (on (match 2) f)                             [2]      {:status :accept, :value 2}
+  (on (match 1) f)                             [1]      {:status :accept, :end 0, :value 1}
+  (on (match 2) f)                             [2]      {:status :accept, :end 0, :value 2}
 
-  (on any f)                                   [1]      {:status :accept, :value 1}
-  (on any f)                                   [7]      {:status :accept, :value 7}
+  (on any f)                                   [1]      {:status :accept, :end 0, :value 1}
+  (on any f)                                   [7]      {:status :accept, :end 0, :value 7}
 
   (maybe (on (match 1) f))                     []       {:status :accept}
-  (maybe (on (match 1) f))                     [1]      {:status :accept, :value 1}
+  (maybe (on (match 1) f))                     [1]      {:status :accept, :end 0, :value 1}
   (on (maybe (match 1)) f)                     []       {:status :accept}
-  (on (maybe (match 1)) f)                     [1]      {:status :accept, :value 1}
+  (on (maybe (match 1)) f)                     [1]      {:status :accept, :end 0, :value 1}
 
-  (choice (on (match 1) f) (on (match 2) f))   [1]      {:status :accept, :value 1}
-  (choice (on (match 1) f) (on (match 2) f))   [2]      {:status :accept, :value 2}
-  (on (choice (match 1) (match 2)) f)          [1]      {:status :accept, :value 1}
-  (on (choice (match 1) (match 2)) f)          [2]      {:status :accept, :value 2}
+  (choice (on (match 1) f) (on (match 2) f))   [1]      {:status :accept, :end 0, :value 1}
+  (choice (on (match 1) f) (on (match 2) f))   [2]      {:status :accept, :end 0, :value 2}
+  (on (choice (match 1) (match 2)) f)          [1]      {:status :accept, :end 0, :value 1}
+  (on (choice (match 1) (match 2)) f)          [2]      {:status :accept, :end 0, :value 2}
 
-  (chain (on any f) any)                       [7 9]    {:status :accept, :value 7}
+  (chain (on any f) any)                       [7 9]    {:status :accept, :end 1, :value 7}
 
-  (kleene (on (match 7) f))                    [7]      {:status :accept, :value 7}
-  (kleene (on (match 7) f))                    [7 7]    {:status :accept, :value 77}
-  (kleene (on (match 7) f))                    [7 7 7]  {:status :accept, :value 777}
-  (kleene (on any f))                          [8 6 7]  {:status :accept, :value 867}
+  (kleene (on (match 7) f))                    [7]      {:status :accept, :end 0, :value 7}
+  (kleene (on (match 7) f))                    [7 7]    {:status :accept, :end 1, :value 77}
+  (kleene (on (match 7) f))                    [7 7 7]  {:status :accept, :end 2, :value 777}
+  (kleene (on any f))                          [8 6 7]  {:status :accept, :end 2, :value 867}
 
-  (chain (on (match 1) f) (on (match 2) f))    [1 2]    {:status :accept, :value 12})
+  (chain (on (match 1) f) (on (match 2) f))    [1 2]    {:status :accept, :end 1, :value 12})
