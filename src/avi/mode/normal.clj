@@ -21,6 +21,9 @@
             :motion [:goto [:current :first-non-blank]]}
     "$"    {:span :inclusive,
             :motion [:goto [:current :end-of-line]]}
+    "e"    {:span :inclusive
+            :motion [:word {:direction :forward
+                            :position-in-word :end}]}
     "f<.>" {:span :inclusive,
             :motion [:move-to-char]}
     "ge"   {:span :inclusive,

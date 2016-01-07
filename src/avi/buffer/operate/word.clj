@@ -31,15 +31,16 @@
 (def other+ (nfa/chain other (nfa/kleene other)))
 
 (def nfas
-  {:first-of-next-word (nfa/choice
-                         (nfa/chain (nfa/kleene nfa/any) nl nl)
-                         (nfa/chain ws+ (nfa/choice word other))
-                         (nfa/chain other+ (nfa/choice
-                                             (nfa/chain (nfa/kleene ws) word)
-                                             (nfa/chain ws+ other)))
-                         (nfa/chain word+ (nfa/choice
-                                            (nfa/chain (nfa/kleene ws) other)
-                                            (nfa/chain ws+ word))))})
+  {:first (nfa/choice
+            (nfa/chain (nfa/kleene nfa/any) nl nl)
+            (nfa/chain ws+ (nfa/choice word other))
+            (nfa/chain other+ (nfa/choice
+                                (nfa/chain (nfa/kleene ws) word)
+                                (nfa/chain ws+ other)))
+            (nfa/chain word+ (nfa/choice
+                               (nfa/chain (nfa/kleene ws) other)
+                               (nfa/chain ws+ word))))
+   :last (nfa/chain word+ (nfa/lookahead (nfa/choice ws other)))})
 
 (defn last-possible
   [{:keys [lines]} {:keys [operator] [_ {:keys [direction]}] :motion}]
@@ -64,14 +65,18 @@
           (recur (next stream) state'))))))
 
 (defn next-word
-  [{:keys [lines] :as buffer} {[_ {:keys [big? direction]}] :motion, :as operation} [i j]]
-  (let [stream-generator (if (= direction :backward)
+  [{:keys [lines] :as buffer} {[_ {:keys [position-in-word big? direction]}] :motion, :as operation} [i j]]
+  (let [nfa-type (case [position-in-word direction]
+                   ([:start :forward] [:end :backward]) :first
+                   ([:end :forward]) :last)
+        nfa (nfas nfa-type)
+        stream-generator (if (= direction :backward)
                            l/backward
                            l/forward)
         stream (stream-generator [i j] (lines/line-length lines))
         classify #(classify (get-in lines %) big?)]
     (or
-      (end-of-eager-match (:first-of-next-word nfas) stream classify)
+      (end-of-eager-match nfa stream classify)
       (last-possible buffer operation))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)

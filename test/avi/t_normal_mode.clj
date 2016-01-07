@@ -516,3 +516,9 @@
   "hel//  "     "$gE"  [0 4]
   "(hel/ ??rld" "$gE"  [0 4]
   "(hel/ ??rld" "$5gE" [0 0])
+
+(tabular
+  (facts "about `e`"
+    (editor :editing ?content :after ?after) => (point ?pos))
+  ?content        ?after ?pos
+  "hello world"   "e"    [0 4])
