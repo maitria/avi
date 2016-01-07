@@ -30,16 +30,16 @@
 (def other (nfa/match :other))
 (def other+ (nfa/chain other (nfa/kleene other)))
 
-(def first-of-next-word-nfa
-  (nfa/choice
-    (nfa/chain (nfa/kleene nfa/any) nl nl)
-    (nfa/chain ws+ (nfa/choice word other))
-    (nfa/chain other+ (nfa/choice
-                        (nfa/chain (nfa/kleene ws) word)
-                        (nfa/chain ws+ other)))
-    (nfa/chain word+ (nfa/choice
-                       (nfa/chain (nfa/kleene ws) other)
-                       (nfa/chain ws+ word)))))
+(def nfas
+  {:first-of-next-word (nfa/choice
+                         (nfa/chain (nfa/kleene nfa/any) nl nl)
+                         (nfa/chain ws+ (nfa/choice word other))
+                         (nfa/chain other+ (nfa/choice
+                                             (nfa/chain (nfa/kleene ws) word)
+                                             (nfa/chain ws+ other)))
+                         (nfa/chain word+ (nfa/choice
+                                            (nfa/chain (nfa/kleene ws) other)
+                                            (nfa/chain ws+ word))))})
 
 (defn last-possible
   [{:keys [lines]} {:keys [operator] [_ {:keys [direction]}] :motion}]
@@ -54,7 +54,7 @@
 (defn end-of-eager-match
   [nfa stream classify]
   (loop [[[i j] :as stream] stream 
-         state (nfa/start first-of-next-word-nfa)]
+         state (nfa/start nfa)]
     (when stream
       (let [input (classify [i j])
             state' (nfa/advance state [[i j] input])]
@@ -71,7 +71,7 @@
         stream (stream-generator [i j] (lines/line-length lines))
         classify #(classify (get-in lines %) big?)]
     (or
-      (end-of-eager-match first-of-next-word-nfa stream classify)
+      (end-of-eager-match (:first-of-next-word nfas) stream classify)
       (last-possible buffer operation))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
