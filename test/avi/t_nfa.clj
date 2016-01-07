@@ -23,24 +23,24 @@
   (match 1)                                    [1 2]    {:status :reject}
 
   any                                          []       {:status :pending}
-  any                                          [1]      {:status :accept}
-  any                                          [2]      {:status :accept}
+  any                                          [1]      {:status :accept, :end 0}
+  any                                          [2]      {:status :accept, :end 0}
   any                                          [1 2]    {:status :reject}
 
   (maybe (match 1))                            []       {:status :accept}
-  (maybe (match 1))                            [1]      {:status :accept}
+  (maybe (match 1))                            [1]      {:status :accept, :end 0}
   (maybe (match 1))                            [2]      {:status :reject}
   (maybe (match 1))                            [1 1]    {:status :reject}
   (maybe (match 1))                            [1 2]    {:status :reject}
 
   (choice (match 1))                           []       {:status :pending}
-  (choice (match 1))                           [1]      {:status :accept}
+  (choice (match 1))                           [1]      {:status :accept, :end 0}
   (choice (match 1))                           [2]      {:status :reject}
   (choice (match 1))                           [1 1]    {:status :reject}
   (choice (match 1))                           [1 2]    {:status :reject}
   (choice (match 1) (match 2))                 []       {:status :pending}
-  (choice (match 1) (match 2))                 [1]      {:status :accept}
-  (choice (match 1) (match 2))                 [2]      {:status :accept}
+  (choice (match 1) (match 2))                 [1]      {:status :accept, :end 0}
+  (choice (match 1) (match 2))                 [2]      {:status :accept, :end 0}
   (choice (match 1) (match 2))                 [3]      {:status :reject}
   (choice (match 1) (match 2))                 [1 1]    {:status :reject}
   (choice (match 1) (match 2))                 [1 3]    {:status :reject}
@@ -48,7 +48,7 @@
   (choice (match 1) (match 2))                 [3 3]    {:status :reject}
 
   (kleene (match 1))                           []       {:status :accept}
-  (kleene (match 1))                           [1]      {:status :accept}
+  (kleene (match 1))                           [1]      {:status :accept, :end 0}
   (kleene (match 1))                           [1 1]    {:status :accept}
   (kleene (match 1))                           [1 1 1]  {:status :accept}
   (kleene (match 1))                           [2]      {:status :reject}
@@ -57,7 +57,7 @@
 
   (chain (match 1) (match 2))                  []       {:status :pending}
   (chain (match 1) (match 2))                  [1]      {:status :pending}
-  (chain (match 1) (match 2))                  [1 2]    {:status :accept}
+  (chain (match 1) (match 2))                  [1 2]    {:status :accept, :end 1}
   (chain (match 1) (match 2))                  [1 2 3]  {:status :reject}
   (chain (match 1) (match 2))                  [3]      {:status :reject}
   (chain (match 1) (match 2))                  [1 3]    {:status :reject}

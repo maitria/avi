@@ -97,20 +97,20 @@
   (:value state))
 
 (defn- advance*
-  [nfa [pc thread-state] input consumed?]
+  [nfa [pc thread-state] input stream-mark consumed?]
   (let [[opcode a b] (get nfa pc)]
     (case opcode
       :split  (->> [a b]
-                (mapcat #(advance* nfa [(+ pc %) thread-state] input consumed?))
+                (mapcat #(advance* nfa [(+ pc %) thread-state] input stream-mark consumed?))
                 vec)
-      :goto   (recur nfa [(+ pc a) thread-state] input consumed?)
+      :goto   (recur nfa [(+ pc a) thread-state] input stream-mark consumed?)
       :match  (if consumed?
                 [[pc thread-state]]
                 (when (or (= a ::any) (= a input))
-                  (recur nfa [(inc pc) (assoc thread-state :end 0)] input true)))
-      :on     (recur nfa [(inc pc) (update-in thread-state [:value] a input)] input consumed?)
+                  (recur nfa [(inc pc) (assoc thread-state :end stream-mark)] input stream-mark true)))
+      :on     (recur nfa [(inc pc) (update-in thread-state [:value] a input)] input stream-mark consumed?)
       :prune  (when-not (a (:value thread-state))
-                (recur nfa [(inc pc) thread-state] input consumed?))
+                (recur nfa [(inc pc) thread-state] input stream-mark consumed?))
       nil     (when consumed?
                 [[pc thread-state]]))))
 
@@ -126,13 +126,13 @@
 (defn start
   [nfa]
   (make-state nfa
-              (->> (advance* nfa [0 nil] nil true)
+              (->> (advance* nfa [0 nil] nil nil true)
                 (into {}))))
 
 (defn advance
   [{:keys [threads] :as state} [stream-mark input]]
   (let [nfa (:nfa (meta state))
         threads' (->> threads
-                   (mapcat #(advance* nfa % input false))
+                   (mapcat #(advance* nfa % input stream-mark false))
                    (into {}))]
     (make-state nfa threads')))
