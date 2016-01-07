@@ -1,4 +1,33 @@
-(ns avi.nfa)
+(ns avi.nfa
+  "Regular expression matching using a virtual machine approach (see:
+  https://swtch.com/~rsc/regexp/regexp2.html).  Abstract: Regular expressions
+  are compiled into serieses of VM 'instructions' which are executed on a
+  pseudo-multithreaded VM.
+
+  Noteworthy aspects of this implementation:
+
+  * This implementation uses a 'lockstep' method.  For each input value, we
+    run every thread until it blocks needing more input, then suspend it.
+
+  * The following properties hold for all produced VM programs:
+
+    1. The only start state is instruction 0
+    2. There is no ':accept' opcode.  Accepting is implicit - it happens by
+       executing the instruction one past the end of the program.
+    3. The addresses used by ':goto' and ':split' are relative instruction
+       counts.
+
+    The result is that programs can be sensically concatenated (see `choice'),
+    and sophisticated programs can be built up from simple ones.
+
+  * Each VM 'instruction' is a vector where the first element, the opcode, is
+    a keyword.  Other elements are parameters.  See `advance*` for implemented
+    opcodes.
+
+  * Thread priorities are not implemented.
+
+  * We are pruning duplicate threads pretty late.  It might be possible to
+    produce programs that hang or overflow the stack.")
 
 (defn match
   [value]
