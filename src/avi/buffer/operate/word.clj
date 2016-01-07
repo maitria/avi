@@ -15,20 +15,12 @@
            (#{\_} ch))))
 
 (defn classify
-  [ch]
+  [ch big?]
   (cond
     (nil? ch)                   :nl
     (Character/isWhitespace ch) :ws
-    (word-char? ch)             :word
+    (word-char? ch)             (if big? :other :word)
     :else                       :other))
-
-(defn classify-big
-  [ch]
-  (case (classify ch)
-    :nl    :nl
-    :ws    :ws
-    :word  :other
-    :other :other))
 
 (def nl (nfa/match :nl))
 (def ws (nfa/choice (nfa/match :ws) nl))
@@ -59,24 +51,21 @@
 
 (defn next-word
   [{:keys [lines] :as buffer} {[_ {:keys [big? direction]}] :motion, :as operation} [i j]]
-  (let [classifier (if big?
-                     classify-big
-                     classify)]
-    (loop [[[i j] :as stream] ((if (= direction :backward)
-                                 l/backward
-                                 l/forward) [i j] (lines/line-length lines))
-           state (nfa/start first-of-next-word-nfa)]
-      (if-not stream
-        (if (= direction :backward)
-          [0 0]
-          (last-location buffer operation))
-        (let [stream-mark [i j]
-              input (classifier (get-in lines [i j]))
-              state' (nfa/advance state [stream-mark input])]
-          (assert (not (nfa/reject? state')))
-          (if (nfa/accept? state')
-            [i j]
-            (recur (next stream) state')))))))
+  (loop [[[i j] :as stream] ((if (= direction :backward)
+                               l/backward
+                               l/forward) [i j] (lines/line-length lines))
+         state (nfa/start first-of-next-word-nfa)]
+    (if-not stream
+      (if (= direction :backward)
+        [0 0]
+        (last-location buffer operation))
+      (let [stream-mark [i j]
+            input (classify (get-in lines [i j]) big?)
+            state' (nfa/advance state [stream-mark input])]
+        (assert (not (nfa/reject? state')))
+        (if (nfa/accept? state')
+          [i j]
+          (recur (next stream) state'))))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{:keys [lines point] :as buffer} {:keys [operator] n :count :as operation}]
