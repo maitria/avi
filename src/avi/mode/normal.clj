@@ -48,6 +48,10 @@
     "w"    {:span :exclusive,
             :motion [:word {:direction :forward
                             :position-in-word :start}]}
+    "E"    {:span :inclusive
+            :motion [:word {:direction :forward
+                            :position-in-word :end
+                            :big? true}]}
     "F<.>" {:span :exclusive,
             :motion [:move-to-char {:direction -1}]}
     "G"    {:span :linewise,

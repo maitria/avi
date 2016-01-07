@@ -531,3 +531,10 @@
   "hello\nworld"  "e"    [0 4]
   "  \n\nwat"     "e"    [2 2] ; `e` does not stop on zero-length lines
   "  \n hi"       "e"    [1 2])
+
+(tabular
+  (facts "about `E`"
+    (editor :editing ?content :after ?after) => (point ?pos))
+
+  ?content        ?after ?pos
+  "he//o world"   "E"    [0 4])
