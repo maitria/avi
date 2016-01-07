@@ -86,12 +86,12 @@
          (prune (match 2) #(= % 1)))           [2]      {:status :accept, :end 0}
 
   (lookahead (match 1))                        []       {:status :pending}
-  (lookahead (match 1))                        [1]      {:status :accept}
+  (lookahead (match 1))                        [1]      {:status :accept, :end nil}
   (lookahead (match 1))                        [2]      {:status :reject}
 
   (chain (match 1) (lookahead (match 2)))      []       {:status :pending}
   (chain (match 1) (lookahead (match 2)))      [1]      {:status :pending}
-  (chain (match 1) (lookahead (match 2)))      [1 2]    {:status :accept}
+  (chain (match 1) (lookahead (match 2)))      [1 2]    {:status :accept, :end 0}
   (chain (match 1) (lookahead (match 2)))      [1 3]    {:status :reject}
   
   ;; NFAs reducing values

@@ -66,8 +66,10 @@
   (reduce into [] nfas))
 
 (defn lookahead
-  [a]
-  a)
+  [nfa]
+  (vec (concat [[:noend +1]]
+               nfa
+               [[:noend -1]])))
 
 (defn on
   [nfa f]
@@ -107,10 +109,14 @@
       :match  (if consumed?
                 [[pc thread-state]]
                 (when (or (= a ::any) (= a input))
-                  (recur nfa [(inc pc) (assoc thread-state :end stream-mark)] input stream-mark true)))
+                  (let [new-thread-state (cond-> thread-state
+                                           (zero? (:noend thread-state))
+                                           (assoc :end stream-mark))]
+                    (recur nfa [(inc pc) new-thread-state] input stream-mark true))))
       :on     (recur nfa [(inc pc) (update-in thread-state [:value] a input)] input stream-mark consumed?)
       :prune  (when-not (a (:value thread-state))
                 (recur nfa [(inc pc) thread-state] input stream-mark consumed?))
+      :noend  (recur nfa [(inc pc) (update-in thread-state [:noend] + a)] input stream-mark consumed?)
       nil     (when consumed?
                 [[pc thread-state]]))))
 
@@ -126,7 +132,7 @@
 (defn start
   [nfa]
   (make-state nfa
-              (->> (advance* nfa [0 {:value nil, :end nil}] nil nil true)
+              (->> (advance* nfa [0 {:value nil, :noend 0, :end nil}] nil nil true)
                 (into {}))))
 
 (defn advance
