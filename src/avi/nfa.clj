@@ -107,7 +107,7 @@
       :match  (if consumed?
                 [[pc thread-state]]
                 (when (or (= a ::any) (= a input))
-                  (recur nfa [(inc pc) thread-state] input true)))
+                  (recur nfa [(inc pc) (assoc thread-state :end 0)] input true)))
       :on     (recur nfa [(inc pc) (update-in thread-state [:value] a input)] input consumed?)
       :prune  (when-not (a (:value thread-state))
                 (recur nfa [(inc pc) thread-state] input consumed?))
@@ -117,9 +117,10 @@
 (defn- make-state
   [nfa threads]
   (with-meta
-    {:threads threads
-     :status (characterize nfa threads)
-     :value (get-in threads [(count nfa) :value])}
+    (merge
+      (get threads (count nfa))
+      {:threads threads
+       :status (characterize nfa threads)})
     {:nfa nfa}))
 
 (defn start

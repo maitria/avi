@@ -18,7 +18,7 @@
 
   ?nfa                                         ?inputs  ?result
   (match 1)                                    []       {:status :pending}
-  (match 1)                                    [1]      {:status :accept}
+  (match 1)                                    [1]      {:status :accept, :end 0}
   (match 1)                                    [2]      {:status :reject}
   (match 1)                                    [1 2]    {:status :reject}
 
