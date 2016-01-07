@@ -40,7 +40,9 @@
             (nfa/chain word+ (nfa/choice
                                (nfa/chain (nfa/kleene ws) other)
                                (nfa/chain ws+ word))))
-   :last (nfa/chain word+ (nfa/lookahead (nfa/choice ws other)))})
+   :last (nfa/choice
+           (nfa/chain word+ (nfa/lookahead (nfa/choice ws other)))
+           (nfa/chain ws+ word+ (nfa/lookahead (nfa/choice ws other))))})
 
 (defn last-possible
   [{:keys [lines]} {:keys [operator] [_ {:keys [direction]}] :motion}]
