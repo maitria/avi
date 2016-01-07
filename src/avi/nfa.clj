@@ -97,22 +97,22 @@
   (:value state))
 
 (defn- advance*
-  [nfa [pc value] input consumed?]
+  [nfa [pc thread-state] input consumed?]
   (let [[opcode a b] (get nfa pc)]
     (case opcode
       :split  (->> [a b]
-                (mapcat #(advance* nfa [(+ pc %) value] input consumed?))
+                (mapcat #(advance* nfa [(+ pc %) thread-state] input consumed?))
                 vec)
-      :goto   (recur nfa [(+ pc a) value] input consumed?)
+      :goto   (recur nfa [(+ pc a) thread-state] input consumed?)
       :match  (if consumed?
-                [[pc value]]
+                [[pc thread-state]]
                 (when (or (= a ::any) (= a input))
-                  (recur nfa [(inc pc) value] input true)))
-      :on     (recur nfa [(inc pc) (update-in value [:value] a input)] input consumed?)
-      :prune  (when-not (a (:value value))
-                (recur nfa [(inc pc) value] input consumed?))
+                  (recur nfa [(inc pc) thread-state] input true)))
+      :on     (recur nfa [(inc pc) (update-in thread-state [:value] a input)] input consumed?)
+      :prune  (when-not (a (:value thread-state))
+                (recur nfa [(inc pc) thread-state] input consumed?))
       nil     (when consumed?
-                [[pc value]]))))
+                [[pc thread-state]]))))
 
 (defn- make-state
   [nfa threads]
