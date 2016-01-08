@@ -505,8 +505,7 @@
   "hello world"  "W"    [0 6]
   "hel)) wordl"  "W"    [0 6]
   "      eorld"  "W"    [0 6]
-  "he??o\n\nwha" "W"    [1 0]
-  )
+  "he??o\n\nwha" "W"    [1 0])
 
 (tabular
   (facts "about `ge` and `gE`"

@@ -93,13 +93,18 @@
       (last-possible buffer operation))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
-  [{:keys [lines point] :as buffer} {:keys [operator] n :count :as operation}]
+  [{:keys [lines point] :as buffer} {:keys [operator]
+                                     [_ {:keys [weird-delete-clip?]}] :motion
+                                     n :count
+                                     :as operation}]
   (let [point' (n-times point (or n 1) (partial move-word buffer operation))]
     (cond
       (= point point')
       nil
 
-      (and (not= operator :move-point)
+      ; `w` doesn't delete past end-of-line
+      (and weird-delete-clip?
+           (not= operator :move-point)
            (not= (first point) (first point')))
       [(first point) (count (get lines (first point)))]
 

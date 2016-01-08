@@ -53,7 +53,8 @@
     "t<.>" {:span :inclusive,
             :motion [:move-to-char {:offset -1}]}
     "w"    {:span :exclusive,
-            :motion [:word {:direction :forward
+            :motion [:word {:weird-delete-clip? true
+                            :direction :forward
                             :position-in-word :start
                             :empty-lines? true}]}
     "E"    {:span :inclusive
