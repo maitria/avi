@@ -24,7 +24,7 @@
     "b"    {:span :exclusive
             :motion [:word {:direction :backward
                             :position-in-word :start
-                            :zero-length-line-words? true}]}
+                            :empty-lines? true}]}
     "e"    {:span :inclusive
             :motion [:word {:direction :forward
                             :position-in-word :end}]}
@@ -51,11 +51,13 @@
             :motion [:move-to-char {:offset -1}]}
     "w"    {:span :exclusive,
             :motion [:word {:direction :forward
-                            :position-in-word :start}]}
+                            :position-in-word :start
+                            :empty-lines? true}]}
     "E"    {:span :inclusive
             :motion [:word {:direction :forward
                             :position-in-word :end
-                            :big? true}]}
+                            :big? true
+                            :empty-lines? false}]}
     "F<.>" {:span :exclusive,
             :motion [:move-to-char {:direction -1}]}
     "G"    {:span :linewise,

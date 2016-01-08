@@ -32,7 +32,6 @@
 
 (def nfas
   {:first (nfa/choice
-            (nfa/chain (nfa/kleene nfa/any) nl nl)
             (nfa/chain ws+ (nfa/choice word other))
             (nfa/chain other+ (nfa/choice
                                 (nfa/chain (nfa/kleene ws) word)
@@ -44,7 +43,7 @@
            (nfa/chain nfa/any (nfa/maybe ws+) word+ (nfa/lookahead (nfa/choice ws other)))
            (nfa/chain nfa/any (nfa/maybe ws+) other+ (nfa/lookahead (nfa/choice ws word))))})
 
-(defn accept-zero-length-lines
+(defn stop-at-empty-lines
   [nfa dir]
   (nfa/choice
     (nfa/chain (nfa/kleene nfa/any) nl (cond-> nl
@@ -75,13 +74,13 @@
           (recur (next stream) state'))))))
 
 (defn next-word
-  [{:keys [lines] :as buffer} {[_ {:keys [zero-length-line-words? position-in-word big? direction]}] :motion, :as operation} [i j]]
+  [{:keys [lines] :as buffer} {[_ {:keys [empty-lines? position-in-word big? direction]}] :motion, :as operation} [i j]]
   (let [nfa-type (case [position-in-word direction]
                    ([:start :forward] [:end :backward]) :first
                    ([:end :forward] [:start :backward]) :last)
         nfa (cond-> (nfas nfa-type)
-              zero-length-line-words?
-              (accept-zero-length-lines direction))
+              empty-lines?
+              (stop-at-empty-lines direction))
 
         stream-generator (if (= direction :backward)
                            l/backward
