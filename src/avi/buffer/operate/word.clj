@@ -77,7 +77,7 @@
           (:end state')
           (recur (next stream) state'))))))
 
-(defn next-word
+(defn move-word
   [{:keys [lines] :as buffer} {[_ {:keys [empty-lines? position-in-word big? direction]}] :motion, :as operation} [i j]]
   (let [nfa-type (case [position-in-word direction]
                    ([:start :forward] [:end :backward]) :first
@@ -94,7 +94,7 @@
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
   [{:keys [lines point] :as buffer} {:keys [operator] n :count :as operation}]
-  (let [point' (n-times point (or n 1) (partial next-word buffer operation))]
+  (let [point' (n-times point (or n 1) (partial move-word buffer operation))]
     (cond
       (= point point')
       nil
