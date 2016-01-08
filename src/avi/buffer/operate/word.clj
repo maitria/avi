@@ -43,6 +43,10 @@
            (nfa/chain nfa/any (nfa/maybe ws+) word+ (nfa/lookahead (nfa/choice ws other)))
            (nfa/chain nfa/any (nfa/maybe ws+) other+ (nfa/lookahead (nfa/choice ws word))))})
 
+(def generators
+  {:forward l/forward
+   :backward l/backward})
+
 (defn stop-at-empty-lines
   [nfa dir]
   (nfa/choice
@@ -81,10 +85,7 @@
         nfa (cond-> (nfas nfa-type)
               empty-lines?
               (stop-at-empty-lines direction))
-
-        stream-generator (if (= direction :backward)
-                           l/backward
-                           l/forward)
+        stream-generator (generators direction)
         stream (stream-generator [i j] (lines/line-length lines))
         classify #(classify (get-in lines %) big?)]
     (or
