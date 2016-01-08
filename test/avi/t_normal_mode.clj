@@ -504,7 +504,9 @@
   ?content       ?after ?pos
   "hello world"  "W"    [0 6]
   "hel)) wordl"  "W"    [0 6]
-  "      eorld"  "W"    [0 6])
+  "      eorld"  "W"    [0 6]
+  "he??o\n\nwha" "W"    [1 0]
+  )
 
 (tabular
   (facts "about `ge` and `gE`"
@@ -515,7 +517,9 @@
   "hello world" "$5ge" [0 0]
   "hel//  "     "$gE"  [0 4]
   "(hel/ ??rld" "$gE"  [0 4]
-  "(hel/ ??rld" "$5gE" [0 0])
+  "(hel/ ??rld" "$5gE" [0 0]
+  "hello\n\nfo" "Gge"  [1 0]
+  "hello\n\nfo" "GgE"  [1 0])
 
 (tabular
   (facts "about `e`"

@@ -27,18 +27,21 @@
                             :empty-lines? true}]}
     "e"    {:span :inclusive
             :motion [:word {:direction :forward
-                            :position-in-word :end}]}
+                            :position-in-word :end
+                            :empty-lines? false}]}
     "f<.>" {:span :inclusive,
             :motion [:move-to-char]}
     "ge"   {:span :inclusive,
             :motion [:word {:direction :backward
-                            :position-in-word :end}]}
+                            :position-in-word :end
+                            :empty-lines? true}]}
     "gg"   {:span :linewise,
             :motion [:goto-line {:default-line 0}]}
     "gE"   {:span :inclusive,
             :motion [:word {:direction :backward
                             :position-in-word :end
-                            :big? true}]}
+                            :big? true
+                            :empty-lines? true}]}
     "h"    {:span :exclusive,
             :motion [:left]}
     "j"    {:span :linewise,
@@ -76,7 +79,8 @@
     "W"    {:span :exclusive,
             :motion [:word {:direction :forward
                             :position-in-word :start
-                            :big? true}]}})
+                            :big? true
+                            :empty-lines? true}]}})
 
 (defn motion-handler
   [editor spec]
