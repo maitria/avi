@@ -67,11 +67,14 @@
           (recur (next stream) state'))))))
 
 (defn next-word
-  [{:keys [lines] :as buffer} {[_ {:keys [position-in-word big? direction]}] :motion, :as operation} [i j]]
+  [{:keys [lines] :as buffer} {[_ {:keys [zero-length-line-words? position-in-word big? direction]}] :motion, :as operation} [i j]]
   (let [nfa-type (case [position-in-word direction]
                    ([:start :forward] [:end :backward]) :first
                    ([:end :forward] [:start :backward]) :last)
-        nfa (nfas nfa-type)
+        nfa (cond-> (nfas nfa-type)
+              zero-length-line-words?
+              (nfa/choice (nfa/chain (nfa/kleene nfa/any) nl (nfa/lookahead nl))))
+
         stream-generator (if (= direction :backward)
                            l/backward
                            l/forward)

@@ -552,9 +552,10 @@
   (facts "about `b`"
     (editor :editing ?content :after ?after) => (point ?pos))
 
-  ?content        ?after  ?pos
-  "hello world"   "$b"    [0 6]
-  "a hello world" "$bb"   [0 2]
-  "a hello world" "$2b"   [0 2]
+  ?content         ?after ?pos
+  "hello world"    "$b"   [0 6]
+  "a hello world"  "$bb"  [0 2]
+  "a hello world"  "$2b"  [0 2]
   "a hello\nworld" "G$b"  [1 0]
-  "a hello\nworld" "G$2b" [0 2])
+  "a hello\nworld" "G$2b" [0 2]
+  "a\n\nwhat"      "Gb"   [1 0])

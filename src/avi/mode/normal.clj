@@ -23,7 +23,8 @@
             :motion [:goto [:current :end-of-line]]}
     "b"    {:span :exclusive
             :motion [:word {:direction :backward
-                            :position-in-word :start}]}
+                            :position-in-word :start
+                            :zero-length-line-words? true}]}
     "e"    {:span :inclusive
             :motion [:word {:direction :forward
                             :position-in-word :end}]}
