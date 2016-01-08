@@ -44,6 +44,14 @@
            (nfa/chain nfa/any (nfa/maybe ws+) word+ (nfa/lookahead (nfa/choice ws other)))
            (nfa/chain nfa/any (nfa/maybe ws+) other+ (nfa/lookahead (nfa/choice ws word))))})
 
+(defn accept-zero-length-lines
+  [nfa dir]
+  (nfa/choice
+    (nfa/chain (nfa/kleene nfa/any) nl (cond-> nl
+                                         (= dir :backward)
+                                         nfa/lookahead))
+    nfa))
+
 (defn last-possible
   [{:keys [lines]} {:keys [operator] [_ {:keys [direction]}] :motion}]
   (if (= direction :backward)
@@ -73,7 +81,7 @@
                    ([:end :forward] [:start :backward]) :last)
         nfa (cond-> (nfas nfa-type)
               zero-length-line-words?
-              (nfa/choice (nfa/chain (nfa/kleene nfa/any) nl (nfa/lookahead nl))))
+              (accept-zero-length-lines direction))
 
         stream-generator (if (= direction :backward)
                            l/backward
