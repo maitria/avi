@@ -177,10 +177,3 @@
   [expected-size]
   (fn [{{{:keys [size]} :viewport} :editor}]
     (checking/extended-= size expected-size)))
-
-(defmacro facts-about
-  [description & args]
-  `(tabular
-     (facts ~description
-       (editor :editing ~'?content :after ~'?after) => (point ~'?point))
-     ~@args))
