@@ -7,10 +7,14 @@
     after   ?after
     point   ?point})
 
+(defn- table-headings
+  [spec]
+  (map tabular-quality-names (take-while tabular-quality-names spec)))
+
 (defmacro facts-about
   [description & spec]
   `(tabular
      (facts ~description
        (editor :editing ~'?content :after ~'?after) => (point ~'?point))
-     ~@(map tabular-quality-names (take-while tabular-quality-names spec))
+     ~@(table-headings spec)
      ~@(drop-while tabular-quality-names spec)))
