@@ -15,10 +15,14 @@
   [spec]
   (drop-while tabular-quality-names spec))
 
+(defn- editor-invocation
+  [spec]
+  `(editor :editing ~'?content :after ~'?after))
+
 (defmacro facts-about
   [description & spec]
   `(tabular
      (facts ~description
-       (editor :editing ~'?content :after ~'?after) => (point ~'?point))
+       ~(editor-invocation spec) => (point ~'?point))
      ~@(table-headings spec)
      ~@(table-data spec)))
