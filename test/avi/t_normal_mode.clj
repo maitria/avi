@@ -551,10 +551,14 @@
   "  \n\nw?t"     "E"    [2 2]
   "  \n hi"       "E"    [1 2])
 
-(tabular
-  (facts "about `b`"
-    (editor :editing ?content :after ?after) => (point ?pos))
+(defmacro facts-about
+  [description & args]
+  `(tabular
+     (facts ~description
+       (editor :editing ~'?content :after ~'?after) => (point ~'?pos))
+     ~@args))
 
+(facts-about "normal-mode `b`"
   ?content         ?after ?pos
   "hello world"    "$b"   [0 6]
   "a hello world"  "$bb"  [0 2]
