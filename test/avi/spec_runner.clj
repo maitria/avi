@@ -3,7 +3,7 @@
   (:require [avi.test-helpers :refer :all]))
 
 (def ^:private tabular-quality-names
-  '{content ?content
+  '{editing ?editing
     after   ?after
     point   ?point})
 
@@ -23,7 +23,7 @@
   [spec]
   (let [qualities (into #{} (qualities spec))]
     (cond-> `(editor)
-      (qualities 'content) (concat [:editing (tabular-quality-names 'content)])
+      (qualities 'editing) (concat [:editing (tabular-quality-names 'editing)])
       (qualities 'after)   (concat [:after   (tabular-quality-names 'after)]))))
 
 (defmacro facts-about
