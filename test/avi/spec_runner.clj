@@ -21,7 +21,10 @@
 
 (defn- editor-invocation
   [spec]
-  `(editor :editing ~'?content :after ~'?after))
+  (let [qualities (into #{} (qualities spec))]
+    (cond-> `(editor)
+      (qualities 'content) (concat [:editing (tabular-quality-names 'content)])
+      (qualities 'after)   (concat [:after   (tabular-quality-names 'after)]))))
 
 (defmacro facts-about
   [description & spec]
