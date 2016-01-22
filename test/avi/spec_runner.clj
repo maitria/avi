@@ -7,9 +7,13 @@
     after   ?after
     point   ?point})
 
+(defn- qualities
+  [spec]
+  (take-while tabular-quality-names spec))
+
 (defn- table-headings
   [spec]
-  (map tabular-quality-names (take-while tabular-quality-names spec)))
+  (map tabular-quality-names (qualities spec)))
 
 (defn- table-data
   [spec]
