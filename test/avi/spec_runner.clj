@@ -8,9 +8,9 @@
     point   ?point})
 
 (defmacro facts-about
-  [description columns & args]
+  [description columns & tests]
   `(tabular
      (facts ~description
        (editor :editing ~'?content :after ~'?after) => (point ~'?point))
      ~@(map column-names columns)
-     ~@args))
+     ~@tests))
