@@ -1,6 +1,7 @@
 (ns avi.test-helpers
   (:import [java.io FileNotFoundException])
-  (:require [avi.color :as color]
+  (:require [midje.sweet :refer :all]
+            [avi.color :as color]
             [avi.core]
             [avi.editor :as e]
             [avi.events :as ev]
@@ -176,3 +177,10 @@
   [expected-size]
   (fn [{{{:keys [size]} :viewport} :editor}]
     (checking/extended-= size expected-size)))
+
+(defmacro facts-about
+  [description & args]
+  `(tabular
+     (facts ~description
+       (editor :editing ~'?content :after ~'?after) => (point ~'?pos))
+     ~@args))
