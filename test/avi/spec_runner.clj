@@ -8,9 +8,9 @@
     point   ?point})
 
 (defmacro facts-about
-  [description qualities & tests]
+  [description & tests]
   `(tabular
      (facts ~description
        (editor :editing ~'?content :after ~'?after) => (point ~'?point))
-     ~@(map tabular-quality-names qualities)
-     ~@tests))
+     ~@(map tabular-quality-names (take-while tabular-quality-names tests))
+     ~@(drop-while tabular-quality-names tests)))
