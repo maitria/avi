@@ -2,7 +2,7 @@
   (:require [midje.sweet :refer :all])
   (:require [avi.test-helpers :refer :all]))
 
-(def ^:private column-names
+(def ^:private tabular-quality-names
   '{content ?content
     after   ?after
     point   ?point})
@@ -12,5 +12,5 @@
   `(tabular
      (facts ~description
        (editor :editing ~'?content :after ~'?after) => (point ~'?point))
-     ~@(map column-names qualities)
+     ~@(map tabular-quality-names qualities)
      ~@tests))
