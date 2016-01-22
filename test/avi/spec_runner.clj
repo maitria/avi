@@ -11,10 +11,14 @@
   [spec]
   (map tabular-quality-names (take-while tabular-quality-names spec)))
 
+(defn- table-data
+  [spec]
+  (drop-while tabular-quality-names spec))
+
 (defmacro facts-about
   [description & spec]
   `(tabular
      (facts ~description
        (editor :editing ~'?content :after ~'?after) => (point ~'?point))
      ~@(table-headings spec)
-     ~@(drop-while tabular-quality-names spec)))
+     ~@(table-data spec)))
