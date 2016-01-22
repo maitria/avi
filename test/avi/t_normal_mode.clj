@@ -552,7 +552,7 @@
   "  \n hi"       "E"    [1 2])
 
 (facts-about "normal-mode `b`"
-  ?content         ?after ?pos
+  ?content         ?after ?point
   "hello world"    "$b"   [0 6]
   "a hello world"  "$bb"  [0 2]
   "a hello world"  "$2b"  [0 2]

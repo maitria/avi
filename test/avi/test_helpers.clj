@@ -182,5 +182,5 @@
   [description & args]
   `(tabular
      (facts ~description
-       (editor :editing ~'?content :after ~'?after) => (point ~'?pos))
+       (editor :editing ~'?content :after ~'?after) => (point ~'?point))
      ~@args))
