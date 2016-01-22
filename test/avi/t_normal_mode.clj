@@ -1,5 +1,6 @@
 (ns avi.t-normal-mode
   (:require [midje.sweet :refer :all] 
+            [avi.spec-runner :refer :all]
             [avi.test-helpers :refer :all]))
 
 (facts "regarding repeating commands"
