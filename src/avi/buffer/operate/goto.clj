@@ -57,14 +57,14 @@
     :else       (f v nil)))
 
 (defmethod resolve/resolve-motion :goto
-  [{:keys [lines] :as buffer} {[_ [i j]] :motion}]
-  (if-let [new-i (some->> (absolutize i #(magic-row-value buffer %1 %2))
+  [{:keys [lines] [i j] :point :as buffer} {[_ [goto-i goto-j]] :motion}]
+  (if-let [new-i (some->> (absolutize goto-i #(magic-row-value buffer %1 %2))
                    (clamp-point-row buffer))]
-    (if-not j
-      [new-i]
-      (let [j (absolutize j #(magic-column-value buffer %1 new-i %2))]
-        (if j
-          [new-i j])))))
+    (if-not goto-j
+      [[i j] [new-i]]
+      (let [new-j (absolutize goto-j #(magic-column-value buffer %1 new-i %2))]
+        (if new-j
+          [[i j] [new-i new-j]])))))
 
 (defmethod resolve/resolve-motion :down
   [{:keys [lines] [i] :point :as buffer} {:keys [count]}]

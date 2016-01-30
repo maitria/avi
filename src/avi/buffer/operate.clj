@@ -59,18 +59,29 @@
     [[(dec si) (count (get lines (dec si)))]
      [ei (count (get lines ei))]]))
 
+(defn resolve-motion
+  [buffer operation]
+  (when-let [result (resolve/resolve-motion buffer operation)]
+    (if (vector? (first result))
+      result
+      [(:point buffer) result])))
+
+(defn fix-last-explicit-j
+  [[start [ei ej]] {:keys [last-explicit-j]}]
+  [start [ei (or ej last-explicit-j)]])
+
 (defn resolve-range
   [{:keys [lines point last-explicit-j] :as buffer} {:keys [span] :as operation}]
-  (when-let [[i j :as pos] (resolve/resolve-motion buffer operation)]
-    (let [j (or j last-explicit-j)]
-      (-> [point [i j]]
-        sort
-        (adjust-for-span lines span)))))
+  (when-let [range (resolve-motion buffer operation)]
+    (-> range
+      (fix-last-explicit-j buffer)
+      sort
+      (adjust-for-span lines span))))
 
 (defmethod operate :move-point
   [{:keys [last-explicit-j] :as buffer} operation]
   (+> buffer
-    (let [[i j :as pos] (resolve/resolve-motion buffer operation)
+    (let [[i j :as pos] (second (resolve-motion buffer operation))
           set-last-explicit? (not (nil? j))
           j (or j last-explicit-j)]
       (if-not pos
