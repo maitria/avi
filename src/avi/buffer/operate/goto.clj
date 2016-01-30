@@ -67,17 +67,17 @@
           [[i j] [new-i new-j]])))))
 
 (defmethod resolve/resolve-motion :down
-  [{:keys [lines] [i] :point :as buffer} {:keys [count]}]
+  [{:keys [lines] [i j] :point :as buffer} {:keys [count]}]
   (let [new-i (+ i (or count 1))
         clamped-i (clamp-point-row buffer new-i)]
     (if (get lines (inc i))
-      [clamped-i])))
+      [[i j] [clamped-i]])))
 
 (defmethod resolve/resolve-motion :up
-  [{[i] :point :as buffer} {:keys [count]}]
+  [{[i j] :point :as buffer} {:keys [count]}]
   (let [new-i (clamp-point-row buffer (- i (or count 1)))]
     (if-not (neg? (dec i))
-      [new-i])))
+      [[i j] [new-i]])))
 
 (defmethod resolve/resolve-motion :right
   [{:keys [lines] [i j] :point} {:keys [operator] n :count}]
@@ -87,16 +87,16 @@
                 dec)
         column (max 0 (min column max-j))]
     (if-not (= j column)
-      [i column])))
+      [[i j] [i column]])))
 
 (defmethod resolve/resolve-motion :left
   [{:keys [lines] [i j] :point} {n :count}]
   (let [column (max 0 (- j (or n 1)))]
     (if-not (= j column)
-      [i column])))
+      [[i j] [i column]])))
 
 (defmethod resolve/resolve-motion :goto-line
-  [{:keys [lines viewport-top viewport-height] :as buffer}
+  [{:keys [lines viewport-top viewport-height] [si sj] :point :as buffer}
    {count-register :count,
     [_ {:keys [from default-line multiplier]
         :or {default-line 0
@@ -117,7 +117,7 @@
                                (+ i middle))
             i)
         i (clamp-point-row buffer i)]
-    [i (first-non-blank buffer i)]))
+    [[si sj] [i (first-non-blank buffer i)]]))
 
 (defmethod resolve/resolve-motion :move-to-char
   [{[i j] :point :as buffer} {ch :char
@@ -125,11 +125,11 @@
                             [_ {:keys [direction offset]
                                 :or {direction +1
                                      offset 0}}] :motion}]
-  (if-let [j (n-times
-               j
-               (or n 1)
-               (fn [j]
-                 (if j
-                   (some-> (next-char-index buffer [i j] direction ch)
-                      (+ offset)))))]
-    [i j]))
+  (if-let [new-j (n-times
+                   j
+                   (or n 1)
+                   (fn [j]
+                     (if j
+                       (some-> (next-char-index buffer [i j] direction ch)
+                          (+ offset)))))]
+    [[i j] [i new-j]]))
