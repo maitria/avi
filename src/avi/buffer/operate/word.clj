@@ -92,11 +92,12 @@
       (end-of-eager-match nfa stream classify)
       (last-possible buffer operation))))
 
-(s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
-  [{:keys [lines point] :as buffer} {:keys [operator]
-                                     [_ {:keys [weird-delete-clip?]}] :motion
-                                     n :count
-                                     :as operation}]
+(s/defmethod resolve/resolve-motion :word :- (s/maybe [l/Location])
+  [{:keys [lines point] :as buffer}
+   {:keys [operator]
+    [_ {:keys [weird-delete-clip?]}] :motion
+    n :count
+    :as operation}]
   (let [point' (n-times point (or n 1) (partial move-word buffer operation))]
     (cond
       (= point point')
@@ -106,7 +107,8 @@
       (and weird-delete-clip?
            (not= operator :move-point)
            (not= (first point) (first point')))
-      [(first point) (count (get lines (first point)))]
+      [point
+       [(first point) (count (get lines (first point)))]]
 
       :else
-      point')))
+      [point point'])))
