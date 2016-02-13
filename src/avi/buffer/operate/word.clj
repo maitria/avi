@@ -41,7 +41,9 @@
                                (nfa/chain ws+ word))))
    :last (nfa/choice
            (nfa/chain nfa/any (nfa/maybe ws+) word+ (nfa/lookahead (nfa/choice ws other)))
-           (nfa/chain nfa/any (nfa/maybe ws+) other+ (nfa/lookahead (nfa/choice ws word))))})
+           (nfa/chain nfa/any (nfa/maybe ws+) other+ (nfa/lookahead (nfa/choice ws word))))
+
+   :end-of-word (nfa/chain (nfa/kleene (nfa/match :word)) (nfa/lookahead (nfa/chain ws)))})
 
 (def generators
   {:forward l/forward
@@ -79,9 +81,11 @@
 
 (defn move-word
   [{:keys [lines] :as buffer} {[_ {:keys [empty-lines? position-in-word big? direction]}] :motion, :as operation} [i j]]
-  (let [nfa-type (case [position-in-word direction]
+  (let [
+        nfa-type (case [position-in-word direction]
                    ([:start :forward] [:end :backward]) :first
-                   ([:end :forward] [:start :backward]) :last)
+                   ([:end :forward] [:start :backward]) :last
+                   ([:anywhere :forward]) :end-of-word)
         nfa (cond-> (nfas nfa-type)
               empty-lines?
               (stop-at-empty-lines direction))
@@ -113,10 +117,9 @@
         :else
         [point point'])))
 
+(def end-of-word-motion {:motion [:in-word {:position-in-word :anywhere
+                                            :direction :forward}]})
+
 (s/defmethod resolve/resolve-motion :in-word :- (s/maybe [l/Location])
-  [{:keys [lines point] :as buffer}
-   {:keys [operator]
-    [_ {:keys [weird-delete-clip? type]}] :motion
-    n :count
-    :as operation}]
-  [point [0 4]])
+  [{:keys [lines point] :as buffer} _]
+  [point (move-word buffer end-of-word-motion point)])
