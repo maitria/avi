@@ -85,6 +85,7 @@
         nfa-type (case [position-in-word direction]
                    ([:start :forward] [:end :backward]) :first
                    ([:end :forward] [:start :backward]) :last
+                   ([:anywhere :backward]) :end-of-word
                    ([:anywhere :forward]) :end-of-word)
         nfa (cond-> (nfas nfa-type)
               empty-lines?
@@ -120,6 +121,10 @@
 (def end-of-word-motion {:motion [:in-word {:position-in-word :anywhere
                                             :direction :forward}]})
 
+(def start-of-word-motion {:motion [:in-word {:position-in-word :anywhere
+                                              :direction :backward}]})
+
 (s/defmethod resolve/resolve-motion :in-word :- (s/maybe [l/Location])
   [{:keys [lines point] :as buffer} _]
-  [point (move-word buffer end-of-word-motion point)])
+  [(move-word buffer start-of-word-motion point)
+   (move-word buffer end-of-word-motion point)])
