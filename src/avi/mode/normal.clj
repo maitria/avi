@@ -45,8 +45,7 @@
     "h"    {:span :exclusive,
             :motion [:left]}
     "iw"   {:span :inclusive,
-            :motion [:word {:direction :forward
-                            :position-in-word :end}]}
+            :motion [:in-word]}
     "j"    {:span :linewise,
             :motion [:down]}
     "k"    {:span :linewise,

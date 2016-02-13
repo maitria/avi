@@ -569,4 +569,6 @@
     (editor :editing ?content :after ?after) => (contents ?content-after))
 
   ?content        ?after  ?pos  ?content-after
-  "hello world"   "diw"   [0 0] " world")
+  "hello world"   "diw"   [0 0] " world"
+  ;"hello world"   "ldiw"   [0 0] " world"
+  )
