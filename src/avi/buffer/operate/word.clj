@@ -81,8 +81,7 @@
 
 (defn move-word
   [{:keys [lines] :as buffer} {[_ {:keys [empty-lines? position-in-word big? direction]}] :motion, :as operation} [i j]]
-  (let [
-        nfa-type (case [position-in-word direction]
+  (let [nfa-type (case [position-in-word direction]
                    ([:start :forward] [:end :backward]) :first
                    ([:end :forward] [:start :backward]) :last
                    ([:anywhere :backward]) :end-of-word
@@ -103,20 +102,20 @@
     [_ {:keys [weird-delete-clip? type]}] :motion
     n :count
     :as operation}]
-    (let [point' (n-times point (or n 1) (partial move-word buffer operation))]
-      (cond
-        (= point point')
-        nil
+  (let [point' (n-times point (or n 1) (partial move-word buffer operation))]
+    (cond
+      (= point point')
+      nil
 
-        ; `w` doesn't delete past end-of-line
-        (and weird-delete-clip?
-             (not= operator :move-point)
-             (not= (first point) (first point')))
-        [point
-         [(first point) (count (get lines (first point)))]]
+      ; `w` doesn't delete past end-of-line
+      (and weird-delete-clip?
+           (not= operator :move-point)
+           (not= (first point) (first point')))
+      [point
+       [(first point) (count (get lines (first point)))]]
 
-        :else
-        [point point'])))
+      :else
+      [point point'])))
 
 (def end-of-word-motion {:motion [:in-word {:position-in-word :anywhere
                                             :direction :forward}]})

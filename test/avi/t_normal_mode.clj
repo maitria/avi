@@ -570,6 +570,5 @@
 
   ?content        ?after  ?pos  ?content-after
   "hello world"   "diw"   [0 0] " world"
-  "hello world"   "ldiw"   [0 0] " world"
-  "hello world"   "wdiw"   [0 5] "hello "
-  )
+  "hello world"   "ldiw"  [0 0] " world"
+  "hello world"   "wdiw"  [0 5] "hello ")
