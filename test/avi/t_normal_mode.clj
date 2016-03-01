@@ -562,3 +562,13 @@
   "a hello\nworld" "G$b"  [1 0]
   "a hello\nworld" "G$2b" [0 2]
   "a\n\nwhat"      "Gb"   [1 0])
+
+(tabular
+  (facts "about `iw`"
+    (editor :editing ?content :after ?after) => (point ?pos)
+    (editor :editing ?content :after ?after) => (contents ?content-after))
+
+  ?content        ?after  ?pos  ?content-after
+  "hello world"   "diw"   [0 0] " world"
+  "hello world"   "ldiw"  [0 0] " world"
+  "hello world"   "wdiw"  [0 5] "hello ")

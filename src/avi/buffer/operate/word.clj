@@ -41,7 +41,9 @@
                                (nfa/chain ws+ word))))
    :last (nfa/choice
            (nfa/chain nfa/any (nfa/maybe ws+) word+ (nfa/lookahead (nfa/choice ws other)))
-           (nfa/chain nfa/any (nfa/maybe ws+) other+ (nfa/lookahead (nfa/choice ws word))))})
+           (nfa/chain nfa/any (nfa/maybe ws+) other+ (nfa/lookahead (nfa/choice ws word))))
+
+   :end-of-word (nfa/chain (nfa/kleene (nfa/match :word)) (nfa/lookahead (nfa/chain ws)))})
 
 (def generators
   {:forward l/forward
@@ -81,7 +83,9 @@
   [{:keys [lines] :as buffer} {[_ {:keys [empty-lines? position-in-word big? direction]}] :motion, :as operation} [i j]]
   (let [nfa-type (case [position-in-word direction]
                    ([:start :forward] [:end :backward]) :first
-                   ([:end :forward] [:start :backward]) :last)
+                   ([:end :forward] [:start :backward]) :last
+                   ([:anywhere :backward]) :end-of-word
+                   ([:anywhere :forward]) :end-of-word)
         nfa (cond-> (nfas nfa-type)
               empty-lines?
               (stop-at-empty-lines direction))
@@ -92,11 +96,12 @@
       (end-of-eager-match nfa stream classify)
       (last-possible buffer operation))))
 
-(s/defmethod resolve/resolve-motion :word :- (s/maybe l/Location)
-  [{:keys [lines point] :as buffer} {:keys [operator]
-                                     [_ {:keys [weird-delete-clip?]}] :motion
-                                     n :count
-                                     :as operation}]
+(s/defmethod resolve/resolve-motion :word :- (s/maybe [l/Location])
+  [{:keys [lines point] :as buffer}
+   {:keys [operator]
+    [_ {:keys [weird-delete-clip? type]}] :motion
+    n :count
+    :as operation}]
   (let [point' (n-times point (or n 1) (partial move-word buffer operation))]
     (cond
       (= point point')
@@ -106,7 +111,19 @@
       (and weird-delete-clip?
            (not= operator :move-point)
            (not= (first point) (first point')))
-      [(first point) (count (get lines (first point)))]
+      [point
+       [(first point) (count (get lines (first point)))]]
 
       :else
-      point')))
+      [point point'])))
+
+(def end-of-word-motion {:motion [:in-word {:position-in-word :anywhere
+                                            :direction :forward}]})
+
+(def start-of-word-motion {:motion [:in-word {:position-in-word :anywhere
+                                              :direction :backward}]})
+
+(s/defmethod resolve/resolve-motion :in-word :- (s/maybe [l/Location])
+  [{:keys [lines point] :as buffer} _]
+  [(move-word buffer start-of-word-motion point)
+   (move-word buffer end-of-word-motion point)])

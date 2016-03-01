@@ -44,6 +44,8 @@
                             :empty-lines? true}]}
     "h"    {:span :exclusive,
             :motion [:left]}
+    "iw"   {:span :inclusive,
+            :motion [:in-word]}
     "j"    {:span :linewise,
             :motion [:down]}
     "k"    {:span :linewise,
