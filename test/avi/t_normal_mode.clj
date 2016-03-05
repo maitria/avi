@@ -463,19 +463,18 @@
   (fact "`D` deletes to the end-of-line"
     (editor :editing "1234" :after "llD") => (line 0 "12")))
 
+(facts-about "`w` moves to the beginning of the next word"
+  editing        after   point
+  "hello world"  "w"     [0 6]
+  "      world"  "w"     [0 6]
+  "ab cd ef gh"  "3w"    [0 9]
+  "ab cd\nef gh" "3w"    [1 3]
+  "ab* cd"       "w"     [0 2]
+  "ab *cd"       "w"     [0 3]
+  "*)ab"         "w"     [0 2]
+  "*)  ab"       "w"     [0 4])
+
 (facts "about `w`"
-  (tabular
-    (fact "`w` moves to the beginning of the next word"
-      (editor :editing ?editing :after ?after) => (point ?point))
-    ?editing       ?after  ?point
-    "hello world"  "w"     [0 6]
-    "      world"  "w"     [0 6]
-    "ab cd ef gh"  "3w"    [0 9]
-    "ab cd\nef gh" "3w"    [1 3]
-    "ab* cd"       "w"     [0 2]
-    "ab *cd"       "w"     [0 3]
-    "*)ab"         "w"     [0 2]
-    "*)  ab"       "w"     [0 4])
   (tabular
     (fact "`w` stops on zero-length lines"
       (editor :editing ?editing :after ?after) => (point ?point))
