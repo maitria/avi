@@ -26,9 +26,7 @@
       identity
 
       (line-number? command-line)
-      (in e/current-buffer
-        (b/operate {:operator :move-point
-                    :motion [:goto [(dec (Long/parseLong command-line)) :first-non-blank]]}))
+      (avi.commands/-NUMBER- command-line)
 
       (command-fn command-line)
       ((command-fn command-line))
