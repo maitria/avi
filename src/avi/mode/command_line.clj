@@ -2,6 +2,7 @@
   (:require [packthread.core :refer :all]
             [avi.buffer :as b]
             [avi.command-line :as cl]
+            [avi.commands]
             [avi.editor :as e]
             [avi.pervasive :refer :all]))
 
@@ -13,23 +14,14 @@
   [command]
   (every? #(Character/isDigit %) command))
 
+(defn- command-fn
+  [command-line]
+  (ns-resolve 'avi.commands (symbol command-line)))
+
 (defn- process-command
   [editor command-line]
   (+> editor
     (cond
-      (= "q" command-line)
-      (assoc :finished? true)
-
-      (= "w" command-line)
-      (in e/current-buffer
-          (b/write))
-
-      (= "wq" command-line)
-      (do
-        (in e/current-buffer
-            (b/write))
-        (assoc :finished? true))
-
       (= "" command-line)
       identity
 
@@ -37,6 +29,9 @@
       (in e/current-buffer
         (b/operate {:operator :move-point
                     :motion [:goto [(dec (Long/parseLong command-line)) :first-non-blank]]}))
+
+      (command-fn command-line)
+      ((command-fn command-line))
 
       :else
       (assoc :message [:white :red (str ":" command-line " is not a thing")]))))
