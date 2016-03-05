@@ -508,7 +508,7 @@
   "      eorld"  "W"    [0 6]
   "he??o\n\nwha" "W"    [1 0])
 
-(facts "about `ge` and `gE`"
+(facts-about "`ge` and `gE`"
   editing       after  point
   "hello  "     "$ge"  [0 4]
   "hello world" "$ge"  [0 4]
