@@ -351,8 +351,8 @@
   (facts "about `J`"
     (let [result (editor :editing "One\nTwo\nThree\nFour" :after ?keys)]
       result => (contents ?after)
-      result => (point ?pos)))
-  ?keys ?pos   ?after
+      result => (point ?point)))
+  ?keys ?point   ?after
   "J"   [0 3]  "One Two\nThree\nFour"
   "3J"  [0 7]  "One Two Three\nFour"
   "4J"  [0 13] "One Two Three Four"
@@ -416,10 +416,10 @@
   (facts "about `d<Motion>` which work"
     (let [result #(editor :editing ?before :after ?keys)]
       (result) => (contents ?after)
-      (result) => (point ?pos)
+      (result) => (point ?point)
       (result) =not=> beeped))
 
-  ?before             ?keys     ?pos  ?after
+  ?before             ?keys     ?point  ?after
   "abcd)f"            "lldf)"   [0 2] "abf"
   "abcd/f"            "lldf/"   [0 2] "abf"
   "abcdef"            "lldl"    [0 2] "abdef"
@@ -449,12 +449,12 @@
 
 (tabular
   (facts "about `d<Motion>` which fail"
-    (let [result (editor :editing ?contents :after ?keys)]
+    (let [result (editor :editing ?editings :after ?keys)]
       (fact "failed delete motions beep"
         result => beeped)
       (fact "failed delete motions do not change file contents"
-        result => (contents ?contents))))
-  ?contents ?keys
+        result => (contents ?editings))))
+  ?editings ?keys
   "y12x"    "ldf)"
   "a\nb\nc" "Gdj"
   "a\nb\nc" "dk")
@@ -466,8 +466,8 @@
 (facts "about `w`"
   (tabular
     (fact "`w` moves to the beginning of the next word"
-      (editor :editing ?content :after ?after) => (point ?pos))
-    ?content       ?after  ?pos
+      (editor :editing ?editing :after ?after) => (point ?point))
+    ?editing       ?after  ?point
     "hello world"  "w"     [0 6]
     "      world"  "w"     [0 6]
     "ab cd ef gh"  "3w"    [0 9]
@@ -478,8 +478,8 @@
     "*)  ab"       "w"     [0 4])
   (tabular
     (fact "`w` stops on zero-length lines"
-      (editor :editing ?content :after ?after) => (point ?pos))
-    ?content       ?after  ?pos
+      (editor :editing ?editing :after ?after) => (point ?point))
+    ?editing       ?after  ?point
     "ab\n\ncd"     "w"     [1 0]
     "  \n\ncd"     "w"     [1 0]
     "))\n\ncd"     "w"     [1 0])
@@ -501,8 +501,8 @@
 
 (tabular
   (facts "about `W`"
-    (editor :editing ?content :after ?after) => (point ?pos))
-  ?content       ?after ?pos
+    (editor :editing ?editing :after ?after) => (point ?point))
+  ?editing       ?after ?point
   "hello world"  "W"    [0 6]
   "hel)) wordl"  "W"    [0 6]
   "      eorld"  "W"    [0 6]
@@ -556,10 +556,10 @@
 
 (tabular
   (facts "about `iw`"
-    (editor :editing ?content :after ?after) => (point ?pos)
-    (editor :editing ?content :after ?after) => (contents ?content-after))
+    (editor :editing ?editing :after ?after) => (point ?point)
+    (editor :editing ?editing :after ?after) => (contents ?editing-after))
 
-  ?content        ?after  ?pos  ?content-after
+  ?editing        ?after  ?point  ?editing-after
   "hello world"   "diw"   [0 0] " world"
   "hello world"   "ldiw"  [0 0] " world"
   "hello world"   "wdiw"  [0 5] "hello ")
