@@ -498,10 +498,8 @@
   (fact "`dw` deletes to end-of-file"
     (editor :editing "hello" :after "ldw") => (contents "h")))
 
-(tabular
-  (facts "about `W`"
-    (editor :editing ?editing :after ?after) => (point ?point))
-  ?editing       ?after ?point
+(facts-about "`W`"
+  editing        after  point
   "hello world"  "W"    [0 6]
   "hel)) wordl"  "W"    [0 6]
   "      eorld"  "W"    [0 6]
