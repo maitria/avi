@@ -463,8 +463,10 @@
   (fact "`D` deletes to the end-of-line"
     (editor :editing "1234" :after "llD") => (line 0 "12")))
 
-(facts-about "`w` moves to the beginning of the next word"
+(facts-about "`w`"
   editing        after   point
+
+  ; moves to the beginning of the next word
   "hello world"  "w"     [0 6]
   "      world"  "w"     [0 6]
   "ab cd ef gh"  "3w"    [0 9]
@@ -472,16 +474,14 @@
   "ab* cd"       "w"     [0 2]
   "ab *cd"       "w"     [0 3]
   "*)ab"         "w"     [0 2]
-  "*)  ab"       "w"     [0 4])
+  "*)  ab"       "w"     [0 4]
+
+  ; stops on zero-length lines
+  "ab\n\ncd"     "w"     [1 0]
+  "  \n\ncd"     "w"     [1 0]
+  "))\n\ncd"     "w"     [1 0])
 
 (facts "about `w`"
-  (tabular
-    (fact "`w` stops on zero-length lines"
-      (editor :editing ?editing :after ?after) => (point ?point))
-    ?editing       ?after  ?point
-    "ab\n\ncd"     "w"     [1 0]
-    "  \n\ncd"     "w"     [1 0]
-    "))\n\ncd"     "w"     [1 0])
   (fact "`w` will move to the end of file"
     (editor :editing "hello" :after "w") => (point [0 4])
     (editor :editing "h" :after "w") => beeped)
@@ -532,7 +532,9 @@
   "foo"           "e"    [0 2]
   "???"           "e"    [0 2]
   "hello\nworld"  "e"    [0 4]
-  "  \n\nwat"     "e"    [2 2] ; `e` does not stop on zero-length lines
+
+  ; does not stop on zero-length lines
+  "  \n\nwat"     "e"    [2 2]
   "  \n hi"       "e"    [1 2]
   "hello??"       "e"    [0 4]
   ".?//.wo"       "e"    [0 4])
