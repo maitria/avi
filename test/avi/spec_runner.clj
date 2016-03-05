@@ -30,6 +30,7 @@
   [description & spec]
   `(tabular
      (facts ~description
-       ~(editor-invocation spec) => (point ~'?point))
+       (let [result# ~(editor-invocation spec)]
+          result# => (point ~'?point)))
      ~@(table-headings spec)
      ~@(table-data spec)))
