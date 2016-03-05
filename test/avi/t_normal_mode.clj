@@ -521,10 +521,8 @@
   "hello\n\nfo" "Gge"  [1 0]
   "hello\n\nfo" "GgE"  [1 0])
 
-(tabular
-  (facts "about `e`"
-    (editor :editing ?content :after ?after) => (point ?pos))
-  ?content        ?after ?pos
+(facts-about "`e`"
+  editing         after  point
   "hello world"   "e"    [0 4]
   "hello world"   "2e"   [0 10]
   "  hello wor"   "e"    [0 6]
