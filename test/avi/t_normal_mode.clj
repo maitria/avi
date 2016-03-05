@@ -508,10 +508,8 @@
   "      eorld"  "W"    [0 6]
   "he??o\n\nwha" "W"    [1 0])
 
-(tabular
-  (facts "about `ge` and `gE`"
-    (editor :editing ?content :after ?after) => (point ?pos))
-  ?content      ?after ?pos
+(facts "about `ge` and `gE`"
+  editing       after  point
   "hello  "     "$ge"  [0 4]
   "hello world" "$ge"  [0 4]
   "hello world" "$5ge" [0 0]
