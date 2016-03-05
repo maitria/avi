@@ -542,11 +542,8 @@
   "hello??"       "e"    [0 4]
   ".?//.wo"       "e"    [0 4])
 
-(tabular
-  (facts "about `E`"
-    (editor :editing ?content :after ?after) => (point ?pos))
-
-  ?content        ?after ?pos
+(facts-about "`E`"
+  editing         after  point
   "he//o world"   "E"    [0 4]
   "  he//o wor"   "E"    [0 6]
   "  \n\nw?t"     "E"    [2 2]
