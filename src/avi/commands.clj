@@ -1,4 +1,8 @@
 (ns avi.commands
+  "Avi's command-line-mode commands.
+  
+  Functions implemented in this namespace can be called by name from the colon
+  prompt."
   (:require [avi.buffer :as b]
             [avi.editor :as e]
             [packthread.core :refer :all]))
