@@ -12,9 +12,10 @@
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :current-buffer 1
    :buffers [nil (b/open filename (- lines 2))]
    :viewport {:size [lines columns]}
+   :windows [{:buffer 1}]
+   :focused-window 0
    :beep? false})
 
 ;; -- Building middlewares ---------------------------------------------------
@@ -37,7 +38,12 @@
     (+> editor
         (in e/current-buffer
             (assoc :foo :bar)))"
-  (beep/add-beep-to-focus (l/comp (l/under :buffers) (l/under 1))))
+  (beep/add-beep-to-focus
+    (fn current-buffer*
+      ([{:keys [focused-window] :as editor}]
+       (get-in editor [:buffers (get-in editor [:windows focused-window :buffer])]))
+      ([{:keys [focused-window windows] :as editor} new-buffer]
+       (assoc-in editor [:buffers (get-in editor [:windows focused-window :buffer])] new-buffer)))))
 
 ;; -- Modes ------------------------------------------------------------------
 
