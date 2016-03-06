@@ -141,7 +141,7 @@
   [expected]
   (fn [result]
     (checking/extended-=
-      (string/join "\n" (get-in result [:editor :buffer :lines]))
+      (string/join "\n" (get-in result [:editor :buffers 1 :lines]))
       expected)))
 
 (defn attributes

@@ -12,7 +12,8 @@
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :buffer (b/open filename (- lines 2))
+   :current-buffer 1
+   :buffers [nil (b/open filename (- lines 2))]
    :viewport {:size [lines columns]}
    :beep? false})
 
@@ -36,7 +37,7 @@
     (+> editor
         (in e/current-buffer
             (assoc :foo :bar)))"
-  (beep/add-beep-to-focus (l/under :buffer)))
+  (beep/add-beep-to-focus (l/comp (l/under :buffers) (l/under 1))))
 
 ;; -- Modes ------------------------------------------------------------------
 
