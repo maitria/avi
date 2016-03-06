@@ -12,9 +12,9 @@
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :buffers [nil (b/open filename (- lines 2))]
+   :buffers [(b/open filename (- lines 2))]
    :viewport {:size [lines columns]}
-   :windows [{:buffer 1}]
+   :windows [{:buffer 0}]
    :focused-window 0
    :beep? false})
 
