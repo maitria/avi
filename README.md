@@ -13,6 +13,10 @@ We love vim. We want more! Test coverage. Flexibilty. Live REPLs!
 * Code is for people. Be expressive as hell.
 * Be friendly. Especially to noobs.
 
+## Code of Welcoming Conduct
+
+Everybody has boundaries around who they invite into their home. To help you decide whether you want to hang out with us, we've done our best to describe our boundaries here in the [maitria code of conduct](maitria.com/coc). It's not a bunch of legalese. It's who we are. Please read it.
+
 ## Contributing
 
 We track upcoming work on a [Trello board].  This board has many small things
