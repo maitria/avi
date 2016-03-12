@@ -12,8 +12,10 @@
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :buffer (b/open filename (- lines 2))
+   :buffers [(b/open filename (- lines 2))]
    :viewport {:size [lines columns]}
+   :windows [{:buffer 0}]
+   :focused-window 0
    :beep? false})
 
 ;; -- Building middlewares ---------------------------------------------------
@@ -26,17 +28,37 @@
         (a-fn editor)
         (handler editor event)))))
 
-;; -- Tracking the current buffer --------------------------------------------
+;; -- Tracking the current window & buffer -----------------------------------
+
+(def current-window
+  "Read or update the current window
+  
+  This is intended to be used with packthread's \"in\" macro, like so:
+
+    (+> editor
+      (in e/current-window
+        (assoc :foo :bar)))"
+  (beep/add-beep-to-focus
+    (fn current-window*
+      ([{:keys [focused-window] :as editor}]
+       (get-in editor [:windows focused-window]))
+      ([{:keys [focused-window] :as editor} new-window]
+       (assoc-in editor [:windows focused-window] new-window)))))
 
 (def current-buffer
   "Read or update the current buffer.
   
-  This is inteaded to be used with packthread's \"in\" macro, like so:
+  This is intended to be used with packthread's \"in\" macro, like so:
 
     (+> editor
-        (in e/current-buffer
-            (assoc :foo :bar)))"
-  (beep/add-beep-to-focus (l/under :buffer)))
+      (in e/current-buffer
+        (assoc :foo :bar)))"
+  (beep/add-beep-to-focus
+    (fn current-buffer*
+      ([{:keys [focused-window] :as editor}]
+       (get-in editor [:buffers (:buffer (current-window editor))]))
+      ([{:keys [focused-window windows] :as editor} new-buffer]
+       (assoc-in editor [:buffers (:buffer (current-window editor))] new-buffer)))))
 
 ;; -- Modes ------------------------------------------------------------------
 
