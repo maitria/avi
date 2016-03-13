@@ -15,7 +15,7 @@ We love vim. We want more! Test coverage. Flexibilty. Live REPLs!
 
 ## Code of Welcoming Conduct
 
-Everybody has boundaries around who they invite into their home. To help you decide whether you want to hang out with us, we've done our best to describe our boundaries here in the [maitria code of conduct](maitria.com/coc). It's not a bunch of legalese. It's who we are. Please read it.
+Everybody has boundaries around who they invite into their home. To help you decide whether you want to hang out with us, we've done our best to describe our boundaries here in the [maitria code of conduct](http://maitria.com/coc). It's not a bunch of legalese. It's who we are. Please read it.
 
 ## Contributing
 
