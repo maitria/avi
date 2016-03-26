@@ -15,12 +15,12 @@
   {:mode :normal
    :documents [(b/open filename)]
    :viewport {:size [lines columns]}
-   :windows [{:document 0
-              :viewport-top 0
-              :viewport-height (- lines 2)
-              :point [0 0]
-              :last-explicit-j 0}]
-   :focused-window 0
+   :lenses [{:document 0
+             :viewport-top 0
+             :viewport-height (- lines 2)
+             :point [0 0]
+             :last-explicit-j 0}]
+   :focused-lens 0
    :beep? false})
 
 ;; -- Building middlewares ---------------------------------------------------
@@ -33,13 +33,13 @@
         (a-fn editor)
         (handler editor event)))))
 
-;; -- Tracking the current window & document ---------------------------------
+;; -- Tracking the current lens & document -----------------------------------
 
-(def current-window
+(def current-lens
   (beep/add-beep-to-focus
-    (fn current-window*
-      ([{:keys [focused-window] :as editor}]
-       (get-in editor [:windows focused-window])))))
+    (fn current-lens*
+      ([{:keys [focused-lens] :as editor}]
+       (get-in editor [:lenses focused-lens])))))
 
 (def EditContext
   {:name s/Any
@@ -54,17 +54,17 @@
 
 (defn current-document-path
   [editor]
-  [:documents (:document (current-window editor))])
+  [:documents (:document (current-lens editor))])
 
-(def ^:private edit-context-buffer-keys
+(def ^:private edit-context-document-keys
   #{:name :lines :undo-log :redo-log :in-transaction?})
-(def ^:private edit-context-window-keys
+(def ^:private edit-context-lens-keys
   #{:viewport-top :viewport-height :point :last-explicit-j})
 
 (def edit-context
   "Perform some action in an \"edit context\".
 
-  An \"edit context\" is the minimal information from a buffer and a window,
+  An \"edit context\" is the minimal information from a document and a lens,
   combined in such a way that a function can make edits to the file and move
   the cursor and viewport.
   
@@ -81,13 +81,13 @@
          (merge
            (-> editor
              (get-in (current-document-path editor))
-             (select-keys edit-context-buffer-keys))
-           (-> (current-window editor)
-             (select-keys edit-context-window-keys)))))
-      ([{:keys [focused-window] :as editor} new-context]
+             (select-keys edit-context-document-keys))
+           (-> (current-lens editor)
+             (select-keys edit-context-lens-keys)))))
+      ([{:keys [focused-lens] :as editor} new-context]
        (-> editor
-         (update-in (current-document-path editor) merge (select-keys new-context edit-context-buffer-keys))
-         (update-in [:windows focused-window] merge (select-keys new-context edit-context-window-keys)))))))
+         (update-in (current-document-path editor) merge (select-keys new-context edit-context-document-keys))
+         (update-in [:lenses focused-lens] merge (select-keys new-context edit-context-lens-keys)))))))
 
 ;; -- Modes ------------------------------------------------------------------
 
