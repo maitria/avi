@@ -57,40 +57,37 @@
   [editor]
   [:documents (:document (current-lens editor))])
 
-(def ^:private edit-context-document-keys
-  #{:name :lines :undo-log :redo-log :in-transaction?})
-(def ^:private edit-context-lens-keys
-  (set/difference
-    (into #{} (keys EditContext))
-    edit-context-document-keys))
+(let [document-keys #{:name :lines :undo-log :redo-log :in-transaction?}
+      lens-keys (set/difference
+                  (into #{} (keys EditContext))
+                  edit-context-document-keys)]
+  (def edit-context
+    "Perform some action in an \"edit context\".
 
-(def edit-context
-  "Perform some action in an \"edit context\".
+    An \"edit context\" is the minimal information from a document and a lens,
+    combined in such a way that a function can make edits to the file and move
+    the cursor and viewport.
+    
+    This is intended to be used with packthread's \"in\" macro, like so:
 
-  An \"edit context\" is the minimal information from a document and a lens,
-  combined in such a way that a function can make edits to the file and move
-  the cursor and viewport.
-  
-  This is intended to be used with packthread's \"in\" macro, like so:
-
-    (+> editor
-      (in e/edit-context
-        (assoc :foo :bar)))"
-  (beep/add-beep-to-focus
-    (fn edit-context*
-      ([editor]
-       (s/validate
-         EditContext
-         (merge
-           (-> editor
-             (get-in (current-document-path editor))
-             (select-keys edit-context-document-keys))
-           (-> (current-lens editor)
-             (select-keys edit-context-lens-keys)))))
-      ([{:keys [focused-lens] :as editor} new-context]
-       (-> editor
-         (update-in (current-document-path editor) merge (select-keys new-context edit-context-document-keys))
-         (update-in [:lenses focused-lens] merge (select-keys new-context edit-context-lens-keys)))))))
+      (+> editor
+        (in e/edit-context
+          (assoc :foo :bar)))"
+    (beep/add-beep-to-focus
+      (fn edit-context*
+        ([editor]
+         (s/validate
+           EditContext
+           (merge
+             (-> editor
+               (get-in (current-document-path editor))
+               (select-keys document-keys))
+             (-> (current-lens editor)
+               (select-keys lens-keys)))))
+        ([{:keys [focused-lens] :as editor} new-context]
+         (-> editor
+           (update-in (current-document-path editor) merge (select-keys new-context document-keys))
+           (update-in [:lenses focused-lens] merge (select-keys new-context lens-keys))))))))
 
 ;; -- Modes ------------------------------------------------------------------
 
