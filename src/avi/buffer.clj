@@ -36,7 +36,6 @@
                 (try-load filename)
                 [""])]
     {:name filename,
-     :viewport-top 0
      :lines lines,
      :undo-log ()
      :redo-log ()}))
