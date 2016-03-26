@@ -3,8 +3,8 @@
             [packthread.core :refer :all]
             [packthread.lenses :as l]
             [avi.beep :as beep]
-            [avi.buffer :as b]
-            [avi.buffer
+            [avi.edit-context :as b]
+            [avi.edit-context
              [lines :as lines]
              [locations :as loc]]
             [avi.editor :as e]))

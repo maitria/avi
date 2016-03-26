@@ -1,5 +1,5 @@
-(ns avi.buffer.t-locations
-  (:require [avi.buffer
+(ns avi.edit-context.t-locations
+  (:require [avi.edit-context
              [lines :as lines]
              [locations :refer :all]]
             [avi.test-helpers :refer :all]

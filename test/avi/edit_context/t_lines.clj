@@ -1,5 +1,5 @@
-(ns avi.buffer.t-lines
-  (:require [avi.buffer.lines :as lines]
+(ns avi.edit-context.t-lines
+  (:require [avi.edit-context.lines :as lines]
             [clojure.string :as string]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]

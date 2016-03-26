@@ -1,9 +1,9 @@
-(ns avi.buffer.lines
+(ns avi.edit-context.lines
   (:refer-clojure :exclude [replace])
   (:require [packthread.core :refer :all]
             [schema.core :as s]
             [avi.pervasive :refer :all]
-            [avi.buffer.locations :as l]))
+            [avi.edit-context.locations :as l]))
 
 (def Line (s/constrained s/Str (complement (partial re-find #"\n"))))
 (def Lines [(s/one Line "first line") Line])

@@ -3,7 +3,7 @@
   
   Functions implemented in this namespace can be called by name from the colon
   prompt."
-  (:require [avi.buffer :as b]
+  (:require [avi.edit-context :as b]
             [avi.editor :as e]
             [packthread.core :refer :all]))
 

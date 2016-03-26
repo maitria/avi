@@ -1,12 +1,12 @@
-(ns avi.buffer.operate
+(ns avi.edit-context.operate
   "Primitives for moving the point."
   (:require [avi.beep :as beep]
-            [avi.buffer
+            [avi.edit-context
               [change :as c]
               [lines :as lines]
               [locations :as l]
               [transactions :as t]]
-            [avi.buffer.operate
+            [avi.edit-context.operate
              [goto]
              [resolve :as resolve]
              [word]]

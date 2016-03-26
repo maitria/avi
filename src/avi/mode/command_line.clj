@@ -1,6 +1,6 @@
 (ns avi.mode.command-line
   (:require [packthread.core :refer :all]
-            [avi.buffer :as b]
+            [avi.edit-context :as b]
             [avi.command-line :as cl]
             [avi.commands]
             [avi.editor :as e]

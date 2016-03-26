@@ -2,7 +2,7 @@
   (:import [java.util Arrays])
   (:require [clojure.set :refer [map-invert]]
             [avi.editor :as e]
-            [avi.buffer :as b]
+            [avi.edit-context :as b]
             [avi.color :as color]))
 
 (defn- render-message-line

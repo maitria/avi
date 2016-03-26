@@ -1,7 +1,7 @@
-(ns avi.buffer.operate.goto
-  (:require [avi.buffer
+(ns avi.edit-context.operate.goto
+  (:require [avi.edit-context
               [locations :as l]]
-            [avi.buffer.operate.resolve :as resolve]
+            [avi.edit-context.operate.resolve :as resolve]
             [avi.pervasive :refer :all]
             [schema.core :as s]))
 

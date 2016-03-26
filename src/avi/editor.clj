@@ -6,7 +6,7 @@
             [schema.core :as s]
             [avi.pervasive :refer :all]
             [avi.beep :as beep]
-            [avi.buffer :as b]))
+            [avi.edit-context :as b]))
 
 ;; -- Initial state ----------------------------------------------------------
 

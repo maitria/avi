@@ -1,5 +1,5 @@
-(ns avi.buffer.change
-  (:require [avi.buffer
+(ns avi.edit-context.change
+  (:require [avi.edit-context
                [lines :as lines]
                [locations :as l]]
             [packthread.core :refer :all]

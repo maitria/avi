@@ -1,4 +1,4 @@
-(ns avi.buffer.locations
+(ns avi.edit-context.locations
   (:refer-clojure :exclude [replace])
   (:require [schema.core :as s]))
 

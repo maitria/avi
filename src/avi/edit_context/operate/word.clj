@@ -1,8 +1,8 @@
-(ns avi.buffer.operate.word
-  (:require [avi.buffer
+(ns avi.edit-context.operate.word
+  (:require [avi.edit-context
               [lines :as lines]
               [locations :as l]]
-            [avi.buffer.operate.resolve :as resolve]
+            [avi.edit-context.operate.resolve :as resolve]
             [avi.nfa :as nfa]
             [avi.pervasive :refer :all]
             [schema.core :as s]))

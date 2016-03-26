@@ -3,7 +3,7 @@
             [packthread.lenses :as l]
             [avi.beep :as beep]
             [avi.editor :as e]
-            [avi.buffer :as b]
+            [avi.edit-context :as b]
             [avi.pervasive :refer :all]))
 
 (defn enter-insert-mode

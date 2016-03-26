@@ -2,7 +2,7 @@
   (:require [packthread.core :refer :all]
             [avi.beep :as beep]
             [avi.brackets :as brackets]
-            [avi.buffer :as b]
+            [avi.edit-context :as b]
             [avi.editor :as e]
             [avi.events :as ev]
             [avi.mode command-line insert]

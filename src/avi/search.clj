@@ -1,6 +1,6 @@
 (ns avi.search
   (:require [packthread.core :refer :all]
-            [avi.buffer :as b]
+            [avi.edit-context :as b]
             [avi.command-line :as cl]
             [avi.editor :as e]
             [avi.pervasive :refer :all]))

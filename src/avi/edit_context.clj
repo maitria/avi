@@ -1,9 +1,9 @@
-(ns avi.buffer
+(ns avi.edit-context
   (:import [java.io FileNotFoundException])
   (:require [packthread.core :refer :all]
             [clojure.string :as string]
             [avi.beep :as beep]
-            [avi.buffer
+            [avi.edit-context
               [change]
               [lines :as lines]
               [locations :as l]
@@ -13,13 +13,13 @@
             [avi.world :as w]
             [potemkin :refer [import-vars]]))
 
-(import-vars [avi.buffer.change
+(import-vars [avi.edit-context.change
                 adjust-viewport-to-contain-point
                 change]
-             [avi.buffer.operate
+             [avi.edit-context.operate
                 clamp-point-j
                 operate]
-             [avi.buffer.transactions
+             [avi.edit-context.transactions
                 start-transaction
                 commit])
 

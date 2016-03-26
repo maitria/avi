@@ -1,4 +1,4 @@
-(ns avi.buffer.transactions
+(ns avi.edit-context.transactions
   (:require [avi.beep :as beep]
             [packthread.core :refer :all]))
 
