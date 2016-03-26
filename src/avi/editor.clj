@@ -1,7 +1,8 @@
 (ns avi.editor
   "Functions (including basse responders, middleware, and utilties) for
    manipulating the editor map."
-  (:require [packthread.core :refer :all]
+  (:require [clojure.set :as set]
+            [packthread.core :refer :all]
             [packthread.lenses :as l]
             [schema.core :as s]
             [avi.pervasive :refer :all]
@@ -59,7 +60,9 @@
 (def ^:private edit-context-document-keys
   #{:name :lines :undo-log :redo-log :in-transaction?})
 (def ^:private edit-context-lens-keys
-  #{:viewport-top :viewport-height :point :last-explicit-j})
+  (set/difference
+    (into #{} (keys EditContext))
+    edit-context-document-keys))
 
 (def edit-context
   "Perform some action in an \"edit context\".
