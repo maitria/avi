@@ -52,6 +52,9 @@
   [editor]
   [:buffers (:buffer (current-window editor))])
 
+(def ^:private edit-context-buffer-keys
+  [:name :lines :viewport-top :viewport-height :point :last-explicit-j :undo-log :redo-log :in-transaction?])
+
 (def edit-context
   "Perform some action in an \"edit context\".
 
@@ -71,7 +74,7 @@
          EditContext
          (-> editor
            (get-in (current-buffer-path editor))
-           (select-keys [:name :lines :viewport-top :viewport-height :point :last-explicit-j :undo-log :redo-log :in-transaction?]))))
+           (select-keys edit-context-buffer-keys))))
       ([editor new-context]
        (update-in editor (current-buffer-path editor) merge new-context)))))
 
