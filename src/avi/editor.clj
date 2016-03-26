@@ -50,9 +50,9 @@
         (assoc :foo :bar)))"
   (beep/add-beep-to-focus
     (fn edit-context*
-      ([{:keys [focused-window] :as editor}]
+      ([editor]
        (get-in editor [:buffers (:buffer (current-window editor))]))
-      ([{:keys [focused-window windows] :as editor} new-buffer]
+      ([editor new-buffer]
        (assoc-in editor [:buffers (:buffer (current-window editor))] new-buffer)))))
 
 ;; -- Modes ------------------------------------------------------------------
