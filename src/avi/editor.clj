@@ -50,7 +50,7 @@
    :last-explicit-j s/Any
    :undo-log s/Any
    :redo-log s/Any
-   (s/optional-key :in-transaction?) s/Any})
+   :in-transaction? s/Any})
 
 (defn current-document-path
   [editor]

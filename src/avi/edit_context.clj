@@ -38,7 +38,8 @@
     {:name filename,
      :lines lines,
      :undo-log ()
-     :redo-log ()}))
+     :redo-log ()
+     :in-transaction? false}))
 
 ;; --
 
