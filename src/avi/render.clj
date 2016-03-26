@@ -21,7 +21,7 @@
 (defn- render-line
   [editor i]
   (let [[height] (:size (:viewport editor))
-        buffer (e/current-buffer editor)
+        buffer (e/edit-context editor)
         top (:viewport-top buffer)
         message-line (dec height)
         status-line (dec message-line)
@@ -49,7 +49,7 @@
 
 (defmethod point-position :default
   [editor]
-  (let [buffer (e/current-buffer editor)
+  (let [buffer (e/edit-context editor)
         [buffer-point-i buffer-point-j] (:point buffer)
         viewport-top (:viewport-top buffer)]
     [(- buffer-point-i viewport-top) buffer-point-j]))

@@ -88,23 +88,23 @@
 (defn motion-handler
   [editor spec]
   (+> editor
-    (in e/current-buffer
+    (in e/edit-context
       (b/operate spec))))
 
 (def non-motion-commands
   {"dd" ^:no-repeat (fn+> [editor spec]
                       (let [repeat-count (:count spec)]
-                        (in e/current-buffer
+                        (in e/edit-context
                             b/start-transaction
                             (n-times (or repeat-count 1) b/delete-current-line)
                             b/commit)))
 
    "u" (fn+> [editor _]
-         (in e/current-buffer
+         (in e/edit-context
            b/undo))
 
    "x" ^:no-repeat (fn+> [editor spec]
-                     (in e/current-buffer
+                     (in e/edit-context
                        (b/operate (merge
                                     spec
                                     {:operator :delete
@@ -112,14 +112,14 @@
                                      :motion [:right]}))))
 
    "D" (fn+> [editor _]
-         (in e/current-buffer
+         (in e/edit-context
            (b/operate {:operator :delete
                        :span :inclusive
                        :motion [:goto [:current :end-of-line]]})))
 
    "J" ^:no-repeat (fn+> [editor spec]
                      (let [n (or (:count spec) 2)]
-                       (in e/current-buffer
+                       (in e/edit-context
                            b/start-transaction
                            (n-times (dec n) (fn+> [{:keys [lines] [i] :point :as buffer}]
                                               (let [start-j (count (get lines i))]
@@ -129,30 +129,30 @@
                            b/commit)))
 
    "<C-D>" (fn+> [editor _]
-             (let [buffer (e/current-buffer editor)]
+             (let [buffer (e/edit-context editor)]
                (if (b/on-last-line? buffer)
                  beep/beep
-                 (in e/current-buffer
+                 (in e/edit-context
                    (b/move-and-scroll-half-page :down)))))
 
    "<C-E>" (fn+> [editor _]
-             (in e/current-buffer
+             (in e/edit-context
                (b/scroll inc)))
 
    "<C-R>" (fn+> [editor _]
-             (in e/current-buffer
+             (in e/edit-context
                b/redo))
 
    "<C-U>" (fn+> [editor _]
-             (let [buffer (e/current-buffer editor)
+             (let [buffer (e/edit-context editor)
                    [i] (:point buffer)]
                (if (zero? i)
                  beep/beep
-                 (in e/current-buffer
+                 (in e/edit-context
                    (b/move-and-scroll-half-page :up)))))
 
    "<C-Y>" (fn+> [editor _]
-             (in e/current-buffer
+             (in e/edit-context
                (b/scroll dec)))})
 
 (defn wrap-handler-with-repeat-loop

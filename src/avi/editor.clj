@@ -45,16 +45,20 @@
       ([{:keys [focused-window] :as editor} new-window]
        (assoc-in editor [:windows focused-window] new-window)))))
 
-(def current-buffer
-  "Read or update the current buffer.
+(def edit-context
+  "Perform some action in an \"edit context\".
+
+  An \"edit context\" is the minimal information from a buffer and a window,
+  combined in such a way that a function can make edits to the file and move
+  the cursor and viewport.
   
   This is intended to be used with packthread's \"in\" macro, like so:
 
     (+> editor
-      (in e/current-buffer
+      (in e/edit-context
         (assoc :foo :bar)))"
   (beep/add-beep-to-focus
-    (fn current-buffer*
+    (fn edit-context*
       ([{:keys [focused-window] :as editor}]
        (get-in editor [:buffers (:buffer (current-window editor))]))
       ([{:keys [focused-window windows] :as editor} new-buffer]
@@ -82,7 +86,7 @@
     (if (= event-type :resize)
       (+> editor
           (assoc-in [:viewport :size] size)
-          (in current-buffer
+          (in edit-context
               (b/resize (- (first size) 2))))
       (responder editor event))))
 

@@ -11,7 +11,7 @@
   "Special function which handles commands like `:42`"
   [editor command-line]
   (+> editor
-    (in e/current-buffer
+    (in e/edit-context
       (b/operate {:operator :move-point
                   :motion [:goto [(dec (Long/parseLong command-line)) :first-non-blank]]}))))
 
@@ -22,7 +22,7 @@
 (defn w
   [editor]
   (+> editor
-    (in e/current-buffer
+    (in e/edit-context
       b/write)))
 
 (def wq (comp q w))

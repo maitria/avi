@@ -13,7 +13,7 @@
              :message [:white :black "--INSERT--"]
              :insert-mode-state {:count (or (:count spec) 1)
                                  :script (or script [])})
-      (in e/current-buffer
+      (in e/edit-context
           b/start-transaction)))
 
 (defn advance-for-append
@@ -27,29 +27,29 @@
 (def mappings-which-enter-insert-mode
   {"a" ^:no-repeat (fn+> [editor spec]
                      (enter-insert-mode spec)
-                     (in e/current-buffer
+                     (in e/edit-context
                        advance-for-append))
 
    "i" ^:no-repeat (fn+> [editor spec]
                      (enter-insert-mode spec))
 
    "o" ^:no-repeat (fn+> [editor spec]
-                     (let [{:keys [lines] [i] :point} (e/current-buffer editor)
+                     (let [{:keys [lines] [i] :point} (e/edit-context editor)
                            eol (count (get lines i))]
                        (enter-insert-mode spec [[:keystroke "<Enter>"]])
-                       (in e/current-buffer
+                       (in e/edit-context
                            move-to-eol
                            (b/change [i eol] [i eol] "\n" :right))))
 
    "A" ^:no-repeat (fn+> [editor spec]
                      (enter-insert-mode spec)
-                     (in e/current-buffer
+                     (in e/edit-context
                          move-to-eol))
 
    "O" ^:no-repeat (fn+> [editor spec]
-                     (let [{[i] :point} (e/current-buffer editor)]
+                     (let [{[i] :point} (e/edit-context editor)]
                        (enter-insert-mode spec [[:keystroke "<Enter>"]])
-                       (in e/current-buffer
+                       (in e/edit-context
                            (b/change [i 0] [i 0] "\n" :left)
                            (b/operate {:operator :move-point
                                        :motion [:goto [i 0]]}))))})
@@ -65,9 +65,9 @@
   (+> editor
     (if-not (= event-type :keystroke)
       beep/beep
-      (in e/current-buffer
+      (in e/edit-context
           (if (= event-data "<BS>")
-            (if (= [0 0] (:point (e/current-buffer editor)))
+            (if (= [0 0] (:point (e/edit-context editor)))
               beep/beep
               b/backspace)
             (b/insert-text (key->text event-data)))))))
@@ -94,10 +94,10 @@
     (fn+> [editor]
       play-script-repeat-count-times
       (dissoc :insert-mode-state)
-      (let [b (e/current-buffer editor)
+      (let [b (e/edit-context editor)
             [i j] (:point b)
             new-j (max (dec j) 0)]
-        (in e/current-buffer
+        (in e/edit-context
             (b/operate {:operator :move-point
                         :motion [:goto [i new-j]]})
             b/commit))

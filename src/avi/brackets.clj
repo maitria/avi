@@ -58,5 +58,5 @@
 
 (def normal-commands
   {"%" (fn+> [editor _]
-         (in e/current-buffer
+         (in e/edit-context
            go-to-matching-bracket))})

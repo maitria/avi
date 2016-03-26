@@ -54,9 +54,9 @@
                     command-line)]
       (assoc ::last-search pattern)
       (assoc ::last-direction direction)
-      (if-let [[i j wrapped?] (find-occurrence direction (e/current-buffer editor) (re-pattern pattern))]
+      (if-let [[i j wrapped?] (find-occurrence direction (e/edit-context editor) (re-pattern pattern))]
         (do
-          (in e/current-buffer (b/operate {:operator :move-point
+          (in e/edit-context (b/operate {:operator :move-point
                                            :motion [:goto [i j]]}))
           (if wrapped?
             (assoc :message [:red :black (get-in directions [direction :wrap-message])])
