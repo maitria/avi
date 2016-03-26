@@ -52,7 +52,7 @@
    :redo-log s/Any
    (s/optional-key :in-transaction?) s/Any})
 
-(defn current-buffer-path
+(defn current-document-path
   [editor]
   [:documents (:document (current-window editor))])
 
@@ -80,13 +80,13 @@
          EditContext
          (merge
            (-> editor
-             (get-in (current-buffer-path editor))
+             (get-in (current-document-path editor))
              (select-keys edit-context-buffer-keys))
            (-> (current-window editor)
              (select-keys edit-context-window-keys)))))
       ([{:keys [focused-window] :as editor} new-context]
        (-> editor
-         (update-in (current-buffer-path editor) merge (select-keys new-context edit-context-buffer-keys))
+         (update-in (current-document-path editor) merge (select-keys new-context edit-context-buffer-keys))
          (update-in [:windows focused-window] merge (select-keys new-context edit-context-window-keys)))))))
 
 ;; -- Modes ------------------------------------------------------------------
