@@ -1,20 +1,37 @@
 (ns avi.editor
   "Functions (including basse responders, middleware, and utilties) for
    manipulating the editor map."
+  (:import [java.io FileNotFoundException])
   (:require [clojure.set :as set]
             [packthread.core :refer :all]
             [packthread.lenses :as l]
             [schema.core :as s]
             [avi.pervasive :refer :all]
             [avi.beep :as beep]
-            [avi.edit-context :as ec]))
+            [avi.edit-context :as ec]
+            [avi.edit-context
+              [lines :as lines]]
+            [avi.world :as w]))
 
 ;; -- Initial state ----------------------------------------------------------
+
+(defn- try-load
+  [filename]
+  (try
+    (lines/content (w/read-file w/*world* filename))
+    (catch FileNotFoundException e
+      [""])))
 
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :documents [(ec/open filename)]
+   :documents [{:name filename,
+                :lines (if filename
+                         (try-load filename)
+                         [""])
+                :undo-log ()
+                :redo-log ()
+                :in-transaction? false}]
    :viewport {:size [lines columns]}
    :lenses [{:document 0
              :viewport-top 0

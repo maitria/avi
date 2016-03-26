@@ -1,5 +1,4 @@
 (ns avi.edit-context
-  (:import [java.io FileNotFoundException])
   (:require [packthread.core :refer :all]
             [clojure.string :as string]
             [avi.beep :as beep]
@@ -22,26 +21,6 @@
              [avi.edit-context.transactions
                 start-transaction
                 commit])
-
-(defn- try-load
-  [filename]
-  (try
-    (lines/content (w/read-file w/*world* filename))
-    (catch FileNotFoundException e
-      [""])))
-
-(defn open
-  [filename]
-  (let [lines (if filename
-                (try-load filename)
-                [""])]
-    {:name filename,
-     :lines lines,
-     :undo-log ()
-     :redo-log ()
-     :in-transaction? false}))
-
-;; --
 
 (defn write
   [{filename :name,
