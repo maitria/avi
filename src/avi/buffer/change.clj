@@ -6,12 +6,12 @@
             [schema.core :as s]))
 
 (defn adjust-viewport-to-contain-point
-  [buffer]
-  (+> buffer
-    (let [height (:viewport-height buffer)
-          viewport-top (:viewport-top buffer)
+  [edit-context]
+  (+> edit-context
+    (let [height (:viewport-height edit-context)
+          viewport-top (:viewport-top edit-context)
           viewport-bottom (dec (+ viewport-top height))
-          [point-i] (:point buffer)]
+          [point-i] (:point edit-context)]
       (cond
         (< point-i viewport-top)
         (assoc :viewport-top point-i)
@@ -21,12 +21,12 @@
 
 (s/defn change
   "All content changes happen through me!"
-  [{:keys [point] :as buffer}
+  [{:keys [point] :as edit-context}
    a :- l/Location
    b :- l/Location
    replacement :- s/Str
    bias :- l/AdjustmentBias]
-  (+> buffer
+  (+> edit-context
     (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)
       (if new-point

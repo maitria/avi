@@ -14,7 +14,7 @@
                     "test.txt" :black :on :white
                     ""]))
 
-  (fact "When avi is not passed a filename, it starts with an empty, unnamed buffer."
+  (fact "When avi is not passed a filename, it starts with an empty, unnamed document"
     (editor :editing :nothing)
       => (terminal [""
                     "~" :blue
@@ -25,7 +25,7 @@
                     "[No Name]" :black :on :white
                     ""]))
 
-  (fact "When avi is passed the name of a non-existent file, it starts with an empty, named buffer."
+  (fact "When avi is passed the name of a non-existent file, it starts with an empty, named document"
     (editor :editing :not-found)
       => (terminal [""
                     "~" :blue

@@ -80,7 +80,9 @@
           (recur (next stream) state'))))))
 
 (defn move-word
-  [{:keys [lines] :as buffer} {[_ {:keys [empty-lines? position-in-word big? direction]}] :motion, :as operation} [i j]]
+  [{:keys [lines] :as edit-context}
+   {[_ {:keys [empty-lines? position-in-word big? direction]}] :motion, :as operation}
+   [i j]]
   (let [nfa-type (case [position-in-word direction]
                    ([:start :forward] [:end :backward]) :first
                    ([:end :forward] [:start :backward]) :last
@@ -94,15 +96,15 @@
         classify #(classify (get-in lines %) big?)]
     (or
       (end-of-eager-match nfa stream classify)
-      (last-possible buffer operation))))
+      (last-possible edit-context operation))))
 
 (s/defmethod resolve/resolve-motion :word :- (s/maybe [l/Location])
-  [{:keys [lines point] :as buffer}
+  [{:keys [lines point] :as edit-context}
    {:keys [operator]
     [_ {:keys [weird-delete-clip? type]}] :motion
     n :count
     :as operation}]
-  (let [point' (n-times point (or n 1) (partial move-word buffer operation))]
+  (let [point' (n-times point (or n 1) (partial move-word edit-context operation))]
     (cond
       (= point point')
       nil
@@ -124,6 +126,6 @@
                                               :direction :backward}]})
 
 (s/defmethod resolve/resolve-motion :in-word :- (s/maybe [l/Location])
-  [{:keys [lines point] :as buffer} _]
-  [(move-word buffer start-of-word-motion point)
-   (move-word buffer end-of-word-motion point)])
+  [{:keys [lines point] :as edit-context} _]
+  [(move-word edit-context start-of-word-motion point)
+   (move-word edit-context end-of-word-motion point)])

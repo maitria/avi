@@ -6,15 +6,15 @@
             [schema.core :as s]))
 
 (defmulti magic-row-value
-  (fn [buffer kind param]
+  (fn [edit-context kind param]
     kind))
 
 (defmethod magic-row-value :current
-  [buffer _ offset]
-  (+ (get-in buffer [:point 0]) (or offset 0)))
+  [edit-context _ offset]
+  (+ (get-in edit-context [:point 0]) (or offset 0)))
 
 (defmulti magic-column-value
-  (fn [buffer kind row param]
+  (fn [edit-context kind row param]
     kind))
 
 (defmethod magic-column-value :end-of-line
@@ -32,8 +32,8 @@
       leading-space-count)))
 
 (defmethod magic-column-value :first-non-blank
-  [buffer _ row _]
-  (first-non-blank buffer row))
+  [edit-context _ row _]
+  (first-non-blank edit-context row))
 
 (defn next-char-index
   [{:keys [lines]} [i j] direction ch]
@@ -57,25 +57,25 @@
     :else       (f v nil)))
 
 (defmethod resolve/resolve-motion :goto
-  [{:keys [lines] [i j] :point :as buffer} {[_ [goto-i goto-j]] :motion}]
-  (if-let [new-i (some->> (absolutize goto-i #(magic-row-value buffer %1 %2))
-                   (clamp-point-row buffer))]
+  [{:keys [lines] [i j] :point :as edit-context} {[_ [goto-i goto-j]] :motion}]
+  (if-let [new-i (some->> (absolutize goto-i #(magic-row-value edit-context %1 %2))
+                   (clamp-point-row edit-context))]
     (if-not goto-j
       [[i j] [new-i]]
-      (let [new-j (absolutize goto-j #(magic-column-value buffer %1 new-i %2))]
+      (let [new-j (absolutize goto-j #(magic-column-value edit-context %1 new-i %2))]
         (if new-j
           [[i j] [new-i new-j]])))))
 
 (defmethod resolve/resolve-motion :down
-  [{:keys [lines] [i j] :point :as buffer} {:keys [count]}]
+  [{:keys [lines] [i j] :point :as edit-context} {:keys [count]}]
   (let [new-i (+ i (or count 1))
-        clamped-i (clamp-point-row buffer new-i)]
+        clamped-i (clamp-point-row edit-context new-i)]
     (if (get lines (inc i))
       [[i j] [clamped-i]])))
 
 (defmethod resolve/resolve-motion :up
-  [{[i j] :point :as buffer} {:keys [count]}]
-  (let [new-i (clamp-point-row buffer (- i (or count 1)))]
+  [{[i j] :point :as edit-context} {:keys [count]}]
+  (let [new-i (clamp-point-row edit-context (- i (or count 1)))]
     (if-not (neg? (dec i))
       [[i j] [new-i]])))
 
@@ -96,7 +96,7 @@
       [[i j] [i column]])))
 
 (defmethod resolve/resolve-motion :goto-line
-  [{:keys [lines viewport-top viewport-height] [si sj] :point :as buffer}
+  [{:keys [lines viewport-top viewport-height] [si sj] :point :as edit-context}
    {count-register :count,
     [_ {:keys [from default-line multiplier]
         :or {default-line 0
@@ -116,20 +116,21 @@
                                    middle (min middle-of-viewport middle-of-file)]
                                (+ i middle))
             i)
-        i (clamp-point-row buffer i)]
-    [[si sj] [i (first-non-blank buffer i)]]))
+        i (clamp-point-row edit-context i)]
+    [[si sj] [i (first-non-blank edit-context i)]]))
 
 (defmethod resolve/resolve-motion :move-to-char
-  [{[i j] :point :as buffer} {ch :char
-                            n :count
-                            [_ {:keys [direction offset]
-                                :or {direction +1
-                                     offset 0}}] :motion}]
+  [{[i j] :point :as edit-context} 
+   {ch :char
+    n :count
+    [_ {:keys [direction offset]
+        :or {direction +1
+             offset 0}}] :motion}]
   (if-let [new-j (n-times
                    j
                    (or n 1)
                    (fn [j]
                      (if j
-                       (some-> (next-char-index buffer [i j] direction ch)
+                       (some-> (next-char-index edit-context [i j] direction ch)
                           (+ offset)))))]
     [[i j] [i new-j]]))

@@ -17,12 +17,12 @@
           b/start-transaction)))
 
 (defn advance-for-append
-  [{[i j] :point, lines :lines :as buffer}]
-  (assoc buffer :point [i (min (count (get lines i)) (inc j))]))
+  [{[i j] :point, lines :lines :as edit-context}]
+  (assoc edit-context :point [i (min (count (get lines i)) (inc j))]))
 
 (defn move-to-eol
-  [{[i] :point, lines :lines :as buffer}]
-  (assoc buffer :point [i (count (get lines i))]))
+  [{[i] :point, lines :lines :as edit-context}]
+  (assoc edit-context :point [i (count (get lines i))]))
 
 (def mappings-which-enter-insert-mode
   {"a" ^:no-repeat (fn+> [editor spec]
@@ -60,7 +60,7 @@
     "\n"
     key))
 
-(defn- update-buffer-for-insert-event
+(defn- update-edit-context-for-insert-event
   [editor [event-type event-data :as event]]
   (+> editor
     (if-not (= event-type :keystroke)
@@ -75,7 +75,7 @@
 (defn- play-script
   [editor script]
   (reduce
-    update-buffer-for-insert-event
+    update-edit-context-for-insert-event
     editor
     script))
 
@@ -110,7 +110,7 @@
     (update-in [:insert-mode-state :script] conj event)))
 
 (def responder
-  (-> update-buffer-for-insert-event
+  (-> update-edit-context-for-insert-event
       wrap-record-event
       wrap-handle-escape))
 

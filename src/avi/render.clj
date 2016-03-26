@@ -21,24 +21,24 @@
 (defn- render-line
   [editor i]
   (let [[height] (:size (:viewport editor))
-        buffer (e/edit-context editor)
-        top (:viewport-top buffer)
+        edit-context (e/edit-context editor)
+        top (:viewport-top edit-context)
         message-line (dec height)
         status-line (dec message-line)
         last-edit-line (dec status-line)
-        buffer-line (+ i top)
-        buffer-line-count (b/line-count buffer)]
+        edit-context-line (+ i top)
+        edit-context-line-count (b/line-count edit-context)]
     (cond
       (= message-line i)
       (render-message-line editor)
 
       (= status-line i)
-      [(color/make :black :white) (or (:name buffer) "[No Name]")]
+      [(color/make :black :white) (or (:name edit-context) "[No Name]")]
 
-      (< buffer-line buffer-line-count)
+      (< edit-context-line edit-context-line-count)
       (let [white-on-black (color/make :white :black)
             red-on-black (color/make :red :black)
-            line (b/line buffer buffer-line)
+            line (b/line edit-context edit-context-line)
             attrs (byte-array (count line) white-on-black)]
         [attrs line])
 
@@ -49,10 +49,10 @@
 
 (defmethod point-position :default
   [editor]
-  (let [buffer (e/edit-context editor)
-        [buffer-point-i buffer-point-j] (:point buffer)
-        viewport-top (:viewport-top buffer)]
-    [(- buffer-point-i viewport-top) buffer-point-j]))
+  (let [edit-context (e/edit-context editor)
+        [edit-context-point-i edit-context-point-j] (:point edit-context)
+        viewport-top (:viewport-top edit-context)]
+    [(- edit-context-point-i viewport-top) edit-context-point-j]))
 
 (defmethod point-position :command-line
   [editor]

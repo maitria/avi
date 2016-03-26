@@ -23,8 +23,8 @@
 (def ^:private brackets (into #{} (concat (keys bracket-map) (vals bracket-map))))
 
 (defn- go-to-matching-bracket
-  [{[i j] :point lines :lines :as buffer}]
-  (+> buffer
+  [{[i j] :point lines :lines :as edit-context}]
+  (+> edit-context
     (let [bracket (get-in lines [i j])
           open-bracket? (open-brackets bracket)
           scan (if open-bracket?

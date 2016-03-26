@@ -33,7 +33,7 @@
         (a-fn editor)
         (handler editor event)))))
 
-;; -- Tracking the current window & buffer -----------------------------------
+;; -- Tracking the current window & document ---------------------------------
 
 (def current-window
   (beep/add-beep-to-focus

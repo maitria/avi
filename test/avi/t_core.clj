@@ -3,7 +3,7 @@
             [avi.test-helpers :refer :all]))
 
 (facts "regarding displaying in the terminal"
-  (fact "It can display buffer content longer than will fit in buffer viewport."
+  (fact "It can display content longer than will fit in document viewport."
     (editor :editing ten-lines)
        => (terminal ["One"
                      "Two"
@@ -17,7 +17,7 @@
 (facts "regarding resizing of terminal window"
   (fact "When the terminal window is resized, it updates the editor viewport size."
     (editor :after "<Resize [17 42]>") => (viewport-size [17 42]))
-  (fact "When the terminal window is resized, it updates the buffer viewport size."
+  (fact "When the terminal window is resized, it updates the document viewport size."
     (editor :editing ten-lines :after "<Resize [12 20]>G")
      => (terminal ["One"
                    "Two"
@@ -31,5 +31,5 @@
                    "Ten"
                    "test.txt" :black :on :white
                    ""]))
-  (fact "When the terminal window is resized, the point stays inside the buffer viewport."
+  (fact "When the terminal window is resized, the point stays inside the document viewport."
     (editor :editing ten-lines :after "G<Resize [5 20]>") => (point [2 0])))

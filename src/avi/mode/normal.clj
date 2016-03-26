@@ -121,7 +121,7 @@
                      (let [n (or (:count spec) 2)]
                        (in e/edit-context
                            b/start-transaction
-                           (n-times (dec n) (fn+> [{:keys [lines] [i] :point :as buffer}]
+                           (n-times (dec n) (fn+> [{:keys [lines] [i] :point}]
                                               (let [start-j (count (get lines i))]
                                                 (b/change [i start-j] [(inc i) 0] " " :left)
                                                 (b/operate {:operator :move-point
@@ -129,8 +129,8 @@
                            b/commit)))
 
    "<C-D>" (fn+> [editor _]
-             (let [buffer (e/edit-context editor)]
-               (if (b/on-last-line? buffer)
+             (let [edit-context (e/edit-context editor)]
+               (if (b/on-last-line? edit-context)
                  beep/beep
                  (in e/edit-context
                    (b/move-and-scroll-half-page :down)))))
@@ -144,8 +144,8 @@
                b/redo))
 
    "<C-U>" (fn+> [editor _]
-             (let [buffer (e/edit-context editor)
-                   [i] (:point buffer)]
+             (let [edit-context (e/edit-context editor)
+                   [i] (:point edit-context)]
                (if (zero? i)
                  beep/beep
                  (in e/edit-context

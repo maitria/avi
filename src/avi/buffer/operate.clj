@@ -13,7 +13,7 @@
             [packthread.core :refer :all]))
 
 (defmulti operate
-  (fn [buffer params]
+  (fn [edit-context params]
     (:operator params)))
 
 (defn clamped-j
@@ -24,8 +24,8 @@
 
 (defn clamp-point-j
   [{[i j] :point,
-    :as buffer}]
-  (assoc buffer :point [i (clamped-j buffer j)]))
+    :as edit-context}]
+  (assoc edit-context :point [i (clamped-j edit-context j)]))
 
 (defmulti adjust-for-span
   "Per vim docs, \"inclusive\" motions include the last character of the range
@@ -64,17 +64,17 @@
   [start [ei (or ej last-explicit-j)]])
 
 (defn resolve-range
-  [{:keys [lines point last-explicit-j] :as buffer} {:keys [span] :as operation}]
-  (when-let [range (resolve/resolve-motion buffer operation)]
+  [{:keys [lines point last-explicit-j] :as edit-context} {:keys [span] :as operation}]
+  (when-let [range (resolve/resolve-motion edit-context operation)]
     (-> range
-      (fix-last-explicit-j buffer)
+      (fix-last-explicit-j edit-context)
       sort
       (adjust-for-span lines span))))
 
 (defmethod operate :move-point
-  [{:keys [last-explicit-j] :as buffer} operation]
-  (+> buffer
-    (let [[i j :as pos] (second (resolve/resolve-motion buffer operation))
+  [{:keys [last-explicit-j] :as edit-context} operation]
+  (+> edit-context
+    (let [[i j :as pos] (second (resolve/resolve-motion edit-context operation))
           set-last-explicit? (not (nil? j))
           j (or j last-explicit-j)]
       (if-not pos
@@ -87,9 +87,9 @@
         c/adjust-viewport-to-contain-point))))
 
 (defmethod operate :delete
-  [{start :point :keys [lines] :as buffer} operation]
-  (+> buffer
-    (if-let [[start end] (resolve-range buffer operation)]
+  [{start :point :keys [lines] :as edit-context} operation]
+  (+> edit-context
+    (if-let [[start end] (resolve-range edit-context operation)]
       (do
         t/start-transaction
         (c/change start end "" :left)
