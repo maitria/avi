@@ -31,13 +31,12 @@
       [""])))
 
 (defn open
-  [filename height]
+  [filename]
   (let [lines (if filename
                 (try-load filename)
                 [""])]
     {:name filename,
      :viewport-top 0
-     :viewport-height height
      :lines lines,
      :point [0 0],
      :undo-log ()

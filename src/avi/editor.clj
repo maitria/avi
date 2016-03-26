@@ -13,9 +13,10 @@
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :buffers [(b/open filename (- lines 2))]
+   :buffers [(b/open filename)]
    :viewport {:size [lines columns]}
    :windows [{:buffer 0
+              :viewport-height (- lines 2)
               :last-explicit-j 0}]
    :focused-window 0
    :beep? false})
@@ -54,9 +55,9 @@
   [:buffers (:buffer (current-window editor))])
 
 (def ^:private edit-context-buffer-keys
-  #{:name :lines :viewport-top :viewport-height :point :undo-log :redo-log :in-transaction?})
+  #{:name :lines :viewport-top :point :undo-log :redo-log :in-transaction?})
 (def ^:private edit-context-window-keys
-  #{:last-explicit-j})
+  #{:viewport-height :last-explicit-j})
 
 (def edit-context
   "Perform some action in an \"edit context\".
