@@ -13,9 +13,9 @@
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :buffers [(b/open filename)]
+   :documents [(b/open filename)]
    :viewport {:size [lines columns]}
-   :windows [{:buffer 0
+   :windows [{:document 0
               :viewport-top 0
               :viewport-height (- lines 2)
               :point [0 0]
@@ -54,7 +54,7 @@
 
 (defn current-buffer-path
   [editor]
-  [:buffers (:buffer (current-window editor))])
+  [:documents (:document (current-window editor))])
 
 (def ^:private edit-context-buffer-keys
   #{:name :lines :undo-log :redo-log :in-transaction?})
