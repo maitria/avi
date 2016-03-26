@@ -17,6 +17,7 @@
    :viewport {:size [lines columns]}
    :windows [{:buffer 0
               :viewport-height (- lines 2)
+              :point [0 0]
               :last-explicit-j 0}]
    :focused-window 0
    :beep? false})
@@ -55,9 +56,9 @@
   [:buffers (:buffer (current-window editor))])
 
 (def ^:private edit-context-buffer-keys
-  #{:name :lines :viewport-top :point :undo-log :redo-log :in-transaction?})
+  #{:name :lines :viewport-top :undo-log :redo-log :in-transaction?})
 (def ^:private edit-context-window-keys
-  #{:viewport-height :last-explicit-j})
+  #{:viewport-height :point :last-explicit-j})
 
 (def edit-context
   "Perform some action in an \"edit context\".

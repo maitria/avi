@@ -38,7 +38,6 @@
     {:name filename,
      :viewport-top 0
      :lines lines,
-     :point [0 0],
      :undo-log ()
      :redo-log ()}))
 
