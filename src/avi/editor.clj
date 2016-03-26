@@ -3,6 +3,7 @@
    manipulating the editor map."
   (:require [packthread.core :refer :all]
             [packthread.lenses :as l]
+            [schema.core :as s]
             [avi.pervasive :refer :all]
             [avi.beep :as beep]
             [avi.buffer :as b]))
@@ -36,6 +37,17 @@
       ([{:keys [focused-window] :as editor}]
        (get-in editor [:windows focused-window])))))
 
+(def EditContext
+  {:name s/Any
+   :lines s/Any
+   :viewport-top s/Any
+   :viewport-height s/Any
+   :point s/Any
+   :last-explicit-j s/Any
+   :undo-log s/Any
+   :redo-log s/Any
+   (s/optional-key :in-transaction?) s/Any})
+
 (def edit-context
   "Perform some action in an \"edit context\".
 
@@ -51,9 +63,13 @@
   (beep/add-beep-to-focus
     (fn edit-context*
       ([editor]
-       (get-in editor [:buffers (:buffer (current-window editor))]))
-      ([editor new-buffer]
-       (assoc-in editor [:buffers (:buffer (current-window editor))] new-buffer)))))
+       (s/validate
+         EditContext
+         (-> editor
+           (get-in [:buffers (:buffer (current-window editor))])
+           (select-keys [:name :lines :viewport-top :viewport-height :point :last-explicit-j :undo-log :redo-log :in-transaction?]))))
+      ([editor new-context]
+       (update-in editor [:buffers (:buffer (current-window editor))] merge new-context)))))
 
 ;; -- Modes ------------------------------------------------------------------
 
