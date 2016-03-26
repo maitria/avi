@@ -40,7 +40,6 @@
      :viewport-height height
      :lines lines,
      :point [0 0],
-     :last-explicit-j 0
      :undo-log ()
      :redo-log ()}))
 

@@ -15,7 +15,8 @@
   {:mode :normal
    :buffers [(b/open filename (- lines 2))]
    :viewport {:size [lines columns]}
-   :windows [{:buffer 0}]
+   :windows [{:buffer 0
+              :last-explicit-j 0}]
    :focused-window 0
    :beep? false})
 
@@ -53,7 +54,9 @@
   [:buffers (:buffer (current-window editor))])
 
 (def ^:private edit-context-buffer-keys
-  [:name :lines :viewport-top :viewport-height :point :last-explicit-j :undo-log :redo-log :in-transaction?])
+  #{:name :lines :viewport-top :viewport-height :point :undo-log :redo-log :in-transaction?})
+(def ^:private edit-context-window-keys
+  #{:last-explicit-j})
 
 (def edit-context
   "Perform some action in an \"edit context\".
@@ -72,11 +75,16 @@
       ([editor]
        (s/validate
          EditContext
-         (-> editor
-           (get-in (current-buffer-path editor))
-           (select-keys edit-context-buffer-keys))))
-      ([editor new-context]
-       (update-in editor (current-buffer-path editor) merge new-context)))))
+         (merge
+           (-> editor
+             (get-in (current-buffer-path editor))
+             (select-keys edit-context-buffer-keys))
+           (-> (current-window editor)
+             (select-keys edit-context-window-keys)))))
+      ([{:keys [focused-window] :as editor} new-context]
+       (-> editor
+         (update-in (current-buffer-path editor) merge (select-keys new-context edit-context-buffer-keys))
+         (update-in [:windows focused-window] merge (select-keys new-context edit-context-window-keys)))))))
 
 ;; -- Modes ------------------------------------------------------------------
 
