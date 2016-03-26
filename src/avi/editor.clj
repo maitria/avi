@@ -48,6 +48,10 @@
    :redo-log s/Any
    (s/optional-key :in-transaction?) s/Any})
 
+(defn current-buffer-path
+  [editor]
+  [:buffers (:buffer (current-window editor))])
+
 (def edit-context
   "Perform some action in an \"edit context\".
 
@@ -66,10 +70,10 @@
        (s/validate
          EditContext
          (-> editor
-           (get-in [:buffers (:buffer (current-window editor))])
+           (get-in (current-buffer-path editor))
            (select-keys [:name :lines :viewport-top :viewport-height :point :last-explicit-j :undo-log :redo-log :in-transaction?]))))
       ([editor new-context]
-       (update-in editor [:buffers (:buffer (current-window editor))] merge new-context)))))
+       (update-in editor (current-buffer-path editor) merge new-context)))))
 
 ;; -- Modes ------------------------------------------------------------------
 
