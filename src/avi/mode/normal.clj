@@ -2,7 +2,7 @@
   (:require [packthread.core :refer :all]
             [avi.beep :as beep]
             [avi.brackets :as brackets]
-            [avi.edit-context :as b]
+            [avi.edit-context :as ec]
             [avi.editor :as e]
             [avi.events :as ev]
             [avi.mode command-line insert]
@@ -89,59 +89,59 @@
   [editor spec]
   (+> editor
     (in e/edit-context
-      (b/operate spec))))
+      (ec/operate spec))))
 
 (def non-motion-commands
   {"dd" ^:no-repeat (fn+> [editor spec]
                       (let [repeat-count (:count spec)]
                         (in e/edit-context
-                            b/start-transaction
-                            (n-times (or repeat-count 1) b/delete-current-line)
-                            b/commit)))
+                            ec/start-transaction
+                            (n-times (or repeat-count 1) ec/delete-current-line)
+                            ec/commit)))
 
    "u" (fn+> [editor _]
          (in e/edit-context
-           b/undo))
+           ec/undo))
 
    "x" ^:no-repeat (fn+> [editor spec]
                      (in e/edit-context
-                       (b/operate (merge
-                                    spec
-                                    {:operator :delete
-                                     :span :exclusive
-                                     :motion [:right]}))))
+                       (ec/operate (merge
+                                     spec
+                                     {:operator :delete
+                                      :span :exclusive
+                                      :motion [:right]}))))
 
    "D" (fn+> [editor _]
          (in e/edit-context
-           (b/operate {:operator :delete
-                       :span :inclusive
-                       :motion [:goto [:current :end-of-line]]})))
+           (ec/operate {:operator :delete
+                        :span :inclusive
+                        :motion [:goto [:current :end-of-line]]})))
 
    "J" ^:no-repeat (fn+> [editor spec]
                      (let [n (or (:count spec) 2)]
                        (in e/edit-context
-                           b/start-transaction
+                           ec/start-transaction
                            (n-times (dec n) (fn+> [{:keys [lines] [i] :point}]
                                               (let [start-j (count (get lines i))]
-                                                (b/change [i start-j] [(inc i) 0] " " :left)
-                                                (b/operate {:operator :move-point
+                                                (ec/change [i start-j] [(inc i) 0] " " :left)
+                                                (ec/operate {:operator :move-point
                                                             :motion [:goto [i start-j]]}))))
-                           b/commit)))
+                           ec/commit)))
 
    "<C-D>" (fn+> [editor _]
              (let [edit-context (e/edit-context editor)]
-               (if (b/on-last-line? edit-context)
+               (if (ec/on-last-line? edit-context)
                  beep/beep
                  (in e/edit-context
-                   (b/move-and-scroll-half-page :down)))))
+                   (ec/move-and-scroll-half-page :down)))))
 
    "<C-E>" (fn+> [editor _]
              (in e/edit-context
-               (b/scroll inc)))
+               (ec/scroll inc)))
 
    "<C-R>" (fn+> [editor _]
              (in e/edit-context
-               b/redo))
+               ec/redo))
 
    "<C-U>" (fn+> [editor _]
              (let [edit-context (e/edit-context editor)
@@ -149,11 +149,11 @@
                (if (zero? i)
                  beep/beep
                  (in e/edit-context
-                   (b/move-and-scroll-half-page :up)))))
+                   (ec/move-and-scroll-half-page :up)))))
 
    "<C-Y>" (fn+> [editor _]
              (in e/edit-context
-               (b/scroll dec)))})
+               (ec/scroll dec)))})
 
 (defn wrap-handler-with-repeat-loop
   [handler]

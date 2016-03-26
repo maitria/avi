@@ -3,7 +3,6 @@
             [packthread.core :refer :all]
             [packthread.lenses :as l]
             [avi.beep :as beep]
-            [avi.edit-context :as b]
             [avi.edit-context
              [lines :as lines]
              [locations :as loc]]

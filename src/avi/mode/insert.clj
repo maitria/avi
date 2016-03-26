@@ -2,8 +2,8 @@
   (:require [packthread.core :refer :all]
             [packthread.lenses :as l]
             [avi.beep :as beep]
+            [avi.edit-context :as ec]
             [avi.editor :as e]
-            [avi.edit-context :as b]
             [avi.pervasive :refer :all]))
 
 (defn enter-insert-mode
@@ -14,7 +14,7 @@
              :insert-mode-state {:count (or (:count spec) 1)
                                  :script (or script [])})
       (in e/edit-context
-          b/start-transaction)))
+        ec/start-transaction)))
 
 (defn advance-for-append
   [{[i j] :point, lines :lines :as edit-context}]
@@ -39,7 +39,7 @@
                        (enter-insert-mode spec [[:keystroke "<Enter>"]])
                        (in e/edit-context
                            move-to-eol
-                           (b/change [i eol] [i eol] "\n" :right))))
+                           (ec/change [i eol] [i eol] "\n" :right))))
 
    "A" ^:no-repeat (fn+> [editor spec]
                      (enter-insert-mode spec)
@@ -50,8 +50,8 @@
                      (let [{[i] :point} (e/edit-context editor)]
                        (enter-insert-mode spec [[:keystroke "<Enter>"]])
                        (in e/edit-context
-                           (b/change [i 0] [i 0] "\n" :left)
-                           (b/operate {:operator :move-point
+                           (ec/change [i 0] [i 0] "\n" :left)
+                           (ec/operate {:operator :move-point
                                        :motion [:goto [i 0]]}))))})
 
 (defn- key->text
@@ -69,8 +69,8 @@
           (if (= event-data "<BS>")
             (if (= [0 0] (:point (e/edit-context editor)))
               beep/beep
-              b/backspace)
-            (b/insert-text (key->text event-data)))))))
+              ec/backspace)
+            (ec/insert-text (key->text event-data)))))))
 
 (defn- play-script
   [editor script]
@@ -98,9 +98,9 @@
             [i j] (:point b)
             new-j (max (dec j) 0)]
         (in e/edit-context
-            (b/operate {:operator :move-point
-                        :motion [:goto [i new-j]]})
-            b/commit))
+          (ec/operate {:operator :move-point
+                       :motion [:goto [i new-j]]})
+          ec/commit))
       (e/enter-normal-mode))))
 
 (defn- wrap-record-event

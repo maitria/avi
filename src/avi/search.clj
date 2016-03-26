@@ -1,7 +1,7 @@
 (ns avi.search
   (:require [packthread.core :refer :all]
-            [avi.edit-context :as b]
             [avi.command-line :as cl]
+            [avi.edit-context :as ec]
             [avi.editor :as e]
             [avi.pervasive :refer :all]))
 
@@ -56,8 +56,8 @@
       (assoc ::last-direction direction)
       (if-let [[i j wrapped?] (find-occurrence direction (e/edit-context editor) (re-pattern pattern))]
         (do
-          (in e/edit-context (b/operate {:operator :move-point
-                                           :motion [:goto [i j]]}))
+          (in e/edit-context (ec/operate {:operator :move-point
+                                          :motion [:goto [i j]]}))
           (if wrapped?
             (assoc :message [:red :black (get-in directions [direction :wrap-message])])
             (assoc :message [:white :black (str (get-in directions [direction :prompt]) pattern)])))

@@ -2,7 +2,7 @@
   (:import [java.util Arrays])
   (:require [clojure.set :refer [map-invert]]
             [avi.editor :as e]
-            [avi.edit-context :as b]
+            [avi.edit-context :as ec]
             [avi.color :as color]))
 
 (defn- render-message-line
@@ -27,7 +27,7 @@
         status-line (dec message-line)
         last-edit-line (dec status-line)
         edit-context-line (+ i top)
-        edit-context-line-count (b/line-count edit-context)]
+        edit-context-line-count (ec/line-count edit-context)]
     (cond
       (= message-line i)
       (render-message-line editor)
@@ -38,7 +38,7 @@
       (< edit-context-line edit-context-line-count)
       (let [white-on-black (color/make :white :black)
             red-on-black (color/make :red :black)
-            line (b/line edit-context edit-context-line)
+            line (ec/line edit-context edit-context-line)
             attrs (byte-array (count line) white-on-black)]
         [attrs line])
 

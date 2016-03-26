@@ -3,7 +3,7 @@
   
   Functions implemented in this namespace can be called by name from the colon
   prompt."
-  (:require [avi.edit-context :as b]
+  (:require [avi.edit-context :as ec]
             [avi.editor :as e]
             [packthread.core :refer :all]))
 
@@ -12,8 +12,8 @@
   [editor command-line]
   (+> editor
     (in e/edit-context
-      (b/operate {:operator :move-point
-                  :motion [:goto [(dec (Long/parseLong command-line)) :first-non-blank]]}))))
+        (ec/operate {:operator :move-point
+                     :motion [:goto [(dec (Long/parseLong command-line)) :first-non-blank]]}))))
 
 (defn q
   [editor]
@@ -23,6 +23,6 @@
   [editor]
   (+> editor
     (in e/edit-context
-      b/write)))
+      ec/write)))
 
 (def wq (comp q w))

@@ -7,14 +7,14 @@
             [schema.core :as s]
             [avi.pervasive :refer :all]
             [avi.beep :as beep]
-            [avi.edit-context :as b]))
+            [avi.edit-context :as ec]))
 
 ;; -- Initial state ----------------------------------------------------------
 
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :documents [(b/open filename)]
+   :documents [(ec/open filename)]
    :viewport {:size [lines columns]}
    :lenses [{:document 0
              :viewport-top 0
@@ -60,7 +60,7 @@
 (let [document-keys #{:name :lines :undo-log :redo-log :in-transaction?}
       lens-keys (set/difference
                   (into #{} (keys EditContext))
-                  edit-context-document-keys)]
+                  document-keys)]
   (def edit-context
     "Perform some action in an \"edit context\".
 
@@ -112,7 +112,7 @@
       (+> editor
           (assoc-in [:viewport :size] size)
           (in edit-context
-              (b/resize (- (first size) 2))))
+              (ec/resize (- (first size) 2))))
       (responder editor event))))
 
 ;; -- Exceptions and failures ------------------------------------------------
