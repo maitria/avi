@@ -31,19 +31,10 @@
 ;; -- Tracking the current window & buffer -----------------------------------
 
 (def current-window
-  "Read or update the current window
-  
-  This is intended to be used with packthread's \"in\" macro, like so:
-
-    (+> editor
-      (in e/current-window
-        (assoc :foo :bar)))"
   (beep/add-beep-to-focus
     (fn current-window*
       ([{:keys [focused-window] :as editor}]
-       (get-in editor [:windows focused-window]))
-      ([{:keys [focused-window] :as editor} new-window]
-       (assoc-in editor [:windows focused-window] new-window)))))
+       (get-in editor [:windows focused-window])))))
 
 (def edit-context
   "Perform some action in an \"edit context\".
