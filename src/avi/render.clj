@@ -22,6 +22,7 @@
   [editor i]
   (let [[height] (:size (:viewport editor))
         edit-context (e/edit-context editor)
+        document (get-in editor (e/current-document-path editor))
         top (:viewport-top edit-context)
         message-line (dec height)
         status-line (dec message-line)
@@ -33,7 +34,7 @@
       (render-message-line editor)
 
       (= status-line i)
-      [(color/make :black :white) (or (:name edit-context) "[No Name]")]
+      [(color/make :black :white) (or (:name document) "[No Name]")]
 
       (< edit-context-line edit-context-line-count)
       (let [white-on-black (color/make :white :black)

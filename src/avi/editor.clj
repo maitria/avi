@@ -60,8 +60,7 @@
        (get-in editor [:lenses focused-lens])))))
 
 (def EditContext
-  {:name s/Any
-   :lines s/Any
+  {:lines s/Any
    :viewport-top s/Any
    :viewport-height s/Any
    :point s/Any
@@ -74,7 +73,7 @@
   [editor]
   [:documents (:document (current-lens editor))])
 
-(let [document-keys #{:name :lines :undo-log :redo-log :in-transaction?}
+(let [document-keys #{:lines :undo-log :redo-log :in-transaction?}
       lens-keys (set/difference
                   (into #{} (keys EditContext))
                   document-keys)]
