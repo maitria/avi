@@ -5,6 +5,8 @@
   prompt."
   (:require [avi.edit-context :as ec]
             [avi.editor :as e]
+            [avi.world :as w]
+            [clojure.string :as string]
             [packthread.core :refer :all]))
 
 (defn -NUMBER-
@@ -21,8 +23,8 @@
 
 (defn w
   [editor]
-  (+> editor
-    (in e/edit-context
-      ec/write)))
+  (let [{filename :name, :keys [lines]} (get-in editor (e/current-document-path editor))]
+    (w/write-file w/*world* filename (string/join "\n" lines))
+    editor))
 
 (def wq (comp q w))

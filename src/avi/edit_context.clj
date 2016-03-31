@@ -1,6 +1,5 @@
 (ns avi.edit-context
   (:require [packthread.core :refer :all]
-            [clojure.string :as string]
             [avi.beep :as beep]
             [avi.edit-context
               [change]
@@ -21,13 +20,6 @@
              [avi.edit-context.transactions
                 start-transaction
                 commit])
-
-(defn write
-  [{filename :name,
-    :keys [lines]
-    :as edit-context}]
-  (w/write-file w/*world* filename (string/join "\n" lines))
-  edit-context)
 
 (defn line
   [edit-context i]
