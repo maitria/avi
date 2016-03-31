@@ -12,15 +12,18 @@
             [potemkin :refer [import-vars]]
             [schema.core :as s]))
 
+(def Nat
+  (s/constrained s/Int (complement neg?)))
+
 (def EditContext
-  {:lines s/Any
-   :viewport-top s/Any
-   :viewport-height s/Any
-   :point s/Any
-   :last-explicit-j s/Any
+  {:lines lines/Lines
+   :viewport-top Nat
+   :viewport-height Nat
+   :point l/Location
+   :last-explicit-j Nat
    :undo-log s/Any
    :redo-log s/Any
-   :in-transaction? s/Any})
+   :in-transaction? s/Bool})
 
 (import-vars [avi.edit-context.change
                 adjust-viewport-to-contain-point
