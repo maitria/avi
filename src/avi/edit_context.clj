@@ -9,7 +9,18 @@
               [transactions]]
             [avi.pervasive :refer :all]
             [avi.world :as w]
-            [potemkin :refer [import-vars]]))
+            [potemkin :refer [import-vars]]
+            [schema.core :as s]))
+
+(def EditContext
+  {:lines s/Any
+   :viewport-top s/Any
+   :viewport-height s/Any
+   :point s/Any
+   :last-explicit-j s/Any
+   :undo-log s/Any
+   :redo-log s/Any
+   :in-transaction? s/Any})
 
 (import-vars [avi.edit-context.change
                 adjust-viewport-to-contain-point

@@ -59,23 +59,13 @@
       ([{:keys [focused-lens] :as editor}]
        (get-in editor [:lenses focused-lens])))))
 
-(def EditContext
-  {:lines s/Any
-   :viewport-top s/Any
-   :viewport-height s/Any
-   :point s/Any
-   :last-explicit-j s/Any
-   :undo-log s/Any
-   :redo-log s/Any
-   :in-transaction? s/Any})
-
 (defn current-document-path
   [editor]
   [:documents (:document (current-lens editor))])
 
 (let [document-keys #{:lines :undo-log :redo-log :in-transaction?}
       lens-keys (set/difference
-                  (into #{} (keys EditContext))
+                  (into #{} (keys ec/EditContext))
                   document-keys)]
   (def edit-context
     "Perform some action in an \"edit context\".
@@ -93,7 +83,7 @@
       (fn edit-context*
         ([editor]
          (s/validate
-           EditContext
+           ec/EditContext
            (merge
              (-> editor
                (get-in (current-document-path editor))
