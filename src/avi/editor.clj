@@ -38,7 +38,9 @@
              :viewport-height (- lines 2)
              :point [0 0]
              :last-explicit-j 0}]
-   :focused-lens 0
+   :panes [{:type :pane
+            :lens 0}]
+   :focused-pane 0
    :beep? false})
 
 ;; -- Building middlewares ---------------------------------------------------
@@ -53,11 +55,22 @@
 
 ;; -- Tracking the current lens & document -----------------------------------
 
+(defn current-pane-path
+  [{:keys [focused-pane] :as editor}]
+  [:panes focused-pane])
+
+(defn current-pane
+  [editor]
+  (get-in editor (current-pane-path editor)))
+
+(defn current-lens-path
+  [editor]
+  [:lenses (:lens (current-pane editor))])
+
 (def current-lens
   (beep/add-beep-to-focus
-    (fn current-lens*
-      ([{:keys [focused-lens] :as editor}]
-       (get-in editor [:lenses focused-lens])))))
+    (fn current-lens* [editor]
+      (get-in editor (current-lens-path editor)))))
 
 (defn current-document-path
   [editor]
@@ -90,10 +103,10 @@
                (select-keys document-keys))
              (-> (current-lens editor)
                (select-keys lens-keys)))))
-        ([{:keys [focused-lens] :as editor} new-context]
+        ([editor new-context]
          (-> editor
            (update-in (current-document-path editor) merge (select-keys new-context document-keys))
-           (update-in [:lenses focused-lens] merge (select-keys new-context lens-keys))))))))
+           (update-in (current-lens-path editor) merge (select-keys new-context lens-keys))))))))
 
 ;; -- Modes ------------------------------------------------------------------
 
