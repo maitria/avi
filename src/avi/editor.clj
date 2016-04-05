@@ -35,7 +35,6 @@
    :viewport {:size [lines columns]}
    :lenses [{:document 0
              :viewport-top 0
-             :viewport-height (- lines 2)
              :point [0 0]
              :last-explicit-j 0}]
    :panes [{:type :pane
@@ -76,10 +75,16 @@
   [editor]
   [:documents (:document (current-lens editor))])
 
+(defn- editor-viewport-height
+  [editor]
+  (- (get-in editor [:viewport :size 0]) 2))
+
 (let [document-keys #{:lines :undo-log :redo-log :in-transaction?}
+      computed-keys #{:viewport-height}
       lens-keys (set/difference
                   (into #{} (keys ec/EditContext))
-                  document-keys)]
+                  document-keys
+                  computed-keys)]
   (def edit-context
     "Perform some action in an \"edit context\".
 
@@ -102,7 +107,8 @@
                (get-in (current-document-path editor))
                (select-keys document-keys))
              (-> (current-lens editor)
-               (select-keys lens-keys)))))
+               (select-keys lens-keys))
+             {:viewport-height (editor-viewport-height editor)})))
         ([editor new-context]
          (-> editor
            (update-in (current-document-path editor) merge (select-keys new-context document-keys))
