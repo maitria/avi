@@ -58,12 +58,6 @@
         (operate {:operator :move-point
                   :motion [:goto [viewport-bottom]]})))))
 
-(defn resize
-  [edit-context height]
-  (+> edit-context
-      (assoc :viewport-height height)
-      (adjust-viewport-to-contain-point)))
-
 (defn scroll
   [edit-context scroll-fn]
   (+> edit-context

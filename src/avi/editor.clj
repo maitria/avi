@@ -135,9 +135,9 @@
   (fn [editor [event-type size :as event]]
     (if (= event-type :resize)
       (+> editor
-          (assoc-in [:viewport :size] size)
-          (in edit-context
-              (ec/resize (- (first size) 2))))
+        (assoc-in [:viewport :size] size)
+        (in edit-context
+          ec/adjust-viewport-to-contain-point))
       (responder editor event))))
 
 ;; -- Exceptions and failures ------------------------------------------------
