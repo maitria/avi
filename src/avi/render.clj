@@ -5,25 +5,6 @@
             [avi.edit-context :as ec]
             [avi.color :as color]))
 
-(defn- render-line
-  [editor i]
-  (let [[height] (:size (:viewport editor))
-        edit-context (e/edit-context editor)
-        document (get-in editor (e/current-document-path editor))
-        top (:viewport-top edit-context)
-        status-line (- height 2)
-        edit-context-line (+ i top)
-        edit-context-line-count (ec/line-count edit-context)]
-    (cond
-      (= status-line i)
-      [(color/make :black :white) (or (:name document) "[No Name]")]
-
-      (< edit-context-line edit-context-line-count)
-      [(color/make :white :black) (ec/line edit-context edit-context-line)]
-
-      :else
-      [(color/make :blue :black) "~"])))
-
 (defmulti ^:private point-position :mode)
 
 (defmethod point-position :default
@@ -51,9 +32,17 @@
     (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs)))
 
 (defn render-pane!
-  [editor rendition [from-line to-line] lens]
-  (doseq [i (range from-line (inc to-line))]
-    (render-line! rendition i (render-line editor i))))
+  [editor rendition [from-line to-line] lens-number]
+  (let [document (get-in editor (e/current-document-path editor))]
+    (doseq [i (range from-line to-line)]
+      (let [edit-context (e/edit-context editor)
+            top (:viewport-top edit-context)
+            edit-context-line (+ i top)
+            edit-context-line-count (ec/line-count edit-context)]
+        (if (< edit-context-line edit-context-line-count)
+          (render-line! rendition i [(color/make :white :black) (ec/line edit-context edit-context-line)])
+          (render-line! rendition i [(color/make :blue :black) "~"]))))
+    (render-line! rendition to-line [(color/make :black :white) (or (:name document) "[No Name]")])))
 
 (defn render-message-line!
   [editor rendition]
