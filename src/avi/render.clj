@@ -21,11 +21,7 @@
       [(color/make :black :white) (or (:name document) "[No Name]")]
 
       (< edit-context-line edit-context-line-count)
-      (let [white-on-black (color/make :white :black)
-            red-on-black (color/make :red :black)
-            line (ec/line edit-context edit-context-line)
-            attrs (byte-array (count line) white-on-black)]
-        [attrs line])
+      [(color/make :white :black) (ec/line edit-context edit-context-line)]
 
       :else
       [(color/make :blue :black) "~"])))
