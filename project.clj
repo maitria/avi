@@ -5,7 +5,8 @@
             :url "http://github.com/maitria/avi/README.md"}
   :jvm-opts ["-Djava.library.path=/usr/local/lib/avi"]
   :plugins [[lein-midje "3.0.0"]]
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :exclusions [org.clojure/clojure]
+  :dependencies [[org.jaunt-lang/jaunt "0.3.0-SNAPSHOT"]
                  [com.maitria/packthread "0.1.8"]
                  [prismatic/schema "1.0.2"]
                  [potemkin "0.4.1"]]
