@@ -34,14 +34,14 @@
 (defn render-pane!
   [editor rendition [from-line to-line] lens-number]
   (let [document (get-in editor (e/current-document-path editor))]
-    (doseq [i (range from-line to-line)]
-      (let [edit-context (e/edit-context editor)
-            top (:viewport-top edit-context)
-            edit-context-line (+ i top)
-            edit-context-line-count (ec/line-count edit-context)]
-        (if (< edit-context-line edit-context-line-count)
-          (fill-rendition-line! rendition i [(color/make :white :black) (ec/line edit-context edit-context-line)])
-          (fill-rendition-line! rendition i [(color/make :blue :black) "~"]))))
+    (doseq [i (range (inc (- to-line from-line)))]
+      (let [{:keys [viewport-top] document-number :document} (get-in editor [:lenses lens-number])
+            document-line (get-in editor [:documents document-number :lines (+ i viewport-top)])
+            line-color (if document-line
+                         (color/make :white :black)
+                         (color/make :blue :black))
+            line-text (or document-line "~")]
+        (fill-rendition-line! rendition (+ i from-line) [line-color line-text])))
     (fill-rendition-line! rendition to-line [(color/make :black :white) (or (:name document) "[No Name]")])))
 
 (defn render-message-line!
