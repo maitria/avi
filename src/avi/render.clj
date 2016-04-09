@@ -72,6 +72,11 @@
     (System/arraycopy attrs 0 rendered-attrs (* i width) (min width (count attrs)))
     (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs)))
 
+(defn render-message-line!
+  [editor rendition]
+  (let [[height] (:size (:viewport editor))]
+    (render-line! rendition (dec height) (render-line editor (dec height)))))
+
 (defn render
   [editor]
   (let [[height width] (:size (:viewport editor))
@@ -82,8 +87,9 @@
                    :chars rendered-chars
                    :attrs rendered-attrs
                    :point (point-position editor)}]
-    (doseq [i (range height)]
+    (doseq [i (range (dec height))]
       (render-line! rendition i (render-line editor i)))
+    (render-message-line! editor rendition)
     rendition))
 
 (defn rendered
