@@ -1,2 +1,4 @@
 language: clojure
+jdk:
+- oraclejdk8
 script: lein midje :print-facts
