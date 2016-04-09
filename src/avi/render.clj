@@ -50,23 +50,17 @@
     (System/arraycopy attrs 0 rendered-attrs (* i width) (min width (count attrs)))
     (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs)))
 
-(defn- render-message-line
-  [editor]
-  (cond
-    (and (:prompt editor) (:command-line editor))
-    [(color/make :white :black) (str (:prompt editor) (:command-line editor))]
-
-    (:message editor)
-    (let [[foreground background text] (:message editor)]
-      [(color/make foreground background) text])
-
-    :else
-    [(color/make :white :black) ""]))
-
 (defn render-message-line!
   [editor rendition]
-  (let [[height] (:size (:viewport editor))]
-    (render-line! rendition (dec height) (render-message-line editor))))
+  (let [[height] (:size (:viewport editor))
+        i (dec height)]
+    (cond
+      (and (:prompt editor) (:command-line editor))
+      (render-line! rendition i [(color/make :white :black) (str (:prompt editor) (:command-line editor))])
+
+      (:message editor)
+      (let [[foreground background text] (:message editor)]
+        (render-line! rendition i [(color/make foreground background) text])))))
 
 (defn render
   [editor]
