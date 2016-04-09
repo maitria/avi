@@ -70,17 +70,18 @@
   (let [[height width] (:size (:viewport editor))
         default-attrs (color/make :white :black)
         rendered-chars (char-array (* height width) \space)
-        rendered-attrs (byte-array (* height width) default-attrs)]
+        rendered-attrs (byte-array (* height width) default-attrs)
+        rendition {:width width
+                   :chars rendered-chars
+                   :attrs rendered-attrs
+                   :point (point-position editor)}]
     (doseq [i (range height)]
       (let [[attrs text] (render-line editor i)]
         (.getChars text 0 (min width (count text)) rendered-chars (* i width))
         (if (byte-array? attrs)
           (System/arraycopy attrs 0 rendered-attrs (* i width) (min width (count attrs)))
           (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))))
-    {:width width
-     :chars rendered-chars
-     :attrs rendered-attrs
-     :point (point-position editor)}))
+    rendition))
 
 (defn rendered
   [editor]
