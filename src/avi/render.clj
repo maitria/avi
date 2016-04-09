@@ -24,7 +24,7 @@
     [obj]
     (= byte-array-class (class obj))))
 
-(defn render-line!
+(defn fill-rendition-line!
   [{:keys [width] rendered-chars :chars, rendered-attrs :attrs} i [attrs text]]
   (.getChars text 0 (min width (count text)) rendered-chars (* i width))
   (if (byte-array? attrs)
@@ -40,9 +40,9 @@
             edit-context-line (+ i top)
             edit-context-line-count (ec/line-count edit-context)]
         (if (< edit-context-line edit-context-line-count)
-          (render-line! rendition i [(color/make :white :black) (ec/line edit-context edit-context-line)])
-          (render-line! rendition i [(color/make :blue :black) "~"]))))
-    (render-line! rendition to-line [(color/make :black :white) (or (:name document) "[No Name]")])))
+          (fill-rendition-line! rendition i [(color/make :white :black) (ec/line edit-context edit-context-line)])
+          (fill-rendition-line! rendition i [(color/make :blue :black) "~"]))))
+    (fill-rendition-line! rendition to-line [(color/make :black :white) (or (:name document) "[No Name]")])))
 
 (defn render-message-line!
   [editor rendition]
@@ -50,11 +50,11 @@
         i (dec height)]
     (cond
       (and (:prompt editor) (:command-line editor))
-      (render-line! rendition i [(color/make :white :black) (str (:prompt editor) (:command-line editor))])
+      (fill-rendition-line! rendition i [(color/make :white :black) (str (:prompt editor) (:command-line editor))])
 
       (:message editor)
       (let [[foreground background text] (:message editor)]
-        (render-line! rendition i [(color/make foreground background) text])))))
+        (fill-rendition-line! rendition i [(color/make foreground background) text])))))
 
 (defn render
   [editor]
