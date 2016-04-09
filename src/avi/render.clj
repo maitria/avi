@@ -11,9 +11,7 @@
         edit-context (e/edit-context editor)
         document (get-in editor (e/current-document-path editor))
         top (:viewport-top edit-context)
-        message-line (dec height)
-        status-line (dec message-line)
-        last-edit-line (dec status-line)
+        status-line (- height 2)
         edit-context-line (+ i top)
         edit-context-line-count (ec/line-count edit-context)]
     (cond
