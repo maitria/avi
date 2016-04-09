@@ -5,19 +5,6 @@
             [avi.edit-context :as ec]
             [avi.color :as color]))
 
-(defn- render-message-line
-  [editor]
-  (cond
-    (and (:prompt editor) (:command-line editor))
-    [(color/make :white :black) (str (:prompt editor) (:command-line editor))]
-
-    (:message editor)
-    (let [[foreground background text] (:message editor)]
-      [(color/make foreground background) text])
-
-    :else
-    [(color/make :white :black) ""]))
-
 (defn- render-line
   [editor i]
   (let [[height] (:size (:viewport editor))
@@ -30,9 +17,6 @@
         edit-context-line (+ i top)
         edit-context-line-count (ec/line-count edit-context)]
     (cond
-      (= message-line i)
-      (render-message-line editor)
-
       (= status-line i)
       [(color/make :black :white) (or (:name document) "[No Name]")]
 
@@ -72,10 +56,23 @@
     (System/arraycopy attrs 0 rendered-attrs (* i width) (min width (count attrs)))
     (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs)))
 
+(defn- render-message-line
+  [editor]
+  (cond
+    (and (:prompt editor) (:command-line editor))
+    [(color/make :white :black) (str (:prompt editor) (:command-line editor))]
+
+    (:message editor)
+    (let [[foreground background text] (:message editor)]
+      [(color/make foreground background) text])
+
+    :else
+    [(color/make :white :black) ""]))
+
 (defn render-message-line!
   [editor rendition]
   (let [[height] (:size (:viewport editor))]
-    (render-line! rendition (dec height) (render-line editor (dec height)))))
+    (render-line! rendition (dec height) (render-message-line editor))))
 
 (defn render
   [editor]
