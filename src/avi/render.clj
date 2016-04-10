@@ -2,17 +2,14 @@
   (:import [java.util Arrays])
   (:require [clojure.set :refer [map-invert]]
             [avi.editor :as e]
-            [avi.edit-context :as ec]
             [avi.color :as color]))
 
 (defmulti ^:private point-position :mode)
 
 (defmethod point-position :default
   [editor]
-  (let [edit-context (e/edit-context editor)
-        [edit-context-point-i edit-context-point-j] (:point edit-context)
-        viewport-top (:viewport-top edit-context)]
-    [(- edit-context-point-i viewport-top) edit-context-point-j]))
+  (let [{:keys [viewport-top] [i j] :point} (get-in editor (e/current-lens-path editor))]
+    [(- i viewport-top) j]))
 
 (defmethod point-position :command-line
   [editor]
