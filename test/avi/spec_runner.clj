@@ -1,6 +1,8 @@
 (ns avi.spec-runner
-  (:require [midje.sweet :refer :all])
-  (:require [avi.test-helpers :refer :all]))
+  (:require [midje.sweet :refer :all]
+            [clojure.java.io :as io]
+            [clojure.string :as s]
+            [avi.test-helpers :refer :all]))
 
 (def ^:private tabular-quality-names
   '{editing ?editing
@@ -33,3 +35,14 @@
        ~(editor-invocation spec) => (point ~'?point))
      ~@(table-headings spec)
      ~@(table-data spec)))
+
+(defn read-spec-lines
+  []
+  (s/split-lines (slurp (io/resource "spec.txt"))))
+
+(defn matches-specs?
+  []
+  false)
+
+(pending-fact "Avi matches the specs" 
+  (matches-specs?) => truthy)
