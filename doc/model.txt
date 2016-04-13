@@ -1,0 +1,26 @@
+#Vim Spec
+
+Normal Mode
+  Motions
+    `j`
+      moves down one line
+        when editing "One\nTwo\nThree":
+          `j` moves the point to 1, 0
+          `jj` moves the point to 2, 0
+      can move to zero-length lines
+        when editing "One\n\nTwo":
+          `j` moves the point to 1, 0
+      won't move the point below the last line
+        when editing "One\nTwo\nThree":
+          `jjjj` moves the point to 3, 0 and beeps
+      won't place the point after the end of the line
+        when editing "Hello\nOne", `llllj` moves the point to 1, 2
+      remembers the last explicitly-specified column
+    `k`
+      `k` moves the point up one line
+    - when editing "Three\nFour" #context/before
+  Search Commands
+  ...
+Insert Mode
+  ...
+
