@@ -1,0 +1,6 @@
+Normal Mode
+  Motions
+    `b`
+      moves to the beginning of the previous word
+        when editing "hello world"
+          `$b` moves the point to 0, 6
