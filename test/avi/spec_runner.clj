@@ -47,7 +47,11 @@
     (drop-while (complement comparison))
     (second)))
 
-(def arrange (partial line-after #(s/ends-with? % ":")))
+(def claim?
+  #(s/ends-with? % ":") 
+  ) 
+
+(def arrange (partial line-after claim?))
 
 (def action-line (partial line-after #(= % (arrange))))
 
