@@ -28,6 +28,6 @@
   ;;(sr/lines->tree ["Root" "  Node"]) => ["Root"  ["Node"]]
   ) 
 
-(fact "Something not indented has indentation of 0"
+(facts "about indentation level"
   (sr/indent-level "hi mom") => 0
   (sr/indent-level "    i'm not your son") => 4)
