@@ -56,8 +56,7 @@
   []
   (->> (spec-lines)
     (map s/trim)
-    (drop-while (complement #(= % (arrange))))
-    (second)))
+    (everything-after #(= % (arrange)))))
 
 (defn action
   []
