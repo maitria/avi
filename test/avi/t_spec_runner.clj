@@ -9,7 +9,7 @@
   (sr/arrange) => "when editing \"hello world\"")
 
 (fact "we can find the action"
-  (sr/test-parameters) => (contains {:after "$b"}))
+  (:setup (sr/test-parameters)) => (contains {:after "$b"}))
 
 (fact "we can find the resulting point"
   (sr/resulting-point) => [0 6]) 
