@@ -29,4 +29,5 @@
   ) 
 
 (fact "Something not indented has indentation of 0"
-  (sr/indent-level "hi mom") => 0)
+  (sr/indent-level "hi mom") => 0
+  (sr/indent-level "  hi son") => 1)
