@@ -60,6 +60,14 @@
 (def arrange (partial line-after claim-line?))
 (def action-line (partial line-after arrange-line?))
 
+(defn resulting-point
+  []
+  (->> (action-line)
+    (re-find #"the point .. (\d+), (\d+)")
+    (rest)
+    (map read-string)
+    (vec)))
+
 (defn action
   []
   (second (re-find #"`(.*)`" (action-line))))

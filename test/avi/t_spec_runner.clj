@@ -10,3 +10,6 @@
 
 (fact "we can find the action"
   (sr/action) => "$b")
+
+(fact "we can find the resulting point"
+  (sr/resulting-point) => [0 6]) 
