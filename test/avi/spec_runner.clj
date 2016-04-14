@@ -80,7 +80,7 @@
 
 (defn indent-level
   [node]
-  (/ (count (re-matches #"^(\s).+" node)) 2))
+  (count (re-find #"^\s+" node)))
 
 (defn lines->tree
   [some-vector]
