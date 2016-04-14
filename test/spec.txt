@@ -4,3 +4,7 @@ Normal Mode
       moves to the beginning of the previous word:
         when editing "hello world"
           `$b` moves the point to 0, 6
+    `bb`
+      does a thing which is going to follow:
+        when editing "some text like this"
+          `keystrokes` text text point at 1, 2
