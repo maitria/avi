@@ -8,8 +8,9 @@
 (fact "we can find an arrange"
   (sr/arrange) => "when editing \"hello world\"")
 
-(fact "we can find the action"
-  (:setup (sr/test-parameters)) => (contains {:after "$b"}))
+(facts "about the test parameters"
+  (fact "it has the keystrokes"
+    (:setup (sr/test-parameters)) => (contains {:after "$b"}))
 
-(fact "we can find the resulting point"
-  (:point (sr/test-parameters)) => [0 6]) 
+  (fact "it has the resulting point"
+    (:point (sr/test-parameters)) => [0 6]))
