@@ -47,9 +47,9 @@
     (drop-while (complement comparison))
     (second)))
 
-(def claim?
-  #(s/ends-with? % ":") 
-  ) 
+(defn claim?
+  [line]
+  (s/ends-with? line ":")) 
 
 (def arrange (partial line-after claim?))
 
