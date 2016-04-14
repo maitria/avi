@@ -82,9 +82,13 @@
   [node]
   (count (re-find #"^\s+" node)))
 
+(defn string->node
+  [words]
+  [(s/triml words)])
+
 (defn lines->tree
-  [some-vector]
-  some-vector)
+  [lines]
+  (concat [(first lines)] (map string->node (rest lines))))
 
 (defn specs
   [spec-lines]

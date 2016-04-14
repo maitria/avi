@@ -23,9 +23,12 @@
   (fact "it has the resulting point"
     (:point (sr/test-parameters)) => [0 6]))
 
+(fact ""
+  (sr/string->node "Root") => ["Root"])
+
 (facts "about turning lines into a tree"
   (sr/lines->tree ["Root"]) => ["Root"] 
-  ;;(sr/lines->tree ["Root" "  Node"]) => ["Root"  ["Node"]]
+  (sr/lines->tree ["Root" "  Node"]) => ["Root"  ["Node"]]
   ) 
 
 (facts "about indentation level"
