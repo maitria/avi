@@ -6,4 +6,4 @@
   (first (sr/spec-lines)) => "Normal Mode")
 
 (fact "we can find an arrange"
-  (sr/find-arrange) => "when editing \"hello world\"")
+  (sr/arrange) => "when editing \"hello world\"")

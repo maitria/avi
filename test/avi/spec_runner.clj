@@ -40,7 +40,7 @@
   []
   (s/split-lines (slurp (io/resource "spec.txt"))))
 
-(defn find-arrange
+(defn arrange
   []
   (->> (spec-lines)
     (map s/trim)
