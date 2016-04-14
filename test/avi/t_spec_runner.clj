@@ -29,6 +29,8 @@
 (facts "about turning lines into a tree"
   (sr/lines->tree ["Root"]) => ["Root"] 
   (sr/lines->tree ["Root" "  Node"]) => ["Root"  ["Node"]]
+  (sr/lines->tree ["Toot" " Beep" "  Waaaah!"]) => 
+                  ["Toot" ["Beep" ["Waaaah!"]]]
   ) 
 
 (facts "about indentation level"

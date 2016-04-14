@@ -88,7 +88,9 @@
 
 (defn lines->tree
   [lines]
-  (concat [(first lines)] (map string->node (rest lines))))
+  (concat (string->node (first lines))
+    (if (next lines) 
+      [(lines->tree (rest lines))])))
 
 (defn specs
   [spec-lines]
