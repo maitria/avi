@@ -6,7 +6,9 @@
   (first (sr/spec-lines)) => "Normal Mode")
 
 (fact "it gives us a list of specs from a file"
-  (sr/specs) => vector?)
+  (sr/specs []) => vector?)
+(fact "it gives us zero specs when the file has no lines"
+  (sr/specs []) => empty?)
 
 (facts "about the test parameters"
   (fact "it has the initial editor contents"

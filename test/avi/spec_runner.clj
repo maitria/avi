@@ -79,7 +79,7 @@
    :point (resulting-point)})
 
 (defn specs
-  []
+  [spec-lines]
   [])
 
 (defn matches-specs?
