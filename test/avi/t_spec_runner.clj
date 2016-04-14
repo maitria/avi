@@ -12,4 +12,4 @@
   (:setup (sr/test-parameters)) => (contains {:after "$b"}))
 
 (fact "we can find the resulting point"
-  (sr/resulting-point) => [0 6]) 
+  (:point (sr/test-parameters)) => [0 6]) 
