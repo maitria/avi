@@ -36,9 +36,16 @@
      ~@(table-headings spec)
      ~@(table-data spec)))
 
-(defn read-spec-lines
+(defn spec-lines
   []
   (s/split-lines (slurp (io/resource "spec.txt"))))
+
+(defn find-arrange
+  []
+  (->> (spec-lines)
+    (map s/trim)
+    (drop-while #(not (s/ends-with? % ":")))
+    (second)))
 
 (defn matches-specs?
   []
