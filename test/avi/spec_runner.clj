@@ -47,13 +47,9 @@
     (drop-while (complement comparison))
     (second)))
 
-(defn arrange
-  []
-  (line-after #(s/ends-with? % ":")))
+(def arrange (partial line-after #(s/ends-with? % ":")))
 
-(defn action-line
-  []
-  (line-after #(= % (arrange))))
+(def action-line (partial line-after #(= % (arrange))))
 
 (defn action
   []
