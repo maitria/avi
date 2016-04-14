@@ -41,21 +41,19 @@
   (s/split-lines (slurp (io/resource "spec.txt"))))
 
 (defn line-after
-  [comparison source-lines]
-  (->> source-lines
+  [comparison]
+  (->> (spec-lines)
     (map s/trim)
     (drop-while (complement comparison))
     (second)))
 
 (defn arrange
   []
-  (->> (spec-lines)
-    (line-after #(s/ends-with? % ":"))))
+  (line-after #(s/ends-with? % ":")))
 
 (defn action-line
   []
-  (->> (spec-lines)
-    (line-after #(= % (arrange)))))
+  (line-after #(= % (arrange))))
 
 (defn action
   []
