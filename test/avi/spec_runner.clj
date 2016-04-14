@@ -72,6 +72,10 @@
   []
   (second (re-find #"`(.*)`" (action-line))))
 
+(defn test-parameters
+  []
+  {:after (action)})
+
 (defn matches-specs?
   []
   false)
