@@ -43,19 +43,18 @@
 (defn everything-after
   [comparison source-data]
   (->> source-data
+    (map s/trim)
     (drop-while (complement comparison))
     (second)))
 
 (defn arrange
   []
   (->> (spec-lines)
-    (map s/trim)
     (everything-after #(s/ends-with? % ":"))))
 
 (defn action-line
   []
   (->> (spec-lines)
-    (map s/trim)
     (everything-after #(= % (arrange)))))
 
 (defn action
