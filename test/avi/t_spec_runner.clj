@@ -22,3 +22,11 @@
     (:setup (sr/test-parameters)) => (contains {:after "$b"}))
   (fact "it has the resulting point"
     (:point (sr/test-parameters)) => [0 6]))
+
+(facts "about turning lines into a tree"
+  (sr/lines->tree ["Root"]) => ["Root"] 
+  ;;(sr/lines->tree ["Root" "  Node"]) => ["Root"  ["Node"]]
+  ) 
+
+(fact "Something not indented has indentation of 0"
+  (sr/indent-level "hi mom") => 0)

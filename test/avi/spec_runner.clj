@@ -78,6 +78,14 @@
            :editing "hello world"}
    :point (resulting-point)})
 
+(defn indent-level
+  [node]
+  0)
+
+(defn lines->tree
+  [some-vector]
+  some-vector)
+
 (defn specs
   [spec-lines]
   [])
