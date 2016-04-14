@@ -5,7 +5,12 @@
 (fact "it gets the lines from the file"
   (first (sr/spec-lines)) => "Normal Mode")
 
-(fact "it gives us a list of specs from a file"
+;; The number of tests is the number of leaf nodes
+;; An indented thing without a parent is ERROR
+;; Indentations are 2 spaces
+;; Blank lines are either IGNORED for now
+
+(fact "specs is a vector"
   (sr/specs []) => vector?)
 (fact "it gives us zero specs when the file has no lines"
   (sr/specs []) => empty?)
