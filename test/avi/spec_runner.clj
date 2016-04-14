@@ -47,17 +47,18 @@
     (drop-while (complement comparison))
     (second)))
 
-(defn claim?
+(declare arrange)
+
+(defn claim-line?
   [line]
   (s/ends-with? line ":")) 
 
-(def arrange (partial line-after claim?))
-
-(defn arrange?
+(defn arrange-line?
   [line]
   (= line (arrange)))
 
-(def action-line (partial line-after arrange?))
+(def arrange (partial line-after claim-line?))
+(def action-line (partial line-after arrange-line?))
 
 (defn action
   []
