@@ -8,9 +8,6 @@
 (fact "it gives us a list of specs from a file"
   (sr/specs) => vector?)
 
-(fact "it finds the arrange"
-  (sr/arrange) => "when editing \"hello world\"")
-
 (facts "about the test parameters"
   (fact "it has the initial editor contents"
     (:setup (sr/test-parameters)) => (contains {:editing "hello world"}))
