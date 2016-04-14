@@ -5,6 +5,9 @@
 (fact "it gets the lines from the file"
   (first (sr/spec-lines)) => "Normal Mode")
 
+(fact "it gives us a list of specs from a file"
+  (sr/specs) => vector?)
+
 (fact "it finds the arrange"
   (sr/arrange) => "when editing \"hello world\"")
 

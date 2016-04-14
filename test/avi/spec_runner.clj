@@ -78,6 +78,10 @@
            :editing "hello world"}
    :point (resulting-point)})
 
+(defn specs
+  []
+  [])
+
 (defn matches-specs?
   []
   false)
