@@ -53,7 +53,11 @@
 
 (def arrange (partial line-after claim?))
 
-(def action-line (partial line-after #(= % (arrange))))
+(defn arrange?
+  [line]
+  (= line (arrange)))
+
+(def action-line (partial line-after arrange?))
 
 (defn action
   []
