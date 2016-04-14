@@ -74,7 +74,8 @@
 
 (defn test-parameters
   []
-  {:setup {:after (action)}
+  {:setup {:after (action)
+           :editing "hello world"}
    :point (resulting-point)})
 
 (defn matches-specs?
