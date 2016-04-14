@@ -47,6 +47,17 @@
     (drop-while #(not (s/ends-with? % ":")))
     (second)))
 
+(defn action-line
+  []
+  (->> (spec-lines)
+    (map s/trim)
+    (drop-while #(not (= % (arrange))))
+    (second)))
+
+(defn action
+  []
+  (second (re-find #"`(.*)`" (action-line))))
+
 (defn matches-specs?
   []
   false)

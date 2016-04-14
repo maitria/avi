@@ -7,3 +7,6 @@
 
 (fact "we can find an arrange"
   (sr/arrange) => "when editing \"hello world\"")
+
+(fact "we can find the action"
+  (sr/action) => "$b")
