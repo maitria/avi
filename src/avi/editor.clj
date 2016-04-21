@@ -37,8 +37,7 @@
              :viewport-top 0
              :point [0 0]
              :last-explicit-j 0}]
-   :panes [{:type :pane
-            :lens 0}]
+   :panes 0
    :focused-pane 0
    :beep? false})
 
@@ -54,17 +53,9 @@
 
 ;; -- Tracking the current lens & document -----------------------------------
 
-(defn current-pane-path
-  [{:keys [focused-pane] :as editor}]
-  [:panes focused-pane])
-
-(defn current-pane
-  [editor]
-  (get-in editor (current-pane-path editor)))
-
 (defn current-lens-path
   [editor]
-  [:lenses (:lens (current-pane editor))])
+  [:lenses (:panes editor)])
 
 (def current-lens
   (beep/add-beep-to-focus
