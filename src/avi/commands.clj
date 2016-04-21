@@ -28,3 +28,10 @@
     editor))
 
 (def wq (comp q w))
+
+(defn sp
+  [{{[lines columns] :size} :viewport :as editor}]
+  (let [first-height (int (/ (dec lines) 2))]
+    (assoc editor
+           :panes [:h 0 first-height 0]
+           :pane-path [0])))

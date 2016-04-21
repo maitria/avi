@@ -55,7 +55,13 @@
 
 (defn current-lens-path
   [editor]
-  [:lenses (:panes editor)])
+  (loop [panes (:panes editor)
+         pane-path (:pane-path editor)]
+    (if (empty? pane-path)
+      [:lenses panes]
+      (recur
+        (get panes (inc (* 2 (first pane-path))))
+        (rest pane-path)))))
 
 (def current-lens
   (beep/add-beep-to-focus
