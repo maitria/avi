@@ -2,7 +2,8 @@
   (:import [java.util Arrays])
   (:require [clojure.set :refer [map-invert]]
             [avi.editor :as e]
-            [avi.color :as color]))
+            [avi.color :as color]
+            [avi.panes :as p]))
 
 (defn- point-position
   [{:keys [mode] :as editor}]
@@ -59,7 +60,9 @@
                    :chars rendered-chars
                    :attrs rendered-attrs
                    :point (point-position editor)}]
-    (render-pane! editor rendition [0 (- height 2)] 0)
+    (doseq [{:keys [lens] [i j] :offset [lines columns] :size} (p/panes-to-render editor)]
+      (render-pane! editor rendition [i (dec (+ lines i))] lens))
+
     (render-message-line! editor rendition)
     rendition))
 
