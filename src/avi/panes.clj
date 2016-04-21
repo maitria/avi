@@ -1,7 +1,7 @@
 (ns avi.panes)
 
 (defn panes-to-render
-  [{:keys [panes]}]
+  [{:keys [panes] {[lines columns] :size} :viewport :as editor}]
   [{:lens panes
     :offset [0 0]
-    :size [9 8]}])
+    :size [(dec lines) columns]}])
