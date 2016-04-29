@@ -73,26 +73,6 @@
   [editor]
   [:documents (:document (current-lens editor))])
 
-(defn- current-pane-height
-  [editor]
-  (loop [panes (:panes editor)
-         pane-path (:pane-path editor)
-         pane-height (dec (get-in editor [:viewport :size 0]))]
-    (if (empty? pane-path)
-      pane-height
-      (let [slot (inc (* 2 (first pane-path)))]
-        (recur
-          (get panes slot)
-          (rest pane-path)
-          (if (= (inc slot) (count panes))
-            (- pane-height
-               (->> panes
-                  rest
-                  (partition 1 2)
-                  flatten
-                  (reduce +)))
-            (get panes (inc slot))))))))
-
 (let [document-keys #{:lines :undo-log :redo-log :in-transaction?}
       computed-keys #{:viewport-height}
       lens-keys (set/difference
@@ -122,7 +102,7 @@
                (select-keys document-keys))
              (-> (current-lens editor)
                (select-keys lens-keys))
-             {:viewport-height (dec (current-pane-height editor))})))
+             {:viewport-height (dec (p/current-pane-height editor))})))
         ([editor new-context]
          (-> editor
            (update-in (current-document-path editor) merge (select-keys new-context document-keys))
