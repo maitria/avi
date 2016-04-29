@@ -64,10 +64,9 @@
         (get panes (inc (* 2 (first pane-path))))
         (rest pane-path)))))
 
-(def current-lens
-  (beep/add-beep-to-focus
-    (fn current-lens* [editor]
-      (get-in editor (current-lens-path editor)))))
+(defn current-lens
+  [editor]
+  (get-in editor (current-lens-path editor)))
 
 (defn current-document-path
   [editor]
