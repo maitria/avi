@@ -39,7 +39,7 @@
              :point [0 0]
              :last-explicit-j 0}]
    :panes 0
-   :focused-pane 0
+   :pane-path []
    :beep? false})
 
 ;; -- Building middlewares ---------------------------------------------------
