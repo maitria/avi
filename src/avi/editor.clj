@@ -56,13 +56,7 @@
 
 (defn current-lens-path
   [editor]
-  (loop [panes (:panes editor)
-         pane-path (:pane-path editor)]
-    (if (empty? pane-path)
-      [:lenses panes]
-      (recur
-        (get panes (inc (* 2 (first pane-path))))
-        (rest pane-path)))))
+  [:lenses (p/current-pane-lens-id editor)])
 
 (defn current-lens
   [editor]

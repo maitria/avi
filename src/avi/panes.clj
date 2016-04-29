@@ -41,3 +41,15 @@
 (defn current-pane-height
   [{:keys [panes pane-path] :as editor}]
   (height panes pane-path (dec (get-in editor [:viewport :size 0]))))
+
+(defn- pane-lens-id
+  [panes pane-path]
+  (if (empty? pane-path)
+    panes
+    (recur
+      (get panes (inc (* 2 (first pane-path))))
+      (rest pane-path))))
+
+(defn current-pane-lens-id
+  [{:keys [panes pane-path]}]
+  (pane-lens-id panes pane-path))
