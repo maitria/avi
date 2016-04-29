@@ -17,22 +17,23 @@
   [{:keys [panes] {[lines columns] :size} :viewport :as editor}]
   (panes-to-render* [0 0] [(dec lines) columns] panes))
 
-(defn current-pane-height
-  [editor]
-  (loop [panes (:panes editor)
-         pane-path (:pane-path editor)
-         pane-height (dec (get-in editor [:viewport :size 0]))]
-    (if (empty? pane-path)
-      pane-height
-      (let [slot (inc (* 2 (first pane-path)))]
-        (recur
-          (get panes slot)
-          (rest pane-path)
-          (if (= (inc slot) (count panes))
-            (- pane-height
-               (->> panes
+(defn height
+  [panes pane-path pane-height]
+  (if (empty? pane-path)
+    pane-height
+    (let [slot (inc (* 2 (first pane-path)))]
+      (recur
+        (get panes slot)
+        (rest pane-path)
+        (if (= (inc slot) (count panes))
+          (- pane-height
+             (->> panes
                   rest
                   (partition 1 2)
                   flatten
                   (reduce +)))
-            (get panes (inc slot))))))))
+          (get panes (inc slot)))))))
+
+(defn current-pane-height
+  [{:keys [panes pane-path] :as editor}]
+  (height panes pane-path (dec (get-in editor [:viewport :size 0]))))
