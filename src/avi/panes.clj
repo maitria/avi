@@ -6,12 +6,16 @@
     [{:lens tree
       :offset [i j]
       :size [lines columns]}]
-    (let [[_ lens-a offset-adjust lens-b] tree]
+    (let [[direction lens-a offset-adjust & rest-of-panes] tree
+          this-pane-lines (if offset-adjust
+                            offset-adjust
+                            lines)]
       (concat
-        (panes-to-render* [i j] [offset-adjust columns] lens-a)
-        (panes-to-render* [(+ i offset-adjust) j]
-                          [(- lines offset-adjust) columns]
-                          lens-b)))))
+        (panes-to-render* [i j] [this-pane-lines columns] lens-a)
+        (if (seq rest-of-panes)
+          (panes-to-render* [(+ i offset-adjust) j]
+                            [(- lines offset-adjust) columns]
+                            (into [direction] rest-of-panes)))))))
 
 (defn panes-to-render
   [{:keys [panes] {[lines columns] :size} :viewport :as editor}]
@@ -53,3 +57,18 @@
 (defn current-pane-lens-id
   [{:keys [panes pane-path]}]
   (pane-lens-id panes pane-path))
+
+(defn split-pane
+  [panes pane-path new-lens total-height]
+  (let [panes (if (number? panes)
+                [:h panes]
+                panes)
+        pane-count (inc (/ (count panes) 2))
+        each-pane-height (int (/ total-height pane-count))
+        panes-with-split (into panes [each-pane-height new-lens])
+        size-slots (take-while #(get panes-with-split %) (iterate (partial + 2) 2))
+        panes-with-normalized-sizes (reduce
+                                      #(assoc %1 %2 each-pane-height)
+                                      panes-with-split
+                                      size-slots)]
+    panes-with-normalized-sizes))

@@ -5,6 +5,7 @@
   prompt."
   (:require [avi.edit-context :as ec]
             [avi.editor :as e]
+            [avi.panes :as p]
             [avi.world :as w]
             [clojure.string :as string]
             [packthread.core :refer :all]))
@@ -30,10 +31,8 @@
 (def wq (comp q w))
 
 (defn sp
-  [{:keys [lenses] {[lines columns] :size} :viewport :as editor}]
-  (let [first-height (int (/ (dec lines) 2))
-        new-lenses (conj lenses (e/current-lens editor))]
-    (+> editor
-      (assoc :lenses new-lenses
-             :panes [:h 0 first-height 1]
-             :pane-path [0]))))
+  [{:keys [lenses panes pane-path] {[lines] :size} :viewport :as editor}]
+  (let [new-lenses (conj lenses (e/current-lens editor))]
+    (assoc editor :lenses new-lenses
+                  :panes (p/split-pane panes pane-path (dec (count new-lenses)) (dec lines))
+                  :pane-path [0])))

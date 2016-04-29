@@ -22,4 +22,14 @@
                     "Two"
                     "Three"
                     "test.txt" :black :on :white
+                    ""]))
+  (fact "two splits equalize size (with remainder to the last one)"
+    (editor :editing "One\nTwo\nThree\nFour" :after ":sp<Enter>:sp<Enter>")
+      => (terminal ["One"
+                    "test.txt" :black :on :white
+                    "One"
+                    "test.txt" :black :on :white
+                    "One"
+                    "Two"
+                    "test.txt" :black :on :white
                     ""])))

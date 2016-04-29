@@ -19,4 +19,15 @@
                                                  :size [3 8]}
                                                 {:lens 1
                                                  :offset [3 0]
-                                                 :size [6 8]}]))
+                                                 :size [6 8]}])
+  (fact "two horizontal splits work correctly"
+    (p/panes-to-render {:viewport {:size [10 8]}
+                        :panes [:h 0 2 1 2 2]}) => [{:lens 0
+                                                     :offset [0 0]
+                                                     :size [2 8]}
+                                                    {:lens 1
+                                                     :offset [2 0]
+                                                     :size [2 8]}
+                                                    {:lens 2
+                                                     :offset [4 0]
+                                                     :size [5 8]}]))
