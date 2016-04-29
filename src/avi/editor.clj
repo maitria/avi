@@ -11,6 +11,7 @@
             [avi.edit-context :as ec]
             [avi.edit-context
               [lines :as lines]]
+            [avi.panes :as p]
             [avi.world :as w]))
 
 ;; -- Initial state ----------------------------------------------------------
@@ -72,9 +73,25 @@
   [editor]
   [:documents (:document (current-lens editor))])
 
-(defn- editor-viewport-height
+(defn- current-pane-height
   [editor]
-  (- (get-in editor [:viewport :size 0]) 2))
+  (loop [panes (:panes editor)
+         pane-path (:pane-path editor)
+         pane-height (dec (get-in editor [:viewport :size 0]))]
+    (if (empty? pane-path)
+      pane-height
+      (let [slot (inc (* 2 (first pane-path)))]
+        (recur
+          (get panes slot)
+          (rest pane-path)
+          (if (= (inc slot) (count panes))
+            (- pane-height
+               (->> panes
+                  rest
+                  (partition 1 2)
+                  flatten
+                  (reduce +)))
+            (get panes (inc slot))))))))
 
 (let [document-keys #{:lines :undo-log :redo-log :in-transaction?}
       computed-keys #{:viewport-height}
@@ -105,7 +122,7 @@
                (select-keys document-keys))
              (-> (current-lens editor)
                (select-keys lens-keys))
-             {:viewport-height (editor-viewport-height editor)})))
+             {:viewport-height (dec (current-pane-height editor))})))
         ([editor new-context]
          (-> editor
            (update-in (current-document-path editor) merge (select-keys new-context document-keys))

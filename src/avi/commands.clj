@@ -30,8 +30,10 @@
 (def wq (comp q w))
 
 (defn sp
-  [{{[lines columns] :size} :viewport :as editor}]
-  (let [first-height (int (/ (dec lines) 2))]
-    (assoc editor
-           :panes [:h 0 first-height 0]
-           :pane-path [0])))
+  [{:keys [lenses] {[lines columns] :size} :viewport :as editor}]
+  (let [first-height (int (/ (dec lines) 2))
+        new-lenses (conj lenses (e/current-lens editor))]
+    (+> editor
+      (assoc :lenses new-lenses
+             :panes [:h 0 first-height 1]
+             :pane-path [0]))))
