@@ -11,7 +11,7 @@
     (let [[height] (:size (:viewport editor))]
       [(dec height) (inc (count (:command-line editor)))])
     (let [{:keys [viewport-top] [i j] :point} (get-in editor (e/current-lens-path editor))]
-      [(- i viewport-top) j])))
+      [(+ (- i viewport-top) (p/current-pane-top editor)) j])))
 
 (let [byte-array-class (Class/forName "[B")]
   (defn byte-array?

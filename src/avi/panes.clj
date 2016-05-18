@@ -46,6 +46,31 @@
   [{:keys [panes pane-path] :as editor}]
   (height panes pane-path (dec (get-in editor [:viewport :size 0]))))
 
+(defn internal-pane-top
+  [panes slot outer-pane-top]
+  (+ outer-pane-top
+     (->> panes
+       (partition 1 2)
+       rest
+       flatten
+       (take slot)
+       (reduce +))))
+
+(defn top
+  [panes pane-path pane-height pane-top]
+  (if (empty? pane-path)
+    pane-top
+    (let [slot (inc (* 2 (first pane-path)))]
+      (recur
+        (get panes slot)
+        (rest pane-path)
+        (internal-pane-height panes slot pane-height)
+        (internal-pane-top panes slot pane-top)))))
+
+(defn current-pane-top
+  [{:keys [panes pane-path] :as editor}]
+  (top panes pane-path (dec (get-in editor [:viewport :size 0])) 0))
+
 (defn- pane-lens-id
   [panes pane-path]
   (if (empty? pane-path)
@@ -72,3 +97,7 @@
                                       panes-with-split
                                       size-slots)]
     panes-with-normalized-sizes))
+
+(defn move-down-pane
+  [editor]
+  (assoc editor :pane-path [1]))

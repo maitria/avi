@@ -32,4 +32,7 @@
                     "One"
                     "Two"
                     "test.txt" :black :on :white
-                    ""])))
+                    ""]))
+  (fact "<C-W>j moves down a pane"
+    (editor :editing "One\nTwo\nThree\nFour" :after ":sp<Enter><C-W>j")
+      => (point [3 0])))

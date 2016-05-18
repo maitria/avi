@@ -7,6 +7,7 @@
             [avi.events :as ev]
             [avi.mode command-line insert]
             [avi.nfa :as nfa]
+            [avi.panes :as p]
             [avi.pervasive :refer :all]
             [avi.search]))
 
@@ -150,6 +151,9 @@
                  beep/beep
                  (in e/edit-context
                    (ec/move-and-scroll-half-page :up)))))
+
+   "<C-W>j" (fn+> [editor _]
+              (p/move-down-pane))
 
    "<C-Y>" (fn+> [editor _]
              (in e/edit-context
