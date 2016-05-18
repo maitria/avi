@@ -47,13 +47,13 @@
   (height panes pane-path (dec (get-in editor [:viewport :size 0]))))
 
 (defn internal-pane-top
-  [panes slot outer-pane-top]
+  [panes pane-number outer-pane-top]
   (+ outer-pane-top
      (->> panes
        (partition 1 2)
        rest
        flatten
-       (take slot)
+       (take pane-number)
        (reduce +))))
 
 (defn top
@@ -65,7 +65,7 @@
         (get panes slot)
         (rest pane-path)
         (internal-pane-height panes slot pane-height)
-        (internal-pane-top panes slot pane-top)))))
+        (internal-pane-top panes (first pane-path) pane-top)))))
 
 (defn current-pane-top
   [{:keys [panes pane-path] :as editor}]
