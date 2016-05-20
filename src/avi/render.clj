@@ -13,17 +13,10 @@
     (let [{:keys [viewport-top] [i j] :point} (get-in editor (e/current-lens-path editor))]
       [(+ (- i viewport-top) (p/current-pane-top editor)) j])))
 
-(let [byte-array-class (Class/forName "[B")]
-  (defn byte-array?
-    [obj]
-    (= byte-array-class (class obj))))
-
 (defn fill-rendition-line!
   [{:keys [width] rendered-chars :chars, rendered-attrs :attrs} i [attrs text]]
   (.getChars text 0 (min width (count text)) rendered-chars (* i width))
-  (if (byte-array? attrs)
-    (System/arraycopy attrs 0 rendered-attrs (* i width) (min width (count attrs)))
-    (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs)))
+  (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))
 
 (defn render-pane!
   [editor rendition [from-line to-line] lens-number]
