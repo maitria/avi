@@ -1,5 +1,14 @@
 (ns avi.panes)
 
+;;{:type :split
+;; :direction :horizontal
+;; :children [{:type :pane,
+;;             :lens 0,
+;;             :size 13}
+;;            {:type :pane,
+;;             :lens 2
+;;             :size remainder}]}
+
 (defn- panes-to-render*
   [[i j] [lines columns] tree]
   (if (number? tree)
