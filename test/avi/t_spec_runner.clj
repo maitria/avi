@@ -28,8 +28,8 @@
   (sr/lines->tree ["Root" "  Node"]) => [["Root"  ["Node"]]]
   (sr/lines->tree ["Toot" " Beep" "  Waaaah!"]) => 
                   [["Toot" ["Beep" ["Waaaah!"]]]] 
-;;  (sr/lines->tree ["Root" "Toot"]) =>
-;;                  [["Root"] ["Toot"]]
+  (sr/lines->tree ["Root" "Toot"]) =>
+                  [["Root"] ["Toot"]]
 )
 
 (facts "about indentation level"

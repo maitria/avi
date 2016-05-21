@@ -82,17 +82,14 @@
   [node]
   (count (re-find #"^\s+" node)))
 
-(defn roots
-  [spec-lines]
-  (filter #(= 0 (indent-level %)) spec-lines))
-  
 (defn string->node
   [words]
   [(s/triml words)])
 
 (defn lines->tree
   [lines]
-  (let [node (string->node (first lines))
+  (let [current-line (first lines)
+        node (string->node current-line)
         children (if (next lines) 
                    (lines->tree (rest lines)))]
     [(concat node children)]))
