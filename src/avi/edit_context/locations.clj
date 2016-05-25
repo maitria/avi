@@ -1,6 +1,12 @@
 (ns avi.edit-context.locations
   (:refer-clojure :exclude [replace])
-  (:require [schema.core :as s]))
+  (:require [schema.core :as s]
+            [clojure.spec :as spec]))
+
+(spec/def ::line (complement neg?))
+(spec/def ::column (complement neg?))
+(spec/def ::location (spec/tuple ::line ::column))
+(spec/def ::adjustment-bias #{:left :right})
 
 (def ZLineNumber (s/constrained s/Int (complement neg?)))
 (def ColumnNumber (s/constrained s/Int (complement neg?)))
@@ -12,29 +18,38 @@
 (def AdjustmentBias
   (s/enum :left :right))
 
-(s/defn location<
-  [a :- Location
-   b :- Location]
+(def boolean? (partial instance? Boolean))
+
+(defn location<
+  [a b]
   (< (.compareTo a b) 0))
+(spec/fdef location<
+  :args (spec/cat :a ::location :b ::location)
+  :ret boolean?)
 
-(s/defn location<=
-  [a :- Location
-   b :- Location]
+(defn location<=
+  [a b]
   (<= (.compareTo a b) 0))
+(spec/fdef location<=
+  :args (spec/cat :a ::location :b ::location)
+  :ret boolean?)
 
-(s/defn location>
-  [a :- Location
-   b :- Location]
+(defn location>
+  [a b]
   (> (.compareTo a b) 0))
+(spec/fdef location>
+  :args (spec/cat :a ::location :b ::location)
+  :ret boolean?)
 
-(s/defn location>=
-  [a :- Location
-   b :- Location]
+(defn location>=
+  [a b]
   (>= (.compareTo a b) 0))
+(spec/fdef location>=
+  :args (spec/cat :a ::location :b ::location)
+  :ret boolean?)
 
-(s/defn advance :- (s/maybe Location)
-  [[i j] :- Location
-   line-length]
+(defn advance
+  [[i j] line-length]
   (cond
     (>= j (line-length i))
     (if-not (line-length (inc i))
@@ -43,10 +58,12 @@
 
     :else
     [i (inc j)]))
+(spec/fdef advance
+  :args (spec/cat :location ::location :line-length (constantly true))
+  :ret (spec/nilable ::location))
 
-(s/defn retreat :- (s/maybe Location)
-  [[i j] :- Location
-   line-length]
+(defn retreat
+  [[i j] line-length]
   (cond
     (= [i j] [0 0])
     nil
@@ -56,6 +73,9 @@
 
     :else
     [(dec i) (line-length (dec i))]))
+(spec/fdef retreat
+  :args (spec/cat :location ::location :line-length (constantly true))
+  :ret (spec/nilable ::location))
 
 (defn forward
   [pos line-length]
@@ -69,12 +89,13 @@
     (when pos
       (cons pos (backward (retreat pos line-length) line-length)))))
 
-(s/defn forget-location? :- s/Bool
-  [a :- Location
-   b :- Location
-   l :- Location]
+(defn forget-location?
+  [a b l]
   (and (location< a l)
        (location< l b)))
+(spec/fdef forget-location?
+  :args (spec/cat :a ::location :b ::location :l ::location)
+  :ret boolean?)
 
 (defn line-count
   [text]
@@ -92,12 +113,8 @@
       (not= last-newline -1)
       (- (inc last-newline)))))
 
-(s/defn adjust-for-replacement :- (s/maybe Location)
-  [[li lj :as l] :- Location
-   [ai aj :as a] :- Location
-   [bi bj :as b] :- Location
-   text :- s/Str
-   bias :- AdjustmentBias]
+(defn adjust-for-replacement
+  [[li lj :as l] [ai aj :as a] [bi bj :as b] text bias]
   (cond
     (and (= a b l) (= bias :left))
     l
@@ -118,3 +135,10 @@
 
     :else
     l))
+(spec/fdef adjust-for-replacement
+  :args (spec/cat :l ::location
+                  :a ::location
+                  :b ::location
+                  :text string?
+                  :bias ::adjustment-bias)
+  :ret (spec/nilable ::location))

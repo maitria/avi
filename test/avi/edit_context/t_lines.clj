@@ -10,8 +10,6 @@
             [schema.core :as s]
             [avi.test-helpers :refer :all]))
 
-(s/set-fn-validation! true)
-
 (facts "about buffer contents"
   (fact "we can retrieve buffer contents' initial text"
     (lines/content "Hello, World!") => ["Hello, World!"]

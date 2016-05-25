@@ -8,9 +8,14 @@
             [avi.main]
             [avi.world :refer :all]
             [avi.test-helpers properties]
+            [clojure.spec :as spec]
             [clojure.string :as string]
             [midje.checking.core :as checking]
-            [potemkin :refer [import-vars]]))
+            [potemkin :refer [import-vars]]
+            [schema.core :as s]))
+
+(spec/instrument-all)
+(s/set-fn-validation! true)
 
 (import-vars [avi.test-helpers.properties
                 property])
