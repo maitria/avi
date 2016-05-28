@@ -7,7 +7,6 @@
             [com.gfredericks.test.chuck.properties :as prop']
             [midje.sweet :refer :all]
             [midje.checking.core :as checking]
-            [schema.core :as s]
             [avi.test-helpers :refer :all]))
 
 (facts "about buffer contents"

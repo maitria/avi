@@ -2,8 +2,7 @@
   (:require [avi.edit-context
                [lines :as lines]
                [locations :as l]]
-            [packthread.core :refer :all]
-            [schema.core :as s]))
+            [packthread.core :refer :all]))
 
 (defn adjust-viewport-to-contain-point
   [edit-context]
@@ -19,13 +18,9 @@
         (> point-i viewport-bottom)
         (assoc :viewport-top (inc (- point-i height)))))))
 
-(s/defn change
+(defn change
   "All content changes happen through me!"
-  [{:keys [point] :as edit-context}
-   a :- l/Location
-   b :- l/Location
-   replacement :- s/Str
-   bias :- l/AdjustmentBias]
+  [{:keys [point] :as edit-context} a b replacement bias]
   (+> edit-context
     (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
       (update-in [:lines] lines/replace a b replacement)

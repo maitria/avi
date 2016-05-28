@@ -4,8 +4,7 @@
               [locations :as l]]
             [avi.edit-context.operate.resolve :as resolve]
             [avi.nfa :as nfa]
-            [avi.pervasive :refer :all]
-            [schema.core :as s]))
+            [avi.pervasive :refer :all]))
 
 (defn word-char?
   [ch]
@@ -98,7 +97,7 @@
       (end-of-eager-match nfa stream classify)
       (last-possible edit-context operation))))
 
-(s/defmethod resolve/resolve-motion :word :- (s/maybe [l/Location])
+(defmethod resolve/resolve-motion :word
   [{:keys [lines point] :as edit-context}
    {:keys [operator]
     [_ {:keys [weird-delete-clip? type]}] :motion
@@ -125,7 +124,7 @@
 (def start-of-word-motion {:motion [:in-word {:position-in-word :anywhere
                                               :direction :backward}]})
 
-(s/defmethod resolve/resolve-motion :in-word :- (s/maybe [l/Location])
+(defmethod resolve/resolve-motion :in-word
   [{:keys [lines point] :as edit-context} _]
   [(move-word edit-context start-of-word-motion point)
    (move-word edit-context end-of-word-motion point)])

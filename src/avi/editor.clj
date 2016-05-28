@@ -5,7 +5,6 @@
   (:require [clojure.set :as set]
             [packthread.core :refer :all]
             [packthread.lenses :as l]
-            [schema.core :as s]
             [avi.pervasive :refer :all]
             [avi.beep :as beep]
             [avi.edit-context :as ec]
@@ -68,10 +67,7 @@
 
 (let [document-keys #{:lines :undo-log :redo-log :in-transaction?}
       computed-keys #{:viewport-height}
-      lens-keys (set/difference
-                  (into #{} (keys ec/EditContext))
-                  document-keys
-                  computed-keys)]
+      lens-keys #{:viewport-top :point :last-explicit-j}]
   (def edit-context
     "Perform some action in an \"edit context\".
 
@@ -87,15 +83,13 @@
     (beep/add-beep-to-focus
       (fn edit-context*
         ([editor]
-         (s/validate
-           ec/EditContext
-           (merge
-             (-> editor
+         (merge
+           (-> editor
                (get-in (current-document-path editor))
                (select-keys document-keys))
-             (-> (current-lens editor)
+           (-> (current-lens editor)
                (select-keys lens-keys))
-             {:viewport-height (dec (p/current-pane-height editor))})))
+           {:viewport-height (dec (p/current-pane-height editor))}))
         ([editor new-context]
          (-> editor
            (update-in (current-document-path editor) merge (select-keys new-context document-keys))

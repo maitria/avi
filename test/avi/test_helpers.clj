@@ -11,11 +11,9 @@
             [clojure.spec :as spec]
             [clojure.string :as string]
             [midje.checking.core :as checking]
-            [potemkin :refer [import-vars]]
-            [schema.core :as s]))
+            [potemkin :refer [import-vars]]))
 
 (spec/instrument-all)
-(s/set-fn-validation! true)
 
 (import-vars [avi.test-helpers.properties
                 property])

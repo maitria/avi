@@ -9,21 +9,7 @@
               [transactions]]
             [avi.pervasive :refer :all]
             [avi.world :as w]
-            [potemkin :refer [import-vars]]
-            [schema.core :as s]))
-
-(def Nat
-  (s/constrained s/Int (complement neg?)))
-
-(def EditContext
-  {:lines lines/Lines
-   :viewport-top Nat
-   :viewport-height Nat
-   :point l/Location
-   :last-explicit-j Nat
-   :undo-log s/Any
-   :redo-log s/Any
-   :in-transaction? s/Bool})
+            [potemkin :refer [import-vars]]))
 
 (import-vars [avi.edit-context.change
                 adjust-viewport-to-contain-point

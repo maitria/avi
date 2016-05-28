@@ -1,12 +1,8 @@
 (ns avi.edit-context.lines
   (:refer-clojure :exclude [replace])
   (:require [packthread.core :refer :all]
-            [schema.core :as s]
             [avi.pervasive :refer :all]
             [avi.edit-context.locations :as l]))
-
-(def Line (s/constrained s/Str (complement (partial re-find #"\n"))))
-(def Lines [(s/one Line "first line") Line])
 
 (defn- split-lines
   ([text]
@@ -34,20 +30,18 @@
                          (count text))]
     (split-lines text stopping-point)))
 
-(s/defn content :- Lines
-  [text :- s/Str]
+(defn content
+  [text]
   (text-lines text))
 
-(s/defn before :- [Line]
-  [lines :- [Line]
-   [i j] :- l/Location]
+(defn before
+  [lines [i j]]
   (-> lines
     (subvec 0 i)
     (conj (subs-with-spaces (get lines i) 0 j))))
 
-(s/defn after :- [Line]
-  [lines :- [Line]
-   [start-line start-column] :- l/Location]
+(defn after
+  [lines [start-line start-column]]
   (vec (concat [(subs-with-spaces (get lines start-line) start-column)]
                (subvec lines (inc start-line)))))
 
@@ -59,17 +53,14 @@
   ([a b c]
    (join (join a b) c)))
 
-(s/defn replace :- Lines
+(defn replace
   "Replace text between the `start` location and the `end` location with
   `replacement`.
 
   `replacement` may contain newlines, and the `start` and `end` locations can
   span lines; therefore, this is the most general content operation which can
   insert, delete, or replace text."
-  [lines :- Lines
-   a :- l/Location
-   b :- l/Location
-   replacement :- s/Str]
+  [lines a b replacement]
   (let [[start end] (sort [a b])]
     (join (before lines start)
           (split-lines replacement)

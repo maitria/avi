@@ -1,22 +1,11 @@
 (ns avi.edit-context.locations
   (:refer-clojure :exclude [replace])
-  (:require [schema.core :as s]
-            [clojure.spec :as spec]))
+  (:require [clojure.spec :as spec]))
 
 (spec/def ::line (complement neg?))
 (spec/def ::column (complement neg?))
 (spec/def ::location (spec/tuple ::line ::column))
 (spec/def ::adjustment-bias #{:left :right})
-
-(def ZLineNumber (s/constrained s/Int (complement neg?)))
-(def ColumnNumber (s/constrained s/Int (complement neg?)))
-
-(def Location
-  [(s/one ZLineNumber "line number (zero-based)")
-   (s/one ColumnNumber "column")])
-
-(def AdjustmentBias
-  (s/enum :left :right))
 
 (def boolean? (partial instance? Boolean))
 

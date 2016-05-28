@@ -2,8 +2,7 @@
   (:require [avi.edit-context
               [locations :as l]]
             [avi.edit-context.operate.resolve :as resolve]
-            [avi.pervasive :refer :all]
-            [schema.core :as s]))
+            [avi.pervasive :refer :all]))
 
 (defmulti magic-row-value
   (fn [edit-context kind param]
