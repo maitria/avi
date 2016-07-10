@@ -1,4 +1,6 @@
 #include <jni.h>
+
+#define _XOPEN_SOURCE_EXTENDED
 #include <curses.h>
 
 static const int TERMINAL_COLORS[] = {
@@ -69,7 +71,7 @@ Java_avi_terminal_Terminal_getKey(JNIEnv *env, jclass k)
 JNIEXPORT void JNICALL
 Java_avi_terminal_Terminal_refresh(JNIEnv *env, jclass k, jint cursorI, jint cursorJ, jint width, jcharArray charsArray, jbyteArray attrsArray)
 {
-	chtype ch;
+	cchar_t ch;
 	jint i, j, offset;
 	jsize size = (*env)->GetArrayLength(env, charsArray);
 	jchar *chars = (*env)->GetCharArrayElements(env, charsArray, NULL);
@@ -77,8 +79,10 @@ Java_avi_terminal_Terminal_refresh(JNIEnv *env, jclass k, jint cursorI, jint cur
 
 	for (i = 0, offset = 0; offset < size; ++i, offset += width) {
 		for (j = 0; j < width; ++j) {
-			ch = chars[offset+j] | COLOR_PAIR(attrs[offset+j]);
-			mvaddch(i, j, ch);
+			ch.attr = COLOR_PAIR(attrs[offset+j]);
+			ch.chars[0] = chars[offset+j];
+			ch.chars[1] = 0;
+			mvadd_wch(i, j, &ch);
 		}
 	}
 
