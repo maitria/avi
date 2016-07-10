@@ -53,11 +53,21 @@ static jstring make_ctrl_key(JNIEnv *env, jchar ch)
 JNIEXPORT jstring JNICALL
 Java_avi_terminal_Terminal_getKey(JNIEnv *env, jclass k)
 {
-	jchar character = getch();
+	wint_t ch;
+	jchar character;
+	int rc;
 
-	if (is_enter_key(character)) 
+	rc = get_wch(&ch);
+	if (ERR == rc)
+		return (*env)->NewString(env, NULL, 0);
+
+	character = ch;
+
+	if ((KEY_CODE_YES == rc && ch == KEY_ENTER) ||
+	    (OK == rc && character == '\n'))
 		return (*env)->NewStringUTF(env, "<Enter>");
-	if (KEY_BACKSPACE == character || 127 == character)
+	if ((KEY_CODE_YES == rc && ch == KEY_BACKSPACE) ||
+	    (OK == rc && 127 == character))
 		return (*env)->NewStringUTF(env, "<BS>");
 	if (27 == character)
 		return (*env)->NewStringUTF(env, "<Esc>");
