@@ -43,10 +43,10 @@
         (str "-I" include-path)
         (str "-I" (str include-path "/" java-arch-name))
         "-o" avi-Terminal-path
-        "c-src/terminal.c"
-        "-lcurses"] 
+        "c-src/terminal.c"] 
        (if (= os-name "Linux")
-         ["-ltinfo"]))]))
+         ["-ltinfo" "-lncursesw"]
+         ["-curses"]))]))
 
 (defn install
   [& [prefix]]

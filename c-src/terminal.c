@@ -1,7 +1,11 @@
 #include <jni.h>
 
 #define _XOPEN_SOURCE_EXTENDED
+#if defined(DARWIN)
 #include <curses.h>
+#else
+#include <ncursesw/curses.h>
+#endif
 
 static const int TERMINAL_COLORS[] = {
 	COLOR_BLACK,
