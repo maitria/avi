@@ -46,7 +46,7 @@
         "c-src/terminal.c"] 
        (if (= os-name "Linux")
          ["-ltinfo" "-lncursesw"]
-         ["-curses"]))]))
+         ["-lcurses"]))]))
 
 (defn install
   [& [prefix]]

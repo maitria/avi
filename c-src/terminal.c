@@ -1,7 +1,7 @@
 #include <jni.h>
 
 #define _XOPEN_SOURCE_EXTENDED
-#if defined(DARWIN)
+#if defined(__APPLE__)
 #include <curses.h>
 #else
 #include <ncursesw/curses.h>
