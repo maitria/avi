@@ -8,12 +8,12 @@
             [avi.main]
             [avi.world :refer :all]
             [avi.test-helpers properties]
-            [clojure.spec :as spec]
+            [clojure.spec.test :as spec.test]
             [clojure.string :as string]
             [midje.checking.core :as checking]
             [potemkin :refer [import-vars]]))
 
-(spec/instrument-all)
+(spec.test/instrument)
 
 (import-vars [avi.test-helpers.properties
                 property])
