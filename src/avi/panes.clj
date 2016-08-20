@@ -54,9 +54,7 @@
   (if (= (inc slot) (count panes))
     (- outer-pane-height
        (->> (::old-split panes)
-         (drop 2)
-         (partition 1 2)
-         flatten
+         (keep ::extent)
          (reduce +)))
     (get-in panes [::old-split (inc slot)])))
 
@@ -83,9 +81,7 @@
   [{:keys [::old-split] :as panes} pane-number outer-pane-top]
   (+ outer-pane-top
      (->> old-split
-       (partition 1 2)
-       rest
-       flatten
+       (keep ::extent)
        (take pane-number)
        (reduce +))))
 
