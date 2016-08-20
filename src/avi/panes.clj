@@ -6,11 +6,12 @@
 (s/def ::lens ::nat)
 (s/def ::extent ::nat)
 
+(s/def ::pane (s/keys :req [::lens]))
 (s/def ::split (s/cat :direction ::direction
                       :middle (s/* (s/cat :tree ::tree
                                           :extent ::extent))
-                      :lens (s/keys :req [::lens])))
-(s/def ::tree (s/or :lens (s/keys :req [::lens])
+                      :tree ::tree))
+(s/def ::tree (s/or :lens ::pane
                     :split ::split))
 
 (s/def ::path (s/coll-of ::nat :type vector?))
