@@ -6,11 +6,13 @@
 (s/def ::lens ::nat)
 (s/def ::extent ::nat)
 
-(s/def ::pane (s/keys :req [::lens]))
-(s/def ::split (s/cat :direction ::direction
+(s/def ::old-split (s/cat :direction ::direction
                       :middle (s/* (s/cat :tree ::tree
                                           :extent ::extent))
                       :tree ::tree))
+
+(s/def ::pane (s/keys :req [::lens]))
+(s/def ::split (s/keys :req [::old-split]))
 (s/def ::tree (s/or :lens ::pane
                     :split ::split))
 
@@ -26,7 +28,7 @@
     [{:lens (::lens tree)
       :offset [i j]
       :size [lines columns]}]
-    (let [[direction lens-a offset-adjust & rest-of-panes] tree
+    (let [{[direction lens-a offset-adjust & rest-of-panes] ::old-split} tree
           this-pane-lines (if offset-adjust
                             offset-adjust
                             lines)]
@@ -35,7 +37,7 @@
         (if (seq rest-of-panes)
           (panes-to-render* [(+ i offset-adjust) j]
                             [(- lines offset-adjust) columns]
-                            (into [direction] rest-of-panes)))))))
+                            {::old-split (into [direction] rest-of-panes)}))))))
 
 (defn panes-to-render
   [{:keys [::tree] {[lines columns] :size} :viewport}]
@@ -46,26 +48,31 @@
                       :slot ::nat
                       :outer-pane-height ::nat)
                (fn slot-valid? [{:keys [panes slot]}]
-                 (< slot (count (s/unform ::tree panes)))))
+                 (< slot (count (::old-split (s/unform ::tree panes))))))
   :ret ::nat)
 (defn- internal-pane-height
   [panes slot outer-pane-height]
   (if (= (inc slot) (count panes))
     (- outer-pane-height
-       (->> panes
+       (->> (::old-split panes)
          (drop 2)
          (partition 1 2)
          flatten
          (reduce +)))
-    (get panes (inc slot))))
+    (get-in panes [::old-split (inc slot)])))
 
+(s/fdef height
+  :args (s/cat :panes ::tree
+               :path ::path
+               :pane-height ::nat)
+  :ret ::nat)
 (defn height
   [panes pane-path pane-height]
   (if (empty? pane-path)
     pane-height
     (let [slot (inc (* 2 (first pane-path)))]
       (recur
-        (get panes slot)
+        (get-in panes [::old-split slot])
         (rest pane-path)
         (internal-pane-height panes slot pane-height)))))
 
@@ -74,9 +81,9 @@
   (height tree pane-path (dec (get-in editor [:viewport :size 0]))))
 
 (defn internal-pane-top
-  [panes pane-number outer-pane-top]
+  [{:keys [::old-split] :as panes} pane-number outer-pane-top]
   (+ outer-pane-top
-     (->> panes
+     (->> old-split
        (partition 1 2)
        rest
        flatten
@@ -95,7 +102,7 @@
     pane-top
     (let [slot (inc (* 2 (first pane-path)))]
       (recur
-        (get panes slot)
+        (get-in panes [::old-split slot])
         (rest pane-path)
         (internal-pane-height panes slot pane-height)
         (internal-pane-top panes (first pane-path) pane-top)))))
@@ -109,7 +116,7 @@
   (if (empty? pane-path)
     (::lens panes)
     (recur
-      (get panes (inc (* 2 (first pane-path))))
+      (get-in panes [::old-split (inc (* 2 (first pane-path)))])
       (rest pane-path))))
 
 (defn current-pane-lens-id
@@ -120,7 +127,7 @@
   [panes pane-path new-lens total-height]
   (let [panes (if (::lens panes)
                 [:h panes]
-                panes)
+                (::old-split panes))
         pane-count (inc (/ (count panes) 2))
         each-pane-height (int (/ total-height pane-count))
         panes-with-split (into panes [each-pane-height {::lens new-lens}])
@@ -129,7 +136,7 @@
                                       #(assoc %1 %2 each-pane-height)
                                       panes-with-split
                                       size-slots)]
-    panes-with-normalized-sizes))
+    {::old-split panes-with-normalized-sizes}))
 
 (defn move-down-pane
   [editor]
