@@ -6,10 +6,13 @@
 (s/def ::lens ::nat)
 (s/def ::extent ::nat)
 
-(s/def ::old-split (s/cat :direction ::direction
-                      :middle (s/* (s/cat :tree ::tree
-                                          :extent ::extent))
-                      :tree ::tree))
+(s/def ::old-split (s/cat
+                     :direction ::direction
+                     :middle (s/* (s/cat :tree (s/merge
+                                                 ::tree
+                                                 (s/keys :req [::extent]))
+                                         :extent ::extent))
+                     :tree ::tree))
 
 (s/def ::pane (s/keys :req [::lens]))
 (s/def ::split (s/keys :req [::old-split]))
@@ -44,11 +47,9 @@
   (panes-to-render* [0 0] [(dec lines) columns] tree))
 
 (s/fdef internal-pane-height
-  :args (s/and (s/cat :panes ::tree
-                      :slot ::nat
-                      :outer-pane-height ::nat)
-               (fn slot-valid? [{:keys [panes slot]}]
-                 (< slot (count (::old-split (s/unform ::tree panes))))))
+  :args (s/cat :panes ::tree
+               :slot ::nat
+               :outer-pane-height ::nat)
   :ret ::nat)
 (defn- internal-pane-height
   [panes slot outer-pane-height]
@@ -123,6 +124,12 @@
   [{:keys [::tree pane-path]}]
   (pane-lens-id tree pane-path))
 
+(s/fdef split-pane
+  :args (s/cat :panes ::tree
+               :path ::path
+               :new-lens ::lens
+               :total-height ::nat)
+  :ret ::split)
 (defn split-pane
   [panes pane-path new-lens total-height]
   (let [panes (if (::lens panes)
@@ -133,7 +140,10 @@
         panes-with-split (into panes [each-pane-height {::lens new-lens}])
         size-slots (take-while #(get panes-with-split %) (iterate (partial + 2) 2))
         panes-with-normalized-sizes (reduce
-                                      #(assoc %1 %2 each-pane-height)
+                                      (fn [ps slot]
+                                        (-> ps
+                                          (assoc slot each-pane-height)
+                                          (assoc-in [(dec slot) ::extent] each-pane-height)))
                                       panes-with-split
                                       size-slots)]
     {::old-split panes-with-normalized-sizes}))

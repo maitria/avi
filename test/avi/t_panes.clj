@@ -14,7 +14,9 @@
                                         :size [7 17]}])
   (fact "a single horizonal split works correctly"
     (p/panes-to-render {:viewport {:size [10 8]}
-                        ::p/tree {::p/old-split [:h {::p/lens 0} 3 {::p/lens 1}]}})
+                        ::p/tree {::p/old-split [:h
+                                                 {::p/lens 0 ::p/extent 3} 3
+                                                 {::p/lens 1}]}})
       => [{:lens 0
            :offset [0 0]
            :size [3 8]}
@@ -23,7 +25,10 @@
            :size [6 8]}])
   (fact "two horizontal splits work correctly"
     (p/panes-to-render {:viewport {:size [10 8]}
-                        ::p/tree {::p/old-split [:h {::p/lens 0} 2 {::p/lens 1} 2 {::p/lens 2}]}})
+                        ::p/tree {::p/old-split [:h
+                                                 {::p/lens 0 ::p/extent 2} 2
+                                                 {::p/lens 1 ::p/extent 2} 2
+                                                 {::p/lens 2}]}})
       => [{:lens 0
            :offset [0 0]
            :size [2 8]}
