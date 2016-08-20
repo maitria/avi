@@ -1,5 +1,22 @@
-(ns avi.panes)
+(ns avi.panes
+  (:require [clojure.spec :as s]))
 
+(s/def ::nat (s/and int? (complement neg?)))
+(s/def ::direction #{:h :v})
+(s/def ::lens ::nat)
+(s/def ::extent ::nat)
+
+(s/def ::split (s/cat :direction ::direction
+                      :middle (s/* (s/cat :tree ::tree
+                                          :extent ::extent))
+                      :lens ::lens))
+(s/def ::tree (s/or :lens ::lens
+                    :split ::split))
+
+(s/fdef panes-to-render*
+  :args (s/cat :offset (s/tuple ::nat ::nat)
+               :size (s/tuple ::nat ::nat)
+               :tree ::tree))
 (defn- panes-to-render*
   [[i j] [lines columns] tree]
   (if (number? tree)
@@ -18,8 +35,8 @@
                             (into [direction] rest-of-panes)))))))
 
 (defn panes-to-render
-  [{:keys [panes] {[lines columns] :size} :viewport :as editor}]
-  (panes-to-render* [0 0] [(dec lines) columns] panes))
+  [{:keys [::tree] {[lines columns] :size} :viewport}]
+  (panes-to-render* [0 0] [(dec lines) columns] tree))
 
 (defn- internal-pane-height
   [panes slot outer-pane-height]
@@ -43,8 +60,8 @@
         (internal-pane-height panes slot pane-height)))))
 
 (defn current-pane-height
-  [{:keys [panes pane-path] :as editor}]
-  (height panes pane-path (dec (get-in editor [:viewport :size 0]))))
+  [{:keys [::tree pane-path] :as editor}]
+  (height tree pane-path (dec (get-in editor [:viewport :size 0]))))
 
 (defn internal-pane-top
   [panes pane-number outer-pane-top]
@@ -68,8 +85,8 @@
         (internal-pane-top panes (first pane-path) pane-top)))))
 
 (defn current-pane-top
-  [{:keys [panes pane-path] :as editor}]
-  (top panes pane-path (dec (get-in editor [:viewport :size 0])) 0))
+  [{:keys [::tree pane-path] :as editor}]
+  (top tree pane-path (dec (get-in editor [:viewport :size 0])) 0))
 
 (defn- pane-lens-id
   [panes pane-path]
@@ -80,8 +97,8 @@
       (rest pane-path))))
 
 (defn current-pane-lens-id
-  [{:keys [panes pane-path]}]
-  (pane-lens-id panes pane-path))
+  [{:keys [::tree pane-path]}]
+  (pane-lens-id tree pane-path))
 
 (defn split-pane
   [panes pane-path new-lens total-height]
