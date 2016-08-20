@@ -9,9 +9,11 @@
 (s/def ::split (s/cat :direction ::direction
                       :middle (s/* (s/cat :tree ::tree
                                           :extent ::extent))
-                      :lens ::lens))
-(s/def ::tree (s/or :lens ::lens
+                      :lens (s/keys :req [::lens])))
+(s/def ::tree (s/or :lens (s/keys :req [::lens])
                     :split ::split))
+
+(s/def ::path (s/coll-of ::nat :type vector?))
 
 (s/fdef panes-to-render*
   :args (s/cat :offset (s/tuple ::nat ::nat)
@@ -19,8 +21,8 @@
                :tree ::tree))
 (defn- panes-to-render*
   [[i j] [lines columns] tree]
-  (if (number? tree)
-    [{:lens tree
+  (if (::lens tree)
+    [{:lens (::lens tree)
       :offset [i j]
       :size [lines columns]}]
     (let [[direction lens-a offset-adjust & rest-of-panes] tree
@@ -38,12 +40,19 @@
   [{:keys [::tree] {[lines columns] :size} :viewport}]
   (panes-to-render* [0 0] [(dec lines) columns] tree))
 
+(s/fdef internal-pane-height
+  :args (s/and (s/cat :panes ::tree
+                      :slot ::nat
+                      :outer-pane-height ::nat)
+               (fn slot-valid? [{:keys [panes slot]}]
+                 (< slot (count (s/unform ::tree panes)))))
+  :ret ::nat)
 (defn- internal-pane-height
   [panes slot outer-pane-height]
   (if (= (inc slot) (count panes))
     (- outer-pane-height
        (->> panes
-         rest
+         (drop 2)
          (partition 1 2)
          flatten
          (reduce +)))
@@ -73,6 +82,12 @@
        (take pane-number)
        (reduce +))))
 
+(s/fdef top
+  :args (s/cat :panes ::tree
+               :pane-path ::path
+               :pane-height ::nat
+               :pane-top ::nat)
+  :ret ::nat)
 (defn top
   [panes pane-path pane-height pane-top]
   (if (empty? pane-path)
@@ -91,7 +106,7 @@
 (defn- pane-lens-id
   [panes pane-path]
   (if (empty? pane-path)
-    panes
+    (::lens panes)
     (recur
       (get panes (inc (* 2 (first pane-path))))
       (rest pane-path))))
@@ -102,12 +117,12 @@
 
 (defn split-pane
   [panes pane-path new-lens total-height]
-  (let [panes (if (number? panes)
+  (let [panes (if (::lens panes)
                 [:h panes]
                 panes)
         pane-count (inc (/ (count panes) 2))
         each-pane-height (int (/ total-height pane-count))
-        panes-with-split (into panes [each-pane-height new-lens])
+        panes-with-split (into panes [each-pane-height {::lens new-lens}])
         size-slots (take-while #(get panes-with-split %) (iterate (partial + 2) 2))
         panes-with-normalized-sizes (reduce
                                       #(assoc %1 %2 each-pane-height)

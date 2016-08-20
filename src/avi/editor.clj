@@ -37,7 +37,7 @@
              :viewport-top 0
              :point [0 0]
              :last-explicit-j 0}]
-   :avi.panes/tree 0
+   :avi.panes/tree {:avi.panes/lens 0}
    :pane-path []
    :beep? false})
 
