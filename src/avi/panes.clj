@@ -31,15 +31,13 @@
     [{:lens (::lens tree)
       :offset [i j]
       :size [lines columns]}]
-    (let [{[direction lens-a offset-adjust & rest-of-panes] ::old-split} tree
-          this-pane-lines (if offset-adjust
-                            offset-adjust
-                            lines)]
+    (let [{[direction {:keys [::extent] :as lens-a} _  & rest-of-panes] ::old-split} tree
+          this-pane-lines (or extent lines)]
       (concat
         (panes-to-render* [i j] [this-pane-lines columns] lens-a)
         (if (seq rest-of-panes)
-          (panes-to-render* [(+ i offset-adjust) j]
-                            [(- lines offset-adjust) columns]
+          (panes-to-render* [(+ i extent) j]
+                            [(- lines extent) columns]
                             {::old-split (into [direction] rest-of-panes)}))))))
 
 (defn panes-to-render
