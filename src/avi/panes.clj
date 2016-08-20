@@ -51,7 +51,7 @@
   :ret ::nat)
 (defn- internal-pane-height
   [panes slot outer-pane-height]
-  (if (= (inc slot) (count panes))
+  (if (= (inc slot) (count (::old-split panes)))
     (- outer-pane-height
        (->> (::old-split panes)
          (keep ::extent)
@@ -134,10 +134,7 @@
         panes-with-split (into panes [each-pane-height {::lens new-lens}])
         size-slots (take-while #(get panes-with-split %) (iterate (partial + 2) 2))
         panes-with-normalized-sizes (reduce
-                                      (fn [ps slot]
-                                        (-> ps
-                                          (assoc slot each-pane-height)
-                                          (assoc-in [(dec slot) ::extent] each-pane-height)))
+                                      #(assoc-in %1 [(dec %2) ::extent] each-pane-height)
                                       panes-with-split
                                       size-slots)]
     {::old-split panes-with-normalized-sizes}))
