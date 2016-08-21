@@ -53,13 +53,13 @@
                :outer-pane-height ::nat)
   :ret ::nat)
 (defn- internal-pane-height
-  [panes slot outer-pane-height]
-  (if (= (inc slot) (count (::old-split panes)))
+  [panes pane-index outer-pane-height]
+  (if (= (inc pane-index) (count (::subtrees panes)))
     (- outer-pane-height
-       (->> (::old-split panes)
+       (->> (::subtrees panes)
          (keep ::extent)
          (reduce +)))
-    (get-in panes [::old-split (inc slot)])))
+    (get-in panes [::subtrees pane-index ::extent])))
 
 (s/fdef height
   :args (s/cat :panes ::tree
@@ -73,7 +73,7 @@
     (recur
       (get-in panes [::subtrees (first pane-path)])
       (rest pane-path)
-      (internal-pane-height panes (inc (* 2 (first pane-path))) pane-height))))
+      (internal-pane-height panes (first pane-path) pane-height))))
 
 (defn current-pane-height
   [{:keys [::tree pane-path] :as editor}]
@@ -100,7 +100,7 @@
     (recur
       (get-in panes [::subtrees (first pane-path)])
       (rest pane-path)
-      (internal-pane-height panes (inc (* 2 (first pane-path))) pane-height)
+      (internal-pane-height panes (first pane-path) pane-height)
       (internal-pane-top panes (first pane-path) pane-top))))
 
 (defn current-pane-top
