@@ -6,19 +6,10 @@
 (s/def ::lens ::nat)
 (s/def ::extent ::nat)
 
-(s/def ::old-split (s/cat
-                     :direction ::direction
-                     :middle (s/* (s/cat :tree (s/merge
-                                                 ::tree
-                                                 (s/keys :req [::extent]))
-                                         :extent ::extent))
-                     :tree ::tree))
-
 (s/def ::subtrees (s/coll-of ::tree :type vector?))
 
 (s/def ::pane (s/keys :req [::lens]))
-(s/def ::split (s/keys :req [::subtrees]
-                       :opt [::old-split]))
+(s/def ::split (s/keys :req [::subtrees]))
 (s/def ::tree (s/or :lens ::pane
                     :split ::split))
 
@@ -128,18 +119,12 @@
 (defn split-pane
   [panes pane-path new-lens total-height]
   (let [panes (if (::lens panes)
-                [:h panes]
-                (::old-split panes))
-        pane-count (inc (/ (count panes) 2))
-        each-pane-height (int (/ total-height pane-count))
-        panes-with-split (into panes [each-pane-height {::lens new-lens}])
-        size-slots (take-while #(get panes-with-split %) (iterate (partial + 2) 2))
-        panes-with-normalized-sizes (reduce
-                                      #(assoc-in %1 [(dec %2) ::extent] each-pane-height)
-                                      panes-with-split
-                                      size-slots)]
-    {::old-split panes-with-normalized-sizes
-     ::subtrees (filterv map? panes-with-normalized-sizes)}))
+                [panes]
+                (::subtrees panes))
+        each-pane-height (int (/ total-height (inc (count panes))))
+        panes (-> (mapv #(assoc % ::extent each-pane-height) panes)
+                (into [{::lens new-lens}]))]
+    {::subtrees panes}))
 
 (defn move-down-pane
   [editor]
