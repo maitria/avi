@@ -54,8 +54,7 @@
                    :attrs rendered-attrs
                    :point (point-position editor)}]
     (doseq [{:keys [::p/lens]
-             [i j] :offset
-             [lines columns] :size} (p/panes-to-render editor)]
+             [[i j] [lines columns]] ::p/shape} (p/panes-to-render editor)]
       (render-pane! editor rendition [i (dec (+ lines i))] lens))
 
     (render-message-line! editor rendition)

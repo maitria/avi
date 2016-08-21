@@ -25,8 +25,7 @@
   [[[i j] [lines columns]] tree]
   (if (::lens tree)
     [{::lens (::lens tree)
-      :offset [i j]
-      :size [lines columns]}]
+      ::shape [[i j] [lines columns]]}]
     (let [{[{:keys [::extent] :as t} & ts] ::subtrees} tree
           this-pane-lines (or extent lines)]
       (concat
