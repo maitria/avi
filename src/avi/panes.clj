@@ -60,21 +60,8 @@
                    ::shape (pane-area-shape editor)
                    ::path [])])))
 
-(defn current-pane-shape
-  [{:keys [::tree ::path] :as editor}]
-  (::shape (current-pane editor)))
-
-(defn- pane-lens-id
-  [panes path]
-  (if (empty? path)
-    (::lens panes)
-    (recur
-      (get-in panes [::subtrees (first path)])
-      (rest path))))
-
-(defn current-pane-lens-id
-  [{:keys [::tree ::path]}]
-  (pane-lens-id tree path))
+(def current-pane-shape (comp ::shape current-pane))
+(def current-pane-lens-id (comp ::lens current-pane))
 
 (s/fdef split-pane
   :args (s/cat :panes ::tree
