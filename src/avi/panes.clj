@@ -59,11 +59,6 @@
   [{:keys [::tree ::path] :as editor}]
   (shape tree path (pane-area-shape editor)))
 
-(defn current-pane-height
-  [editor]
-  (let [[_ [rows _]] (current-pane-shape editor)]
-    rows))
-
 (defn- pane-lens-id
   [panes path]
   (if (empty? path)

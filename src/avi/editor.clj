@@ -89,7 +89,8 @@
                (select-keys document-keys))
            (-> (current-lens editor)
                (select-keys lens-keys))
-           {:viewport-height (dec (p/current-pane-height editor))}))
+           (let [[_ [height _]] (p/current-pane-shape editor)]
+             {:viewport-height (dec height)})))
         ([editor new-context]
          (-> editor
            (update-in (current-document-path editor) merge (select-keys new-context document-keys))
