@@ -64,11 +64,6 @@
   (let [[_ [rows _]] (current-pane-shape editor)]
     rows))
 
-(defn current-pane-top
-  [editor]
-  (let [[[i _] _] (current-pane-shape editor)]
-    i))
-
 (defn- pane-lens-id
   [panes path]
   (if (empty? path)
