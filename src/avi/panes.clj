@@ -98,12 +98,11 @@
   [panes pane-path pane-height pane-top]
   (if (empty? pane-path)
     pane-top
-    (let [slot (inc (* 2 (first pane-path)))]
-      (recur
-        (get-in panes [::old-split slot])
-        (rest pane-path)
-        (internal-pane-height panes slot pane-height)
-        (internal-pane-top panes (first pane-path) pane-top)))))
+    (recur
+      (get-in panes [::subtrees (first pane-path)])
+      (rest pane-path)
+      (internal-pane-height panes (inc (* 2 (first pane-path))) pane-height)
+      (internal-pane-top panes (first pane-path) pane-top))))
 
 (defn current-pane-top
   [{:keys [::tree pane-path] :as editor}]
