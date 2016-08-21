@@ -58,17 +58,17 @@
                :pane-height ::nat)
   :ret ::nat)
 (defn height
-  [panes pane-path pane-height]
-  (if (empty? pane-path)
+  [panes path pane-height]
+  (if (empty? path)
     pane-height
     (recur
-      (get-in panes [::subtrees (first pane-path)])
-      (rest pane-path)
-      (internal-pane-height panes (first pane-path) pane-height))))
+      (get-in panes [::subtrees (first path)])
+      (rest path)
+      (internal-pane-height panes (first path) pane-height))))
 
 (defn current-pane-height
-  [{:keys [::tree pane-path] :as editor}]
-  (height tree pane-path (dec (get-in editor [:viewport :size 0]))))
+  [{:keys [::tree ::path] :as editor}]
+  (height tree path (dec (get-in editor [:viewport :size 0]))))
 
 (defn internal-pane-top
   [{:keys [::subtrees]} pane-number outer-pane-top]
@@ -80,35 +80,35 @@
 
 (s/fdef top
   :args (s/cat :panes ::tree
-               :pane-path ::path
+               :path ::path
                :pane-height ::nat
                :pane-top ::nat)
   :ret ::nat)
 (defn top
-  [panes pane-path pane-height pane-top]
-  (if (empty? pane-path)
+  [panes path pane-height pane-top]
+  (if (empty? path)
     pane-top
     (recur
-      (get-in panes [::subtrees (first pane-path)])
-      (rest pane-path)
-      (internal-pane-height panes (first pane-path) pane-height)
-      (internal-pane-top panes (first pane-path) pane-top))))
+      (get-in panes [::subtrees (first path)])
+      (rest path)
+      (internal-pane-height panes (first path) pane-height)
+      (internal-pane-top panes (first path) pane-top))))
 
 (defn current-pane-top
-  [{:keys [::tree pane-path] :as editor}]
-  (top tree pane-path (dec (get-in editor [:viewport :size 0])) 0))
+  [{:keys [::tree ::path] :as editor}]
+  (top tree path (dec (get-in editor [:viewport :size 0])) 0))
 
 (defn- pane-lens-id
-  [panes pane-path]
-  (if (empty? pane-path)
+  [panes path]
+  (if (empty? path)
     (::lens panes)
     (recur
-      (get-in panes [::subtrees (first pane-path)])
-      (rest pane-path))))
+      (get-in panes [::subtrees (first path)])
+      (rest path))))
 
 (defn current-pane-lens-id
-  [{:keys [::tree pane-path]}]
-  (pane-lens-id tree pane-path))
+  [{:keys [::tree ::path]}]
+  (pane-lens-id tree path))
 
 (s/fdef split-pane
   :args (s/cat :panes ::tree
@@ -117,7 +117,7 @@
                :total-height ::nat)
   :ret ::split)
 (defn split-pane
-  [panes pane-path new-lens total-height]
+  [panes path new-lens total-height]
   (let [panes (if (::lens panes)
                 [panes]
                 (::subtrees panes))
@@ -128,4 +128,4 @@
 
 (defn move-down-pane
   [editor]
-  (assoc editor :pane-path [1]))
+  (assoc editor ::path [1]))

@@ -37,8 +37,8 @@
              :viewport-top 0
              :point [0 0]
              :last-explicit-j 0}]
-   :avi.panes/tree {:avi.panes/lens 0}
-   :pane-path []
+   ::p/tree {:avi.panes/lens 0}
+   ::p/path []
    :beep? false})
 
 ;; -- Building middlewares ---------------------------------------------------

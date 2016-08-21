@@ -31,8 +31,8 @@
 (def wq (comp q w))
 
 (defn sp
-  [{:keys [lenses ::p/tree pane-path] {[lines] :size} :viewport :as editor}]
+  [{:keys [lenses ::p/tree ::p/path] {[lines] :size} :viewport :as editor}]
   (let [new-lenses (conj lenses (e/current-lens editor))]
     (assoc editor :lenses new-lenses
-                  ::p/tree (p/split-pane tree pane-path (dec (count new-lenses)) (dec lines))
-                  :pane-path [0])))
+                  ::p/tree (p/split-pane tree path (dec (count new-lenses)) (dec lines))
+                  ::p/path [0])))
