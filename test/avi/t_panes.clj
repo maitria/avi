@@ -16,7 +16,9 @@
     (p/panes-to-render {:viewport {:size [10 8]}
                         ::p/tree {::p/old-split [:h
                                                  {::p/lens 0 ::p/extent 3} 3
-                                                 {::p/lens 1}]}})
+                                                 {::p/lens 1}]
+                                  ::p/subtrees [{::p/lens 0 ::p/extent 3}
+                                                {::p/lens 1}]}})
       => [{:lens 0
            :offset [0 0]
            :size [3 8]}
@@ -28,7 +30,10 @@
                         ::p/tree {::p/old-split [:h
                                                  {::p/lens 0 ::p/extent 2} 2
                                                  {::p/lens 1 ::p/extent 2} 2
-                                                 {::p/lens 2}]}})
+                                                 {::p/lens 2}]
+                                  ::p/subtrees [{::p/lens 0 ::p/extent 2}
+                                                {::p/lens 1 ::p/extent 2}
+                                                {::p/lens 2}]}})
       => [{:lens 0
            :offset [0 0]
            :size [2 8]}

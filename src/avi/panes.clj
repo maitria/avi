@@ -14,8 +14,11 @@
                                          :extent ::extent))
                      :tree ::tree))
 
+(s/def ::subtrees (s/coll-of ::tree :type vector?))
+
 (s/def ::pane (s/keys :req [::lens]))
-(s/def ::split (s/keys :req [::old-split]))
+(s/def ::split (s/keys :req [::subtrees]
+                       :opt [::old-split]))
 (s/def ::tree (s/or :lens ::pane
                     :split ::split))
 
@@ -31,14 +34,14 @@
     [{:lens (::lens tree)
       :offset [i j]
       :size [lines columns]}]
-    (let [{[direction {:keys [::extent] :as lens-a} _  & rest-of-panes] ::old-split} tree
+    (let [{[{:keys [::extent] :as t} & ts] ::subtrees} tree
           this-pane-lines (or extent lines)]
       (concat
-        (panes-to-render* [i j] [this-pane-lines columns] lens-a)
-        (if (seq rest-of-panes)
+        (panes-to-render* [i j] [this-pane-lines columns] t)
+        (if (seq ts)
           (panes-to-render* [(+ i extent) j]
                             [(- lines extent) columns]
-                            {::old-split (into [direction] rest-of-panes)}))))))
+                            {::subtrees (vec ts)}))))))
 
 (defn panes-to-render
   [{:keys [::tree] {[lines columns] :size} :viewport}]
@@ -137,7 +140,8 @@
                                       #(assoc-in %1 [(dec %2) ::extent] each-pane-height)
                                       panes-with-split
                                       size-slots)]
-    {::old-split panes-with-normalized-sizes}))
+    {::old-split panes-with-normalized-sizes
+     ::subtrees (filterv map? panes-with-normalized-sizes)}))
 
 (defn move-down-pane
   [editor]
