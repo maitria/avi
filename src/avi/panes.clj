@@ -25,8 +25,8 @@
   "A transducer which visits all leaf nodes (panes) in a pane tree.
 
   The input pane trees must be augmented with ::shape and ::path, but only
-  at the tree's root.  This information is used to augment each sub-pane
-  before rf is applied to it."
+  at the tree's root.  (See augmented-root-panes.) This information is used
+  to augment each sub-pane before rf is applied to it."
   [rf]
   (fn
     ([] (rf))
@@ -46,19 +46,21 @@
            [result shape 0]
            subtrees))))))
 
-(defn panes-to-render
+(defn augmented-root-panes
   [{:keys [::tree] :as editor}]
-  (sequence panes [(assoc tree
-                          ::shape (pane-area-shape editor)
-                          ::path [])]))
+  [(assoc tree
+          ::shape (pane-area-shape editor)
+          ::path [])])
+
+(defn panes-to-render
+  [editor]
+  (sequence panes (augmented-root-panes editor)))
 
 (defn- current-pane
-  [{:keys [::tree ::path] :as editor}]
+  [{:keys [::path] :as editor}]
   (first (sequence
            (comp panes (filter #(= (::path %) path)))
-           [(assoc tree
-                   ::shape (pane-area-shape editor)
-                   ::path [])])))
+           (augmented-root-panes editor))))
 
 (def current-pane-shape (comp ::shape current-pane))
 (def current-pane-lens-id (comp ::lens current-pane))
