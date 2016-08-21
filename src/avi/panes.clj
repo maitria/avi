@@ -2,19 +2,14 @@
   (:require [clojure.spec :as s]))
 
 (s/def ::nat (s/and int? (complement neg?)))
-(s/def ::direction #{:h :v})
 (s/def ::lens ::nat)
 (s/def ::extent ::nat)
-
 (s/def ::subtrees (s/coll-of ::tree :type vector?))
-
 (s/def ::pane (s/keys :req [::lens]))
 (s/def ::split (s/keys :req [::subtrees]))
 (s/def ::tree (s/or :lens ::pane
                     :split ::split))
-
 (s/def ::path (s/coll-of ::nat :type vector?))
-
 (s/def ::shape (s/tuple (s/tuple ::nat ::nat)
                         (s/tuple ::nat ::nat)))
 
