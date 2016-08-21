@@ -15,28 +15,29 @@
 
 (s/def ::path (s/coll-of ::nat :type vector?))
 
+(s/def ::shape (s/tuple (s/tuple ::nat ::nat)
+                        (s/tuple ::nat ::nat)))
+
 (s/fdef panes-to-render*
-  :args (s/cat :offset (s/tuple ::nat ::nat)
-               :size (s/tuple ::nat ::nat)
+  :args (s/cat :shape ::shape
                :tree ::tree))
 (defn- panes-to-render*
-  [[i j] [lines columns] tree]
+  [[[i j] [lines columns]] tree]
   (if (::lens tree)
-    [{:lens (::lens tree)
+    [{::lens (::lens tree)
       :offset [i j]
       :size [lines columns]}]
     (let [{[{:keys [::extent] :as t} & ts] ::subtrees} tree
           this-pane-lines (or extent lines)]
       (concat
-        (panes-to-render* [i j] [this-pane-lines columns] t)
+        (panes-to-render* [[i j] [this-pane-lines columns]] t)
         (if (seq ts)
-          (panes-to-render* [(+ i extent) j]
-                            [(- lines extent) columns]
+          (panes-to-render* [[(+ i extent) j] [(- lines extent) columns]]
                             {::subtrees (vec ts)}))))))
 
 (defn panes-to-render
   [{:keys [::tree] {[lines columns] :size} :viewport}]
-  (panes-to-render* [0 0] [(dec lines) columns] tree))
+  (panes-to-render* [[0 0] [(dec lines) columns]] tree))
 
 (s/fdef internal-pane-height
   :args (s/cat :panes ::tree
