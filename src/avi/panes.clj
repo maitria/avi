@@ -70,11 +70,10 @@
   [panes pane-path pane-height]
   (if (empty? pane-path)
     pane-height
-    (let [slot (inc (* 2 (first pane-path)))]
-      (recur
-        (get-in panes [::old-split slot])
-        (rest pane-path)
-        (internal-pane-height panes slot pane-height)))))
+    (recur
+      (get-in panes [::subtrees (first pane-path)])
+      (rest pane-path)
+      (internal-pane-height panes (inc (* 2 (first pane-path))) pane-height))))
 
 (defn current-pane-height
   [{:keys [::tree pane-path] :as editor}]
