@@ -22,6 +22,11 @@
     [[0 0] [(dec rows) cols]]))
 
 (defn panes
+  "A transducer which visits all leaf nodes (panes) in a pane tree.
+
+  The input pane trees must be augmented with ::shape and ::path, but only
+  at the tree's root.  This information is used to augment each sub-pane
+  before rf is applied to it."
   [rf]
   (fn
     ([] (rf))
@@ -29,19 +34,23 @@
     ([result input]
      (if (::lens input)
        (rf result input)
-       (let [{:keys [::subtrees ::shape]} input]
+       (let [{:keys [::subtrees ::shape ::path]} input]
          (reduce
-           (fn [[result [[i j] [rows cols]]] {:keys [::extent] :as input}]
+           (fn [[result [[i j] [rows cols]] n] {:keys [::extent] :as input}]
              (let [height (or extent rows)
-                   input (assoc input ::shape [[i j] [height cols]])
+                   input (assoc input
+                                ::shape [[i j] [height cols]]
+                                ::path (conj path n))
                    result (rf result input)]
-               [result [[(+ i height) j] [(- rows height) cols]]]))
-           [result shape]
+               [result [[(+ i height) j] [(- rows height) cols]] (inc n)]))
+           [result shape 0]
            subtrees))))))
 
 (defn panes-to-render
   [{:keys [::tree] :as editor}]
-  (sequence panes [(assoc tree ::shape (pane-area-shape editor))]))
+  (sequence panes [(assoc tree
+                          ::shape (pane-area-shape editor)
+                          ::path [])]))
 
 (defn- shape
   [tree path [[i j] [rows cols] :as shape]]
