@@ -53,16 +53,26 @@
            [(- rows extent) cols]])))
     shape))
 
-(defn current-pane-height
+(defn- pane-area-shape
+  "Shape of the rectangle where all panes are displayed.
+
+  This accounts for the message line (ick)."
+  [editor]
+  (let [[rows cols] (get-in editor [:viewport :size])]
+    [[0 0] [(dec rows) cols]]))
+
+(defn current-pane-shape
   [{:keys [::tree ::path] :as editor}]
-  (let [[rows cols] (get-in editor [:viewport :size])
-        [_ [rows _]] (shape tree path [[0 0] [(dec rows) cols]])]
+  (shape tree path (pane-area-shape editor)))
+
+(defn current-pane-height
+  [editor]
+  (let [[_ [rows _]] (current-pane-shape editor)]
     rows))
 
 (defn current-pane-top
-  [{:keys [::tree ::path] :as editor}]
-  (let [[rows cols] (get-in editor [:viewport :size])
-        [[i _] _] (shape tree path [[0 0] [(dec rows) cols]])]
+  [editor]
+  (let [[[i _] _] (current-pane-shape editor)]
     i))
 
 (defn- pane-lens-id
