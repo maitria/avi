@@ -21,7 +21,7 @@
   (let [[rows cols] (get-in editor [:viewport :size])]
     [[0 0] [(dec rows) cols]]))
 
-(defn panes
+(defn all-panes
   "A transducer which visits all leaf nodes (panes) in a pane tree.
 
   The input pane trees must be augmented with ::shape and ::path, but only
@@ -54,12 +54,12 @@
 
 (defn panes-to-render
   [editor]
-  (sequence panes (augmented-root-panes editor)))
+  (sequence all-panes (augmented-root-panes editor)))
 
 (defn- current-pane
   [{:keys [::path] :as editor}]
   (first (sequence
-           (comp panes (filter #(= (::path %) path)))
+           (comp all-panes (filter #(= (::path %) path)))
            (augmented-root-panes editor))))
 
 (def current-pane-shape (comp ::shape current-pane))
