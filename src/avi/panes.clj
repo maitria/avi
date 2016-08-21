@@ -13,6 +13,14 @@
 (s/def ::shape (s/tuple (s/tuple ::nat ::nat)
                         (s/tuple ::nat ::nat)))
 
+(defn- pane-area-shape
+  "Shape of the rectangle where all panes are displayed.
+
+  This accounts for the message line (ick)."
+  [editor]
+  (let [[rows cols] (get-in editor [:viewport :size])]
+    [[0 0] [(dec rows) cols]]))
+
 (s/fdef panes-to-render*
   :args (s/cat :shape ::shape
                :tree ::tree))
@@ -28,8 +36,8 @@
       ::shape [[i j] [lines columns]]}]))
 
 (defn panes-to-render
-  [{:keys [::tree] {[lines columns] :size} :viewport}]
-  (panes-to-render* [[0 0] [(dec lines) columns]] tree))
+  [{:keys [::tree] :as editor}]
+  (panes-to-render* (pane-area-shape editor) tree))
 
 (defn- shape
   [tree path [[i j] [rows cols] :as shape]]
@@ -44,14 +52,6 @@
           [[(+ i extent) j]
            [(- rows extent) cols]])))
     shape))
-
-(defn- pane-area-shape
-  "Shape of the rectangle where all panes are displayed.
-
-  This accounts for the message line (ick)."
-  [editor]
-  (let [[rows cols] (get-in editor [:viewport :size])]
-    [[0 0] [(dec rows) cols]]))
 
 (defn current-pane-shape
   [{:keys [::tree ::path] :as editor}]
