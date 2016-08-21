@@ -80,9 +80,9 @@
   (height tree pane-path (dec (get-in editor [:viewport :size 0]))))
 
 (defn internal-pane-top
-  [{:keys [::old-split] :as panes} pane-number outer-pane-top]
+  [{:keys [::subtrees]} pane-number outer-pane-top]
   (+ outer-pane-top
-     (->> old-split
+     (->> subtrees
        (keep ::extent)
        (take pane-number)
        (reduce +))))
