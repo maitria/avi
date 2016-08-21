@@ -39,6 +39,20 @@
   [{:keys [::tree] {[lines columns] :size} :viewport}]
   (panes-to-render* [[0 0] [(dec lines) columns]] tree))
 
+(defn- shape
+  [tree path [[i j] [rows cols] :as shape]]
+  (if-not (empty? path)
+    (let [[phead & prest] path
+          {:keys [::extent] :as subnode} (first (::subtrees tree))]
+      (if (zero? phead)
+        (recur subnode prest [[i j] [(or extent rows) cols]])
+        (recur
+          (update-in tree ::subtrees (comp vec rest))
+          (into [(dec phead)] prest)
+          [[(+ i extent) j]
+           [(- rows extent) cols]])))
+    shape))
+
 (s/fdef internal-pane-height
   :args (s/cat :panes ::tree
                :slot ::nat
@@ -53,23 +67,11 @@
          (reduce +)))
     (get-in panes [::subtrees pane-index ::extent])))
 
-(s/fdef height
-  :args (s/cat :panes ::tree
-               :path ::path
-               :pane-height ::nat)
-  :ret ::nat)
-(defn height
-  [panes path pane-height]
-  (if (empty? path)
-    pane-height
-    (recur
-      (get-in panes [::subtrees (first path)])
-      (rest path)
-      (internal-pane-height panes (first path) pane-height))))
-
 (defn current-pane-height
   [{:keys [::tree ::path] :as editor}]
-  (height tree path (dec (get-in editor [:viewport :size 0]))))
+  (let [[rows cols] (get-in editor [:viewport :size])
+        [_ [rows _]] (shape tree path [[0 0] [(dec rows) cols]])]
+    rows))
 
 (defn internal-pane-top
   [{:keys [::subtrees]} pane-number outer-pane-top]
