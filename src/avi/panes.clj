@@ -114,7 +114,7 @@
   (if (empty? pane-path)
     (::lens panes)
     (recur
-      (get-in panes [::old-split (inc (* 2 (first pane-path)))])
+      (get-in panes [::subtrees (first pane-path)])
       (rest pane-path))))
 
 (defn current-pane-lens-id
