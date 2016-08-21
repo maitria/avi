@@ -21,23 +21,27 @@
   (let [[rows cols] (get-in editor [:viewport :size])]
     [[0 0] [(dec rows) cols]]))
 
-(s/fdef panes-to-render*
-  :args (s/cat :shape ::shape
-               :tree ::tree))
-(defn- panes-to-render*
-  [[[i j] [lines columns]] tree]
-  (if-some [[{:keys [::extent] :as t} & ts] (::subtrees tree)]
-    (concat
-      (panes-to-render* [[i j] [(or extent lines) columns]] t)
-      (if (seq ts)
-        (panes-to-render* [[(+ i extent) j] [(- lines extent) columns]]
-                          {::subtrees (vec ts)})))
-    [{::lens (::lens tree)
-      ::shape [[i j] [lines columns]]}]))
+(defn panes
+  [rf]
+  (fn
+    ([] (rf))
+    ([result] (rf result))
+    ([result input]
+     (if (::lens input)
+       (rf result input)
+       (let [{:keys [::subtrees ::shape]} input]
+         (reduce
+           (fn [[result [[i j] [rows cols]]] {:keys [::extent] :as input}]
+             (let [height (or extent rows)
+                   input (assoc input ::shape [[i j] [height cols]])
+                   result (rf result input)]
+               [result [[(+ i height) j] [(- rows height) cols]]]))
+           [result shape]
+           subtrees))))))
 
 (defn panes-to-render
   [{:keys [::tree] :as editor}]
-  (panes-to-render* (pane-area-shape editor) tree))
+  (sequence panes [(assoc tree ::shape (pane-area-shape editor))]))
 
 (defn- shape
   [tree path [[i j] [rows cols] :as shape]]

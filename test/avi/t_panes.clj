@@ -17,7 +17,8 @@
                         ::p/tree {::p/subtrees [{::p/lens 0 ::p/extent 3}
                                                 {::p/lens 1}]}})
       => [{::p/lens 0
-           ::p/shape [[0 0] [3 8]]}
+           ::p/shape [[0 0] [3 8]]
+           ::p/extent 3}
           {::p/lens 1
            ::p/shape [[3 0] [6 8]]}])
   (fact "two horizontal splits work correctly"
@@ -26,8 +27,10 @@
                                                 {::p/lens 1 ::p/extent 2}
                                                 {::p/lens 2}]}})
       => [{::p/lens 0
-           ::p/shape [[0 0] [2 8]]}
+           ::p/shape [[0 0] [2 8]]
+           ::p/extent 2}
           {::p/lens 1
-           ::p/shape [[2 0] [2 8]]}
+           ::p/shape [[2 0] [2 8]]
+           ::p/extent 2}
           {::p/lens 2
            ::p/shape [[4 0] [5 8]]}]))
