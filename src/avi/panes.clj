@@ -13,7 +13,7 @@
 (s/def ::shape (s/tuple (s/tuple ::nat ::nat)
                         (s/tuple ::nat ::nat)))
 
-(defn- pane-area-shape
+(defn- root-pane-shape
   "Shape of the rectangle where all panes are displayed.
 
   This accounts for the message line (ick)."
@@ -49,7 +49,7 @@
 (defn augmented-root-panes
   [{:keys [::tree] :as editor}]
   [(assoc tree
-          ::shape (pane-area-shape editor)
+          ::shape (root-pane-shape editor)
           ::path [])])
 
 (defn panes-to-render
