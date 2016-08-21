@@ -62,8 +62,6 @@
            (comp all-panes (filter #(= (::path %) path)))
            (augmented-root-panes editor))))
 
-(def current-pane-lens-id (comp ::lens current-pane))
-
 (s/fdef split-pane
   :args (s/cat :panes ::tree
                :path ::path

@@ -55,7 +55,7 @@
 
 (defn current-lens-path
   [editor]
-  [:lenses (p/current-pane-lens-id editor)])
+  [:lenses (::p/lens (p/current-pane editor))])
 
 (defn current-lens
   [editor]
