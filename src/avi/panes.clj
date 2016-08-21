@@ -52,23 +52,17 @@
                           ::shape (pane-area-shape editor)
                           ::path [])]))
 
-(defn- shape
-  [tree path [[i j] [rows cols] :as shape]]
-  (if-not (empty? path)
-    (let [[phead & prest] path
-          {:keys [::extent] :as subnode} (first (::subtrees tree))]
-      (if (zero? phead)
-        (recur subnode prest [[i j] [(or extent rows) cols]])
-        (recur
-          (update tree ::subtrees (comp vec rest))
-          (into [(dec phead)] prest)
-          [[(+ i extent) j]
-           [(- rows extent) cols]])))
-    shape))
+(defn- current-pane
+  [{:keys [::tree ::path] :as editor}]
+  (first (sequence
+           (comp panes (filter #(= (::path %) path)))
+           [(assoc tree
+                   ::shape (pane-area-shape editor)
+                   ::path [])])))
 
 (defn current-pane-shape
   [{:keys [::tree ::path] :as editor}]
-  (shape tree path (pane-area-shape editor)))
+  (::shape (current-pane editor)))
 
 (defn- pane-lens-id
   [panes path]
