@@ -18,16 +18,14 @@
                :tree ::tree))
 (defn- panes-to-render*
   [[[i j] [lines columns]] tree]
-  (if (::lens tree)
+  (if-some [[{:keys [::extent] :as t} & ts] (::subtrees tree)]
+    (concat
+      (panes-to-render* [[i j] [(or extent lines) columns]] t)
+      (if (seq ts)
+        (panes-to-render* [[(+ i extent) j] [(- lines extent) columns]]
+                          {::subtrees (vec ts)})))
     [{::lens (::lens tree)
-      ::shape [[i j] [lines columns]]}]
-    (let [{[{:keys [::extent] :as t} & ts] ::subtrees} tree
-          this-pane-lines (or extent lines)]
-      (concat
-        (panes-to-render* [[i j] [this-pane-lines columns]] t)
-        (if (seq ts)
-          (panes-to-render* [[(+ i extent) j] [(- lines extent) columns]]
-                            {::subtrees (vec ts)}))))))
+      ::shape [[i j] [lines columns]]}]))
 
 (defn panes-to-render
   [{:keys [::tree] {[lines columns] :size} :viewport}]
