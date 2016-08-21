@@ -89,7 +89,7 @@
                (select-keys document-keys))
            (-> (current-lens editor)
                (select-keys lens-keys))
-           (let [[_ [height _]] (p/current-pane-shape editor)]
+           (let [[_ [height _]] (::p/shape (p/current-pane editor))]
              {:viewport-height (dec height)})))
         ([editor new-context]
          (-> editor

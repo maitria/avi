@@ -11,7 +11,7 @@
     (let [[height] (:size (:viewport editor))]
       [(dec height) (inc (count (:command-line editor)))])
     (let [{:keys [viewport-top] [i j] :point} (get-in editor (e/current-lens-path editor))
-          [[top _] _] (p/current-pane-shape editor)]
+          [[top _] _] (::p/shape (p/current-pane editor))]
       [(+ (- i viewport-top) top) j])))
 
 (defn fill-rendition-line!

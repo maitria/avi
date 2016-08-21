@@ -56,13 +56,12 @@
   [editor]
   (sequence all-panes (augmented-root-panes editor)))
 
-(defn- current-pane
+(defn current-pane
   [{:keys [::path] :as editor}]
   (first (sequence
            (comp all-panes (filter #(= (::path %) path)))
            (augmented-root-panes editor))))
 
-(def current-pane-shape (comp ::shape current-pane))
 (def current-pane-lens-id (comp ::lens current-pane))
 
 (s/fdef split-pane
