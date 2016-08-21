@@ -54,9 +54,14 @@
                    :chars rendered-chars
                    :attrs rendered-attrs
                    :point (point-position editor)}]
-    (doseq [{:keys [::p/lens]
-             [[i j] [lines columns]] ::p/shape} (p/panes-to-render editor)]
-      (render-pane! editor rendition [i (dec (+ lines i))] lens))
+    (transduce
+      p/all-panes
+      (fn
+        ([])
+        ([x] x)
+        ([_ {:keys [::p/lens] [[i j] [lines columns]] ::p/shape}]
+         (render-pane! editor rendition [i (dec (+ lines i))] lens)))
+      (p/augmented-root-panes editor))
 
     (render-message-line! editor rendition)
     rendition))

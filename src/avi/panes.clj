@@ -52,10 +52,6 @@
           ::shape (root-pane-shape editor)
           ::path [])])
 
-(defn panes-to-render
-  [editor]
-  (sequence all-panes (augmented-root-panes editor)))
-
 (defn current-pane
   [{:keys [::path] :as editor}]
   (first (sequence
