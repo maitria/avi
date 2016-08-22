@@ -46,7 +46,7 @@
     :else
     [i (inc j)]))
 (spec/fdef advance
-  :args (spec/cat :location ::location :line-length (constantly true))
+  :args (spec/cat :location ::location :line-length any?)
   :ret (spec/nilable ::location))
 
 (defn retreat
@@ -61,7 +61,7 @@
     :else
     [(dec i) (line-length (dec i))]))
 (spec/fdef retreat
-  :args (spec/cat :location ::location :line-length (constantly true))
+  :args (spec/cat :location ::location :line-length any?)
   :ret (spec/nilable ::location))
 
 (defn forward
