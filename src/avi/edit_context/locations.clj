@@ -7,8 +7,6 @@
 (spec/def ::location (spec/tuple ::line ::column))
 (spec/def ::adjustment-bias #{:left :right})
 
-(def boolean? (partial instance? Boolean))
-
 (defn location<
   [a b]
   (< (.compareTo a b) 0))
