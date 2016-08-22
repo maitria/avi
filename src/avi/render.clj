@@ -54,15 +54,10 @@
                    :chars rendered-chars
                    :attrs rendered-attrs
                    :point (point-position editor)}]
-    (transduce
-      p/all-panes
-      (fn
-        ([])
-        ([x] x)
-        ([_ {:keys [::p/lens] [[i j] [lines columns]] ::p/shape}]
-         (render-pane! editor rendition [i (dec (+ lines i))] lens)))
-      (p/augmented-root-panes editor))
-
+    (run!
+      (fn [{:keys [::p/lens] [[i j] [lines columns]] ::p/shape}]
+        (render-pane! editor rendition [i (dec (+ lines i))] lens))
+      (eduction p/all-panes (p/augmented-root-panes editor)))
     (render-message-line! editor rendition)
     rendition))
 
