@@ -1,5 +1,6 @@
 (ns avi.panes
-  (:require [clojure.spec :as s]))
+  (:require [avi.layout :as layout]
+            [clojure.spec :as s]))
 
 (s/def ::nat (s/and int? (complement neg?)))
 (s/def ::lens ::nat)
@@ -10,8 +11,6 @@
 (s/def ::tree (s/or :lens ::pane
                     :split ::split))
 (s/def ::path (s/coll-of ::nat :type vector?))
-(s/def ::shape (s/tuple (s/tuple ::nat ::nat)
-                        (s/tuple ::nat ::nat)))
 
 (defn- root-pane-shape
   "Shape of the rectangle where all panes are displayed.
@@ -24,9 +23,9 @@
 (defn all-panes
   "A transducer which visits all leaf nodes (panes) in a pane tree.
 
-  The input pane trees must be augmented with ::shape and ::path, but only
-  at the tree's root.  (See augmented-root-panes.) This information is used
-  to augment each sub-pane before rf is applied to it."
+  The input pane trees must be augmented with ::layout/shape and ::path, but
+  only at the tree's root.  (See augmented-root-panes.) This information is
+  used to augment each sub-pane before rf is applied to it."
   [rf]
   (fn
     ([] (rf))
@@ -34,12 +33,12 @@
     ([result input]
      (if (::lens input)
        (rf result input)
-       (let [{:keys [::subtrees ::shape ::path]} input]
+       (let [{:keys [::subtrees ::layout/shape ::path]} input]
          (reduce
            (fn [[result [[i j] [rows cols]] n] {:keys [::extent] :as input}]
              (let [height (or extent rows)
                    input (assoc input
-                                ::shape [[i j] [height cols]]
+                                ::layout/shape [[i j] [height cols]]
                                 ::path (conj path n))
                    result (rf result input)]
                [result [[(+ i height) j] [(- rows height) cols]] (inc n)]))
@@ -49,7 +48,7 @@
 (defn augmented-root-panes
   [{:keys [::tree] :as editor}]
   [(assoc tree
-          ::shape (root-pane-shape editor)
+          ::layout/shape (root-pane-shape editor)
           ::path [])])
 
 (defn current-pane

@@ -3,6 +3,7 @@
   (:require [clojure.set :refer [map-invert]]
             [avi.editor :as e]
             [avi.color :as color]
+            [avi.layout :as layout]
             [avi.panes :as p]))
 
 (defn- point-position
@@ -11,7 +12,7 @@
     (let [[height] (:size (:viewport editor))]
       [(dec height) (inc (count (:command-line editor)))])
     (let [{:keys [viewport-top] [i j] :point} (get-in editor (e/current-lens-path editor))
-          [[top _] _] (::p/shape (p/current-pane editor))]
+          [[top _] _] (::layout/shape (p/current-pane editor))]
       [(+ (- i viewport-top) top) j])))
 
 (defn fill-rendition-line!
@@ -55,7 +56,7 @@
                    :attrs rendered-attrs
                    :point (point-position editor)}]
     (run!
-      (fn [{:keys [::p/lens] [[i j] [lines columns]] ::p/shape}]
+      (fn [{:keys [::p/lens] [[i j] [lines columns]] ::layout/shape}]
         (render-pane! editor rendition [i (dec (+ lines i))] lens))
       (eduction p/all-panes (p/augmented-root-panes editor)))
     (render-message-line! editor rendition)

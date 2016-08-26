@@ -10,6 +10,7 @@
             [avi.edit-context :as ec]
             [avi.edit-context
               [lines :as lines]]
+            [avi.layout :as layout]
             [avi.panes :as p]
             [avi.world :as w]))
 
@@ -89,7 +90,7 @@
                (select-keys document-keys))
            (-> (current-lens editor)
                (select-keys lens-keys))
-           (let [[_ [height _]] (::p/shape (p/current-pane editor))]
+           (let [[_ [height _]] (::layout/shape (p/current-pane editor))]
              {:viewport-height (dec height)})))
         ([editor new-context]
          (-> editor
