@@ -1,7 +1,7 @@
 (ns avi.t-panes
   (:require [midje.sweet :refer :all]
             [avi.layout :as layout]
-            [avi.panes :as p]))
+            [avi.layout.panes :as p]))
 
 (defn all-panes
   [tree]

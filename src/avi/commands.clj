@@ -5,7 +5,7 @@
   prompt."
   (:require [avi.edit-context :as ec]
             [avi.editor :as e]
-            [avi.panes :as p]
+            [avi.layout.panes :as p]
             [avi.world :as w]
             [clojure.string :as string]
             [packthread.core :refer :all]))

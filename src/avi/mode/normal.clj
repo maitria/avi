@@ -5,9 +5,9 @@
             [avi.edit-context :as ec]
             [avi.editor :as e]
             [avi.events :as ev]
+            [avi.layout.panes :as p]
             [avi.mode command-line insert]
             [avi.nfa :as nfa]
-            [avi.panes :as p]
             [avi.pervasive :refer :all]
             [avi.search]))
 

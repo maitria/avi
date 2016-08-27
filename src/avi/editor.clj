@@ -11,7 +11,7 @@
             [avi.edit-context
               [lines :as lines]]
             [avi.layout :as layout]
-            [avi.panes :as p]
+            [avi.layout.panes :as p]
             [avi.world :as w]))
 
 ;; -- Initial state ----------------------------------------------------------
@@ -38,7 +38,7 @@
              :viewport-top 0
              :point [0 0]
              :last-explicit-j 0}]
-   ::p/tree {:avi.panes/lens 0}
+   ::p/tree {:avi.layout.panes/lens 0}
    ::p/path []
    :beep? false})
 

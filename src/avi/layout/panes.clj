@@ -1,4 +1,4 @@
-(ns avi.panes
+(ns avi.layout.panes
   (:require [avi.layout :as layout]
             [clojure.spec :as s]))
 

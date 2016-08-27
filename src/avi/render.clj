@@ -4,7 +4,7 @@
             [avi.editor :as e]
             [avi.color :as color]
             [avi.layout :as layout]
-            [avi.panes :as p]))
+            [avi.layout.panes :as p]))
 
 (defn- point-position
   [{:keys [mode] :as editor}]
