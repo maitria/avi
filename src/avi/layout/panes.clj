@@ -1,5 +1,6 @@
 (ns avi.layout.panes
-  (:require [clojure.spec :as s]))
+  (:require [avi.beep :as b]
+            [clojure.spec :as s]))
 
 (s/def ::nat (s/and int? (complement neg?)))
 (s/def ::lens ::nat)
@@ -98,4 +99,6 @@
                  (filter (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
                            (< i pi)))
                  (augmented-root-panes editor)))]
-    (assoc editor ::path (::path pane))))
+    (if pane
+      (assoc editor ::path (::path pane))
+      (b/beep editor))))
