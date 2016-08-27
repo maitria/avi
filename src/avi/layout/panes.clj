@@ -19,6 +19,10 @@
   (let [[rows cols] (get-in editor [:viewport :size])]
     [[0 0] [(dec rows) cols]]))
 
+(defn- tag-pane
+  [pane]
+  (assoc pane :avi.layout/renderable-type :avi.layout.panes/pane))
+
 (defn all-panes
   "A transducer which visits all leaf nodes (panes) in a pane tree.
 
@@ -31,7 +35,7 @@
     ([result] (rf result))
     ([result input]
      (if (::lens input)
-       (rf result input)
+       (rf result (tag-pane input))
        (let [{:keys [::subtrees :avi.layout/shape ::path]} input]
          (reduce
            (fn [[result [[i j] [rows cols]] n] {:keys [::extent] :as input}]
@@ -39,7 +43,7 @@
                    input (assoc input
                                 :avi.layout/shape [[i j] [height cols]]
                                 ::path (conj path n))
-                   result (rf result input)]
+                   result (rf result (tag-pane input))]
                [result [[(+ i height) j] [(- rows height) cols]] (inc n)]))
            [result shape 0]
            subtrees))))))

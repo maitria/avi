@@ -5,6 +5,7 @@
 (s/def ::nat (s/and int? (complement neg?)))
 (s/def ::shape (s/tuple (s/tuple ::nat ::nat)
                         (s/tuple ::nat ::nat)))
+(s/def ::renderable-type keyword)
 
 (def all-renderables
   (comp (mapcat p/augmented-root-panes)
