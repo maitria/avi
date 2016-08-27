@@ -89,4 +89,13 @@
 
 (defn move-down-pane
   [editor]
-  (assoc editor ::path [1]))
+  (let [[i j] (point-position editor)
+        pane (first
+               (eduction
+                 all-panes
+                 (filter (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
+                           (<= pj j (+ pj pcols))))
+                 (filter (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
+                           (< i pi)))
+                 (augmented-root-panes editor)))]
+    (assoc editor ::path (::path pane))))

@@ -37,4 +37,6 @@
                     ""]))
   (fact "<C-W>j moves down a pane"
     (editor :editing "One\nTwo\nThree\nFour" :after ":sp<Enter><C-W>j")
-      => (point [3 0])))
+      => (point [3 0])
+    (editor :editing "One\nTwo\n" :after ":sp<Enter>:sp<Enter><C-W>j<C-W>j")
+      => (point [4 0])))
