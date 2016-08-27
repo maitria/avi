@@ -96,32 +96,14 @@
            (< i pi)
            (< pi i)))))
 
-(defn move-down-pane
-  [editor]
-  (let [[i j] (point-position editor)
-        pane (first
-               (eduction
-                 all-panes
-                 (filter (pane-reachable [i j] [+1 0]))
-                 (augmented-root-panes editor)))]
-    (if pane
-      (assoc editor ::path (::path pane))
-      (b/beep editor))))
-
-(defn move-up-pane
-  [editor]
-  (let [[i j] (point-position editor)
-        pane (first
-               (eduction
-                 all-panes
-                 (filter (pane-reachable [i j] [-1 0]))
-                 (augmented-root-panes editor)))]
-    (if pane
-      (assoc editor ::path (::path pane))
-      (b/beep editor))))
-
 (defn move-pane
-  [editor [i _]]
-  (if (pos? i)
-    (move-down-pane editor)
-    (move-up-pane editor)))
+  [editor [di dj]]
+  (let [[i j] (point-position editor)
+        pane (first
+               (eduction
+                 all-panes
+                 (filter (pane-reachable [i j] [di dj]))
+                 (augmented-root-panes editor)))]
+    (if pane
+      (assoc editor ::path (::path pane))
+      (b/beep editor))))
