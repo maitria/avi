@@ -102,3 +102,18 @@
     (if pane
       (assoc editor ::path (::path pane))
       (b/beep editor))))
+
+(defn move-up-pane
+  [editor]
+  (let [[i j] (point-position editor)
+        pane (first
+               (eduction
+                 all-panes
+                 (filter (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
+                           (<= pj j (+ pj pcols))))
+                 (filter (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
+                           (< pi i)))
+                 (augmented-root-panes editor)))]
+    (if pane
+      (assoc editor ::path (::path pane))
+      (b/beep editor))))

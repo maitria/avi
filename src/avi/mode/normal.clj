@@ -154,6 +154,9 @@
 
    "<C-W>j" (fn+> [editor _]
               (p/move-down-pane))
+   
+   "<C-W>k" (fn+> [editor _]
+              (p/move-up-pane))
 
    "<C-Y>" (fn+> [editor _]
              (in e/edit-context
