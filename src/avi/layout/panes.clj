@@ -117,3 +117,9 @@
     (if pane
       (assoc editor ::path (::path pane))
       (b/beep editor))))
+
+(defn move-pane
+  [editor [i _]]
+  (if (pos? i)
+    (move-down-pane editor)
+    (move-up-pane editor)))

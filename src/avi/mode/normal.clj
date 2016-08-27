@@ -153,10 +153,10 @@
                    (ec/move-and-scroll-half-page :up)))))
 
    "<C-W>j" (fn+> [editor _]
-              (p/move-down-pane))
+              (p/move-pane [+1 0]))
    
    "<C-W>k" (fn+> [editor _]
-              (p/move-up-pane))
+              (p/move-pane [-1 0]))
 
    "<C-Y>" (fn+> [editor _]
              (in e/edit-context
