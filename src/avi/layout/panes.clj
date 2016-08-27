@@ -88,14 +88,18 @@
                 (into [{::lens new-lens}]))]
     {::subtrees panes}))
 
+(defn- pane-reachable
+  [[i j]]
+  (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
+    (<= pj j (+ pj pcols))))
+
 (defn move-down-pane
   [editor]
   (let [[i j] (point-position editor)
         pane (first
                (eduction
                  all-panes
-                 (filter (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
-                           (<= pj j (+ pj pcols))))
+                 (filter (pane-reachable [i j]))
                  (filter (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
                            (< i pi)))
                  (augmented-root-panes editor)))]
@@ -109,8 +113,7 @@
         pane (first
                (eduction
                  all-panes
-                 (filter (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
-                           (<= pj j (+ pj pcols))))
+                 (filter (pane-reachable [i j]))
                  (filter (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
                            (< pi i)))
                  (augmented-root-panes editor)))]
