@@ -6,7 +6,7 @@
 (s/def ::shape (s/tuple (s/tuple ::nat ::nat)
                         (s/tuple ::nat ::nat)))
 
-(def all-shapes
+(def all-renderables
   (comp (mapcat p/augmented-root-panes)
         p/all-panes))
   

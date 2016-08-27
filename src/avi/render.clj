@@ -58,7 +58,7 @@
     (run!
       (fn [{:keys [::p/lens] [[i j] [lines columns]] ::layout/shape}]
         (render-pane! editor rendition [i (dec (+ lines i))] lens))
-      (eduction layout/all-shapes [editor]))
+      (eduction layout/all-renderables [editor]))
     (render-message-line! editor rendition)
     rendition))
 
