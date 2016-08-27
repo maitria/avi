@@ -88,7 +88,7 @@
                 (into [{::lens new-lens}]))]
     {::subtrees panes}))
 
-(defn- pane-reachable
+(defn- reachable
   [[i j] [di dj]]
   (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
     (and (<= pj j (+ pj pcols))
@@ -96,13 +96,13 @@
            (< i pi)
            (< pi i)))))
 
-(defn move-pane
+(defn move
   [editor [di dj]]
   (let [[i j] (point-position editor)
         pane (first
                (eduction
                  all-panes
-                 (filter (pane-reachable [i j] [di dj]))
+                 (filter (reachable [i j] [di dj]))
                  (augmented-root-panes editor)))]
     (if pane
       (assoc editor ::path (::path pane))
