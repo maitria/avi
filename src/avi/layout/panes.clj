@@ -60,6 +60,17 @@
            (comp all-panes (filter #(= (::path %) path)))
            (augmented-root-panes editor))))
 
+(defn point-position
+  "Position of the point in the currently focused pane.
+  
+  (Note: The cursor could be elsewhere if something else is focused, like the
+  command-line.)"
+  [editor]
+  (let [{:keys [::lens] [[top _] _] :avi.layout/shape :as pane}
+          (current-pane editor)
+        {:keys [viewport-top] [i j] :point} (get-in editor [:lenses lens])]
+    [(+ (- i viewport-top) top) j]))
+
 (s/fdef split-pane
   :args (s/cat :panes ::tree
                :path ::path
