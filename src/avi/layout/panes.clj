@@ -38,16 +38,17 @@
      (if (::lens input)
        (rf result (tag-pane input))
        (let [{:keys [::subtrees :avi.layout/shape ::path]} input]
-         (reduce
-           (fn [[result [[i j] [rows cols]] n] {:keys [::extent] :as input}]
-             (let [height (or extent rows)
-                   input (assoc input
-                                :avi.layout/shape [[i j] [height cols]]
-                                ::path (conj path n))
-                   result (rf result (tag-pane input))]
-               [result [[(+ i height) j] [(- rows height) cols]] (inc n)]))
-           [result shape 0]
-           subtrees))))))
+         (first
+           (reduce
+             (fn [[result [[i j] [rows cols]] n] {:keys [::extent] :as input}]
+               (let [height (or extent rows)
+                     input (assoc input
+                                  :avi.layout/shape [[i j] [height cols]]
+                                  ::path (conj path n))
+                     result (rf result (tag-pane input))]
+                 [result [[(+ i height) j] [(- rows height) cols]] (inc n)]))
+             [result shape 0]
+             subtrees)))))))
 
 (defn augmented-root-panes
   [{:keys [::tree] :as editor}]
@@ -96,14 +97,25 @@
            (< i pi)
            (< pi i)))))
 
+(defn- distance
+  [[i j] {[[pi pj] [plines pcols]] :avi.layout/shape}]
+  (min (Math/abs (- i pi))
+       (Math/abs (- i (dec (+ i plines))))
+       (Math/abs (- j pj))
+       (Math/abs (- j (dec (+ j pcols))))))
+
 (defn move
   [editor [di dj]]
   (let [[i j] (point-position editor)
-        pane (first
-               (eduction
-                 all-panes
-                 (filter (reachable [i j] [di dj]))
-                 (augmented-root-panes editor)))]
+        [_ pane] (transduce
+                   (comp all-panes
+                         (filter (reachable [i j] [di dj]))
+                         (map (juxt #(distance [i j] %) identity)))
+                   (completing
+                     (fn [[rd result :as a] [id input :as b]]
+                       (if (< rd id) a b)))
+                   [Long/MAX_VALUE nil]
+                   (augmented-root-panes editor))]
     (if pane
       (assoc editor ::path (::path pane))
       (b/beep editor))))

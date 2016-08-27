@@ -43,4 +43,8 @@
     (editor :editing "One\nTwo" :after "<C-W>j") => beeped)
   (fact "<C-W>k moves up a pane"
     (editor :editing "One\nTwo\nThree\nFour" :after ":sp<Enter><C-W>j<C-W>k")
-      => (point [0 0])))
+      => (point [0 0])
+    (editor :editing "One\nTwo\n" :after ":sp<Enter>:sp<Enter><C-W>j<C-W>j<C-W>k")
+      => (point [2 0])
+
+      ))
