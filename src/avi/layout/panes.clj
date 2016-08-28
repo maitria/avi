@@ -98,11 +98,14 @@
            (< (dec (+ pi plines)) i)))))
 
 (defn- distance
-  [[i j] {[[pi pj] [plines pcols]] :avi.layout/shape}]
-  (min (Math/abs (- i pi))
-       (Math/abs (- i (dec (+ i plines))))
-       (Math/abs (- j pj))
-       (Math/abs (- j (dec (+ j pcols))))))
+  [[i j] [di dj] {[[pi pj] [plines pcols]] :avi.layout/shape}]
+  (reduce min (concat
+                (if-not (zero? di)
+                  [(Math/abs (- i pi))
+                   (Math/abs (- i (dec (+ pi plines))))])
+                (if-not (zero? dj)
+                  [(Math/abs (- j pj))
+                   (Math/abs (- j (dec (+ pj pcols))))]))))
 
 (defn move
   [editor [di dj]]
@@ -110,7 +113,7 @@
         [_ pane] (transduce
                    (comp all-panes
                          (filter (reachable [i j] [di dj]))
-                         (map (juxt #(distance [i j] %) identity)))
+                         (map (juxt #(distance [i j] [di dj] %) identity)))
                    (completing
                      (fn [[rd result :as a] [id input :as b]]
                        (if (< rd id) a b)))

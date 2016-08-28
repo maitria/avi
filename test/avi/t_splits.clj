@@ -36,16 +36,12 @@
                     "test.txt" :black :on :white
                     ""]))
   (fact "<C-W>j moves down a pane"
-    (editor :editing "One\nTwo\nThree\nFour" :after ":sp<Enter><C-W>j")
-      => (point [3 0])
-    (editor :editing "One\nTwo\n" :after ":sp<Enter>:sp<Enter><C-W>j<C-W>j")
-      => (point [4 0])
-    (editor :editing "One\nTwo" :after "<C-W>j") => beeped)
+    (editor :after ":sp<Enter><C-W>j") => (point [3 0])
+    (editor :after ":sp<Enter>:sp<Enter><C-W>j") => (point [2 0])
+    (editor :after ":sp<Enter>:sp<Enter><C-W>j<C-W>j") => (point [4 0])
+    (editor :after "<C-W>j") => beeped)
   (fact "<C-W>k moves up a pane"
-    (editor :editing "One\nTwo\nThree\nFour" :after ":sp<Enter><C-W>j<C-W>k")
-      => (point [0 0])
-    (editor :editing "One\nTwo\n" :after ":sp<Enter>:sp<Enter><C-W>j<C-W>j<C-W>k")
-      => (point [2 0])
+    (editor :after ":sp<Enter><C-W>j<C-W>k") => (point [0 0])
+    (editor :after ":sp<Enter>:sp<Enter><C-W>j<C-W>j<C-W>k") => (point [2 0])
     (fact "<C-W>k always works (regression)"
-      (editor :editing "a\nb\n" :after "j:sp<Enter><C-W>j<C-W>k")
-        => (point [1 0]))))
+      (editor :after "j:sp<Enter><C-W>j<C-W>k") => (point [1 0]))))
