@@ -92,10 +92,10 @@
 (defn- reachable
   [[i j] [di dj]]
   (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
-    (and (<= pj j (+ pj pcols))
+    (and (<= pj j (dec (+ pj pcols)))
          (if (pos? di)
            (< i pi)
-           (< pi i)))))
+           (< (dec (+ pi plines)) i)))))
 
 (defn- distance
   [[i j] {[[pi pj] [plines pcols]] :avi.layout/shape}]

@@ -46,5 +46,6 @@
       => (point [0 0])
     (editor :editing "One\nTwo\n" :after ":sp<Enter>:sp<Enter><C-W>j<C-W>j<C-W>k")
       => (point [2 0])
-
-      ))
+    (fact "<C-W>k always works (regression)"
+      (editor :editing "a\nb\n" :after "j:sp<Enter><C-W>j<C-W>k")
+        => (point [1 0]))))
