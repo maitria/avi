@@ -9,18 +9,18 @@
 
 (facts "about finding panes to render"
   (fact "a single root pane fills the screen"
-    (all-panes {:viewport {:size [10 8]}
+    (all-panes {::layout/shape [[0 0] [10 8]]
                 ::p/tree {::p/lens 0}})
     => (contains (contains {::p/lens 0
                             ::layout/shape [[0 0] [9 8]]
                             ::p/path []}))
-    (all-panes {:viewport {:size [8 17]}
+    (all-panes {::layout/shape [[0 0] [8 17]]
                 ::p/tree {::p/lens 6}})
     => (contains (contains {::p/lens 6
                             ::layout/shape [[0 0] [7 17]]
                             ::p/path []})))
   (fact "a single horizonal split works correctly"
-        (all-panes {:viewport {:size [10 8]}
+        (all-panes {::layout/shape [[0 0] [10 8]]
                     ::p/tree {::p/subtrees [{::p/lens 0 ::p/extent 3}
                                             {::p/lens 1}]}})
         => (contains (contains {::p/lens 0
@@ -31,7 +31,7 @@
                                 ::layout/shape [[3 0] [6 8]]
                                 ::p/path [1]})))
   (fact "two horizontal splits work correctly"
-    (all-panes {:viewport {:size [10 8]}
+    (all-panes {::layout/shape [[0 0] [10 8]]
                 ::p/tree {::p/subtrees [{::p/lens 0 ::p/extent 2}
                                         {::p/lens 1 ::p/extent 2}
                                         {::p/lens 2}]}})

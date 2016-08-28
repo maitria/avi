@@ -1,8 +1,9 @@
 (ns avi.editor
   "Functions (including basse responders, middleware, and utilties) for
    manipulating the editor map."
-  (:import [java.io FileNotFoundException])
-  (:require [clojure.set :as set]
+  (:import (java.io FileNotFoundException))
+  (:require [clojure.spec :as s]
+            [clojure.set :as set]
             [packthread.core :refer :all]
             [packthread.lenses :as l]
             [avi.pervasive :refer :all]
@@ -13,6 +14,8 @@
             [avi.layout :as layout]
             [avi.layout.panes :as p]
             [avi.world :as w]))
+
+(s/def ::editor (s/merge ::p/editor))
 
 ;; -- Initial state ----------------------------------------------------------
 
@@ -33,13 +36,13 @@
                 :undo-log ()
                 :redo-log ()
                 :in-transaction? false}]
-   :viewport {:size [lines columns]}
    :lenses [{:document 0
              :viewport-top 0
              :point [0 0]
              :last-explicit-j 0}]
    ::p/tree {:avi.layout.panes/lens 0}
    ::p/path []
+   ::layout/shape [[0 0] [lines columns]]
    :beep? false})
 
 ;; -- Building middlewares ---------------------------------------------------
@@ -66,6 +69,10 @@
   [editor]
   [:documents (:document (current-lens editor))])
 
+(s/fdef edit-context
+  :args (s/cat :editor ::editor
+               :new-context (s/? any?))
+  :ret ::editor)
 (let [document-keys #{:lines :undo-log :redo-log :in-transaction?}
       computed-keys #{:viewport-height}
       lens-keys #{:viewport-top :point :last-explicit-j}]
@@ -118,7 +125,7 @@
   (fn [editor [event-type size :as event]]
     (if (= event-type :resize)
       (+> editor
-        (assoc-in [:viewport :size] size)
+        (assoc-in [::layout/shape 1] size)
         (in edit-context
           ec/adjust-viewport-to-contain-point))
       (responder editor event))))

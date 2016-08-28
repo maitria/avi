@@ -9,7 +9,7 @@
 (defn- point-position
   [{:keys [mode] :as editor}]
   (if (= mode :command-line)
-    (let [[height] (:size (:viewport editor))]
+    (let [[_ [height]] (::layout/shape editor)]
       [(dec height) (inc (count (:command-line editor)))])
     (p/point-position editor)))
 
@@ -33,7 +33,7 @@
 
 (defn render-message-line!
   [editor rendition]
-  (let [[height] (:size (:viewport editor))
+  (let [[_ [height]] (::layout/shape editor)
         i (dec height)]
     (cond
       (and (:prompt editor) (:command-line editor))
@@ -45,7 +45,7 @@
 
 (defn render
   [editor]
-  (let [[height width] (:size (:viewport editor))
+  (let [[_ [height width]] (::layout/shape editor)
         default-attrs (color/make :white :black)
         rendered-chars (char-array (* height width) \space)
         rendered-attrs (byte-array (* height width) default-attrs)

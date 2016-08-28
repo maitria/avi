@@ -178,5 +178,7 @@
 
 (defn viewport-size
   [expected-size]
-  (fn [{{{:keys [size]} :viewport} :editor}]
-    (checking/extended-= size expected-size)))
+  (fn [{{{:keys [width chars]} :rendition} :editor}]
+    (let [height (int (/ (count chars) width))
+          size [height width]]
+    (checking/extended-= size expected-size))))

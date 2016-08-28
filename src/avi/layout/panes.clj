@@ -12,12 +12,14 @@
                     :split ::split))
 (s/def ::path (s/coll-of ::nat :type vector?))
 
+(s/def ::editor (s/keys :req [::tree ::path :avi.layout/shape]))
+
 (defn- root-pane-shape
   "Shape of the rectangle where all panes are displayed.
 
   This accounts for the message line (ick)."
   [editor]
-  (let [[rows cols] (get-in editor [:viewport :size])]
+  (let [[[i j] [rows cols]] (:avi.layout/shape editor)]
     [[0 0] [(dec rows) cols]]))
 
 (defn- tag-pane
