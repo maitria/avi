@@ -75,6 +75,14 @@ Java_avi_terminal_Terminal_getKey(JNIEnv *env, jclass k)
 		return (*env)->NewStringUTF(env, "<BS>");
 	if (27 == character)
 		return (*env)->NewStringUTF(env, "<Esc>");
+	if (KEY_CODE_YES == rc && ch == KEY_UP)
+		return (*env)->NewStringUTF(env, "<Up>");
+	if (KEY_CODE_YES == rc && ch == KEY_DOWN)
+		return (*env)->NewStringUTF(env, "<Down>");
+	if (KEY_CODE_YES == rc && ch == KEY_RIGHT)
+		return (*env)->NewStringUTF(env, "<Right>");
+	if (KEY_CODE_YES == rc && ch == KEY_LEFT)
+		return (*env)->NewStringUTF(env, "<Left>");
 
 	if (character >= 0 && character < 0x20)
 		return make_ctrl_key(env, character);

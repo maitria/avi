@@ -45,13 +45,21 @@
                             :empty-lines? true}]}
     "h"    {:span :exclusive,
             :motion [:left]}
+    "<Left>"{:span :exclusive,
+            :motion [:left]}
     "iw"   {:span :inclusive,
             :motion [:in-word]}
     "j"    {:span :linewise,
             :motion [:down]}
+    "<Down>"{:span :linewise,
+            :motion [:down]}
     "k"    {:span :linewise,
             :motion [:up]}
+    "<Up>" {:span :linewise,
+            :motion [:up]}
     "l"    {:span :exclusive,
+            :motion [:right]}
+    "<Right>"{:span :exclusive,
             :motion [:right]}
     "t<.>" {:span :inclusive,
             :motion [:move-to-char {:offset -1}]}
