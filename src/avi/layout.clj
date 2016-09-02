@@ -2,9 +2,8 @@
   (:require [avi.layout.panes :as p]
             [clojure.spec :as s]))
 
-(s/def ::nat (s/and int? (complement neg?)))
-(s/def ::shape (s/tuple (s/tuple ::nat ::nat)
-                        (s/tuple ::nat ::nat)))
+(s/def ::shape (s/tuple (s/tuple nat-int? nat-int?)
+                        (s/tuple nat-int? nat-int?)))
 (s/def ::renderable-type keyword)
 
 (def all-renderables

@@ -2,15 +2,14 @@
   (:require [avi.beep :as b]
             [clojure.spec :as s]))
 
-(s/def ::nat (s/and int? (complement neg?)))
-(s/def ::lens ::nat)
-(s/def ::extent ::nat)
+(s/def ::lens nat-int?)
+(s/def ::extent nat-int?)
 (s/def ::subtrees (s/coll-of ::tree :type vector?))
 (s/def ::pane (s/keys :req [::lens]))
 (s/def ::split (s/keys :req [::subtrees]))
 (s/def ::tree (s/or :lens ::pane
                     :split ::split))
-(s/def ::path (s/coll-of ::nat :type vector?))
+(s/def ::path (s/coll-of nat-int? :type vector?))
 
 (s/def ::editor (s/keys :req [::tree ::path :avi.layout/shape]))
 
@@ -79,7 +78,7 @@
   :args (s/cat :panes ::tree
                :path ::path
                :new-lens ::lens
-               :total-height ::nat)
+               :total-height nat-int?)
   :ret ::split)
 (defn split-pane
   [panes path new-lens total-height]
