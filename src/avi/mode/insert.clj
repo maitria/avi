@@ -103,6 +103,38 @@
           ec/commit))
       (e/enter-normal-mode))))
 
+(def wrap-handle-up
+  (e/keystroke-middleware "<Up>"
+    (fn+> [editor]
+      (in e/edit-context
+        (ec/operate {:operator :move-point
+                     :motion [:up]})
+        ec/commit))))
+
+(def wrap-handle-down
+  (e/keystroke-middleware "<Down>"
+    (fn+> [editor]
+      (in e/edit-context
+        (ec/operate {:operator :move-point
+                     :motion [:down]})
+        ec/commit))))
+
+(def wrap-handle-right
+  (e/keystroke-middleware "<Right>"
+    (fn+> [editor]
+      (in e/edit-context
+        (ec/operate {:operator :move-point
+                     :motion [:right]})
+        ec/commit))))
+
+(def wrap-handle-left
+  (e/keystroke-middleware "<Left>"
+    (fn+> [editor]
+      (in e/edit-context
+        (ec/operate {:operator :move-point
+                     :motion [:left]})
+        ec/commit))))
+
 (defn- wrap-record-event
   [responder]
   (fn+> [editor event]
@@ -112,6 +144,10 @@
 (def responder
   (-> update-edit-context-for-insert-event
       wrap-record-event
+      wrap-handle-up
+      wrap-handle-down
+      wrap-handle-right
+      wrap-handle-left
       wrap-handle-escape))
 
 (def wrap-mode (e/mode-middleware :insert responder))
