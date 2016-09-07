@@ -122,10 +122,14 @@
 (def wrap-handle-right
   (e/keystroke-middleware "<Right>"
     (fn+> [editor]
-      (in e/edit-context
-        (ec/operate {:operator :move-point
-                     :motion [:right]})
-        ec/commit))))
+      (let [{[i j] :point lines :lines } (e/edit-context editor)
+             eol (dec (count (get lines i)))]
+        (in e/edit-context
+          (if (<= eol j)
+            move-to-eol
+            (ec/operate {:operator :move-point
+                       :motion [:right]}))
+          ec/commit)))))
 
 (def wrap-handle-left
   (e/keystroke-middleware "<Left>"
