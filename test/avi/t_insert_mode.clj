@@ -95,7 +95,27 @@
                     "~" :blue
                     "~" :blue
                     "test.txt" :black :on :white
-                    ""])))
+                    ""]))
+  (facts "about Arrow Keys in Insert mode"
+    (fact "<Right> moves to the right of the current position including eol cases"
+      (editor :editing "One\nTwo\nThree..." :after "i<Right><Esc>") => (point [0 0])
+      (editor :editing "One\nTwo\nThree..." :after "i<Right><Right><Right><Esc>") => (point [0 2])
+      (editor :editing "One\nTwo\nThree..." :after "i<Right><Right><Right><Right><Right><Esc>") => (point [0 2]))
+    (fact "<Left> moves to the left of the current position"
+      (editor :editing "One\nTwo\nThree..." :after "i<Right><Left><Esc>") => (point [0 0])
+      (editor :editing "One\nTwo\nThree..." :after "i<Right><Right><Left><Left><Left><Esc>") => (point [0 0])
+      (editor :editing "One\nTwo\nThree..." :after "i<Down><Down><Right><Right><Right><Right><Right><Left><Left><Left><Left><Esc>") => (point [2 0]))
+    (fact "<Down> moves to the bottom line of the current position"
+      (editor :editing "One\nTwo\nThree..." :after "i<Down><Esc>") => (point [1 0])
+      (editor :editing "One\nTwo\nThree..." :after "i<Right><Down><Down><Esc>") => (point [2 0])
+      (editor :editing "One\nTwo\nThree..." :after "i<Down><Down><Down><Down><Right><Right><Right><Right><Esc>") => (point [2 3])
+      (editor :editing "One\nTwo\nThree...\nFour" :after "i<Down><Down><Right><Right><Right><Right><Right><Right><Down><Down><Esc>") => (point [3 2]))
+    (fact "<Up> moves to the top line of the current position"
+      (editor :editing "One\nTwo\nThree..." :after "i<Down><Down><Right><Right><Up><Esc>") => (point [1 1])
+      (editor :editing "One\nTwo\nThree..." :after "i<Down><Right><Up><Up><Esc>") => (point [0 0])
+      (editor :editing "One\nTwo\nThree...\nFour\nFive" :after "<Down><Down><Down><Down><Up><Esc>") => (point [3 0])
+      (editor :editing "One\nTwo\nThree..." :after "ia<Enter>b<Enter>c<Enter><Down><Down><Up><Up><Up><Esc>") => (point [2 0])
+      (editor :editing "One\nTwo\nThree..." :after "ia<Enter>b<Enter>c<Enter>d<Enter>e<Enter>f<Enter><Up><Up><Up><Esc>") => (point [2 0]))))
 
 (facts "regarding repeating in insert mode"
   (fact "repeat count for `i` repeatedly inserts the text"
@@ -130,6 +150,16 @@
                     "xxx"
                     "xxx"
                     "One"
+                    "~" :blue
+                    "~" :blue
+                    "test.txt" :black :on :white
+                    ""]))
+  (fact "Arrow keys in repeat insert mode"
+    (editor :editing "One\nTwo\nThree..." :after "3iab<Up><Up><Left>cd<Esc>")
+      => (terminal ["acdbOne"
+                    "Two"
+                    "Three..."
+                    "~" :blue
                     "~" :blue
                     "~" :blue
                     "test.txt" :black :on :white
