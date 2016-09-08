@@ -106,6 +106,7 @@
 (def wrap-handle-up
   (e/keystroke-middleware "<Up>"
     (fn+> [editor]
+      (assoc :insert-mode-state {:count 1})
       (in e/edit-context
         (ec/operate {:operator :move-point
                      :motion [:up]})
@@ -114,6 +115,7 @@
 (def wrap-handle-down
   (e/keystroke-middleware "<Down>"
     (fn+> [editor]
+      (assoc :insert-mode-state {:count 1})
       (in e/edit-context
         (ec/operate {:operator :move-point
                      :motion [:down]})
@@ -122,6 +124,7 @@
 (def wrap-handle-right
   (e/keystroke-middleware "<Right>"
     (fn+> [editor]
+      (assoc :insert-mode-state {:count 1})
       (let [{[i j] :point lines :lines } (e/edit-context editor)
              eol (dec (count (get lines i)))]
         (in e/edit-context
@@ -134,6 +137,7 @@
 (def wrap-handle-left
   (e/keystroke-middleware "<Left>"
     (fn+> [editor]
+      (assoc :insert-mode-state {:count 1})
       (in e/edit-context
         (ec/operate {:operator :move-point
                      :motion [:left]})

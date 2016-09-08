@@ -499,6 +499,26 @@
   (fact "`dw` deletes to end-of-file"
     (editor :editing "hello" :after "ldw") => (contents "h")))
 
+(facts "about Arrow Keys"
+  (fact "<Right> moves to the right of the current position"
+    (editor :editing "One\nTwo\nThree..." :after "<Right>") => (point [0 1])
+    (editor :editing "One\nTwo\nThree..." :after "<Right><Right><Right>") => (point [0 2])
+    (editor :editing "One\nTwo\nThree..." :after "<Right><Right><Right><Right><Right>") => (point [0 2]))
+  (fact "<Left> moves to the left of the current position"
+    (editor :editing "One\nTwo\nThree..." :after "<Right><Left>") => (point [0 0])
+    (editor :editing "One\nTwo\nThree..." :after "<Right><Right><Left><Left><Left>") => (point [0 0])
+    (editor :editing "One\nTwo\nThree..." :after "<Down><Down><Right><Right><Right><Right><Right><Left><Left><Left><Left>") => (point [2 1]))
+  (fact "<Down> moves to the bottom line of the current position"
+    (editor :editing "One\nTwo\nThree..." :after "<Down>") => (point [1 0])
+    (editor :editing "One\nTwo\nThree..." :after "<Right><Down><Down>") => (point [2 1])
+    (editor :editing "One\nTwo\nThree..." :after "<Down><Down><Down><Down><Right><Right><Right><Right>") => (point [2 4])
+    (editor :editing "One\nTwo\nThree...\nFour" :after "<Down><Down><Right><Right><Right><Right><Right><Right><Down><Down>") => (point [3 3]))
+  (fact "<Up> moves to the top line of the current position"
+    (editor :editing "One\nTwo\nThree..." :after "<Down><Down><Right><Right><Up>") => (point [1 2])
+    (editor :editing "One\nTwo\nThree..." :after "<Down><Right><Up><Up>") => (point [0 1])
+    (editor :editing "One\nTwo\nThree...\nFour\nFive" :after "<Down><Down><Down><Down><Up>") => (point [3 0])
+    (editor :editing "One\nTwo\nThree..." :after "<Up><Up><Up><Up>") => (point [0 0])))
+
 (tabular
   (facts "about `W`"
     (editor :editing ?content :after ?after) => (point ?pos))
