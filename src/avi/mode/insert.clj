@@ -94,6 +94,10 @@
     (fn+> [editor]
       play-script-repeat-count-times
       (dissoc :insert-mode-state)
+      ; TODO: point not updated bug - editor holds values prior to
+      ;             play-script-repeat-count-times call, and the
+      ;             point is calculated based on first iteration
+      ;             values.
       (let [b (e/edit-context editor)
             [i j] (:point b)
             new-j (max (dec j) 0)]
