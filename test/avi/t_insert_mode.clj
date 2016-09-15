@@ -130,6 +130,8 @@
                     "~" :blue
                     "test.txt" :black :on :white
                     ""])
+  (fact "repeat count for `i` with `3ix<Esc>` leaves the point on last `x` added"
+    (editor :editing "One" :after "3ix<Esc>") => (point [0 2]))
   (fact "repeat count for `a` repeatedly inserts the text"
     (editor :editing "One" :after "3axy<Esc>") => (line 0 "Oxyxyxyne"))
   (fact "repeat count for `A` repeatedly inserts the text at end-of-line"
@@ -154,7 +156,7 @@
                     "~" :blue
                     "test.txt" :black :on :white
                     ""]))
-  (fact "Arrow keys in repeat insert mode"
+  (fact "repeat count is ignored when arrows are used during insert"
     (editor :editing "One\nTwo\nThree..." :after "3iab<Up><Up><Left>cd<Esc>")
       => (terminal ["acdbOne"
                     "Two"
