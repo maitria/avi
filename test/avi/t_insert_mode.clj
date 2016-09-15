@@ -130,8 +130,8 @@
                     "~" :blue
                     "test.txt" :black :on :white
                     ""])
-  (future-fact "repeat count for `i` with `3ix<Esc>` leaves the point on last `x` added"
-    (editor :editing "One" :after "3ixx<Esc>") => (point [0 2]))
+  (fact "repeat count for `i` with `3ix<Esc>` leaves the point on last `x` added"
+    (editor :editing "One" :after "3ix<Esc>") => (point [0 2]))
   (fact "repeat count for `a` repeatedly inserts the text"
     (editor :editing "One" :after "3axy<Esc>") => (line 0 "Oxyxyxyne"))
   (fact "repeat count for `A` repeatedly inserts the text at end-of-line"

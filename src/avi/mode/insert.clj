@@ -89,23 +89,27 @@
       editor
       (range (dec repeat-count)))))
 
-(def wrap-handle-escape
-  (e/keystroke-middleware "<Esc>"
-    (fn+> [editor]
+(defn- move-point-after-escape
+  [editor]
+  (+> editor
+    (let [b (e/edit-context editor)
+          [i j] (:point b)
+          new-j (max (dec j) 0)]
+      (in e/edit-context
+        (ec/operate {:operator :move-point
+                     :motion [:goto [i new-j]]})
+        ec/commit))))
+
+(defn- escape-key-handler
+  [editor]
+  (+> editor
       play-script-repeat-count-times
+      move-point-after-escape
       (dissoc :insert-mode-state)
-      ; TODO: point not updated bug - editor holds values prior to
-      ;             play-script-repeat-count-times call, and the
-      ;             point is calculated based on first iteration
-      ;             values.
-      (let [b (e/edit-context editor)
-            [i j] (:point b)
-            new-j (max (dec j) 0)]
-        (in e/edit-context
-          (ec/operate {:operator :move-point
-                       :motion [:goto [i new-j]]})
-          ec/commit))
-      (e/enter-normal-mode))))
+      (e/enter-normal-mode)))
+
+(def wrap-handle-escape
+  (e/keystroke-middleware "<Esc>" escape-key-handler))
 
 (def wrap-handle-up
   (e/keystroke-middleware "<Up>"
@@ -146,6 +150,8 @@
         (ec/operate {:operator :move-point
                      :motion [:left]})
         ec/commit))))
+
+
 
 (defn- wrap-record-event
   [responder]
