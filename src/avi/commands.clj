@@ -31,10 +31,14 @@
 (def wq (comp q w))
 
 (defn sp
-  [{:keys [lenses ::p/tree ::p/path]
+  [{:keys [:lenses]
     [_ [lines _]] :avi.layout/shape
     :as editor}]
-  (let [new-lenses (conj lenses (e/current-lens editor))]
+  (-> editor
+    (update :lenses conj (e/current-lens editor))
+    (p/split-pane (count lenses) (dec lines)))
+
+  #_ (let [new-lenses (conj lenses (e/current-lens editor))]
     (assoc editor :lenses new-lenses
                   ::p/tree (p/split-pane tree path (dec (count new-lenses)) (dec lines))
                   ::p/path [0])))
