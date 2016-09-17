@@ -76,15 +76,15 @@
 
 (s/fdef split-pane
   :args (s/cat :editor ::editor
-               :new-lens ::lens
-               :total-height nat-int?)
+               :new-lens ::lens)
   :ret ::split)
 (defn split-pane
-  [{:keys [::tree] :as editor} new-lens total-height]
-  (let [panes (if (::lens tree)
+  [{:keys [::tree] :as editor} new-lens]
+  (let [[_ [lines _]] (root-pane-shape editor)
+        panes (if (::lens tree)
                 [tree]
                 (::subtrees tree))
-        each-pane-height (int (/ total-height (inc (count panes))))
+        each-pane-height (int (/ (dec lines) (inc (count panes))))
         panes (-> (mapv #(assoc % ::extent each-pane-height) panes)
                 (into [{::lens new-lens}]))]
     (assoc editor
