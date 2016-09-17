@@ -25,31 +25,35 @@
   [pane]
   (assoc pane :avi.layout/renderable-type :avi.layout.panes/pane))
 
-(defn all-panes
-  "A transducer which visits all leaf nodes (panes) in a pane tree.
+(defn all-nodes
+  "A transducer which visits all nodes in a pane tree.
 
   The input pane trees must be augmented with :avi.layout/shape and ::path,
   but only at the tree's root.  (See augmented-root-panes.) This information
-  is used to augment each sub-pane before rf is applied to it."
+  is used to augment each child node before rf is applied to it."
   [rf]
-  (fn
+  (fn all-nodes-rf
     ([] (rf))
     ([result] (rf result))
-    ([result input]
+    ([result {:keys [::path] :as input}]
      (if (::lens input)
        (rf result (tag-pane input))
-       (let [{:keys [::subtrees :avi.layout/shape ::path]} input]
-         (first
-           (reduce
-             (fn [[result [[i j] [rows cols]] n] {:keys [::extent] :as input}]
-               (let [height (or extent rows)
-                     input (assoc input
-                                  :avi.layout/shape [[i j] [height cols]]
-                                  ::path (conj path n))
-                     result (rf result (tag-pane input))]
-                 [result [[(+ i height) j] [(- rows height) cols]] (inc n)]))
-             [result shape 0]
-             subtrees)))))))
+       (loop [[node & nodes] (::subtrees input)
+              result result
+              [[i j] [rows cols]] (:avi.layout/shape input)
+              n 0]
+         (if-not node
+           result
+           (let [height (or (::extent node) rows)]
+             (recur
+               nodes
+               (all-nodes-rf result (assoc node
+                                           :avi.layout/shape [[i j] [height cols]]
+                                           ::path (conj path n)))
+               [[(+ i height) j] [(- rows height) cols]]
+               (inc n)))))))))
+
+(def all-panes (comp all-nodes (filter ::lens)))
 
 (defn augmented-root-panes
   [{:keys [::tree] :as editor}]
@@ -60,7 +64,7 @@
 (defn current-pane
   [{:keys [::path] :as editor}]
   (first (sequence
-           (comp all-panes (filter #(= (::path %) path)))
+           (comp all-nodes (filter #(= (::path %) path)))
            (augmented-root-panes editor))))
 
 (defn point-position
