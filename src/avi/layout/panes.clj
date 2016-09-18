@@ -21,9 +21,26 @@
   (let [[[i j] [rows cols]] (:avi.layout/shape editor)]
     [[0 0] [(dec rows) cols]]))
 
-(defn- tag-pane
+(defn- add-renderable-type
   [pane]
-  (assoc pane :avi.layout/renderable-type :avi.layout.panes/pane))
+  (cond-> pane
+    (::lens pane) 
+    (assoc :avi.layout/renderable-type :avi.layout.panes/pane)))
+
+(defn- xfmap
+  [xform tree]
+  (if (::lens tree)
+    tree
+    (update tree ::subtrees #(into [] xform %))))
+
+(defn- cata
+  "A sort of more general catamorphism for transducers."
+  [xfmap xform root]
+  (letfn [(cata' [tree]
+            (xfmap (comp (map cata') xform) tree))]
+    (into []
+          (comp (map cata') xform)
+          [root])))
 
 (defn all-nodes
   "A transducer which visits all nodes in a pane tree.
@@ -37,13 +54,13 @@
     ([result] (rf result))
     ([result {:keys [::path] :as input}]
      (if (::lens input)
-       (rf result (tag-pane input))
+       (rf result (add-renderable-type input))
        (loop [[node & nodes] (::subtrees input)
               result result
               [[i j] [rows cols]] (:avi.layout/shape input)
               n 0]
          (if-not node
-           result
+           (rf result input)
            (let [height (or (::extent node) rows)]
              (recur
                nodes
