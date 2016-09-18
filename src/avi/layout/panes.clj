@@ -21,19 +21,22 @@
   (let [[[i j] [rows cols]] (:avi.layout/shape editor)]
     [[0 0] [(dec rows) cols]]))
 
-(defn- add-renderable-type
-  [pane]
-  (cond-> pane
-    (::lens pane) 
-    (assoc :avi.layout/renderable-type :avi.layout.panes/pane)))
+(defn- with-renderable-type
+  [xform]
+  (comp
+    (map #(cond-> %
+            (::lens %)
+            (assoc :avi.layout/renderablt-type :avi.layout.panes/pane)))
+    xform
+    (map #(dissoc % :avi.layout/renderable-type))))
 
 (defn- xfmap
   [xform tree]
-  (if (::lens tree)
-    tree
-    (update tree ::subtrees #(into [] xform %))))
+  (cond-> tree
+    (::subtrees tree)
+    (update ::subtrees #(into [] (with-renderable-type xform) %))))
 
-(defn- cata
+(defn cata
   "A sort of more general catamorphism for transducers."
   [xfmap xform root]
   (letfn [(cata' [tree]
