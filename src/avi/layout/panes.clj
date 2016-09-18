@@ -21,49 +21,60 @@
   (let [[[i j] [rows cols]] (:avi.layout/shape editor)]
     [[0 0] [(dec rows) cols]]))
 
+(def annotate-renderable-type
+  (map #(cond-> %
+          (::lens %)
+          (assoc :avi.layout/renderable-type :avi.layout.panes/pane))))
+
 (defn- with-renderable-type
   [xform]
   (comp
-    (map #(cond-> %
-            (::lens %)
-            (assoc :avi.layout/renderable-type :avi.layout.panes/pane)))
+    annotate-renderable-type
     xform
     (map #(dissoc % :avi.layout/renderable-type))))
 
+(defn- annotate-path
+  [parent]
+  (let [{:keys [::path]} parent]
+    (fn add-paths [rf]
+      (let [n (volatile! -1)]
+        (fn add-paths-rf
+          ([] (rf))
+          ([result] (rf result))
+          ([result input]
+           (rf result (assoc input
+                             ::path
+                             (conj path (vswap! n inc))))))))))
+
 (defn- with-path
   [xform parent]
-  (let [{:keys [::path]} parent]
-    (comp
-      (fn add-paths [rf]
-        (let [n (volatile! -1)]
-          (fn add-paths-rf
-            ([] (rf))
-            ([result] (rf result))
-            ([result input]
-             (rf result (assoc input
-                               ::path
-                               (conj path (vswap! n inc))))))))
-      xform
-      (map #(dissoc % ::path)))))
+  (comp
+    (annotate-path parent)
+    xform
+    (map #(dissoc % ::path))))
+
+(defn- annotate-shape
+  [parent]
+  (let [{:keys [:avi.layout/shape]} parent]
+    (fn add-shape [rf]
+      (let [shape (volatile! shape)]
+        (fn add-shape-rf
+          ([] (rf))
+          ([result] (rf result))
+          ([result input]
+           (let [[[i j] [rows cols]] @shape
+                 height (or (::extent input) rows)
+                 input-shape [[i j] [height cols]]
+                 remaining-shape [[(+ i height) j] [(- rows height) cols]]]
+             (vreset! shape remaining-shape)
+             (rf result (assoc input :avi.layout/shape input-shape)))))))))
 
 (defn- with-shape
   [xform parent]
-  (let [{:keys [:avi.layout/shape]} parent]
-    (comp
-      (fn add-shape [rf]
-        (let [shape (volatile! shape)]
-          (fn add-shape-rf
-            ([] (rf))
-            ([result] (rf result))
-            ([result input]
-             (let [[[i j] [rows cols]] @shape
-                   height (or (::extent input) rows)
-                   input-shape [[i j] [height cols]]
-                   remaining-shape [[(+ i height) j] [(- rows height) cols]]]
-               (vreset! shape remaining-shape)
-               (rf result (assoc input :avi.layout/shape input-shape)))))))
-      xform
-      (map #(dissoc % :avi.layout/shape)))))
+  (comp
+    (annotate-shape parent)
+    xform
+    (map #(dissoc % :avi.layout/shape))))
 
 (defn- xfmap
   [xform tree]
@@ -93,23 +104,17 @@
   (fn all-nodes-rf
     ([] (rf))
     ([result] (rf result))
-    ([result {:keys [::path] :as input}]
-     (if (::lens input)
-       (rf result (add-renderable-type input))
-       (loop [[node & nodes] (::subtrees input)
-              result result
-              [[i j] [rows cols]] (:avi.layout/shape input)
-              n 0]
-         (if-not node
-           (rf result input)
-           (let [height (or (::extent node) rows)]
-             (recur
-               nodes
-               (all-nodes-rf result (assoc node
-                                           :avi.layout/shape [[i j] [height cols]]
-                                           ::path (conj path n)))
-               [[(+ i height) j] [(- rows height) cols]]
-               (inc n)))))))))
+    ([result input]
+     (-> (transduce
+           (comp
+             (annotate-shape input)
+             (annotate-path input)
+             annotate-renderable-type
+             all-nodes-rf)
+           rf
+           result
+           (::subtrees input))
+       (rf input)))))
 
 (def all-panes (comp all-nodes (filter ::lens)))
 
