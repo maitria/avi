@@ -26,15 +26,33 @@
   (comp
     (map #(cond-> %
             (::lens %)
-            (assoc :avi.layout/renderablt-type :avi.layout.panes/pane)))
+            (assoc :avi.layout/renderable-type :avi.layout.panes/pane)))
     xform
     (map #(dissoc % :avi.layout/renderable-type))))
+
+(defn- with-path
+  [xform parent]
+  (let [{:keys [::path]} parent]
+    (comp
+      (fn add-paths [rf]
+        (let [n (volatile! -1)]
+          (fn add-paths-rf
+            ([] (rf))
+            ([result] (rf result))
+            ([result input]
+             (rf result (assoc input
+                               ::path
+                               (conj path (vswap! n inc))))))))
+      xform
+      (map #(dissoc % ::path)))))
 
 (defn- xfmap
   [xform tree]
   (cond-> tree
     (::subtrees tree)
-    (update ::subtrees #(into [] (with-renderable-type xform) %))))
+    (update ::subtrees #(into [] (-> xform
+                                   (with-path tree)
+                                   with-renderable-type) %))))
 
 (defn cata
   "A sort of more general catamorphism for transducers."
