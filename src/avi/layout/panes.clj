@@ -46,11 +46,31 @@
       xform
       (map #(dissoc % ::path)))))
 
+(defn- with-shape
+  [xform parent]
+  (let [{:keys [:avi.layout/shape]} parent]
+    (comp
+      (fn add-shape [rf]
+        (let [shape (volatile! shape)]
+          (fn add-shape-rf
+            ([] (rf))
+            ([result] (rf result))
+            ([result input]
+             (let [[[i j] [rows cols]] @shape
+                   height (or (::extent input) rows)
+                   input-shape [[i j] [height cols]]
+                   remaining-shape [[(+ i height) j] [(- rows height) cols]]]
+               (vreset! shape remaining-shape)
+               (rf result (assoc input :avi.layout/shape input-shape)))))))
+      xform
+      (map #(dissoc % :avi.layout/shape)))))
+
 (defn- xfmap
   [xform tree]
   (cond-> tree
     (::subtrees tree)
     (update ::subtrees #(into [] (-> xform
+                                   (with-shape tree)
                                    (with-path tree)
                                    with-renderable-type) %))))
 
