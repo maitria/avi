@@ -57,10 +57,16 @@
                  ::path))))
 
 (defn- xfmap
-  [xform tree]
-  (cond-> tree
-    (::subtrees tree)
-    (update ::subtrees #(into [] (comp (annotate tree) xform deannotate) %))))
+  ([xform tree]
+   (cond-> tree
+     (::subtrees tree)
+     (update ::subtrees #(into [] (comp (annotate tree) xform deannotate) %))))
+  ([result rf tree]
+   (transduce
+     (annotate tree)
+     rf
+     result
+     (::subtrees tree))))
 
 (defn all-nodes
   "A transducer which visits all nodes in a pane tree.
@@ -73,11 +79,8 @@
     ([] (rf))
     ([result] (rf result))
     ([result input]
-     (-> (transduce
-           (comp (annotate input) all-nodes-rf)
-           rf
-           result
-           (::subtrees input))
+     (-> result
+       (xfmap all-nodes-rf input)
        (rf input)))))
 
 (def all-panes (comp all-nodes (filter ::lens)))
