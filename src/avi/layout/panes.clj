@@ -152,6 +152,34 @@
   (pane-tree-cata editor (comp (map assign-equal-extents)
                                (map remove-last-child-extent))))
 
+(defn- flatten-like-splits
+  [tree]
+  (+> tree
+   (if-let [subtrees (::subtrees tree)]
+     (update ::subtrees
+             #(->> %
+                (mapcat (fn [child]
+                          (if (::lens child)
+                            [child]
+                            (::subtrees child))))
+                vec)))))
+
+(defn- remove-one-child-splits
+  [tree]
+  (+> tree
+    (if (= 1 (count (::subtrees tree)))
+      (get-in [::subtrees 0]))))
+
+(defn- simplify-panes
+  "If a split of a particular direction contains a split of the same
+  direction, splice the children into the parent recursively."
+  [editor]
+  (pane-tree-cata
+    editor
+    (comp
+      (map flatten-like-splits)
+      (map remove-one-child-splits))))
+
 (s/fdef split-pane
   :args (s/cat :editor ::editor
                :new-lens ::lens)
@@ -165,6 +193,7 @@
                        tree)))
     (update-in [::tree ::subtrees] #(into [{::lens new-lens}] %))
     (assoc ::path [0])
+    simplify-panes
     resize-panes))
 
 (defn- reachable
