@@ -110,8 +110,25 @@
 
 (defn pane-tree-cata
   [editor xform]
-  (let [tree (augmented-root-pane editor)]
-    (assoc editor ::tree (first (xf/cata xfmap xform tree)))))
+  (let [tree (augmented-root-pane editor)
+        tree (first (xf/cata
+                      xfmap
+                      (comp
+                        (map #(cond-> %
+                                (= (::path editor) (::path %))
+                                (assoc ::focused true)))
+                        xform)
+                      tree))
+        path (::path (first (sequence
+                              (comp all-nodes (filter ::focused))
+                              [(assoc tree ;; hack! see augmented-root-pane
+                                      :avi.layout/shape (root-pane-shape editor)
+                                      ::path [])])))
+        _ (assert path)
+        tree (first (xf/cata xfmap (map #(dissoc % ::focused)) tree))]
+    (assoc editor
+           ::path path
+           ::tree tree)))
 
 (defn- remove-last-child-extent
   [tree]
@@ -160,19 +177,34 @@
   (pane-tree-cata editor (comp (map flatten-like-splits)
                                (map remove-one-child-splits))))
 
+(defn- split-pane'
+  [editor new-lens]
+  (+> editor
+    (pane-tree-cata
+      (map (fn [node]
+             (if (::focused node)
+               (let [[_ [rows _]] (:avi.layout/shape node)
+                     new-height (max 2 (int (/ rows 2)))]
+                 {::path (::path node)
+                  :avi.layout/shape (:avi.layout/shape node)
+                  ::subtrees [(-> node
+                                (update ::path conj 0)
+                                (assoc ::extent new-height
+                                       ::lens new-lens))
+                              (-> node
+                                (update ::path conj 1)
+                                (dissoc ::focused)
+                                (dissoc ::extent))]})
+               node))))))
+
 (s/fdef split-pane
   :args (s/cat :editor ::editor
                :new-lens ::lens)
   :ret ::split)
 (defn split-pane
-  [{:keys [::tree] :as editor} new-lens]
+  [editor new-lens]
   (+> editor
-    (update ::tree (fn [tree]
-                     (if (::lens tree)
-                       {::subtrees [tree]}
-                       tree)))
-    (update-in [::tree ::subtrees] #(into [{::lens new-lens}] %))
-    (assoc ::path [0])
+    (split-pane' new-lens)
     simplify-panes
     resize-panes))
 
