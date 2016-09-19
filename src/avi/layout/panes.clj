@@ -23,31 +23,6 @@
   (let [[[i j] [rows cols]] (:avi.layout/shape editor)]
     [[0 0] [(dec rows) cols]]))
 
-(def annotate-renderable-type
-  (map #(cond-> %
-          (::lens %)
-          (assoc :avi.layout/renderable-type :avi.layout.panes/pane))))
-
-(defn- with-renderable-type
-  [xform]
-  (comp
-    annotate-renderable-type
-    xform
-    (map #(dissoc % :avi.layout/renderable-type))))
-
-(defn- annotate-path
-  [parent]
-  (xf/annotate (fn [state input]
-                 [(inc state) (assoc input ::path (conj (::path parent) state))])
-               0))
-
-(defn- with-path
-  [xform parent]
-  (comp
-    (annotate-path parent)
-    xform
-    (map #(dissoc % ::path))))
-
 (defn- annotate-shape
   [parent]
   (xf/annotate (fn [[[i j] [rows cols]] input]
@@ -56,21 +31,36 @@
                     (assoc input :avi.layout/shape [[i j] [height cols]])]))
                (:avi.layout/shape parent)))
 
-(defn- with-shape
-  [xform parent]
+(defn- annotate-path
+  [parent]
+  (xf/annotate (fn [state input]
+                 [(inc state) (assoc input ::path (conj (::path parent) state))])
+               0))
+
+(def annotate-renderable-type
+  (map #(cond-> %
+          (::lens %)
+          (assoc :avi.layout/renderable-type :avi.layout.panes/pane))))
+
+(defn- annotate
+  [parent]
   (comp
     (annotate-shape parent)
-    xform
-    (map #(dissoc % :avi.layout/shape))))
+    (annotate-path parent)
+    annotate-renderable-type))
+
+(def ^:private deannotate
+  (map (fn [node]
+         (dissoc node
+                 :avi.layout/renderable-type
+                 :avi.layout/shape
+                 ::path))))
 
 (defn- xfmap
   [xform tree]
   (cond-> tree
     (::subtrees tree)
-    (update ::subtrees #(into [] (-> xform
-                                   (with-shape tree)
-                                   (with-path tree)
-                                   with-renderable-type) %))))
+    (update ::subtrees #(into [] (comp (annotate tree) xform deannotate) %))))
 
 (defn all-nodes
   "A transducer which visits all nodes in a pane tree.
@@ -157,12 +147,12 @@
   (+> tree
    (if-let [subtrees (::subtrees tree)]
      (update ::subtrees
-             #(->> %
+             #(vec
                 (mapcat (fn [child]
                           (if (::lens child)
                             [child]
-                            (::subtrees child))))
-                vec)))))
+                            (::subtrees child)))
+                        %))))))
 
 (defn- remove-one-child-splits
   [tree]
