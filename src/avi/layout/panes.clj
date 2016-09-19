@@ -128,24 +128,29 @@
   (let [tree (augmented-root-pane editor)]
     (assoc editor ::tree (first (xf/cata xfmap xform tree)))))
 
+(defn- remove-last-child-extent
+  [tree]
+  (+> tree
+    (if (::subtrees tree)
+      (let [n (count (::subtrees tree))]
+        (update-in [::subtrees (dec n)] dissoc ::extent)))))
+
+(defn- assign-equal-extents
+  [tree]
+  (+> tree
+    (if-let [subtrees (::subtrees tree)]
+      (let [{[[i j] [rows cols]] :avi.layout/shape} tree
+            pane-height (int (/ (dec rows) (count subtrees)))]
+        (assoc ::subtrees
+               (into []
+                     (map #(assoc % ::extent pane-height))
+                     subtrees))))))
+
 (defn resize-panes
   "Makes all panes equal size."
   [editor]
-  (pane-tree-cata
-    editor
-    (comp
-      (map (fn+> [tree]
-             (if-let [subtrees (::subtrees tree)]
-               (let [{[[i j] [rows cols]] :avi.layout/shape} tree
-                     pane-height (int (/ (dec rows) (count subtrees)))]
-                 (assoc ::subtrees
-                        (into []
-                              (map #(assoc % ::extent pane-height))
-                              subtrees))))))
-      (map (fn+> [tree]
-             (if (::subtrees tree)
-               (let [n (count (::subtrees tree))]
-                 (update-in [::subtrees (dec n)] dissoc ::extent))))))))
+  (pane-tree-cata editor (comp (map assign-equal-extents)
+                               (map remove-last-child-extent))))
 
 (s/fdef split-pane
   :args (s/cat :editor ::editor
