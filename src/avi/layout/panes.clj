@@ -33,18 +33,32 @@
     xform
     (map #(dissoc % :avi.layout/renderable-type))))
 
+(defn annotate
+  "A transducer which annotates inputs by stateful process.
+
+  f accepts state and input and returns [state' input'].  To index inputs:
+
+     (annotate (fn [input n] [(assoc input ::pos n) (inc n)]) 0)"
+  [f init]
+  (fn [rf]
+    (let [state (volatile! init)]
+      (fn annotate-rf
+        ([] (rf))
+        ([result] (rf result))
+        ([result input]
+         (let [[state' input'] (f @state input)]
+           (vreset! state state')
+           (rf result input')))
+        ([result input & inputs]
+         (let [[state' input' & inputs'] (apply f @state input inputs)]
+           (vreset! state state')
+           (apply rf result input' inputs')))))))
+
 (defn- annotate-path
   [parent]
-  (let [{:keys [::path]} parent]
-    (fn add-paths [rf]
-      (let [n (volatile! -1)]
-        (fn add-paths-rf
-          ([] (rf))
-          ([result] (rf result))
-          ([result input]
-           (rf result (assoc input
-                             ::path
-                             (conj path (vswap! n inc))))))))))
+  (annotate (fn [state input]
+              [(inc state) (assoc input ::path (conj (::path parent) state))])
+            0))
 
 (defn- with-path
   [xform parent]
@@ -55,19 +69,11 @@
 
 (defn- annotate-shape
   [parent]
-  (let [{:keys [:avi.layout/shape]} parent]
-    (fn add-shape [rf]
-      (let [shape (volatile! shape)]
-        (fn add-shape-rf
-          ([] (rf))
-          ([result] (rf result))
-          ([result input]
-           (let [[[i j] [rows cols]] @shape
-                 height (or (::extent input) rows)
-                 input-shape [[i j] [height cols]]
-                 remaining-shape [[(+ i height) j] [(- rows height) cols]]]
-             (vreset! shape remaining-shape)
-             (rf result (assoc input :avi.layout/shape input-shape)))))))))
+  (annotate (fn [[[i j] [rows cols]] input]
+                  (let [height (or (::extent input) rows)]
+                    [[[(+ i height) j] [(- rows height) cols]]
+                     (assoc input :avi.layout/shape [[i j] [height cols]])]))
+                (:avi.layout/shape parent)))
 
 (defn- with-shape
   [xform parent]
