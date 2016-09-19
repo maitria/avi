@@ -171,14 +171,9 @@
       (get-in [::subtrees 0]))))
 
 (defn- simplify-panes
-  "If a split of a particular direction contains a split of the same
-  direction, splice the children into the parent recursively."
   [editor]
-  (pane-tree-cata
-    editor
-    (comp
-      (map flatten-like-splits)
-      (map remove-one-child-splits))))
+  (pane-tree-cata editor (comp (map flatten-like-splits)
+                               (map remove-one-child-splits))))
 
 (s/fdef split-pane
   :args (s/cat :editor ::editor
