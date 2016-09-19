@@ -1,5 +1,6 @@
 (ns avi.layout.panes
   (:require [avi.beep :as b]
+            [avi.xforms :as xf]
             [clojure.spec :as s]))
 
 (s/def ::lens nat-int?)
@@ -21,35 +22,78 @@
   (let [[[i j] [rows cols]] (:avi.layout/shape editor)]
     [[0 0] [(dec rows) cols]]))
 
-(defn- tag-pane
-  [pane]
-  (assoc pane :avi.layout/renderable-type :avi.layout.panes/pane))
+(def annotate-renderable-type
+  (map #(cond-> %
+          (::lens %)
+          (assoc :avi.layout/renderable-type :avi.layout.panes/pane))))
 
-(defn all-panes
-  "A transducer which visits all leaf nodes (panes) in a pane tree.
+(defn- with-renderable-type
+  [xform]
+  (comp
+    annotate-renderable-type
+    xform
+    (map #(dissoc % :avi.layout/renderable-type))))
+
+(defn- annotate-path
+  [parent]
+  (xf/annotate (fn [state input]
+                 [(inc state) (assoc input ::path (conj (::path parent) state))])
+               0))
+
+(defn- with-path
+  [xform parent]
+  (comp
+    (annotate-path parent)
+    xform
+    (map #(dissoc % ::path))))
+
+(defn- annotate-shape
+  [parent]
+  (xf/annotate (fn [[[i j] [rows cols]] input]
+                 (let [height (or (::extent input) rows)]
+                   [[[(+ i height) j] [(- rows height) cols]]
+                    (assoc input :avi.layout/shape [[i j] [height cols]])]))
+               (:avi.layout/shape parent)))
+
+(defn- with-shape
+  [xform parent]
+  (comp
+    (annotate-shape parent)
+    xform
+    (map #(dissoc % :avi.layout/shape))))
+
+(defn- xfmap
+  [xform tree]
+  (cond-> tree
+    (::subtrees tree)
+    (update ::subtrees #(into [] (-> xform
+                                   (with-shape tree)
+                                   (with-path tree)
+                                   with-renderable-type) %))))
+
+(defn all-nodes
+  "A transducer which visits all nodes in a pane tree.
 
   The input pane trees must be augmented with :avi.layout/shape and ::path,
   but only at the tree's root.  (See augmented-root-panes.) This information
-  is used to augment each sub-pane before rf is applied to it."
+  is used to augment each child node before rf is applied to it."
   [rf]
-  (fn
+  (fn all-nodes-rf
     ([] (rf))
     ([result] (rf result))
     ([result input]
-     (if (::lens input)
-       (rf result (tag-pane input))
-       (let [{:keys [::subtrees :avi.layout/shape ::path]} input]
-         (first
-           (reduce
-             (fn [[result [[i j] [rows cols]] n] {:keys [::extent] :as input}]
-               (let [height (or extent rows)
-                     input (assoc input
-                                  :avi.layout/shape [[i j] [height cols]]
-                                  ::path (conj path n))
-                     result (rf result (tag-pane input))]
-                 [result [[(+ i height) j] [(- rows height) cols]] (inc n)]))
-             [result shape 0]
-             subtrees)))))))
+     (-> (transduce
+           (comp
+             (annotate-shape input)
+             (annotate-path input)
+             annotate-renderable-type
+             all-nodes-rf)
+           rf
+           result
+           (::subtrees input))
+       (rf input)))))
+
+(def all-panes (comp all-nodes (filter ::lens)))
 
 (defn augmented-root-panes
   [{:keys [::tree] :as editor}]
@@ -60,12 +104,12 @@
 (defn current-pane
   [{:keys [::path] :as editor}]
   (first (sequence
-           (comp all-panes (filter #(= (::path %) path)))
+           (comp all-nodes (filter #(= (::path %) path)))
            (augmented-root-panes editor))))
 
 (defn point-position
   "Position of the point in the currently focused pane.
-  
+
   (Note: The cursor could be elsewhere if something else is focused, like the
   command-line.)"
   [editor]
@@ -75,20 +119,21 @@
     [(+ (- i viewport-top) top) j]))
 
 (s/fdef split-pane
-  :args (s/cat :panes ::tree
-               :path ::path
-               :new-lens ::lens
-               :total-height nat-int?)
+  :args (s/cat :editor ::editor
+               :new-lens ::lens)
   :ret ::split)
 (defn split-pane
-  [panes path new-lens total-height]
-  (let [panes (if (::lens panes)
-                [panes]
-                (::subtrees panes))
-        each-pane-height (int (/ total-height (inc (count panes))))
+  [{:keys [::tree] :as editor} new-lens]
+  (let [[_ [lines _]] (root-pane-shape editor)
+        panes (if (::lens tree)
+                [tree]
+                (::subtrees tree))
+        each-pane-height (int (/ (dec lines) (inc (count panes))))
         panes (-> (mapv #(assoc % ::extent each-pane-height) panes)
                 (into [{::lens new-lens}]))]
-    {::subtrees panes}))
+    (assoc editor
+           ::tree {::subtrees panes}
+           ::path [0])))
 
 (defn- reachable
   [[i j] [di dj]]
