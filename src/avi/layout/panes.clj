@@ -1,5 +1,6 @@
 (ns avi.layout.panes
   (:require [avi.beep :as b]
+            [avi.xforms :as xf]
             [clojure.spec :as s]))
 
 (s/def ::lens nat-int?)
@@ -33,32 +34,11 @@
     xform
     (map #(dissoc % :avi.layout/renderable-type))))
 
-(defn annotate
-  "A transducer which annotates inputs by stateful process.
-
-  f accepts state and input and returns [state' input'].  To index inputs:
-
-     (annotate (fn [input n] [(assoc input ::pos n) (inc n)]) 0)"
-  [f init]
-  (fn [rf]
-    (let [state (volatile! init)]
-      (fn annotate-rf
-        ([] (rf))
-        ([result] (rf result))
-        ([result input]
-         (let [[state' input'] (f @state input)]
-           (vreset! state state')
-           (rf result input')))
-        ([result input & inputs]
-         (let [[state' input' & inputs'] (apply f @state input inputs)]
-           (vreset! state state')
-           (apply rf result input' inputs')))))))
-
 (defn- annotate-path
   [parent]
-  (annotate (fn [state input]
-              [(inc state) (assoc input ::path (conj (::path parent) state))])
-            0))
+  (xf/annotate (fn [state input]
+                 [(inc state) (assoc input ::path (conj (::path parent) state))])
+               0))
 
 (defn- with-path
   [xform parent]
@@ -69,11 +49,11 @@
 
 (defn- annotate-shape
   [parent]
-  (annotate (fn [[[i j] [rows cols]] input]
-                  (let [height (or (::extent input) rows)]
-                    [[[(+ i height) j] [(- rows height) cols]]
-                     (assoc input :avi.layout/shape [[i j] [height cols]])]))
-                (:avi.layout/shape parent)))
+  (xf/annotate (fn [[[i j] [rows cols]] input]
+                 (let [height (or (::extent input) rows)]
+                   [[[(+ i height) j] [(- rows height) cols]]
+                    (assoc input :avi.layout/shape [[i j] [height cols]])]))
+               (:avi.layout/shape parent)))
 
 (defn- with-shape
   [xform parent]
