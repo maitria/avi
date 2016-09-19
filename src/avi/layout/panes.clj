@@ -62,11 +62,7 @@
      (::subtrees tree)
      (update ::subtrees #(into [] (comp (annotate tree) xform deannotate) %))))
   ([result rf tree]
-   (transduce
-     (annotate tree)
-     rf
-     result
-     (::subtrees tree))))
+   (transduce (annotate tree) rf result (::subtrees tree))))
 
 (defn all-nodes
   "A transducer which visits all nodes in a pane tree.
