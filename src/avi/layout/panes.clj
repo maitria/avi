@@ -74,11 +74,7 @@
     ([result] (rf result))
     ([result input]
      (-> (transduce
-           (comp
-             (annotate-shape input)
-             (annotate-path input)
-             annotate-renderable-type
-             all-nodes-rf)
+           (comp (annotate input) all-nodes-rf)
            rf
            result
            (::subtrees input))
