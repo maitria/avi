@@ -71,15 +71,6 @@
                                    (with-path tree)
                                    with-renderable-type) %))))
 
-(defn cata
-  "A sort of more general catamorphism for transducers."
-  [xfmap xform root]
-  (letfn [(cata' [tree]
-            (xfmap (comp (map cata') xform) tree))]
-    (into []
-          (comp (map cata') xform)
-          [root])))
-
 (defn all-nodes
   "A transducer which visits all nodes in a pane tree.
 
@@ -118,7 +109,7 @@
 
 (defn point-position
   "Position of the point in the currently focused pane.
-  
+
   (Note: The cursor could be elsewhere if something else is focused, like the
   command-line.)"
   [editor]
