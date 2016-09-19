@@ -1,7 +1,8 @@
 (ns avi.layout.panes
   (:require [avi.beep :as b]
             [avi.xforms :as xf]
-            [clojure.spec :as s]))
+            [clojure.spec :as s]
+            [packthread.core :refer :all]))
 
 (s/def ::lens nat-int?)
 (s/def ::extent nat-int?)
@@ -95,11 +96,15 @@
 
 (def all-panes (comp all-nodes (filter ::lens)))
 
-(defn augmented-root-panes
+(defn- augmented-root-pane
   [{:keys [::tree] :as editor}]
-  [(assoc tree
-          :avi.layout/shape (root-pane-shape editor)
-          ::path [])])
+  (assoc tree
+         :avi.layout/shape (root-pane-shape editor)
+         ::path []))
+
+(defn augmented-root-panes
+  [editor]
+  [(augmented-root-pane editor)])
 
 (defn current-pane
   [{:keys [::path] :as editor}]
@@ -118,22 +123,44 @@
         {:keys [viewport-top] [i j] :point} (get-in editor [:lenses lens])]
     [(+ (- i viewport-top) top) j]))
 
+(defn pane-tree-cata
+  [editor xform]
+  (let [tree (augmented-root-pane editor)]
+    (assoc editor ::tree (first (xf/cata xfmap xform tree)))))
+
+(defn resize-panes
+  "Makes all panes equal size."
+  [editor]
+  (pane-tree-cata
+    editor
+    (comp
+      (map (fn+> [tree]
+             (if-let [subtrees (::subtrees tree)]
+               (let [{[[i j] [rows cols]] :avi.layout/shape} tree
+                     pane-height (int (/ (dec rows) (count subtrees)))]
+                 (assoc ::subtrees
+                        (into []
+                              (map #(assoc % ::extent pane-height))
+                              subtrees))))))
+      (map (fn+> [tree]
+             (if (::subtrees tree)
+               (let [n (count (::subtrees tree))]
+                 (update-in [::subtrees (dec n)] dissoc ::extent))))))))
+
 (s/fdef split-pane
   :args (s/cat :editor ::editor
                :new-lens ::lens)
   :ret ::split)
 (defn split-pane
   [{:keys [::tree] :as editor} new-lens]
-  (let [[_ [lines _]] (root-pane-shape editor)
-        panes (if (::lens tree)
-                [tree]
-                (::subtrees tree))
-        each-pane-height (int (/ (dec lines) (inc (count panes))))
-        panes (-> (mapv #(assoc % ::extent each-pane-height) panes)
-                (into [{::lens new-lens}]))]
-    (assoc editor
-           ::tree {::subtrees panes}
-           ::path [0])))
+  (+> editor
+    (update ::tree (fn [tree]
+                     (if (::lens tree)
+                       {::subtrees [tree]}
+                       tree)))
+    (update-in [::tree ::subtrees] #(into [{::lens new-lens}] %))
+    (assoc ::path [0])
+    resize-panes))
 
 (defn- reachable
   [[i j] [di dj]]
