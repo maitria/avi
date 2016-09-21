@@ -146,6 +146,19 @@
       (editor :editing ten-lines :after "jj<C-E>") => (point [1 0]))
     (fact "`^E` won't put the point past end-of-line"
       (editor :editing ten-lines :after "3G$3<C-E>") => (point [0 3])))
+  (facts "about `^G`"
+    (fact "`^G` on empty buffer"
+      (editor :editing "" :after "<C-G>")
+        => (message-line ["\"test.txt\"\t--No lines in buffer--" :white :on :blue]))
+    (fact "`^G` on start of buffer"
+      (editor :editing "a\nb\nc\nd" :after "H<C-G>")
+        => (message-line ["\"test.txt\"\t4 lines --25%--" :white :on :blue]))
+    (fact "`^G` on end of buffer"
+      (editor :editing "a\nb\nc\nd" :after "L<C-G>")
+        => (message-line ["\"test.txt\"\t4 lines --100%--" :white :on :blue]))
+    (fact "`^G` on middle of buffer"
+      (editor :editing "a\nb\nc\nd" :after "M<C-G>")
+        => (message-line ["\"test.txt\"\t4 lines --50%--" :white :on :blue])))
   (facts "about `^Y`"
     (fact "`^Y` scrolls the lens up one line"
       (editor :editing ten-lines :after "<C-E><C-Y>")

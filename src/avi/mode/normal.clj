@@ -16,7 +16,15 @@
    "d" {:operator :delete}})
 
 (def motions
-  '{"0"    {:span :exclusive,
+  '{"<Down>"{:span :linewise,
+            :motion [:down]}
+    "<Left>"{:span :exclusive,
+            :motion [:left]}
+    "<Right>"{:span :exclusive,
+            :motion [:right]}
+    "<Up>" {:span :linewise,
+            :motion [:up]}
+    "0"    {:span :exclusive,
             :motion [:goto [:current 0]]}
     "^"    {:span :exclusive,
             :motion [:goto [:current :first-non-blank]]}
@@ -45,21 +53,13 @@
                             :empty-lines? true}]}
     "h"    {:span :exclusive,
             :motion [:left]}
-    "<Left>"{:span :exclusive,
-            :motion [:left]}
     "iw"   {:span :inclusive,
             :motion [:in-word]}
     "j"    {:span :linewise,
             :motion [:down]}
-    "<Down>"{:span :linewise,
-            :motion [:down]}
     "k"    {:span :linewise,
             :motion [:up]}
-    "<Up>" {:span :linewise,
-            :motion [:up]}
     "l"    {:span :exclusive,
-            :motion [:right]}
-    "<Right>"{:span :exclusive,
             :motion [:right]}
     "t<.>" {:span :inclusive,
             :motion [:move-to-char {:offset -1}]}
@@ -147,6 +147,17 @@
    "<C-E>" (fn+> [editor _]
              (in e/edit-context
                (ec/scroll inc)))
+
+   "<C-G>" (fn+> [editor _]
+            (let [edit-context (e/edit-context editor)
+                  [i] (:point edit-context)
+                  document (get-in editor (e/current-document-path editor))
+                  num-lines (count (:lines document))
+                  line-no (inc i)
+                  msg-txt (str "\"" (or (:name document) "[No Name]") "\"\t")]
+              (if (not= (:lines document) [""])
+                (assoc :message [:white :blue (str msg-txt num-lines " lines --" (int (/ (* line-no 100) num-lines)) "%--" )])
+                (assoc :message [:white :blue (str msg-txt "--No lines in buffer--")]))))
 
    "<C-R>" (fn+> [editor _]
              (in e/edit-context
