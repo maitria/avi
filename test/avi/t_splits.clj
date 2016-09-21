@@ -15,6 +15,8 @@
                       "test.txt" :black :on :white
                       ""])
            (point [0 0])))
+  (fact "`:sp` splits the correct pane"
+    (editor :after ":sp<Enter><C-W>j:sp<Enter>") => (point [2 0]))
   (fact "horizontal splits scroll correctly"
     (editor :editing "One\nTwo\nThree\nFour" :after ":sp<Enter>G")
       => (terminal ["Three"
