@@ -96,50 +96,42 @@
   (fact "line-wise point movement will keep the point in the viewport"
     (fact "can scroll down some lines"
       (editor :editing ten-lines :after "7j")
-        => (terminal ["Three"
+        => (terminal-buffer ["Three"
                       "Four"
                       "Five"
                       "Six"
                       "Seven"
-                      "Eight"
-                      "test.txt" :black :on :white
-                      ""])
+                      "Eight"])
       (editor :editing ten-lines :after "7j") => (point [5 0]))
         
     (fact "viewport stays when moving back up"
       (editor :editing ten-lines :after "7jk")
-        => (terminal ["Three"
+        => (terminal-buffer ["Three"
                       "Four"
                       "Five"
                       "Six"
                       "Seven"
-                      "Eight"
-                      "test.txt" :black :on :white
-                      ""])
+                      "Eight"])
       (editor :editing ten-lines :after "7jk") => (point [4 0]))
 
     (fact "can scroll up some lines"
       (editor :editing ten-lines :after "7j6k")
-        => (terminal ["Two"
+        => (terminal-buffer ["Two"
                       "Three"
                       "Four"
                       "Five"
                       "Six"
-                      "Seven"
-                      "test.txt" :black :on :white
-                      ""])
+                      "Seven"])
       (editor :editing ten-lines :after "7j6k") => (point [0 0])))
   (facts "about `^E`"
     (fact "`^E` scrolls the lens down one line"
       (editor :editing ten-lines :after "<C-E>")
-        => (terminal ["Two"
+        => (terminal-buffer ["Two"
                       "Three"
                       "Four"
                       "Five"
                       "Six"
-                      "Seven"
-                      "test.txt" :black :on :white
-                      ""]))
+                      "Seven"]))
     (fact "`^E` moves the point down to keep it in the viewport"
       (editor :editing ten-lines :after "<C-E>") => (point [0 0]))
     (fact "`^E` doesn't move the point when unnecessary"
@@ -162,14 +154,12 @@
   (facts "about `^Y`"
     (fact "`^Y` scrolls the lens up one line"
       (editor :editing ten-lines :after "<C-E><C-Y>")
-        => (terminal ["One"
+        => (terminal-buffer ["One"
                       "Two"
                       "Three"
                       "Four"
                       "Five"
-                      "Six"
-                      "test.txt" :black :on :white
-                      ""]))
+                      "Six"]))
     (fact "`^Y` moves the point up to keep it in the viewport"
       (editor :editing ten-lines :after "7G<C-Y>") => (point [5 0]))
     (fact "`^Y` doesn't move the point when unnecessary"
@@ -179,40 +169,34 @@
   (facts "about `^D`"
     (fact "`^D` scrolls down half a page"
       (editor :editing ten-lines :after "<C-D>")
-        => (terminal ["Four"
+        => (terminal-buffer ["Four"
                       "Five"
                       "Six"
                       "Seven"
                       "Eight"
-                      "Nine"
-                      "test.txt" :black :on :white
-                      ""]))
+                      "Nine"]))
     (fact "`^D` moves the point down half a page"
       (editor :editing ten-lines :after "jj<C-D>") => (point [2 0]))
     (fact "`^D` won't scroll past end-of-file"
       (editor :editing ten-lines :after "<C-D><C-D><C-D>")
-        => (terminal ["Five"
+        => (terminal-buffer ["Five"
                       "Six"
                       "Seven"
                       "Eight"
                       "Nine"
-                      "Ten"
-                      "test.txt" :black :on :white
-                      ""]))
+                      "Ten"]))
     (fact "`^D` near end-of-file moves the point to last line (and not past)"
       (editor :editing ten-lines :after "Gk<C-D>") => (point [5 0]))
     (fact "`^D` on last line beeps"
       (editor :editing ten-lines :after "G<C-D>") => beeped)
     (fact "`^D` won't scroll when file is shorter than document viewport"
       (editor :after "<C-D>")
-        => (terminal ["One"
+        => (terminal-buffer ["One"
                       "Two"
                       "Three"
                       "."
                       "~" :blue
-                      "~" :blue
-                      "test.txt" :black :on :white
-                      ""]))
+                      "~" :blue]))
     (fact "`^D` won't move point past end-of-file when file is shorter than document viewport"
       (editor :editing "One\nTwo" :after "<C-D>") => (point [1 0])))
 
@@ -221,26 +205,22 @@
       (editor :after "<C-U>") => beeped)
     (fact "`^U` scrolls up a half page"
       (editor :editing ten-lines :after "<C-D><C-U>")
-        => (terminal ["One"
+        => (terminal-buffer ["One"
                       "Two"
                       "Three"
                       "Four"
                       "Five"
-                      "Six"
-                      "test.txt" :black :on :white
-                      ""]))
+                      "Six"]))
     (fact "`^U` moves the point up half a page"
       (editor :editing ten-lines :after "Gk<C-U>") => (point [4 0]))
     (fact "`^U` does not scroll to before first line of file"
       (editor :editing ten-lines :after "<C-E><C-U>")
-        => (terminal ["One"
+        => (terminal-buffer ["One"
                       "Two"
                       "Three"
                       "Four"
                       "Five"
-                      "Six"
-                      "test.txt" :black :on :white
-                      ""]))
+                      "Six"]))
     (fact "`^U` does not move point before beginning of file"
       (editor :editing ten-lines :after "j<C-U>") => (point [0 0]))))
 
@@ -251,14 +231,12 @@
     (fact "`L` moves to the last line on the lens when the file is longer"
       (editor :editing ten-lines-indented :after "L") => (point [5 2])
       (editor :editing ten-lines :after "L")
-        => (terminal ["One"
+        => (terminal-buffer ["One"
                       "Two"
                       "Three"
                       "Four"
                       "Five"
-                      "Six"
-                      "test.txt" :black :on :white
-                      ""]))
+                      "Six"]))
     (fact "`L` will move to count line from bottom of viewport"
       (editor :editing ten-lines-indented :after "<C-E>2L") => (point [4 2]))
     (fact "`L` will move to count line from bottom of file when file is shorter"
@@ -266,27 +244,23 @@
     (fact "`L` will not move above top of viewport"
       (editor :editing ten-lines :after "G8L") => (point [0 0])
       (editor :editing ten-lines :after "G8L")
-        => (terminal ["Five"
+        => (terminal-buffer ["Five"
                       "Six"
                       "Seven"
                       "Eight"
                       "Nine"
-                      "Ten"
-                      "test.txt" :black :on :white
-                      ""]))))
+                      "Ten"]))))
 
   (facts "about `H`"
     (fact "`H` moves to the first line in the lens"
       (editor :editing ten-lines-indented :after "G$H") => (point [0 2])
       (editor :editing ten-lines :after "GH")
-        => (terminal ["Five"
+        => (terminal-buffer ["Five"
                       "Six"
                       "Seven"
                       "Eight"
                       "Nine"
-                      "Ten"
-                      "test.txt" :black :on :white
-                      ""]))
+                      "Ten"]))
     (fact "`H` moves to the count line in the lens"
       (editor :editing ten-lines :after "G3H") => (point [2 0]))
     (fact "`H` will not move below the bottom of the lens"
@@ -296,14 +270,12 @@
     (fact "`M` moves to the middle line of the lens when document has more lines than the lens"
       (editor :editing ten-lines-indented :after "M") => (point [2 2])
       (editor :editing ten-lines :after "M")
-        => (terminal ["One"
+        => (terminal-buffer ["One"
                       "Two"
                       "Three"
                       "Four"
                       "Five"
-                      "Six"
-                      "test.txt" :black :on :white
-                      ""]))
+                      "Six"]))
     (fact "`M` moves to the middle line of document text when document contains fewer lines than the lens"
       (editor :editing "One\nTwo\nThree" :after "M") => (point [1 0]))))
 
@@ -315,14 +287,12 @@
   (fact "`gg` won't move past end-of-file"
     (editor :editing ten-lines :after "99gg") => (point [5 0])
     (editor :editing ten-lines :after "99gg")
-      => (terminal ["Five"
+      => (terminal-buffer ["Five"
                     "Six"
                     "Seven"
                     "Eight"
                     "Nine"
-                    "Ten"
-                    "test.txt" :black :on :white
-                    ""])))
+                    "Ten"])))
 
 (facts "about `x`"
   (fact "`x` deletes the current character"
@@ -337,28 +307,24 @@
 (facts "about `dd`"
   (fact "`dd` deletes the current line"
     (editor :editing "One\nTwo\nThree..." :after "jdd")
-      => (terminal ["One"
+      => (terminal-buffer ["One"
                     "Three..."
                     "~" :blue
                     "~" :blue
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
+                    "~" :blue]))
   (fact "`dd` moves the point to the first non-space"
     (editor :editing "One\nTwo\n  Three..." :after "jdd") => (point [1 2]))
   (fact "`dd` moves the point up when deleting the last line"
     (editor :editing "One\nTwo\nThree" :after "Gdd") => (point [1 0]))
   (fact "`dd` can delete the only line in a file"
     (editor :editing "One" :after "dd")
-      => (terminal [""
+      => (terminal-buffer [""
                     "~" :blue
                     "~" :blue
                     "~" :blue
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""])))
+                    "~" :blue])))
 
 (tabular
   (facts "about `J`"

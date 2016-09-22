@@ -140,6 +140,25 @@
   [expected]
   (line nil expected))
 
+(defn terminal-buffer
+  ;; Added to compare only lines in buffer without status and command line
+  [expected]
+  (fn [{{{:keys [width chars attrs]} :rendition} :editor}]
+    (let [height (dec (dec (quot (count chars) width)))
+          lines (->> (range height)
+                     (map #(String. chars (* % width) width))
+                     (map string/trimr))
+          line-annotations (->> (range height)
+                                (map (fn [i]
+                                       (get attrs (* i width))))
+                                (map color/description))]
+      (checking/extended-=
+        (->> (map vector lines line-annotations)
+             flatten
+             unwrap-single-value)
+        expected))))
+
+
 (defn contents
   [expected]
   (fn [result]
