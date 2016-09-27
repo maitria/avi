@@ -17,14 +17,12 @@
       (editor :editing "xx" :after "i<BS>") => beeped)
     (fact "`i<BS>` at 1,0 joins lines"
       (editor :editing "One\nTwo\nThree..." :after "ji<BS><Esc>")
-        => (terminal ["OneTwo"
+        => (terminal-buffer ["OneTwo"
                       "Three..."
                       "~" :blue
                       "~" :blue
                       "~" :blue
-                      "~" :blue
-                      "test.txt" :black :on :white
-                      ""]))
+                      "~" :blue]))
     (fact "`i<BS>` at beginning of line leaves the point at join"
       (editor :editing "One\nTwo\nThree..." :after "ji<BS>") => (point [0 3])))
 
@@ -34,68 +32,56 @@
     (editor :editing "One\nTwo\nThree..." :after "i") => (message-line "--INSERT--"))
   (fact "`ix<Enter>` inserts a new line"
     (editor :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>")
-     => (terminal ["x"
+     => (terminal-buffer ["x"
                    "One"
                    "Two"
                    "Three..."
                    "~" :blue
-                   "~" :blue
-                   "test.txt" :black :on :white
-                   ""])
+                   "~" :blue])
     (editor :editing "One\nTwo\nThree..." :after "ix<Enter><Esc>") => (point [1 0])
     (editor :editing "" :after "i<Enter><Esc>")
-      => (terminal [""
+      => (terminal-buffer [""
                     ""
                     "~" :blue
                     "~" :blue
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
+                    "~" :blue]))
   (fact "`oxy<Esc>` inserts a line below"
     (editor :editing "One\nTwo\nThree..." :after "oxy<Esc>")
-      => (terminal ["One"
+      => (terminal-buffer ["One"
                     "xy"
                     "Two"
                     "Three..."
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
+                    "~" :blue]))
   (fact "`oxy<Esc>` works when file has one line"
     (editor :editing "" :after "oxy<Esc>")
-      => (terminal [""
+      => (terminal-buffer [""
                     "xy"
                     "~" :blue
                     "~" :blue
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
+                    "~" :blue]))
   (fact "`Oxy<Esc>` inserts a line here"
     (editor :editing "One\nTwo\nThree..." :after "llOxy<Esc>")
-      => (terminal ["xy"
+      => (terminal-buffer ["xy"
                     "One"
                     "Two"
                     "Three..."
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
+                    "~" :blue]))
   (fact "`axy<Esc>` inserts after current character"
     (editor :editing "One\nTwo\nThree..." :after "axy<Esc>") => (line 0 "Oxyne"))
   (fact "`a` behaves like `i` on a zero-length line"
     (editor :editing "" :after "axy<Esc>") => (line 0 "xy"))
   (fact "`Axy<Esc>` inserts at end-of-line"
     (editor :editing "One\nTwo\nThree..." :after "Axy<Esc>")
-      => (terminal ["Onexy"
+      => (terminal-buffer ["Onexy"
                     "Two"
                     "Three..."
                     "~" :blue
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
+                    "~" :blue]))
   (facts "about Arrow Keys in Insert mode"
     (fact "<Right> moves to the right of the current position including eol cases"
       (editor :editing "One\nTwo\nThree..." :after "i<Right><Esc>") => (point [0 0])
@@ -122,14 +108,12 @@
     (editor :editing "One" :after "3ix<Esc>") => (line 0 "xxxOne")
     (editor :editing "One" :after "2ixy<BS><Esc>") => (line 0 "xxOne")
     (editor :editing "One" :after "3ix<Enter><Esc>")
-      => (terminal ["x"
+      => (terminal-buffer ["x"
                     "x"
                     "x"
                     "One"
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""])
+                    "~" :blue])
   (fact "repeat count for `i` with `3ix<Esc>` leaves the point on last `x` added"
     (editor :editing "One" :after "3ix<Esc>") => (point [0 2]))
   (fact "repeat count for `a` repeatedly inserts the text"
@@ -138,34 +122,28 @@
     (editor :editing "One" :after "3Axy<Esc>") => (line 0 "Onexyxyxy")))
   (fact "repeat count for `o` makes multiple lines"
     (editor :editing "One" :after "3oxxx<Esc>")
-      => (terminal ["One"
+      => (terminal-buffer ["One"
                     "xxx"
                     "xxx"
                     "xxx"
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
+                    "~" :blue]))
   (fact "repeat count for `O` makes multiple lines"
     (editor :editing "One" :after "3Oxxx<Esc>")
-      => (terminal ["xxx"
+      => (terminal-buffer ["xxx"
                     "xxx"
                     "xxx"
                     "One"
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""]))
+                    "~" :blue]))
   (fact "repeat count is ignored when arrows are used during insert"
     (editor :editing "One\nTwo\nThree..." :after "3iab<Up><Up><Left>cd<Esc>")
-      => (terminal ["acdbOne"
+      => (terminal-buffer ["acdbOne"
                     "Two"
                     "Three..."
                     "~" :blue
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""])))
+                    "~" :blue])))
 
 (fact "viewport is adjusted to cursor when typing in insert mode"
   (editor :editing "1\n2\n3\n4\n5\n6" :after "GA<Enter>x<Enter>y<Enter>z")
@@ -175,5 +153,5 @@
                   "x"
                   "y"
                   "z"
-                  "test.txt" :black :on :white
+                  "test.txt\t[9,2]" :black :on :white
                   "--INSERT--"]))

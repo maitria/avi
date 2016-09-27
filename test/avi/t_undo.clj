@@ -14,27 +14,23 @@
     (editor :editing "One\n" :after "3xu") => (line 0 "One"))
   (fact "`ddju` leaves point at 0,0"
     (editor :editing "One\nTwo\nThree..." :after "ddju")
-      => (terminal ["One"
+      => (terminal-buffer ["One"
                     "Two"
                     "Three..."
                     "~" :blue
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""])
+                    "~" :blue])
     (editor :editing "One\nTwo\nThree..." :after "ddju") => (point [0 0]))
   (fact "`ddGu` adjusts viewport to point"
     (editor :editing ten-lines :after "ddGu") => (point [0 0]))
   (fact "`2ddu` undoes both lines"
     (editor :editing "One\nTwo\nThree..." :after "2ddGu")
-      => (terminal ["One"
+      => (terminal-buffer ["One"
                     "Two"
                     "Three..."
                     "~" :blue
                     "~" :blue
-                    "~" :blue
-                    "test.txt" :black :on :white
-                    ""])))
+                    "~" :blue])))
 
 (facts "regarding undoing inserts"
   (fact "can undo an insert"
