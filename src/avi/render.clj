@@ -31,7 +31,7 @@
         (fill-rendition-line! rendition (+ i from-line) [line-color line-text])))
     (let [file-name (or (:name document) "[No Name]")
           [i j] (:point (e/edit-context editor))
-          msg-txt (str file-name "\t[" (inc i) "," (inc j) "]" )]
+          msg-txt (str file-name "   [" (inc i) "," (inc j) "]" )]
       (fill-rendition-line! rendition to-line [(color/make :black :white) (str msg-txt) ]))))
 
 (defn render-message-line!
