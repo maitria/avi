@@ -19,8 +19,10 @@
   (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))
 
 (defn render-pane!
-  [editor rendition [from-line to-line] lens-number]
-  (let [document (get-in editor (e/current-document-path editor))]
+  [editor rendition [[i j] [rows cols]] lens-number]
+  (let [from-line i
+        to-line (dec (+ i rows))
+        document (get-in editor (e/current-document-path editor))]
     (doseq [i (range (inc (- to-line from-line)))]
       (let [{:keys [viewport-top] document-number :document} (get-in editor [:lenses lens-number])
             document-line (get-in editor [:documents document-number :lines (+ i viewport-top)])
@@ -57,8 +59,8 @@
                    :attrs rendered-attrs
                    :point (point-position editor)}]
     (run!
-      (fn [{:keys [::p/lens] [[i j] [lines columns]] ::layout/shape}]
-        (render-pane! editor rendition [i (dec (+ lines i))] lens))
+      (fn [{:keys [::p/lens ::layout/shape]}]
+        (render-pane! editor rendition shape lens))
       (eduction layout/all-renderables [editor]))
     (render-message-line! editor rendition)
     rendition))
