@@ -36,7 +36,7 @@
 
 
 (defn- compare-result
-[result expected custom-msg]
+  [result expected custom-msg]
   (or (checking/extended-= result expected)
       (checking/as-data-laden-falsehood {:notes [(str custom-msg (pr-str result))]})))
 
@@ -122,9 +122,9 @@
     coll))
 
 (defn line-cmp
-  [line expected ncmpBuf]
+  [line expected ncmpbuf]
   (fn [{{{:keys [width chars attrs]} :rendition} :editor}]
-    (let [height (if ncmpBuf (quot (count chars) width) (dec (dec (quot (count chars) width))))
+    (let [height (if ncmpbuf (quot (count chars) width) (- (quot (count chars) width) 2))
           lines (->> (range height)
                      (map #(String. chars (* % width) width))
                      (map string/trimr))
