@@ -34,6 +34,12 @@
        "  Nine\n"
        "  Ten"))
 
+
+(defn- compare-result
+[result expected custom-msg]
+  (or (checking/extended-= result expected)
+      (checking/as-data-laden-falsehood {:notes [(str custom-msg (pr-str result))]})))
+
 (defn- event
   [event-name]
   (let [event-type (if (.startsWith event-name "<Resize ")
@@ -90,9 +96,7 @@
 (defn wrote-file
   [expected-filename expected-contents]
   (fn [{[filename contents] :file-written}]
-    (and
-      (checking/extended-= filename expected-filename)
-      (checking/extended-= contents expected-contents))))
+    (compare-result [filename contents] [expected-filename expected-contents] "Failed [filename contents]:")))
 
 (defn- line-keeper
   [line]
@@ -117,23 +121,25 @@
     (first coll)
     coll))
 
-(defn line
-  [line expected]
+(defn line-cmp
+  [line expected ncmpBuf]
   (fn [{{{:keys [width chars attrs]} :rendition} :editor}]
-    (let [height (quot (count chars) width)
+    (let [height (if ncmpBuf (quot (count chars) width) (dec (dec (quot (count chars) width))))
           lines (->> (range height)
                      (map #(String. chars (* % width) width))
                      (map string/trimr))
           line-annotations (->> (range height)
                                 (map (fn [i]
                                        (get attrs (* i width))))
-                                (map color/description))]
-      (checking/extended-=
-        (->> (map vector lines line-annotations)
+                                (map color/description))
+          result (->> (map vector lines line-annotations)
              (keep-indexed (line-keeper line))
              flatten
-             unwrap-single-value)
-        expected))))
+             unwrap-single-value)]
+    (compare-result result expected "Failed set:"))))
+(defn line
+  [line expected]
+  (line-cmp line expected true))
 (def message-line (partial line :message))
 
 (defn terminal
@@ -143,28 +149,12 @@
 (defn terminal-buffer
   ;; Added to compare only lines in buffer without status and command line
   [expected]
-  (fn [{{{:keys [width chars attrs]} :rendition} :editor}]
-    (let [height (dec (dec (quot (count chars) width)))
-          lines (->> (range height)
-                     (map #(String. chars (* % width) width))
-                     (map string/trimr))
-          line-annotations (->> (range height)
-                                (map (fn [i]
-                                       (get attrs (* i width))))
-                                (map color/description))]
-      (checking/extended-=
-        (->> (map vector lines line-annotations)
-             flatten
-             unwrap-single-value)
-        expected))))
-
+  (line-cmp nil expected false))
 
 (defn contents
   [expected]
   (fn [result]
-    (checking/extended-=
-      (string/join "\n" (:lines (e/edit-context (:editor result))))
-      expected)))
+    (compare-result (string/join "\n" (:lines (e/edit-context (:editor result)))) expected "Failed contents:")))
 
 (defn attributes
   [[i j] expected]
@@ -172,12 +162,12 @@
     (-> (get attrs (+ j (* i width)))
       color/description
       unwrap-single-value
-      (checking/extended-= expected))))
+      (compare-result expected "Failed attributes:"))))
 
 (defn point
   [expected-pos]
   (fn [{:keys [editor]}]
-    (checking/extended-= (:point (:rendition editor)) expected-pos)))
+    (compare-result (:point (:rendition editor)) expected-pos "Failed point:")))
 
 (defn beeped
   [{:keys [editor]}]
@@ -190,7 +180,7 @@
 (defn mode
   [expected-mode]
   (fn [{{:keys [mode]} :editor}]
-    (checking/extended-= mode expected-mode)))
+    (compare-result mode expected-mode "Failed mode:")))
 
 (def finished? (comp :finished? :editor))
 (def unfinished? (complement finished?))
@@ -200,4 +190,4 @@
   (fn [{{{:keys [width chars]} :rendition} :editor}]
     (let [height (int (/ (count chars) width))
           size [height width]]
-    (checking/extended-= size expected-size))))
+    (compare-result size expected-size "Failed viewport-size:"))))
