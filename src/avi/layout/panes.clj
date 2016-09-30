@@ -52,10 +52,14 @@
                  [(inc state) (assoc input ::path (conj (::path parent) state))])
                0))
 
+(defn- add-renderable-type
+  [tree]
+  (if (::lens tree)
+    (assoc tree :avi.layout/renderable-type ::pane)
+    tree))
+
 (def annotate-renderable-type
-  (map #(cond-> %
-          (::lens %)
-          (assoc :avi.layout/renderable-type ::pane))))
+  (map add-renderable-type))
 
 (defn- annotate
   [parent]
@@ -99,10 +103,9 @@
 (defn- augmented-root-pane
   [{:keys [::tree] :as editor}]
   (+> tree
+    add-renderable-type
     (assoc :avi.layout/shape (root-pane-shape editor)
-           ::path [])
-    (if (::lens tree)
-      (assoc :avi.layout/renderable-type ::pane))))
+           ::path [])))
 
 (defn augmented-root-panes
   [editor]
