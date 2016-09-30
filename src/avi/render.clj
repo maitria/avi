@@ -14,13 +14,17 @@
     (p/point-position editor)))
 
 (defn fill-rendition-line!
-  [{:keys [width] rendered-chars :chars, rendered-attrs :attrs} i [attrs text]]
-  (.getChars text 0 (min width (count text)) rendered-chars (* i width))
-  (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))
+  [{:keys [width] rendered-chars :chars, rendered-attrs :attrs} n [[i j] [rows cols]] [attrs text]]
+  (let [start (+ j (* (+ n i) width))
+        text-size (count text)]
+    (.getChars text 0 (min cols text-size) rendered-chars start)
+    (Arrays/fill rendered-attrs start (+ start cols) attrs)))
 
 (defn render-pane!
-  [editor rendition [from-line to-line] lens-number]
-  (let [document (get-in editor (e/current-document-path editor))]
+  [editor rendition [[i j] [rows cols] :as shape] lens-number]
+  (let [from-line i
+        to-line (dec (+ i rows))
+        document (get-in editor (e/current-document-path editor))]
     (doseq [i (range (inc (- to-line from-line)))]
       (let [{:keys [viewport-top] document-number :document} (get-in editor [:lenses lens-number])
             document-line (get-in editor [:documents document-number :lines (+ i viewport-top)])
@@ -28,23 +32,24 @@
                          (color/make :white :black)
                          (color/make :blue :black))
             line-text (or document-line "~")]
-        (fill-rendition-line! rendition (+ i from-line) [line-color line-text])))
+        (fill-rendition-line! rendition i shape [line-color line-text])))
     (let [file-name (or (:name document) "[No Name]")
           [i j] (:point (e/edit-context editor))
           msg-txt (str file-name "   [" (inc i) "," (inc j) "]" )]
-      (fill-rendition-line! rendition to-line [(color/make :black :white) (str msg-txt) ]))))
+      (fill-rendition-line! rendition (dec rows) shape [(color/make :black :white) (str msg-txt)]))))
 
 (defn render-message-line!
   [editor rendition]
-  (let [[_ [height]] (::layout/shape editor)
+  (let [{:keys [::layout/shape]} editor
+        [_ [height]] (::layout/shape editor)
         i (dec height)]
     (cond
       (and (:prompt editor) (:command-line editor))
-      (fill-rendition-line! rendition i [(color/make :white :black) (str (:prompt editor) (:command-line editor))])
+      (fill-rendition-line! rendition i shape [(color/make :white :black) (str (:prompt editor) (:command-line editor))])
 
       (:message editor)
       (let [[foreground background text] (:message editor)]
-        (fill-rendition-line! rendition i [(color/make foreground background) text])))))
+        (fill-rendition-line! rendition i shape [(color/make foreground background) text])))))
 
 (defn render
   [editor]
@@ -57,8 +62,8 @@
                    :attrs rendered-attrs
                    :point (point-position editor)}]
     (run!
-      (fn [{:keys [::p/lens] [[i j] [lines columns]] ::layout/shape}]
-        (render-pane! editor rendition [i (dec (+ lines i))] lens))
+      (fn [{:keys [::p/lens ::layout/shape]}]
+        (render-pane! editor rendition shape lens))
       (eduction layout/all-renderables [editor]))
     (render-message-line! editor rendition)
     rendition))

@@ -34,4 +34,10 @@
   [{:keys [:lenses] :as editor}]
   (-> editor
     (update :lenses conj (e/current-lens editor))
-    (p/split-pane (count lenses))))
+    (p/split-pane (count lenses) :horizontal)))
+
+(defn vsp
+  [{:keys [:lenses] :as editor}]
+  (-> editor
+    (update :lenses conj (e/current-lens editor))
+    (p/split-pane (count lenses) :vertical)))

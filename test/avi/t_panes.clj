@@ -21,7 +21,8 @@
                             ::p/path []})))
   (fact "a single horizonal split works correctly"
         (all-panes {::layout/shape [[0 0] [10 8]]
-                    ::p/tree {::p/subtrees [{::p/lens 0 ::p/extent 3}
+                    ::p/tree {::p/direction :horizontal
+                              ::p/subtrees [{::p/lens 0 ::p/extent 3}
                                             {::p/lens 1}]}})
         => (contains (contains {::p/lens 0
                                 ::layout/shape [[0 0] [3 8]]
@@ -32,7 +33,8 @@
                                 ::p/path [1]})))
   (fact "two horizontal splits work correctly"
     (all-panes {::layout/shape [[0 0] [10 8]]
-                ::p/tree {::p/subtrees [{::p/lens 0 ::p/extent 2}
+                ::p/tree {::p/direction :horizontal
+                          ::p/subtrees [{::p/lens 0 ::p/extent 2}
                                         {::p/lens 1 ::p/extent 2}
                                         {::p/lens 2}]}})
     => (contains (contains {::p/lens 0
