@@ -38,6 +38,10 @@
           msg-txt (str file-name "   [" (inc i) "," (inc j) "]" )]
       (fill-rendition-line! rendition (dec rows) shape [(color/make :black :white) (str msg-txt)]))))
 
+(defmethod layout/render! ::p/pane
+  [editor rendition {:keys [:avi.layout/shape ::p/lens]}]
+  (render-pane! editor rendition shape lens))
+
 (defn render-message-line!
   [editor rendition]
   (let [{:keys [::layout/shape]} editor
@@ -62,8 +66,7 @@
                    :attrs rendered-attrs
                    :point (point-position editor)}]
     (run!
-      (fn [{:keys [::p/lens ::layout/shape]}]
-        (render-pane! editor rendition shape lens))
+      #(layout/render! editor rendition %)
       (eduction layout/all-renderables [editor]))
     (render-message-line! editor rendition)
     rendition))
