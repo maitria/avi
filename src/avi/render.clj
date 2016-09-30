@@ -14,9 +14,11 @@
     (p/point-position editor)))
 
 (defn fill-rendition-line!
-  [{:keys [width] rendered-chars :chars, rendered-attrs :attrs} i shape [attrs text]]
-  (.getChars text 0 (min width (count text)) rendered-chars (* i width))
-  (Arrays/fill rendered-attrs (* i width) (* (inc i) width) attrs))
+  [{:keys [width] rendered-chars :chars, rendered-attrs :attrs} n [[i j] [rows cols]] [attrs text]]
+  (let [start (+ j (* (+ n i) width))
+        text-size (count text)]
+    (.getChars text 0 (min cols text-size) rendered-chars start)
+    (Arrays/fill rendered-attrs start (+ start cols) attrs)))
 
 (defn render-pane!
   [editor rendition [[i j] [rows cols] :as shape] lens-number]
@@ -30,11 +32,11 @@
                          (color/make :white :black)
                          (color/make :blue :black))
             line-text (or document-line "~")]
-        (fill-rendition-line! rendition (+ i from-line) shape [line-color line-text])))
+        (fill-rendition-line! rendition i shape [line-color line-text])))
     (let [file-name (or (:name document) "[No Name]")
           [i j] (:point (e/edit-context editor))
           msg-txt (str file-name "   [" (inc i) "," (inc j) "]" )]
-      (fill-rendition-line! rendition to-line shape [(color/make :black :white) (str msg-txt)]))))
+      (fill-rendition-line! rendition (dec rows) shape [(color/make :black :white) (str msg-txt)]))))
 
 (defn render-message-line!
   [editor rendition]

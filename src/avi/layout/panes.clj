@@ -4,11 +4,15 @@
             [clojure.spec :as s]
             [packthread.core :refer :all]))
 
+;; Yeah, so panes in a horizontal split are layed out vertically, and vice
+;; versa
+
 (s/def ::lens nat-int?)
 (s/def ::extent nat-int?)
+(s/def ::direction #{:horizontal :vertical})
 (s/def ::subtrees (s/coll-of ::tree :type vector?))
 (s/def ::pane (s/keys :req [::lens]))
-(s/def ::split (s/keys :req [::subtrees]))
+(s/def ::split (s/keys :req [::direction ::subtrees]))
 (s/def ::tree (s/or :lens ::pane
                     :split ::split))
 (s/def ::path (s/coll-of nat-int? :type vector?))
@@ -25,11 +29,22 @@
 
 (defn- annotate-shape
   [parent]
-  (xf/annotate (fn [[[i j] [rows cols]] input]
-                 (let [height (or (::extent input) rows)]
-                   [[[(+ i height) j] [(- rows height) cols]]
-                    (assoc input :avi.layout/shape [[i j] [height cols]])]))
-               (:avi.layout/shape parent)))
+  (case (::direction parent)
+    :horizontal
+    (xf/annotate (fn [[[i j] [rows cols]] input]
+                   (let [height (or (::extent input) rows)]
+                     [[[(+ i height) j] [(- rows height) cols]]
+                      (assoc input :avi.layout/shape [[i j] [height cols]])]))
+                 (:avi.layout/shape parent))
+
+    :vertical
+    (xf/annotate (fn [[[i j] [rows cols]] input]
+                   (let [width (or (::extent input) cols)]
+                     [[[i (+ j width 1)] [rows (- cols width 1)]]
+                      (assoc input :avi.layout/shape [[i j] [rows width]])]))
+                 (:avi.layout/shape parent))
+
+    identity))
 
 (defn- annotate-path
   [parent]
@@ -141,11 +156,15 @@
   [tree]
   (+> tree
     (if-let [subtrees (::subtrees tree)]
-      (let [{[[i j] [rows cols]] :avi.layout/shape} tree
-            pane-height (int (/ (dec rows) (count subtrees)))]
+      (let [{:keys [::direction], [[i j] [rows cols]] :avi.layout/shape} tree
+            extent (case direction
+                     :horizontal
+                     (int (/ (dec rows) (count subtrees)))
+                     :vertical
+                     (dec (int (/ cols (count subtrees)))))]
         (assoc ::subtrees
                (into []
-                     (map #(assoc % ::extent pane-height))
+                     (map #(assoc % ::extent extent))
                      subtrees))))))
 
 (defn resize-panes
@@ -161,7 +180,9 @@
      (update ::subtrees
              #(vec
                 (mapcat (fn [child]
-                          (if (::lens child)
+                          (if (or (::lens child)
+                                  (not= (::direction tree) (::direction child))
+                                  )
                             [child]
                             (::subtrees child)))
                         %))))))
@@ -178,18 +199,22 @@
                                (map remove-one-child-splits))))
 
 (defn- split-pane'
-  [editor new-lens]
+  [editor new-lens direction]
   (+> editor
     (pane-tree-cata
       (map (fn [node]
              (if (::focused node)
-               (let [[_ [rows _]] (:avi.layout/shape node)
-                     new-height (max 2 (int (/ rows 2)))]
-                 {::path (::path node)
+               (let [[_ [rows cols]] (:avi.layout/shape node)
+                     old-extent (case direction
+                                  :horizontal rows
+                                  :vertical cols)
+                     new-extent (max 2 (int (/ old-extent 2)))]
+                 {::direction direction
+                  ::path (::path node)
                   :avi.layout/shape (:avi.layout/shape node)
                   ::subtrees [(-> node
                                 (update ::path conj 0)
-                                (assoc ::extent new-height
+                                (assoc ::extent new-extent
                                        ::lens new-lens))
                               (-> node
                                 (update ::path conj 1)
@@ -199,12 +224,13 @@
 
 (s/fdef split-pane
   :args (s/cat :editor ::editor
-               :new-lens ::lens)
+               :new-lens ::lens
+               :direction ::direction)
   :ret ::split)
 (defn split-pane
-  [editor new-lens]
+  [editor new-lens direction]
   (+> editor
-    (split-pane' new-lens)
+    (split-pane' new-lens direction)
     simplify-panes
     resize-panes))
 

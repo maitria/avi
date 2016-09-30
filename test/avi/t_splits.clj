@@ -47,3 +47,15 @@
     (editor :after ":sp<Enter>:sp<Enter><C-W>j<C-W>j<C-W>k") => (point [2 0])
     (fact "<C-W>k always works (regression)"
       (editor :after "j:sp<Enter><C-W>j<C-W>k") => (point [1 0]))))
+
+(facts "about vertical splits"
+  (fact "`:vsp` splits vertically"
+    (editor :editing "One\nTwo\nThree" :after ":vsp<Enter>")
+      => (terminal ["One                 One"
+                    "Two                 Two"
+                    "Three               Three"
+                    "~                   ~" :blue
+                    "~                   ~" :blue
+                    "~                   ~" :blue
+                    "test.txt   [1,1]    test.txt   [1,1]" :black :on :white
+                    ""])))
