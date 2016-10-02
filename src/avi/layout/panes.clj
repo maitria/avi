@@ -100,6 +100,20 @@
 
 (def all-panes (comp all-nodes (filter ::lens)))
 
+(def all-renderables
+  (comp all-panes
+        (fn [rf]
+          (fn
+            ([] (rf))
+            ([result] (rf result))
+            ([result input]
+             (let [[[i j] [rows cols]] (:avi.layout/shape input)
+                   result (rf result input)]
+               (cond-> result
+                 (not (zero? j))
+                 (rf {:avi.layout/shape [[i (dec j)] [rows 1]]
+                      :avi.layout/renderable-type ::vertical-bar}))))))))
+
 (defn- augmented-root-pane
   [{:keys [::tree] :as editor}]
   (+> tree

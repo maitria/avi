@@ -47,6 +47,12 @@
           msg-txt (str (format fmt-str file-name) status-txt)]
        (fill-rendition-line! rendition (dec rows) shape [(color/make :black :white) (str msg-txt)]))))
 
+(defmethod layout/render! ::p/vertical-bar
+  [editor rendition {[[i j] [rows cols] :as shape] ::layout/shape}]
+  (let [color (color/make :black :white)]
+    (doseq [n (range rows)]
+      (fill-rendition-line! rendition n shape [color "|"]))))
+
 (defn render-message-line!
   [editor rendition]
   (let [{:keys [::layout/shape]} editor

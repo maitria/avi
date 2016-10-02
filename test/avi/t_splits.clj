@@ -65,13 +65,13 @@
 (facts "about vertical splits"
   (fact "`:vsp` splits vertically"
     (editor :editing "One\nTwo\nThree" :after ":vsp<Enter>")
-      => (terminal ["One                 One"
-                    "Two                 Two"
-                    "Three               Three"
-                    "~                   ~" :blue
-                    "~                   ~" :blue
-                    "~                   ~" :blue
-                    "test.tx  [1,1]  Top test.txt  [1,1]  Top" :black :on :white
+      => (terminal ["One                |One"
+                    "Two                |Two"
+                    "Three              |Three"
+                    "~                  |~" :blue
+                    "~                  |~" :blue
+                    "~                  |~" :blue
+                    "test.tx  [1,1]  Top|test.txt  [1,1]  Top" :black :on :white
                     ""]))
   (fact "`<C-W>l` moves right a pane"
     (editor :editing "One\nTwo\nThree" :after ":vsp<Enter><C-W>l")

@@ -8,7 +8,7 @@
 
 (def all-renderables
   (comp (mapcat p/augmented-root-panes)
-        p/all-panes))
+        p/all-renderables))
   
 (defmulti render!
   (fn [editor rendition renderable]
