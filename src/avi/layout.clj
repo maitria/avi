@@ -4,7 +4,7 @@
 
 (s/def ::shape (s/tuple (s/tuple nat-int? nat-int?)
                         (s/tuple nat-int? nat-int?)))
-(s/def ::renderable-type keyword)
+(s/def ::renderable-type keyword?)
 
 (def all-renderables
   (comp (mapcat p/augmented-root-panes)
