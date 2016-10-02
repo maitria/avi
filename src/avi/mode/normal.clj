@@ -171,14 +171,10 @@
                  (in e/edit-context
                    (ec/move-and-scroll-half-page :up)))))
 
-   "<C-W>j" (fn+> [editor _]
-              (p/move [+1 0]))
-   
-   "<C-W>k" (fn+> [editor _]
-              (p/move [-1 0]))
-
-   "<C-W>l" (fn+> [editor _]
-              (p/move [0 +1]))
+   "<C-W>h" (fn+> [editor _] (p/move [0 -1]))
+   "<C-W>j" (fn+> [editor _] (p/move [+1 0]))
+   "<C-W>k" (fn+> [editor _] (p/move [-1 0]))
+   "<C-W>l" (fn+> [editor _] (p/move [0 +1]))
 
    "<C-Y>" (fn+> [editor _]
              (in e/edit-context
