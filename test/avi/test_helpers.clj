@@ -153,8 +153,8 @@
 
 (defn contents
   [expected]
-  (fn [result]
-    (compare-result (string/join "\n" (:lines (e/edit-context (:editor result)))) expected "Failed contents:")))
+  (fn [editor]
+    (compare-result (string/join "\n" (:lines (e/edit-context (:editor editor)))) expected "Failed contents:")))
 
 (defn attributes
   [[i j] expected]

@@ -8,11 +8,11 @@
       => (every-pred
            (terminal ["One"
                       "Two"
-                      "test.txt   [1,1]" :black :on :white
+                      "test.txt                      [1,1]" :black :on :white
                       "One"
                       "Two"
                       "Three"
-                      "test.txt   [1,1]" :black :on :white
+                      "test.txt                      [1,1]" :black :on :white
                       ""])
            (point [0 0])))
   (fact "`:sp` splits the correct pane"
@@ -21,21 +21,31 @@
     (editor :editing "One\nTwo\nThree\nFour" :after ":sp<Enter>G")
       => (terminal ["Three"
                     "Four"
-                    "test.txt   [4,1]" :black :on :white
+                    "test.txt                      [4,1]  End" :black :on :white
                     "One"
                     "Two"
                     "Three"
-                    "test.txt   [4,1]" :black :on :white
+                    "test.txt                      [1,1]  Top" :black :on :white
+                    ""]))
+  (fact "horizontal splits scroll correctly to middle of buffer"
+    (editor :editing "One\nTwo\nThree\nFour\nFive\nSix\nSeven\nEight" :after ":sp<Enter>G<Up><Up><Up><Up><Up>")
+      => (terminal ["Three"
+                    "Four"
+                    "test.txt                      [3,1]  33%" :black :on :white
+                    "One"
+                    "Two"
+                    "Three"
+                    "test.txt                      [1,1]  Top" :black :on :white
                     ""]))
   (fact "two splits equalize size (with remainder to the last one)"
     (editor :editing "One\nTwo\nThree\nFour" :after ":sp<Enter>:sp<Enter>")
       => (terminal ["One"
-                    "test.txt   [1,1]" :black :on :white
+                    "test.txt                      [1,1]  Top" :black :on :white
                     "One"
-                    "test.txt   [1,1]" :black :on :white
+                    "test.txt                      [1,1]  Top" :black :on :white
                     "One"
                     "Two"
-                    "test.txt   [1,1]" :black :on :white
+                    "test.txt                      [1,1]  Top" :black :on :white
                     ""]))
   (fact "<C-W>j moves down a pane"
     (editor :after ":sp<Enter><C-W>j") => (point [3 0])
@@ -57,7 +67,7 @@
                     "~                   ~" :blue
                     "~                   ~" :blue
                     "~                   ~" :blue
-                    "test.txt   [1,1]    test.txt   [1,1]" :black :on :white
+                    "test.tx  [1,1]  Top test.txt  [1,1]  Top" :black :on :white
                     ""]))
   (fact "`<C-W>l` moves right a pane"
     (editor :editing "One\nTwo\nThree" :after ":vsp<Enter><C-W>l")

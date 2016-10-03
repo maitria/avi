@@ -153,5 +153,5 @@
                   "x"
                   "y"
                   "z"
-                  "test.txt   [9,2]" :black :on :white
+                  "test.txt                      [9,2]  End" :black :on :white
                   "--INSERT--"]))

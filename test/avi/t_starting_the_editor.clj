@@ -11,7 +11,7 @@
                     "."
                     "~" :blue
                     "~" :blue
-                    "test.txt   [1,1]" :black :on :white
+                    "test.txt                      [1,1]  Top" :black :on :white
                     ""]))
 
   (fact "When avi is not passed a filename, it starts with an empty, unnamed document"
@@ -22,7 +22,7 @@
                     "~" :blue
                     "~" :blue
                     "~" :blue
-                    "[No Name]   [1,1]" :black :on :white
+                    "[No Name]                     [1,1]  Top" :black :on :white
                     ""]))
 
   (fact "When avi is passed the name of a non-existent file, it starts with an empty, named document"
@@ -33,5 +33,5 @@
                     "~" :blue
                     "~" :blue
                     "~" :blue
-                    "test.txt   [1,1]" :black :on :white
+                    "test.txt                      [1,1]  Top" :black :on :white
                     ""])))
