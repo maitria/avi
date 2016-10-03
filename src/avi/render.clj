@@ -20,13 +20,13 @@
     (.getChars text 0 (min cols text-size) rendered-chars start)
     (Arrays/fill rendered-attrs start (+ start cols) attrs)))
 
-(defn render-pane!
-  [editor rendition [[i j] [rows cols] :as shape] lens-number]
+(defmethod layout/render! ::p/pane
+  [editor rendition {:keys [::p/lens] [[i j] [rows cols] :as shape] ::layout/shape}]
   (let [from-line i
         to-line (dec (+ i rows))
         document (get-in editor (e/current-document-path editor))]
     (doseq [i (range (inc (- to-line from-line)))]
-      (let [{:keys [viewport-top] document-number :document} (get-in editor [:lenses lens-number])
+      (let [{:keys [viewport-top] document-number :document} (get-in editor [:lenses lens])
             document-line (get-in editor [:documents document-number :lines (+ i viewport-top)])
             line-color (if document-line
                          (color/make :white :black)
@@ -62,8 +62,7 @@
                    :attrs rendered-attrs
                    :point (point-position editor)}]
     (run!
-      (fn [{:keys [::p/lens ::layout/shape]}]
-        (render-pane! editor rendition shape lens))
+      #(layout/render! editor rendition %)
       (eduction layout/all-renderables [editor]))
     (render-message-line! editor rendition)
     rendition))

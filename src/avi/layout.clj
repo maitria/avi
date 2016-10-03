@@ -10,3 +10,6 @@
   (comp (mapcat p/augmented-root-panes)
         p/all-panes))
   
+(defmulti render!
+  (fn [editor rendition renderable]
+    (::renderable-type renderable)))

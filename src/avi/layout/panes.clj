@@ -52,10 +52,14 @@
                  [(inc state) (assoc input ::path (conj (::path parent) state))])
                0))
 
+(defn- add-renderable-type
+  [tree]
+  (if (::lens tree)
+    (assoc tree :avi.layout/renderable-type ::pane)
+    tree))
+
 (def annotate-renderable-type
-  (map #(cond-> %
-          (::lens %)
-          (assoc :avi.layout/renderable-type :avi.layout.panes/pane))))
+  (map add-renderable-type))
 
 (defn- annotate
   [parent]
@@ -98,9 +102,10 @@
 
 (defn- augmented-root-pane
   [{:keys [::tree] :as editor}]
-  (assoc tree
-         :avi.layout/shape (root-pane-shape editor)
-         ::path []))
+  (+> tree
+    add-renderable-type
+    (assoc :avi.layout/shape (root-pane-shape editor)
+           ::path [])))
 
 (defn augmented-root-panes
   [editor]
@@ -118,10 +123,11 @@
   (Note: The cursor could be elsewhere if something else is focused, like the
   command-line.)"
   [editor]
-  (let [{:keys [::lens] [[top _] _] :avi.layout/shape :as pane}
+  (let [{:keys [::lens] [[pi pj] _] :avi.layout/shape :as pane}
           (current-pane editor)
         {:keys [viewport-top] [i j] :point} (get-in editor [:lenses lens])]
-    [(+ (- i viewport-top) top) j]))
+    [(+ (- i viewport-top) pi)
+     (+ pj j)]))
 
 (defn pane-tree-cata
   [editor xform]
@@ -236,11 +242,17 @@
 
 (defn- reachable
   [[i j] [di dj]]
+  {:pre [(or (zero? di) (zero? dj))]}
   (fn [{[[pi pj] [plines pcols]] :avi.layout/shape}]
-    (and (<= pj j (dec (+ pj pcols)))
-         (if (pos? di)
-           (< i pi)
-           (< (dec (+ pi plines)) i)))))
+    (if (zero? dj)
+      (and (<= pj j (dec (+ pj pcols)))
+           (if (pos? di)
+             (< i pi)
+             (< (dec (+ pi plines)) i)))
+      (and (<= pi i (dec (+ pi plines)))
+           (if (pos? dj)
+             (< j pj)
+             (< (dec (+ pj pcols)) j))))))
 
 (defn- distance
   [[i j] [di dj] {[[pi pj] [plines pcols]] :avi.layout/shape}]

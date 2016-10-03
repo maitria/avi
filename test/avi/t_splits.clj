@@ -58,4 +58,10 @@
                     "~                   ~" :blue
                     "~                   ~" :blue
                     "test.txt   [1,1]    test.txt   [1,1]" :black :on :white
-                    ""])))
+                    ""]))
+  (fact "`<C-W>l` moves right a pane"
+    (editor :editing "One\nTwo\nThree" :after ":vsp<Enter><C-W>l")
+      => (point [0 20]))
+  (fact "`<C-W>h` moves left a pane"
+    (editor :editing "One\nTwo\nThree" :after ":vsp<Enter><C-W>l<C-W>h")
+      => (point [0 0])))
