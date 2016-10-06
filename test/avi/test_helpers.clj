@@ -138,7 +138,7 @@
              (keep-indexed (line-keeper line))
              flatten
              unwrap-single-value)]
-    (compare-result result expected (str "Failed set:")))))
+    (compare-result result expected "Failed set:"))))
 (defn line
   [line expected]
   (line-cmp line expected true))
