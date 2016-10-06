@@ -61,9 +61,11 @@
 
 (defn editor
   [& {width :width,
+      height :height,
       file-contents :editing,
       string-of-commands :after,
       :or {width 40,
+           height 8,
            file-contents "One\nTwo\nThree\n.",
            keystrokes ""}}]
   (let [events (make-events string-of-commands)
@@ -84,7 +86,7 @@
                        (swap! file-written (constantly [filename content]))
                        nil))
         initial-editor (binding [*world* test-world]
-                         (avi.main/initial-editor [8 width] start-args))
+                         (avi.main/initial-editor [height width] start-args))
         final-editor (binding [*world* test-world]
                        (reduce
                          responder
@@ -136,10 +138,11 @@
              (keep-indexed (line-keeper line))
              flatten
              unwrap-single-value)]
-    (compare-result result expected "Failed set:"))))
+    (compare-result result expected (str "Failed set:")))))
 (defn line
   [line expected]
   (line-cmp line expected true))
+
 (def message-line (partial line :message))
 
 (defn terminal

@@ -235,10 +235,15 @@
   :ret ::split)
 (defn split-pane
   [editor new-lens direction]
-  (+> editor
-    (split-pane' new-lens direction)
-    simplify-panes
-    resize-panes))
+  (let [{:keys [::lens] [[_] [rows cols]] :avi.layout/shape :as pane}
+          (current-pane editor)]
+    (if (or (and (= direction :horizontal) (> (/ rows 2) 2))
+           (and (= direction :vertical)  (> (/ cols 2) 2)))
+      (+> editor
+        (split-pane' new-lens direction)
+          simplify-panes
+          resize-panes)
+      (b/beep editor (str "No room for new Pane")))))
 
 (defn- reachable
   [[i j] [di dj]]

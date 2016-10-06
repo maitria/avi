@@ -2,6 +2,7 @@
   (:import [avi.terminal Terminal])
   (:require [packthread.core :refer :all]
             [avi.editor :as e]
+            [clojure.stacktrace :as st]
             [avi.main]
             [avi.world :refer :all])
   (:gen-class))
@@ -42,6 +43,11 @@
       (perform-effects! editor))
     (cleanup *world*)))
 
+(defn- clean-exit
+  [world]
+  (binding [*world* world]
+    (cleanup *world*)))
+
 (defn -main
   [& args]
   (let [world (reify
@@ -62,4 +68,15 @@
                   (slurp filename))
                 (write-file [_ filename contents]
                   (spit filename contents)))]
-    (run world args)))
+    (try
+      (run world args)
+      (catch Exception e ((clean-exit world)
+                        (println "============================================================")
+                        (println "You have caught a bug in Avi")
+                        (println "Stacktrace for the issue follows:")
+                        (st/print-stack-trace e)
+                        (println "============================================================")
+                        (println "Issue can be logged for avi at:")
+                        (println "https://github.com/maitria/avi/issues")
+                        (println "Do also provide the exact steps to reproduce the issue there")
+                        (println "============================================================"))))))
