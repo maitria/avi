@@ -43,7 +43,7 @@
                       (str (int (/ (* viewport-top 100) (- num-lines (dec rows)))) "%")))
           status-txt (str "  [" (inc i) "," (inc j) "]  " pos-txt)
           filelen (- cols (count status-txt))
-          fmt-str (str "%-"filelen"."filelen"s" )
+          fmt-str (if (> filelen 0) (str "%-"filelen"."filelen"s" ) (str "%s"))
           msg-txt (str (format fmt-str file-name) status-txt)]
        (fill-rendition-line! rendition (dec rows) shape [(color/make :black :white) (str msg-txt)]))))
 
