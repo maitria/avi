@@ -243,7 +243,7 @@
         (split-pane' new-lens direction)
           simplify-panes
           resize-panes)
-      (b/beep editor (str "No room for new Pane")))))
+      (b/beep editor "No room for new Pane"))))
 
 (defn- reachable
   [[i j] [di dj]]
