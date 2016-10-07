@@ -20,16 +20,19 @@
   (fact "`<Esc>` cancels command-line mode"
     (editor :after ":xx<Esc>") => (mode :normal)
     (editor :after ":xx<Esc>") => (message-line "")))
+
 (facts "regarding `:q`"
   (fact "Avi doesn't start in the 'finished' state"
     (editor) => unfinished?)
   (fact "Typing part of `:q<Enter>` doesn't exit Avi"
     (editor :after ":") => unfinished?
     (editor :after ":q") => unfinished?)
-  (fact "`:q<Enter>` exits Avi."
+  (fact "`:q<Enter>` exits Avi"
     (editor :after ":q<Enter>") => finished?)
-  (fact "`:q!<Enter>` does not exit Avi."
-    (editor :after ":q!<Enter>") => unfinished?))
+  (fact "`:q!<Enter>` does not exit Avi"
+    (editor :after ":q!<Enter>") => unfinished?)
+  (fact "`:sp<Enter>:q<Enter>` does not exit Avi"
+    (editor :after ":sp<Enter>:q<Enter>") => unfinished?))
 
 (facts "regarding `:<N>`"
   (fact "`:<N><Enter>` moves to line N"

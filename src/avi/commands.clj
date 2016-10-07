@@ -20,7 +20,7 @@
 
 (defn q
   [editor]
-  (assoc editor :finished? true))
+  (p/close-pane editor))
 
 (defn w
   [editor]

@@ -259,6 +259,12 @@
           resize-panes)
       (b/beep editor "No room for new Pane"))))
 
+(defn close-pane
+  [editor]
+  (if (::lens (::tree editor))
+    (assoc editor :finished? true)
+    editor))
+
 (defn- reachable
   [[i j] [di dj]]
   {:pre [(or (zero? di) (zero? dj))]}
