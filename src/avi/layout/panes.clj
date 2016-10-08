@@ -153,17 +153,17 @@
                       (comp
                         (map #(cond-> %
                                 (= (::path editor) (::path %))
-                                (assoc ::focused true)))
+                                (assoc ::focused? true)))
                         xform)
                       tree))
         tree (assoc tree ;; hack! see augmented-root-pane
                     :avi.layout/shape (root-pane-shape editor)
                     ::path [])
         path (::path (first (sequence
-                              (comp all-nodes (filter ::focused))
+                              (comp all-nodes (filter ::focused?))
                               [tree])))
         _ (assert path)
-        tree (first (xf/cata xfmap (map #(dissoc % ::focused)) tree))]
+        tree (first (xf/cata xfmap (map #(dissoc % ::focused?)) tree))]
     (assoc editor
            ::path path
            ::tree tree)))
@@ -226,7 +226,7 @@
   (+> editor
     (pane-tree-cata
       (map (fn [node]
-             (if (::focused node)
+             (if (::focused? node)
                (let [[_ [rows cols]] (:avi.layout/shape node)
                      old-extent (case direction
                                   :horizontal rows
@@ -241,7 +241,7 @@
                                        ::lens new-lens))
                               (-> node
                                 (update ::path conj 1)
-                                (dissoc ::focused)
+                                (dissoc ::focused?)
                                 (dissoc ::extent))]})
                node))))))
 
@@ -290,7 +290,7 @@
                 (map (fn [pane]
                        (cond-> pane
                          (= (::path pane) new-path)
-                         (assoc ::focused true))))))
+                         (assoc ::focused? true))))))
         simplify-panes
         resize-panes))))
 
