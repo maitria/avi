@@ -36,10 +36,10 @@
                 :undo-log ()
                 :redo-log ()
                 :in-transaction? false}]
-   :lenses [{:document 0
-             :viewport-top 0
-             :point [0 0]
-             :last-explicit-j 0}]
+   :lenses {0 {:document 0
+               :viewport-top 0
+               :point [0 0]
+               :last-explicit-j 0}}
    ::p/tree {:avi.layout.panes/lens 0}
    ::p/path []
    ::layout/shape [[0 0] [lines columns]]

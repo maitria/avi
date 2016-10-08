@@ -39,5 +39,5 @@
 (defn vsp
   [{:keys [:lenses] :as editor}]
   (-> editor
-    (update :lenses conj (e/current-lens editor))
+    (update :lenses assoc (reduce max -1 (keys lenses)) (e/current-lens editor))
     (p/split-pane (count lenses) :vertical)))
