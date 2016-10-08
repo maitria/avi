@@ -86,4 +86,14 @@
       => did-not-beep)
   (fact "multiple splits out of pane area"
     (editor :width 20 :height 8 :after ":sp<Enter>:vsp<Enter>:sp<Enter>:vsp<Enter>:sp<Enter>:vsp<Enter>:sp<Enter>:vsp<Enter>")
-      => (message-line ["No room for new Pane" :white :on :red])))
+      => (message-line ["No room for new Pane" :white :on :red]))
+  (fact "correctly handles closing last sub-split"
+    (editor :after ":vsp<Enter>:sp<Enter><C-W>l:sp<Enter>:q<Enter>:q<Enter>")
+      => (terminal ["One"
+                    "Two"
+                    "test.txt                      [1,1]  Top" :black :on :white
+                    "One"
+                    "Two"
+                    "Three" 
+                    "test.txt                      [1,1]  Top" :black :on :white
+                    ""])))

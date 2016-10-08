@@ -29,6 +29,7 @@
 
 (defn- annotate-shape
   [parent]
+  {:pre [(:avi.layout/shape parent)]}
   (case (::direction parent)
     :horizontal
     (xf/annotate (fn [[[i j] [rows cols]] input]
@@ -145,6 +146,7 @@
 
 (defn pane-tree-cata
   [editor xform]
+  {:pre [(::lens (current-pane editor))]}
   (let [tree (augmented-root-pane editor)
         tree (first (xf/cata
                       xfmap
@@ -154,11 +156,12 @@
                                 (assoc ::focused true)))
                         xform)
                       tree))
+        tree (assoc tree ;; hack! see augmented-root-pane
+                    :avi.layout/shape (root-pane-shape editor)
+                    ::path [])
         path (::path (first (sequence
                               (comp all-nodes (filter ::focused))
-                              [(assoc tree ;; hack! see augmented-root-pane
-                                      :avi.layout/shape (root-pane-shape editor)
-                                      ::path [])])))
+                              [tree])))
         _ (assert path)
         tree (first (xf/cata xfmap (map #(dissoc % ::focused)) tree))]
     (assoc editor
@@ -215,8 +218,8 @@
 
 (defn- simplify-panes
   [editor]
-  (pane-tree-cata editor (comp (map flatten-like-splits)
-                               (map remove-one-child-splits))))
+  (pane-tree-cata editor (comp (map remove-one-child-splits)
+                               (map flatten-like-splits))))
 
 (defn- split-pane'
   [editor new-lens direction]
@@ -249,6 +252,7 @@
   :ret ::split)
 (defn split-pane
   [editor new-lens direction]
+  {:post [(::lens (current-pane %))]}
   (let [{:keys [::lens] [[_] [rows cols]] :avi.layout/shape :as pane}
           (current-pane editor)]
     (if (or (and (= direction :horizontal) (> (/ rows 2) 2))
@@ -261,12 +265,22 @@
 
 (defn- focused-path-after-close
   [{:keys [::path] :as editor}]
-  (if (zero? (peek path))
-    (conj (pop path) 1)
-    (conj (pop path) (dec (peek path)))))
+  (let [prefix (conj (pop path) (if (zero? (peek path))
+                                  1
+                                  (dec (peek path))))]
+    (first (sequence
+             (comp
+               all-panes
+               (map ::path)
+               (filter (fn [p]
+                         (and (<= (count prefix) (count p))
+                              (= prefix (subvec p 0 (count prefix)))))))
+             [(augmented-root-pane editor)]))))
 
 (defn close-pane
   [{:keys [::tree ::path] :as editor}]
+  {:pre [(::lens (current-pane editor))]
+   :post [(or (:finished? %) (::lens (current-pane %)))]}
   (+> editor
     (if (::lens tree)
       (assoc :finished? true)
