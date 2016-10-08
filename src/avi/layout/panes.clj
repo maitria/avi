@@ -196,16 +196,16 @@
 (defn- flatten-like-splits
   [tree]
   (+> tree
-   (if-let [subtrees (::subtrees tree)]
+   (if (::subtrees tree)
      (update ::subtrees
-             #(vec
-                (mapcat (fn [child]
-                          (if (or (::lens child)
-                                  (not= (::direction tree) (::direction child))
-                                  )
-                            [child]
-                            (::subtrees child)))
-                        %))))))
+             (fn [subtrees]
+               (into []
+                     (mapcat (fn [child]
+                               (if (or (::lens child)
+                                       (not= (::direction tree) (::direction child)))
+                                 [child]
+                                 (::subtrees child))))
+                     subtrees))))))
 
 (defn- remove-one-child-splits
   [tree]
