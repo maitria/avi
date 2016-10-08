@@ -255,15 +255,30 @@
            (and (= direction :vertical)  (> (/ cols 2) 2)))
       (+> editor
         (split-pane' new-lens direction)
-          simplify-panes
-          resize-panes)
+        simplify-panes
+        resize-panes)
       (b/beep editor "No room for new Pane"))))
 
+(defn- focused-path-after-close
+  [{:keys [::path] :as editor}]
+  (if (zero? (peek path))
+    (conj (pop path) 1)
+    (conj (pop path) (dec (peek path)))))
+
 (defn close-pane
-  [editor]
-  (if (::lens (::tree editor))
-    (assoc editor :finished? true)
-    editor))
+  [{:keys [::tree ::path] :as editor}]
+  (+> editor
+    (if (::lens tree)
+      (assoc :finished? true)
+      (let [new-path (focused-path-after-close editor)]
+        (pane-tree-cata
+          (comp (remove #(= (::path %) path))
+                (map (fn [pane]
+                       (cond-> pane
+                         (= (::path pane) new-path)
+                         (assoc ::focused true))))))
+        simplify-panes
+        resize-panes))))
 
 (defn- reachable
   [[i j] [di dj]]

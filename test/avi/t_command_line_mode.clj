@@ -32,7 +32,9 @@
   (fact "`:q!<Enter>` does not exit Avi"
     (editor :after ":q!<Enter>") => unfinished?)
   (fact "`:sp<Enter>:q<Enter>` does not exit Avi"
-    (editor :after ":sp<Enter>:q<Enter>") => unfinished?))
+    (editor :after ":sp<Enter>:q<Enter>") => unfinished?)
+  (fact "`:sp<Enter>:q<Enter>:q<Enter>` exits Avi"
+    (editor :after ":sp<Enter>:q<Enter>:q<Enter>") => finished?))
 
 (facts "regarding `:<N>`"
   (fact "`:<N><Enter>` moves to line N"
