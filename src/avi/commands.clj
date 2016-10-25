@@ -30,14 +30,11 @@
 
 (def wq (comp q w))
 
-(defn sp
-  [{:keys [lenses] :as editor}]
-  (-> editor
-    (update :lenses assoc (inc (reduce max -1 (keys lenses))) (e/current-lens editor))
-    (p/split-pane (count lenses) :horizontal)))
-
-(defn vsp
-  [{:keys [lenses] :as editor}]
-  (-> editor
-    (update :lenses assoc (inc (reduce max -1 (keys lenses))) (e/current-lens editor))
-    (p/split-pane (count lenses) :vertical)))
+(defn- split*
+  [direction]
+  (fn [{:keys [lenses] :as editor}]
+    (-> editor
+        (update :lenses assoc (inc (reduce max -1 (keys lenses))) (e/current-lens editor))
+        (p/split-pane (count lenses) direction))))
+(def sp (split* :horizontal))
+(def vsp (split* :vertical))
