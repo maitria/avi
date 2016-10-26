@@ -41,20 +41,10 @@
 (def sp (split* :horizontal))
 (def vsp (split* :vertical))
 
-(defn- try-load
-  [filename]
-  (try
-    (lines/content (w/read-file w/*world* filename))
-    (catch java.io.FileNotFoundException e
-      [""])))
 (defn e
   {:type-hints [:avi.mode.command-line/string]}
   [editor filename]
   (+> editor
     (let [document-n (count (:documents editor))]
-      (update :documents conj {:name filename
-                               :lines (try-load filename)
-                               :undo-log ()
-                               :redo-log ()
-                               :in-transaction? false})
+      (update :documents conj (e/document filename))
       (assoc-in (conj (e/current-lens-path editor) :document) document-n))))

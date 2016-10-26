@@ -26,16 +26,20 @@
     (catch FileNotFoundException e
       [""])))
 
+(defn document
+  [filename]
+  {:name filename
+   :lines (if filename
+            (try-load filename)
+            [""])
+   :undo-log ()
+   :redo-log ()
+   :in-transaction? false})
+
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :documents [{:name filename,
-                :lines (if filename
-                         (try-load filename)
-                         [""])
-                :undo-log ()
-                :redo-log ()
-                :in-transaction? false}]
+   :documents [(document filename)]
    :lenses {0 {:document 0
                :viewport-top 0
                :point [0 0]
