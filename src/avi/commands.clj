@@ -12,11 +12,11 @@
 
 (defn -NUMBER-
   "Special function which handles commands like `:42`"
-  [editor command-line]
+  [editor n]
   (+> editor
     (in e/edit-context
         (ec/operate {:operator :move-point
-                     :motion [:goto [(dec (Long/parseLong command-line)) :first-non-blank]]}))))
+                     :motion [:goto [(dec n) :first-non-blank]]}))))
 
 (defn q
   [editor]
