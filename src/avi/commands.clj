@@ -4,6 +4,8 @@
   Functions implemented in this namespace can be called by name from the colon
   prompt."
   (:require [avi.edit-context :as ec]
+            [avi.edit-context
+              [lines :as lines]]
             [avi.editor :as e]
             [avi.layout.panes :as p]
             [avi.world :as w]
@@ -38,3 +40,21 @@
         (p/split-pane (count lenses) direction))))
 (def sp (split* :horizontal))
 (def vsp (split* :vertical))
+
+(defn- try-load
+  [filename]
+  (try
+    (lines/content (w/read-file w/*world* filename))
+    (catch java.io.FileNotFoundException e
+      [""])))
+(defn e
+  {:type-hints [:avi.mode.command-line/string]}
+  [editor filename]
+  (+> editor
+    (let [document-n (count (:documents editor))]
+      (update :documents conj {:name filename
+                               :lines (try-load filename)
+                               :undo-log ()
+                               :redo-log ()
+                               :in-transaction? false})
+      (assoc-in (conj (e/current-lens-path editor) :document) document-n))))

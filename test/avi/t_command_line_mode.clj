@@ -72,3 +72,13 @@
     (editor :after ":42<Enter>:69<Enter>:<C-P><C-P>") => (message-line ":42"))
   (fact "`:<C-N>` moves to next command"
     (editor :after ":42<Enter>:69<Enter>:<C-P><C-P><C-N>") => (message-line ":69")))
+
+(facts "regarding `:e`"
+  (fact "`:e` "
+    (editor :after ":e other.txt<Enter>")
+      => (terminal-buffer ["Ten"
+                           "Nine"
+                           "Eight"
+                           "Seven"
+                           "Six"
+                           "Five"])))

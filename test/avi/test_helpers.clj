@@ -80,6 +80,9 @@
                          (= :not-found file-contents)
                          (throw (FileNotFoundException. "not found"))
 
+                         (= "other.txt" filename)
+                         "Ten\nNine\nEight\nSeven\nSix\nFive\nFour\nThree"
+
                          (= "test.txt" filename)
                          file-contents))
                      (write-file [_ filename content]
