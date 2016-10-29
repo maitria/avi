@@ -17,11 +17,11 @@
 
 (def motions
   '{"<Down>"{:span :linewise,
-            :motion [:down]}
+             :motion [:down]}
     "<Left>"{:span :exclusive,
-            :motion [:left]}
+             :motion [:left]}
     "<Right>"{:span :exclusive,
-            :motion [:right]}
+              :motion [:right]}
     "<Up>" {:span :linewise,
             :motion [:up]}
     "0"    {:span :exclusive,
@@ -134,7 +134,7 @@
                                               (let [start-j (count (get lines i))]
                                                 (ec/change [i start-j] [(inc i) 0] " " :left)
                                                 (ec/operate {:operator :move-point
-                                                            :motion [:goto [i start-j]]}))))
+                                                             :motion [:goto [i start-j]]}))))
                            ec/commit)))
 
    "<C-D>" (fn+> [editor _]
@@ -154,9 +154,9 @@
                   document (get-in editor (e/current-document-path editor))
                   num-lines (count (:lines document))
                   line-no (inc i)
-                  msg-txt (str "\"" (or (:name document) "[No Name]") "\"\t")]
+                  msg-txt (str "\"" (or (:avi.document/name document) "[No Name]") "\"\t")]
               (if (not= (:lines document) [""])
-                (assoc :message [:white :blue (str msg-txt num-lines " lines --" (int (/ (* line-no 100) num-lines)) "%--" )])
+                (assoc :message [:white :blue (str msg-txt num-lines " lines --" (int (/ (* line-no 100) num-lines)) "%--")])
                 (assoc :message [:white :blue (str msg-txt "--No lines in buffer--")]))))
 
    "<C-R>" (fn+> [editor _]

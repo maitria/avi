@@ -33,7 +33,7 @@
                          (color/make :blue :black))
             line-text (or document-line "~")]
         (fill-rendition-line! rendition i shape [line-color line-text])))
-    (let [file-name (or (:name document) "[No Name]")
+    (let [file-name (or (:avi.document/name document) "[No Name]")
           {:keys [viewport-top] [i j] :point  } (get-in editor [:lenses lens])
           num-lines (count (:lines document))
           pos-txt (if (= viewport-top 0)

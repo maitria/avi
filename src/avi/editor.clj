@@ -8,6 +8,7 @@
             [packthread.lenses :as l]
             [avi.pervasive :refer :all]
             [avi.beep :as beep]
+            [avi.document]
             [avi.edit-context :as ec]
             [avi.edit-context
               [lines :as lines]]
@@ -31,7 +32,7 @@
   (let [text (if filename
                (try-load filename)
                "")]
-    {:name filename
+    {:avi.document/name filename
      :avi.document/text text
      :lines (lines/content text)
      :undo-log ()
