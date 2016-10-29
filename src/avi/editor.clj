@@ -22,19 +22,21 @@
 (defn- try-load
   [filename]
   (try
-    (lines/content (w/read-file w/*world* filename))
+    (w/read-file w/*world* filename)
     (catch FileNotFoundException e
-      [""])))
+     "")))
 
 (defn document
   [filename]
-  {:name filename
-   :lines (if filename
-            (try-load filename)
-            [""])
-   :undo-log ()
-   :redo-log ()
-   :in-transaction? false})
+  (let [text (if filename
+               (try-load filename)
+               "")]
+    {:name filename
+     :avi.document/text text
+     :lines (lines/content text)
+     :undo-log ()
+     :redo-log ()
+     :in-transaction? false}))
 
 (defn initial-editor
   [[lines columns] [filename]]
@@ -144,4 +146,5 @@
       (catch Throwable e
         (merge editor (ex-data e))))))
 
+;; ---------------------------------------------------------------------------
 ;; ---------------------------------------------------------------------------
