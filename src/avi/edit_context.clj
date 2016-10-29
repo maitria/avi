@@ -100,8 +100,8 @@
         (update-in [from-log] rest)
         adjust-viewport-to-contain-point))))
 
-(def undo (partial undo-or-redo :undo-log :redo-log "oldest"))
-(def redo (partial undo-or-redo :redo-log :undo-log "newest"))
+(def undo (partial undo-or-redo :avi.document/undo-log :avi.document/redo-log "oldest"))
+(def redo (partial undo-or-redo :avi.document/redo-log :avi.document/undo-log "newest"))
 
 ;; -- changing edit-context contents --
 

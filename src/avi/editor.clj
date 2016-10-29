@@ -35,8 +35,8 @@
     {:avi.document/name filename
      :avi.document/text text
      :lines (lines/content text)
-     :undo-log ()
-     :redo-log ()
+     :avi.document/undo-log ()
+     :avi.document/redo-log ()
      :avi.document/in-transaction? false}))
 
 (defn initial-editor
@@ -80,7 +80,10 @@
   :args (s/cat :editor ::editor
                :new-context (s/? any?))
   :ret ::editor)
-(let [document-keys #{:lines :undo-log :redo-log :avi.document/in-transaction?}
+(let [document-keys #{:lines
+                      :avi.document/undo-log
+                      :avi.document/redo-log
+                      :avi.document/in-transaction?}
       computed-keys #{:viewport-height}
       lens-keys #{:viewport-top :point :last-explicit-j}]
   (def edit-context
