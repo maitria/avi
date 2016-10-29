@@ -1,6 +1,7 @@
 (ns avi.edit-context
   (:require [packthread.core :refer :all]
             [avi.beep :as beep]
+            [avi.document]
             [avi.edit-context
               [change]
               [lines :as lines]
@@ -112,7 +113,7 @@
   [{[i] :point,
     lines :lines,
     :as edit-context}]
-  {:pre [(:in-transaction? edit-context)]}
+  {:pre [(:avi.document/in-transaction? edit-context)]}
   (+> edit-context
     (cond
       (= 1 (line-count edit-context))
@@ -137,7 +138,7 @@
   [{point :point,
     lines :lines,
     :as edit-context}]
-  {:pre [(:in-transaction? edit-context)]}
+  {:pre [(:avi.document/in-transaction? edit-context)]}
   (+> edit-context
     (if-let [pre (l/retreat point (lines/line-length lines))]
       (change pre point "" :left))))

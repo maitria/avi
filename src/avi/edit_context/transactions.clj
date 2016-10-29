@@ -6,14 +6,14 @@
   [{lines :lines,
     point :point,
     :as edit-context}]
-  (when (:in-transaction? edit-context)
+  (when (:avi.document/in-transaction? edit-context)
     (throw (Exception. "attempt to nest a transaction")))
   (+> edit-context
     (update-in [:undo-log] conj {:lines lines, :point point})
-    (assoc :in-transaction? true)))
+    (assoc :avi.document/in-transaction? true)))
 
 (defn commit
   [edit-context]
   (+> edit-context
-      (assoc :in-transaction? false
+      (assoc :avi.document/in-transaction? false
              :redo-log ())))
