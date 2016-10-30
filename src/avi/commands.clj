@@ -1,17 +1,17 @@
 (ns avi.commands
-  "Avi's command-line-mode commands.
+ "Avi's command-line-mode commands.
 
   Functions implemented in this namespace can be called by name from the colon
   prompt."
-  (:require [avi.documents]
-            [avi.edit-context :as ec]
-            [avi.edit-context
-              [lines :as lines]]
-            [avi.editor :as e]
-            [avi.layout.panes :as p]
-            [avi.world :as w]
-            [clojure.string :as string]
-            [packthread.core :refer :all]))
+ (:require [avi.documents]
+           [avi.edit-context :as ec]
+           [avi.edit-context
+             [lines :as lines]]
+           [avi.editor :as e]
+           [avi.layout.panes :as p]
+           [avi.world :as w]
+           [clojure.string :as string]
+           [packthread.core :refer :all]))
 
 (defn -NUMBER-
   "Special function which handles commands like `:42`"
@@ -49,4 +49,4 @@
   (+> editor
     (let [document-n (count (:avi.documents/documents editor))]
       (update :avi.documents/documents conj (avi.documents/load filename))
-      (assoc-in (conj (e/current-lens-path editor) :document) document-n))))
+      (assoc-in (conj (e/current-lens-path editor) :avi.lenses/document) document-n))))

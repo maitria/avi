@@ -1,10 +1,10 @@
 (ns avi.render
-  (:import [java.util Arrays])
-  (:require [clojure.set :refer [map-invert]]
-            [avi.editor :as e]
-            [avi.color :as color]
-            [avi.layout :as layout]
-            [avi.layout.panes :as p]))
+ (:import [java.util Arrays])
+ (:require [clojure.set :refer [map-invert]]
+           [avi.editor :as e]
+           [avi.color :as color]
+           [avi.layout :as layout]
+           [avi.layout.panes :as p]))
 
 (defn- point-position
   [{:keys [:avi.editor/mode] :as editor}]
@@ -26,7 +26,7 @@
         to-line (dec (+ i rows))
         document (get-in editor (e/current-document-path editor))]
     (doseq [i (range (inc (- to-line from-line)))]
-      (let [{:keys [viewport-top] document-number :document} (get-in editor [:lenses lens])
+      (let [{:keys [viewport-top] document-number :avi.lenses/document} (get-in editor [:lenses lens])
             document-line (get-in editor [:avi.documents/documents document-number :avi.documents/lines (+ i viewport-top)])
             line-color (if document-line
                          (color/make :white :black)

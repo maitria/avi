@@ -1,5 +1,5 @@
 (ns avi.lenses
-  (:require [clojure.spec :as s]))
+ (:require [clojure.spec :as s]))
 
 (s/def ::document :avi.documents/document-ref)
 (s/def ::viewport-top nat-int?)

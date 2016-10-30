@@ -1,21 +1,21 @@
 (ns avi.editor
-  "Functions (including basse responders, middleware, and utilties) for
+ "Functions (including basse responders, middleware, and utilties) for
     manipulating the editor map."
-  (:import (java.io FileNotFoundException))
-  (:require [clojure.spec :as s]
-            [clojure.set :as set]
-            [packthread.core :refer :all]
-            [packthread.lenses :as l]
-            [avi.pervasive :refer :all]
-            [avi.beep :as beep]
-            [avi.documents]
-            [avi.edit-context :as ec]
-            [avi.edit-context
-              [lines :as lines]]
-            [avi.layout :as layout]
-            [avi.layout.panes :as p]
-            [avi.lenses]
-            [avi.world :as w]))
+ (:import (java.io FileNotFoundException))
+ (:require [clojure.spec :as s]
+           [clojure.set :as set]
+           [packthread.core :refer :all]
+           [packthread.lenses :as l]
+           [avi.pervasive :refer :all]
+           [avi.beep :as beep]
+           [avi.documents]
+           [avi.edit-context :as ec]
+           [avi.edit-context
+             [lines :as lines]]
+           [avi.layout :as layout]
+           [avi.layout.panes :as p]
+           [avi.lenses]
+           [avi.world :as w]))
 
 (s/def ::mode keyword?)
 (s/def ::editor
@@ -30,7 +30,7 @@
   [[lines columns] [filename]]
   {::mode :normal
    :avi.documents/documents [(avi.documents/load filename)]
-   :lenses {0 {:document 0
+   :lenses {0 {:avi.lenses/document 0
                :viewport-top 0
                :point [0 0]
                :last-explicit-j 0}}
@@ -61,7 +61,7 @@
 
 (defn current-document-path
   [editor]
-  [:avi.documents/documents (:document (current-lens editor))])
+  [:avi.documents/documents (:avi.lenses/document (current-lens editor))])
 
 (s/fdef edit-context
   :args (s/cat :editor ::editor
