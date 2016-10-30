@@ -1,10 +1,10 @@
 (ns avi.documents
-  (:refer-clojure :exclude [load])
-  (:require [clojure.spec :as s]
-            [avi.edit-context
-             [lines :as lines]]
-            [avi.world :as w])
-  (:import (java.io FileNotFoundException)))
+ (:refer-clojure :exclude [load])
+ (:require [clojure.spec :as s]
+           [avi.edit-context
+            [lines :as lines]]
+           [avi.world :as w])
+ (:import (java.io FileNotFoundException)))
 
 (s/def ::name string?)
 (s/def ::text string?)
@@ -20,7 +20,10 @@
                                 ::undo-log
                                 ::redo-log]))
 (s/def ::documents (s/coll-of ::document :into vector?))
+(s/def ::document-ref nat-int?)
+
 (s/def ::editor (s/keys :req [::documents]))
+
 
 (defn- try-load
   [filename]

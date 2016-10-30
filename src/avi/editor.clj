@@ -14,6 +14,7 @@
               [lines :as lines]]
             [avi.layout :as layout]
             [avi.layout.panes :as p]
+            [avi.lenses]
             [avi.world :as w]))
 
 (s/def ::mode keyword?)
