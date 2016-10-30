@@ -35,7 +35,7 @@
             line-text (or document-line "~")]
         (fill-rendition-line! rendition i shape [line-color line-text])))
     (let [file-name (or (:avi.documents/name document) "[No Name]")
-          {:keys [:avi.lenses/viewport-top] [i j] :point} (get-in editor [:lenses lens])
+          {:keys [:avi.lenses/viewport-top] [i j] :avi.lenses/point} (get-in editor [:lenses lens])
           num-lines (count (:avi.documents/lines document))
           pos-txt (if (= viewport-top 0)
                     (str "Top")

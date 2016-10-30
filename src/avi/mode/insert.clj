@@ -17,12 +17,12 @@
         ec/start-transaction)))
 
 (defn advance-for-append
-  [{[i j] :point, lines :avi.documents/lines :as edit-context}]
-  (assoc edit-context :point [i (min (count (get lines i)) (inc j))]))
+  [{[i j] :avi.lenses/point, lines :avi.documents/lines :as edit-context}]
+  (assoc edit-context :avi.lenses/point [i (min (count (get lines i)) (inc j))]))
 
 (defn move-to-eol
-  [{[i] :point, lines :avi.documents/lines :as edit-context}]
-  (assoc edit-context :point [i (count (get lines i))]))
+  [{[i] :avi.lenses/point, lines :avi.documents/lines :as edit-context}]
+  (assoc edit-context :avi.lenses/point [i (count (get lines i))]))
 
 (def mappings-which-enter-insert-mode
   {"a" ^:no-repeat (fn+> [editor spec]
@@ -34,7 +34,7 @@
                      (enter-insert-mode spec))
 
    "o" ^:no-repeat (fn+> [editor spec]
-                     (let [{:keys [:avi.documents/lines] [i] :point} (e/edit-context editor)
+                     (let [{:keys [:avi.documents/lines] [i] :avi.lenses/point} (e/edit-context editor)
                            eol (count (get lines i))]
                        (enter-insert-mode spec [[:keystroke "<Enter>"]])
                        (in e/edit-context
@@ -47,7 +47,7 @@
                          move-to-eol))
 
    "O" ^:no-repeat (fn+> [editor spec]
-                     (let [{[i] :point} (e/edit-context editor)]
+                     (let [{[i] :avi.lenses/point} (e/edit-context editor)]
                        (enter-insert-mode spec [[:keystroke "<Enter>"]])
                        (in e/edit-context
                            (ec/change [i 0] [i 0] "\n" :left)
@@ -67,7 +67,7 @@
       beep/beep
       (in e/edit-context
           (if (= event-data "<BS>")
-            (if (= [0 0] (:point (e/edit-context editor)))
+            (if (= [0 0] (:avi.lenses/point (e/edit-context editor)))
               beep/beep
               ec/backspace)
             (ec/insert-text (key->text event-data)))))))
@@ -93,7 +93,7 @@
   [editor]
   (+> editor
     (let [b (e/edit-context editor)
-          [i j] (:point b)
+          [i j] (:avi.lenses/point b)
           new-j (max (dec j) 0)]
       (in e/edit-context
         (ec/operate {:operator :move-point
@@ -133,7 +133,7 @@
   (e/keystroke-middleware "<Right>"
     (fn+> [editor]
       (assoc :insert-mode-state {:count 1})
-      (let [{[i j] :point lines :avi.documents/lines} (e/edit-context editor)
+      (let [{[i j] :avi.lenses/point lines :avi.documents/lines} (e/edit-context editor)
              eol (dec (count (get lines i)))]
         (in e/edit-context
           (if (<= eol j)

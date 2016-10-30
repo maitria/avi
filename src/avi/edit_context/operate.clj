@@ -17,15 +17,15 @@
     (:operator params)))
 
 (defn clamped-j
-  [{[i] :point,
+  [{[i] :avi.lenses/point,
     :keys [:avi.documents/lines]}
    j]
   (max 0 (min j (dec (count (get lines i))))))
 
 (defn clamp-point-j
-  [{[i j] :point,
+  [{[i j] :avi.lenses/point,
     :as edit-context}]
-  (assoc edit-context :point [i (clamped-j edit-context j)]))
+  (assoc edit-context :avi.lenses/point [i (clamped-j edit-context j)]))
 
 (defmulti adjust-for-span
   "Per vim docs, \"inclusive\" motions include the last character of the range
@@ -64,7 +64,11 @@
   [start [ei (or ej last-explicit-j)]])
 
 (defn resolve-range
-  [{:keys [:avi.documents/lines point :avi.lenses/last-explicit-j] :as edit-context} {:keys [span] :as operation}]
+  [{:keys [:avi.documents/lines
+           :avi.lenses/point
+           :avi.lenses/last-explicit-j]
+    :as edit-context}
+   {:keys [span] :as operation}]
   (when-let [range (resolve/resolve-motion edit-context operation)]
     (-> range
       (fix-last-explicit-j edit-context)
@@ -80,14 +84,14 @@
       (if-not pos
         beep/beep)
       (when pos
-        (assoc :point [i j])
+        (assoc :avi.lenses/point [i j])
         (if set-last-explicit?
           (assoc :avi.lenses/last-explicit-j j))
         clamp-point-j
         c/adjust-viewport-to-contain-point))))
 
 (defmethod operate :delete
-  [{start :point :keys [:avi.documents/lines] :as edit-context} operation]
+  [{start :avi.lenses/point :keys [:avi.documents/lines] :as edit-context} operation]
   (+> edit-context
     (if-let [[start end] (resolve-range edit-context operation)]
       (do

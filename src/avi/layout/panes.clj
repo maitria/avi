@@ -140,7 +140,7 @@
   [editor]
   (let [{:keys [::lens] [[pi pj] _] :avi.layout/shape :as pane}
         (current-pane editor)
-        {:keys [:avi.lenses/viewport-top] [i j] :point} (get-in editor [:lenses lens])]
+        {:keys [:avi.lenses/viewport-top] [i j] :avi.lenses/point} (get-in editor [:lenses lens])]
     [(+ (- i viewport-top) pi)
      (+ pj j)]))
 

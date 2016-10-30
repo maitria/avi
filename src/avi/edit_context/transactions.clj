@@ -4,12 +4,12 @@
             [packthread.core :refer :all]))
 
 (defn start-transaction
-  [{:keys [point :avi.documents/lines]
+  [{:keys [:avi.lenses/point :avi.documents/lines]
     :as edit-context}]
   (when (:avi.documents/in-transaction? edit-context)
     (throw (Exception. "attempt to nest a transaction")))
   (+> edit-context
-    (update-in [:avi.documents/undo-log] conj {:avi.documents/lines lines, :point point})
+    (update-in [:avi.documents/undo-log] conj {:avi.documents/lines lines, :avi.lenses/point point})
     (assoc :avi.documents/in-transaction? true)))
 
 (defn commit

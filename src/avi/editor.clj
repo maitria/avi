@@ -32,7 +32,7 @@
    :avi.documents/documents [(avi.documents/load filename)]
    :lenses {0 {:avi.lenses/document 0
                :avi.lenses/viewport-top 0
-               :point [0 0]
+               :avi.lenses/point [0 0]
                :avi.lenses/last-explicit-j 0}}
    ::p/tree {:avi.layout.panes/lens 0}
    ::p/path []
@@ -72,7 +72,7 @@
                       :avi.documents/redo-log
                       :avi.documents/in-transaction?}
       computed-keys #{:viewport-height}
-      lens-keys #{:avi.lenses/viewport-top :point :avi.lenses/last-explicit-j}]
+      lens-keys #{:avi.lenses/viewport-top :avi.lenses/point :avi.lenses/last-explicit-j}]
   (def edit-context
     "Perform some action in an \"edit context\".
 

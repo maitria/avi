@@ -98,7 +98,7 @@
       (last-possible edit-context operation))))
 
 (defmethod resolve/resolve-motion :word
-  [{:keys [:avi.documents/lines point] :as edit-context}
+  [{:keys [:avi.documents/lines :avi.lenses/point] :as edit-context}
    {:keys [operator]
     [_ {:keys [weird-delete-clip? type]}] :motion
     n :count
@@ -125,6 +125,6 @@
                                               :direction :backward}]})
 
 (defmethod resolve/resolve-motion :in-word
-  [{:keys [:avi.documents/lines point] :as edit-context} _]
+  [{:keys [:avi.documents/lines :avi.lenses/point] :as edit-context} _]
   [(move-word edit-context start-of-word-motion point)
    (move-word edit-context end-of-word-motion point)])

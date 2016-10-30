@@ -130,7 +130,7 @@
                      (let [n (or (:count spec) 2)]
                        (in e/edit-context
                            ec/start-transaction
-                           (n-times (dec n) (fn+> [{:keys [:avi.documents/lines] [i] :point}]
+                           (n-times (dec n) (fn+> [{:keys [:avi.documents/lines] [i] :avi.lenses/point}]
                                               (let [start-j (count (get lines i))]
                                                 (ec/change [i start-j] [(inc i) 0] " " :left)
                                                 (ec/operate {:operator :move-point
@@ -150,7 +150,7 @@
 
    "<C-G>" (fn+> [editor _]
             (let [edit-context (e/edit-context editor)
-                  [i] (:point edit-context)
+                  [i] (:avi.lenses/point edit-context)
                   document (get-in editor (e/current-document-path editor))
                   num-lines (count (:avi.documents/lines document))
                   line-no (inc i)
@@ -165,7 +165,7 @@
 
    "<C-U>" (fn+> [editor _]
              (let [edit-context (e/edit-context editor)
-                   [i] (:point edit-context)]
+                   [i] (:avi.lenses/point edit-context)]
                (if (zero? i)
                  beep/beep
                  (in e/edit-context

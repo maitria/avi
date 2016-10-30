@@ -10,7 +10,7 @@
 
 (defmethod magic-row-value :current
   [edit-context _ offset]
-  (+ (get-in edit-context [:point 0]) (or offset 0)))
+  (+ (get-in edit-context [:avi.lenses/point 0]) (or offset 0)))
 
 (defmulti magic-column-value
   (fn [edit-context kind row param]
@@ -56,7 +56,7 @@
     :else       (f v nil)))
 
 (defmethod resolve/resolve-motion :goto
-  [{:keys [:avi.documents/lines] [i j] :point :as edit-context} {[_ [goto-i goto-j]] :motion}]
+  [{:keys [:avi.documents/lines] [i j] :avi.lenses/point :as edit-context} {[_ [goto-i goto-j]] :motion}]
   (if-let [new-i (some->> (absolutize goto-i #(magic-row-value edit-context %1 %2))
                    (clamp-point-row edit-context))]
     (if-not goto-j
@@ -66,20 +66,20 @@
           [[i j] [new-i new-j]])))))
 
 (defmethod resolve/resolve-motion :down
-  [{:keys [:avi.documents/lines] [i j] :point :as edit-context} {:keys [count]}]
+  [{:keys [:avi.documents/lines] [i j] :avi.lenses/point :as edit-context} {:keys [count]}]
   (let [new-i (+ i (or count 1))
         clamped-i (clamp-point-row edit-context new-i)]
     (if (get lines (inc i))
       [[i j] [clamped-i]])))
 
 (defmethod resolve/resolve-motion :up
-  [{[i j] :point :as edit-context} {:keys [count]}]
+  [{[i j] :avi.lenses/point :as edit-context} {:keys [count]}]
   (let [new-i (clamp-point-row edit-context (- i (or count 1)))]
     (if-not (neg? (dec i))
       [[i j] [new-i]])))
 
 (defmethod resolve/resolve-motion :right
-  [{:keys [:avi.documents/lines] [i j] :point} {:keys [operator] n :count}]
+  [{:keys [:avi.documents/lines] [i j] :avi.lenses/point} {:keys [operator] n :count}]
   (let [column (+ j (or n 1))
         max-j (cond-> (count (get lines i))
                 (= :move-point operator)
@@ -89,13 +89,13 @@
       [[i j] [i column]])))
 
 (defmethod resolve/resolve-motion :left
-  [{:keys [:avi.documents/lines] [i j] :point} {n :count}]
+  [{:keys [:avi.documents/lines] [i j] :avi.lenses/point} {n :count}]
   (let [column (max 0 (- j (or n 1)))]
     (if-not (= j column)
       [[i j] [i column]])))
 
 (defmethod resolve/resolve-motion :goto-line
-  [{:keys [:avi.documents/lines :avi.lenses/viewport-top viewport-height] [si sj] :point :as edit-context}
+  [{:keys [:avi.documents/lines :avi.lenses/viewport-top viewport-height] [si sj] :avi.lenses/point :as edit-context}
    {count-register :count,
     [_ {:keys [from default-line multiplier]
         :or {default-line 0
@@ -119,7 +119,7 @@
     [[si sj] [i (first-non-blank edit-context i)]]))
 
 (defmethod resolve/resolve-motion :move-to-char
-  [{[i j] :point :as edit-context} 
+  [{[i j] :avi.lenses/point :as edit-context} 
    {ch :char
     n :count
     [_ {:keys [direction offset]

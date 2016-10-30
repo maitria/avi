@@ -32,7 +32,7 @@
 
 (defn- adjust-point-to-viewport
   [{:keys [:avi.lenses/viewport-top viewport-height]
-    [i] :point
+    [i] :avi.lenses/point
     :as edit-context}]
   (+> edit-context
     (let [viewport-bottom (dec (+ viewport-top viewport-height))]
@@ -53,7 +53,7 @@
 
 (defn on-last-line?
   [edit-context]
-  (let [[i] (:point edit-context)
+  (let [[i] (:avi.lenses/point edit-context)
         line-count (line-count edit-context)]
     (= i (dec line-count))))
 
@@ -69,7 +69,7 @@
 (defn move-and-scroll-half-page
   [{top :avi.lenses/viewport-top,
     height :viewport-height,
-    [i] :point,
+    [i] :avi.lenses/point,
     :as edit-context}
    which-way]
   (+> edit-context
@@ -88,13 +88,13 @@
   [from-log
    to-log
    last-name
-   {:keys [:avi.documents/lines point]
+   {:keys [:avi.documents/lines :avi.lenses/point]
     :as edit-context}]
   (+> edit-context
     (if-not (seq (from-log edit-context))
       (beep/beep (str "Already at the " last-name " change"))
       (do
-        (update-in [to-log] conj {:avi.documents/lines lines, :point point})
+        (update-in [to-log] conj {:avi.documents/lines lines, :avi.lenses/point point})
         (merge (first (from-log edit-context)))
         (update-in [from-log] rest)
         adjust-viewport-to-contain-point))))
@@ -105,11 +105,11 @@
 ;; -- changing edit-context contents --
 
 (defn insert-text
-  [{point :point, :as lines-and-text} text]
+  [{point :avi.lenses/point, :as lines-and-text} text]
   (change lines-and-text point point text :right))
 
 (defn delete-current-line
-  [{[i] :point,
+  [{[i] :avi.lenses/point,
     :keys [:avi.documents/lines]
     :as edit-context}]
   {:pre [(:avi.documents/in-transaction? edit-context)]}
@@ -134,7 +134,7 @@
                   :motion [:goto [i :first-non-blank]]})))))
 
 (defn backspace
-  [{:keys [point :avi.documents/lines]
+  [{:keys [:avi.lenses/point :avi.documents/lines]
     :as edit-context}]
   {:pre [(:avi.documents/in-transaction? edit-context)]}
   (+> edit-context

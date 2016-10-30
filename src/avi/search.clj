@@ -21,7 +21,7 @@
 
 (defn scanner
   [succ which pred reset]
-  (fn [{:keys [:avi.documents/lines] [start-i start-j] :point} re]
+  (fn [{:keys [:avi.documents/lines] [start-i start-j] :avi.lenses/point} re]
     (loop [n (inc (count lines))
            i start-i
            j (succ start-j)]
