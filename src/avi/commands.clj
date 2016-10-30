@@ -47,6 +47,6 @@
   {:type-hints [:avi.mode.command-line/string]}
   [editor filename]
   (+> editor
-    (let [document-n (count (:documents editor))]
-      (update :documents conj (avi.document/load filename))
+    (let [document-n (count (:avi.document/documents editor))]
+      (update :avi.document/documents conj (avi.document/load filename))
       (assoc-in (conj (e/current-lens-path editor) :document) document-n))))

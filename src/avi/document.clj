@@ -19,6 +19,8 @@
                                 ::in-transaction?
                                 ::undo-log
                                 ::redo-log]))
+(s/def ::documents (s/coll-of ::document :into vector?))
+(s/def ::editor (s/keys :req [::documents]))
 
 (defn- try-load
   [filename]

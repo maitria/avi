@@ -17,15 +17,18 @@
             [avi.world :as w]))
 
 (s/def ::mode keyword?)
-(s/def ::editor (s/merge (s/keys :req [::mode])
-                         ::p/editor))
+(s/def ::editor
+  (s/merge
+    (s/keys :req [::mode])
+    :avi.document/editor
+    ::p/editor))
 
 ;; -- Initial state ----------------------------------------------------------
 
 (defn initial-editor
   [[lines columns] [filename]]
   {::mode :normal
-   :documents [(avi.document/load filename)]
+   :avi.document/documents [(avi.document/load filename)]
    :lenses {0 {:document 0
                :viewport-top 0
                :point [0 0]
@@ -57,7 +60,7 @@
 
 (defn current-document-path
   [editor]
-  [:documents (:document (current-lens editor))])
+  [:avi.document/documents (:document (current-lens editor))])
 
 (s/fdef edit-context
   :args (s/cat :editor ::editor

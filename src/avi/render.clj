@@ -27,7 +27,7 @@
         document (get-in editor (e/current-document-path editor))]
     (doseq [i (range (inc (- to-line from-line)))]
       (let [{:keys [viewport-top] document-number :document} (get-in editor [:lenses lens])
-            document-line (get-in editor [:documents document-number :avi.document/lines (+ i viewport-top)])
+            document-line (get-in editor [:avi.document/documents document-number :avi.document/lines (+ i viewport-top)])
             line-color (if document-line
                          (color/make :white :black)
                          (color/make :blue :black))
