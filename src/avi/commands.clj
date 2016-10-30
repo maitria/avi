@@ -27,7 +27,7 @@
 (defn w
   [editor]
   (let [{filename :avi.document/name,
-         :keys [lines]} (get-in editor (e/current-document-path editor))]
+         :keys [:avi.document/lines]} (get-in editor (e/current-document-path editor))]
     (w/write-file w/*world* filename (string/join "\n" lines))
     editor))
 

@@ -24,11 +24,11 @@
 
 (defn line
   [edit-context i]
-  (-> edit-context :lines (get i)))
+  (-> edit-context :avi.document/lines (get i)))
 
 (defn line-count
   [edit-context]
-  (-> edit-context :lines count))
+  (-> edit-context :avi.document/lines count))
 
 (defn- adjust-point-to-viewport
   [{:keys [viewport-top viewport-height]
@@ -88,14 +88,13 @@
   [from-log
    to-log
    last-name
-   {lines :lines,
-    point :point,
+   {:keys [:avi.document/lines point]
     :as edit-context}]
   (+> edit-context
     (if-not (seq (from-log edit-context))
       (beep/beep (str "Already at the " last-name " change"))
       (do
-        (update-in [to-log] conj {:lines lines, :point point})
+        (update-in [to-log] conj {:avi.document/lines lines, :point point})
         (merge (first (from-log edit-context)))
         (update-in [from-log] rest)
         adjust-viewport-to-contain-point))))
@@ -111,7 +110,7 @@
 
 (defn delete-current-line
   [{[i] :point,
-    lines :lines,
+    :keys [:avi.document/lines]
     :as edit-context}]
   {:pre [(:avi.document/in-transaction? edit-context)]}
   (+> edit-context
@@ -135,8 +134,7 @@
                   :motion [:goto [i :first-non-blank]]})))))
 
 (defn backspace
-  [{point :point,
-    lines :lines,
+  [{:keys [point :avi.document/lines]
     :as edit-context}]
   {:pre [(:avi.document/in-transaction? edit-context)]}
   (+> edit-context

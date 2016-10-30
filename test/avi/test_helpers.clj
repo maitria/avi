@@ -138,10 +138,10 @@
                                        (get attrs (* i width))))
                                 (map color/description))
           result (->> (map vector lines line-annotations)
-             (keep-indexed (line-keeper line))
-             flatten
-             unwrap-single-value)]
-    (compare-result result expected "Failed set:"))))
+                  (keep-indexed (line-keeper line))
+                  flatten
+                  unwrap-single-value)]
+     (compare-result result expected "Failed set:"))))
 (defn line
   [line expected]
   (line-cmp line expected true))
@@ -160,7 +160,7 @@
 (defn contents
   [expected]
   (fn [editor]
-    (compare-result (string/join "\n" (:lines (e/edit-context (:editor editor)))) expected "Failed contents:")))
+    (compare-result (string/join "\n" (:avi.document/lines (e/edit-context (:editor editor)))) expected "Failed contents:")))
 
 (defn attributes
   [[i j] expected]
@@ -196,4 +196,4 @@
   (fn [{{{:keys [width chars]} :rendition} :editor}]
     (let [height (int (/ (count chars) width))
           size [height width]]
-    (compare-result size expected-size "Failed viewport-size:"))))
+     (compare-result size expected-size "Failed viewport-size:"))))

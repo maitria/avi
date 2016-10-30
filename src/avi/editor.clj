@@ -34,7 +34,7 @@
                "")]
     {:avi.document/name filename
      :avi.document/text text
-     :lines (lines/content text)
+     :avi.document/lines (lines/content text)
      :avi.document/undo-log ()
      :avi.document/redo-log ()
      :avi.document/in-transaction? false}))
@@ -80,7 +80,7 @@
   :args (s/cat :editor ::editor
                :new-context (s/? any?))
   :ret ::editor)
-(let [document-keys #{:lines
+(let [document-keys #{:avi.document/lines
                       :avi.document/undo-log
                       :avi.document/redo-log
                       :avi.document/in-transaction?}
@@ -150,5 +150,4 @@
       (catch Throwable e
         (merge editor (ex-data e))))))
 
-;; ---------------------------------------------------------------------------
 ;; ---------------------------------------------------------------------------

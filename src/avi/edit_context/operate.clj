@@ -18,7 +18,7 @@
 
 (defn clamped-j
   [{[i] :point,
-    :keys [lines]}
+    :keys [:avi.document/lines]}
    j]
   (max 0 (min j (dec (count (get lines i))))))
 
@@ -64,7 +64,7 @@
   [start [ei (or ej last-explicit-j)]])
 
 (defn resolve-range
-  [{:keys [lines point last-explicit-j] :as edit-context} {:keys [span] :as operation}]
+  [{:keys [:avi.document/lines point last-explicit-j] :as edit-context} {:keys [span] :as operation}]
   (when-let [range (resolve/resolve-motion edit-context operation)]
     (-> range
       (fix-last-explicit-j edit-context)
@@ -87,7 +87,7 @@
         c/adjust-viewport-to-contain-point))))
 
 (defmethod operate :delete
-  [{start :point :keys [lines] :as edit-context} operation]
+  [{start :point :keys [:avi.document/lines] :as edit-context} operation]
   (+> edit-context
     (if-let [[start end] (resolve-range edit-context operation)]
       (do
