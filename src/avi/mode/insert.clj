@@ -17,11 +17,11 @@
         ec/start-transaction)))
 
 (defn advance-for-append
-  [{[i j] :point, lines :avi.document/lines :as edit-context}]
+  [{[i j] :point, lines :avi.documents/lines :as edit-context}]
   (assoc edit-context :point [i (min (count (get lines i)) (inc j))]))
 
 (defn move-to-eol
-  [{[i] :point, lines :avi.document/lines :as edit-context}]
+  [{[i] :point, lines :avi.documents/lines :as edit-context}]
   (assoc edit-context :point [i (count (get lines i))]))
 
 (def mappings-which-enter-insert-mode
@@ -34,7 +34,7 @@
                      (enter-insert-mode spec))
 
    "o" ^:no-repeat (fn+> [editor spec]
-                     (let [{:keys [:avi.document/lines] [i] :point} (e/edit-context editor)
+                     (let [{:keys [:avi.documents/lines] [i] :point} (e/edit-context editor)
                            eol (count (get lines i))]
                        (enter-insert-mode spec [[:keystroke "<Enter>"]])
                        (in e/edit-context
@@ -133,7 +133,7 @@
   (e/keystroke-middleware "<Right>"
     (fn+> [editor]
       (assoc :insert-mode-state {:count 1})
-      (let [{[i j] :point lines :avi.document/lines} (e/edit-context editor)
+      (let [{[i j] :point lines :avi.documents/lines} (e/edit-context editor)
              eol (dec (count (get lines i)))]
         (in e/edit-context
           (if (<= eol j)

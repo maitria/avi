@@ -17,11 +17,11 @@
     kind))
 
 (defmethod magic-column-value :end-of-line
-  [{:keys [:avi.document/lines]} _ row _]
+  [{:keys [:avi.documents/lines]} _ row _]
   (bit-shift-right Long/MAX_VALUE 1))
 
 (defn first-non-blank
-  [{:keys [:avi.document/lines]} row]
+  [{:keys [:avi.documents/lines]} row]
   (let [string (get lines row)
         leading-space-count (count (re-find #"^\s*" string))
         all-spaces? (and (> leading-space-count 0)
@@ -35,7 +35,7 @@
   (first-non-blank edit-context row))
 
 (defn next-char-index
-  [{:keys [:avi.document/lines]} [i j] direction ch]
+  [{:keys [:avi.documents/lines]} [i j] direction ch]
   (let [line (get lines i)]
     (loop [nj (+ j direction)]
       (if-let [line-ch (get line nj)]
@@ -45,7 +45,7 @@
         nil))))
 
 (defn- clamp-point-row
-  [{:keys [:avi.document/lines]} row]
+  [{:keys [:avi.documents/lines]} row]
   (max 0 (min (dec (count lines)) row)))
 
 (defn- absolutize
@@ -56,7 +56,7 @@
     :else       (f v nil)))
 
 (defmethod resolve/resolve-motion :goto
-  [{:keys [:avi.document/lines] [i j] :point :as edit-context} {[_ [goto-i goto-j]] :motion}]
+  [{:keys [:avi.documents/lines] [i j] :point :as edit-context} {[_ [goto-i goto-j]] :motion}]
   (if-let [new-i (some->> (absolutize goto-i #(magic-row-value edit-context %1 %2))
                    (clamp-point-row edit-context))]
     (if-not goto-j
@@ -66,7 +66,7 @@
           [[i j] [new-i new-j]])))))
 
 (defmethod resolve/resolve-motion :down
-  [{:keys [:avi.document/lines] [i j] :point :as edit-context} {:keys [count]}]
+  [{:keys [:avi.documents/lines] [i j] :point :as edit-context} {:keys [count]}]
   (let [new-i (+ i (or count 1))
         clamped-i (clamp-point-row edit-context new-i)]
     (if (get lines (inc i))
@@ -79,7 +79,7 @@
       [[i j] [new-i]])))
 
 (defmethod resolve/resolve-motion :right
-  [{:keys [:avi.document/lines] [i j] :point} {:keys [operator] n :count}]
+  [{:keys [:avi.documents/lines] [i j] :point} {:keys [operator] n :count}]
   (let [column (+ j (or n 1))
         max-j (cond-> (count (get lines i))
                 (= :move-point operator)
@@ -89,13 +89,13 @@
       [[i j] [i column]])))
 
 (defmethod resolve/resolve-motion :left
-  [{:keys [:avi.document/lines] [i j] :point} {n :count}]
+  [{:keys [:avi.documents/lines] [i j] :point} {n :count}]
   (let [column (max 0 (- j (or n 1)))]
     (if-not (= j column)
       [[i j] [i column]])))
 
 (defmethod resolve/resolve-motion :goto-line
-  [{:keys [:avi.document/lines viewport-top viewport-height] [si sj] :point :as edit-context}
+  [{:keys [:avi.documents/lines viewport-top viewport-height] [si sj] :point :as edit-context}
    {count-register :count,
     [_ {:keys [from default-line multiplier]
         :or {default-line 0

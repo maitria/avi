@@ -8,7 +8,7 @@
             [packthread.lenses :as l]
             [avi.pervasive :refer :all]
             [avi.beep :as beep]
-            [avi.document]
+            [avi.documents]
             [avi.edit-context :as ec]
             [avi.edit-context
               [lines :as lines]]
@@ -20,7 +20,7 @@
 (s/def ::editor
   (s/merge
     (s/keys :req [::mode])
-    :avi.document/editor
+    :avi.documents/editor
     ::p/editor))
 
 ;; -- Initial state ----------------------------------------------------------
@@ -28,7 +28,7 @@
 (defn initial-editor
   [[lines columns] [filename]]
   {::mode :normal
-   :avi.document/documents [(avi.document/load filename)]
+   :avi.documents/documents [(avi.documents/load filename)]
    :lenses {0 {:document 0
                :viewport-top 0
                :point [0 0]
@@ -60,16 +60,16 @@
 
 (defn current-document-path
   [editor]
-  [:avi.document/documents (:document (current-lens editor))])
+  [:avi.documents/documents (:document (current-lens editor))])
 
 (s/fdef edit-context
   :args (s/cat :editor ::editor
                :new-context (s/? any?))
   :ret ::editor)
-(let [document-keys #{:avi.document/lines
-                      :avi.document/undo-log
-                      :avi.document/redo-log
-                      :avi.document/in-transaction?}
+(let [document-keys #{:avi.documents/lines
+                      :avi.documents/undo-log
+                      :avi.documents/redo-log
+                      :avi.documents/in-transaction?}
       computed-keys #{:viewport-height}
       lens-keys #{:viewport-top :point :last-explicit-j}]
   (def edit-context

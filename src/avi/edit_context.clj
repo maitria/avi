@@ -1,7 +1,7 @@
 (ns avi.edit-context
   (:require [packthread.core :refer :all]
             [avi.beep :as beep]
-            [avi.document]
+            [avi.documents]
             [avi.edit-context
               [change]
               [lines :as lines]
@@ -24,11 +24,11 @@
 
 (defn line
   [edit-context i]
-  (-> edit-context :avi.document/lines (get i)))
+  (-> edit-context :avi.documents/lines (get i)))
 
 (defn line-count
   [edit-context]
-  (-> edit-context :avi.document/lines count))
+  (-> edit-context :avi.documents/lines count))
 
 (defn- adjust-point-to-viewport
   [{:keys [viewport-top viewport-height]
@@ -88,19 +88,19 @@
   [from-log
    to-log
    last-name
-   {:keys [:avi.document/lines point]
+   {:keys [:avi.documents/lines point]
     :as edit-context}]
   (+> edit-context
     (if-not (seq (from-log edit-context))
       (beep/beep (str "Already at the " last-name " change"))
       (do
-        (update-in [to-log] conj {:avi.document/lines lines, :point point})
+        (update-in [to-log] conj {:avi.documents/lines lines, :point point})
         (merge (first (from-log edit-context)))
         (update-in [from-log] rest)
         adjust-viewport-to-contain-point))))
 
-(def undo (partial undo-or-redo :avi.document/undo-log :avi.document/redo-log "oldest"))
-(def redo (partial undo-or-redo :avi.document/redo-log :avi.document/undo-log "newest"))
+(def undo (partial undo-or-redo :avi.documents/undo-log :avi.documents/redo-log "oldest"))
+(def redo (partial undo-or-redo :avi.documents/redo-log :avi.documents/undo-log "newest"))
 
 ;; -- changing edit-context contents --
 
@@ -110,9 +110,9 @@
 
 (defn delete-current-line
   [{[i] :point,
-    :keys [:avi.document/lines]
+    :keys [:avi.documents/lines]
     :as edit-context}]
-  {:pre [(:avi.document/in-transaction? edit-context)]}
+  {:pre [(:avi.documents/in-transaction? edit-context)]}
   (+> edit-context
     (cond
       (= 1 (line-count edit-context))
@@ -134,9 +134,9 @@
                   :motion [:goto [i :first-non-blank]]})))))
 
 (defn backspace
-  [{:keys [point :avi.document/lines]
+  [{:keys [point :avi.documents/lines]
     :as edit-context}]
-  {:pre [(:avi.document/in-transaction? edit-context)]}
+  {:pre [(:avi.documents/in-transaction? edit-context)]}
   (+> edit-context
     (if-let [pre (l/retreat point (lines/line-length lines))]
       (change pre point "" :left))))

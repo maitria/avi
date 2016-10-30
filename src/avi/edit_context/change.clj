@@ -23,7 +23,7 @@
   [{:keys [point] :as edit-context} a b replacement bias]
   (+> edit-context
     (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
-      (update-in [:avi.document/lines] lines/replace a b replacement)
+      (update-in [:avi.documents/lines] lines/replace a b replacement)
       (if new-point
         (assoc :point new-point :last-explicit-j j))
       adjust-viewport-to-contain-point)))

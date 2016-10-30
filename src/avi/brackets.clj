@@ -22,7 +22,7 @@
 (def ^:private brackets (into #{} (concat (keys bracket-map) (vals bracket-map))))
 
 (defn- go-to-matching-bracket
-  [{[i j] :point lines :avi.document/lines :as edit-context}]
+  [{[i j] :point lines :avi.documents/lines :as edit-context}]
   (+> edit-context
     (let [bracket (get-in lines [i j])
           open-bracket? (open-brackets bracket)

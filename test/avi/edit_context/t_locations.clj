@@ -44,7 +44,7 @@
              :let [i (mod i-base (count lines))]
              j-base gen/pos-int
              :let [j (mod j-base (inc (count (get lines i))))]]
-    {:avi.document/lines lines
+    {:avi.documents/lines lines
      :position [i j]}))
 
 (def line-length-generator
@@ -57,11 +57,11 @@
                           j (last line-length)]]
       (nil? (advance [i j] #(get line-length %)))))
   (property "advance position always increases" 55
-    (prop/for-all [{:keys [:avi.document/lines position]} lines-and-position-generator]
+    (prop/for-all [{:keys [:avi.documents/lines position]} lines-and-position-generator]
       (or (nil? (advance position (lines/line-length lines)))
           (location< position (advance position (lines/line-length lines))))))
   (property "advance never skips a line" 55 
-    (prop/for-all [{lines :avi.document/lines [i j] :position} lines-and-position-generator]
+    (prop/for-all [{lines :avi.documents/lines [i j] :position} lines-and-position-generator]
       (or (nil? (advance [i j] (lines/line-length lines)))
           (= i (first (advance [i j] (lines/line-length lines))))
           (= (inc i) (first (advance [i j] (lines/line-length lines)))))))
@@ -77,7 +77,7 @@
     (prop/for-all [line-length line-length-generator]
       (nil? (retreat [0 0] line-length))))
   (property "retreat position always decreases"
-    (prop/for-all [{:keys [:avi.document/lines position]} lines-and-position-generator]
+    (prop/for-all [{:keys [:avi.documents/lines position]} lines-and-position-generator]
       (or (nil? (retreat position (lines/line-length lines)))
           (location< (retreat position (lines/line-length lines)) position))))
   (property "retreat at bol goes to newline position"
@@ -87,7 +87,7 @@
       (= (retreat [i 0] line-length)
          [(dec i) (line-length (dec i))])))
   (property "retreat never skips a line"
-    (prop/for-all [{lines :avi.document/lines [i j] :position} lines-and-position-generator]
+    (prop/for-all [{lines :avi.documents/lines [i j] :position} lines-and-position-generator]
       (or (nil? (retreat [i j] (lines/line-length lines)))
           (= i (first (retreat [i j] (lines/line-length lines))))
           (= (dec i) (first (retreat [i j] (lines/line-length lines))))))))

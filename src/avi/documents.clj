@@ -1,4 +1,4 @@
-(ns avi.document
+(ns avi.documents
   (:refer-clojure :exclude [load])
   (:require [clojure.spec :as s]
             [avi.edit-context

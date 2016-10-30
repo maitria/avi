@@ -130,7 +130,7 @@
                      (let [n (or (:count spec) 2)]
                        (in e/edit-context
                            ec/start-transaction
-                           (n-times (dec n) (fn+> [{:keys [:avi.document/lines] [i] :point}]
+                           (n-times (dec n) (fn+> [{:keys [:avi.documents/lines] [i] :point}]
                                               (let [start-j (count (get lines i))]
                                                 (ec/change [i start-j] [(inc i) 0] " " :left)
                                                 (ec/operate {:operator :move-point
@@ -152,10 +152,10 @@
             (let [edit-context (e/edit-context editor)
                   [i] (:point edit-context)
                   document (get-in editor (e/current-document-path editor))
-                  num-lines (count (:avi.document/lines document))
+                  num-lines (count (:avi.documents/lines document))
                   line-no (inc i)
-                  msg-txt (str "\"" (or (:avi.document/name document) "[No Name]") "\"\t")]
-              (if (not= (:avi.document/lines document) [""])
+                  msg-txt (str "\"" (or (:avi.documents/name document) "[No Name]") "\"\t")]
+              (if (not= (:avi.documents/lines document) [""])
                 (assoc :message [:white :blue (str msg-txt num-lines " lines --" (int (/ (* line-no 100) num-lines)) "%--")])
                 (assoc :message [:white :blue (str msg-txt "--No lines in buffer--")]))))
 

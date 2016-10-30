@@ -1,19 +1,19 @@
 (ns avi.edit-context.transactions
   (:require [avi.beep :as beep]
-            [avi.document]
+            [avi.documents]
             [packthread.core :refer :all]))
 
 (defn start-transaction
-  [{:keys [point :avi.document/lines]
+  [{:keys [point :avi.documents/lines]
     :as edit-context}]
-  (when (:avi.document/in-transaction? edit-context)
+  (when (:avi.documents/in-transaction? edit-context)
     (throw (Exception. "attempt to nest a transaction")))
   (+> edit-context
-    (update-in [:avi.document/undo-log] conj {:avi.document/lines lines, :point point})
-    (assoc :avi.document/in-transaction? true)))
+    (update-in [:avi.documents/undo-log] conj {:avi.documents/lines lines, :point point})
+    (assoc :avi.documents/in-transaction? true)))
 
 (defn commit
   [edit-context]
   (+> edit-context
-      (assoc :avi.document/in-transaction? false
-             :avi.document/redo-log ())))
+      (assoc :avi.documents/in-transaction? false
+             :avi.documents/redo-log ())))

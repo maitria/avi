@@ -57,7 +57,7 @@
     nfa))
 
 (defn last-possible
-  [{:keys [:avi.document/lines]} {:keys [operator] [_ {:keys [direction]}] :motion}]
+  [{:keys [:avi.documents/lines]} {:keys [operator] [_ {:keys [direction]}] :motion}]
   (if (= direction :backward)
     [0 0]
     (let [i (dec (count lines))
@@ -79,7 +79,7 @@
           (recur (next stream) state'))))))
 
 (defn move-word
-  [{:keys [:avi.document/lines] :as edit-context}
+  [{:keys [:avi.documents/lines] :as edit-context}
    {[_ {:keys [empty-lines? position-in-word big? direction]}] :motion, :as operation}
    [i j]]
   (let [nfa-type (case [position-in-word direction]
@@ -98,7 +98,7 @@
       (last-possible edit-context operation))))
 
 (defmethod resolve/resolve-motion :word
-  [{:keys [:avi.document/lines point] :as edit-context}
+  [{:keys [:avi.documents/lines point] :as edit-context}
    {:keys [operator]
     [_ {:keys [weird-delete-clip? type]}] :motion
     n :count
@@ -125,6 +125,6 @@
                                               :direction :backward}]})
 
 (defmethod resolve/resolve-motion :in-word
-  [{:keys [:avi.document/lines point] :as edit-context} _]
+  [{:keys [:avi.documents/lines point] :as edit-context} _]
   [(move-word edit-context start-of-word-motion point)
    (move-word edit-context end-of-word-motion point)])

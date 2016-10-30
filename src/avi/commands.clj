@@ -3,7 +3,7 @@
 
   Functions implemented in this namespace can be called by name from the colon
   prompt."
-  (:require [avi.document]
+  (:require [avi.documents]
             [avi.edit-context :as ec]
             [avi.edit-context
               [lines :as lines]]
@@ -27,8 +27,8 @@
 
 (defn w
   [editor]
-  (let [{filename :avi.document/name,
-         :keys [:avi.document/lines]} (get-in editor (e/current-document-path editor))]
+  (let [{filename :avi.documents/name,
+         :keys [:avi.documents/lines]} (get-in editor (e/current-document-path editor))]
     (w/write-file w/*world* filename (string/join "\n" lines))
     editor))
 
@@ -47,6 +47,6 @@
   {:type-hints [:avi.mode.command-line/string]}
   [editor filename]
   (+> editor
-    (let [document-n (count (:avi.document/documents editor))]
-      (update :avi.document/documents conj (avi.document/load filename))
+    (let [document-n (count (:avi.documents/documents editor))]
+      (update :avi.documents/documents conj (avi.documents/load filename))
       (assoc-in (conj (e/current-lens-path editor) :document) document-n))))
