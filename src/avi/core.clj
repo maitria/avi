@@ -31,7 +31,7 @@
 
 (defn- perform-effects!
   [editor]
-  (when (:beep? editor)
+  (when (:avi.editor/beep? editor)
     (beep *world*))
   (update-terminal *world* (:rendition editor)))
 
@@ -71,12 +71,12 @@
     (try
       (run world args)
       (catch Exception e ((clean-exit world)
-                        (println "============================================================")
-                        (println "You have caught a bug in Avi")
-                        (println "Stacktrace for the issue follows:")
-                        (st/print-stack-trace e)
-                        (println "============================================================")
-                        (println "Issue can be logged for avi at:")
-                        (println "https://github.com/maitria/avi/issues")
-                        (println "Do also provide the exact steps to reproduce the issue there")
-                        (println "============================================================"))))))
+                          (println "============================================================")
+                          (println "You have caught a bug in Avi")
+                          (println "Stacktrace for the issue follows:")
+                          (st/print-stack-trace e)
+                          (println "============================================================")
+                          (println "Issue can be logged for avi at:")
+                          (println "https://github.com/maitria/avi/issues")
+                          (println "Do also provide the exact steps to reproduce the issue there")
+                          (println "============================================================"))))))

@@ -177,11 +177,11 @@
 
 (defn beeped
   [{:keys [editor]}]
-  (:beep? editor))
+  (:avi.editor/beep? editor))
 
 (defn did-not-beep
   [{:keys [editor]}]
-  (not (:beep? editor)))
+  (not (:avi.editor/beep? editor)))
 
 (defn mode
   [expected-mode]

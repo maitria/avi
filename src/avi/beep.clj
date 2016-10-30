@@ -9,7 +9,7 @@
 (defn beep
   [editor-like & [message]]
   (+> editor-like
-    (assoc :beep? true)
+    (assoc :avi.editor/beep? true)
     (if message
       (error message))))
 
@@ -25,7 +25,7 @@
   [handler]
   (fn [editor event]
     (-> editor
-        (assoc :beep? false)
+        (assoc :avi.editor/beep? false)
         (handler event))))
 
 (defn add-beep-to-focus
@@ -36,8 +36,8 @@
     ([original]
      (merge
        (lens original)
-       (select-keys original [:beep? :message])))
+       (select-keys original [:avi.editor/beep? :message])))
     ([original new-value]
      (-> original
-       (lens (dissoc new-value :beep? :message))
-       (merge (select-keys new-value [:beep? :message]))))))
+       (lens (dissoc new-value :avi.editor/beep? :message))
+       (merge (select-keys new-value [:avi.editor/beep? :message]))))))

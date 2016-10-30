@@ -18,10 +18,13 @@
            [avi.world :as w]))
 
 (s/def ::mode keyword?)
+(s/def ::beep? boolean?)
 (s/def ::editor
   (s/merge
-    (s/keys :req [::mode])
+    (s/keys :req [::mode]
+            :opt [::beep?])
     :avi.documents/editor
+    :avi.lenses/editor
     ::p/editor))
 
 ;; -- Initial state ----------------------------------------------------------
@@ -37,7 +40,7 @@
    ::p/tree {:avi.layout.panes/lens 0}
    ::p/path []
    ::layout/shape [[0 0] [lines columns]]
-   :beep? false})
+   ::beep? false})
 
 ;; -- Building middlewares ---------------------------------------------------
 
