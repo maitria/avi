@@ -1,21 +1,21 @@
 (ns avi.editor
- "Functions (including basse responders, middleware, and utilties) for
-    manipulating the editor map."
- (:import (java.io FileNotFoundException))
- (:require [clojure.spec :as s]
-           [clojure.set :as set]
-           [packthread.core :refer :all]
-           [packthread.lenses :as l]
-           [avi.pervasive :refer :all]
-           [avi.beep :as beep]
-           [avi.documents]
-           [avi.edit-context :as ec]
-           [avi.edit-context
-             [lines :as lines]]
-           [avi.layout :as layout]
-           [avi.layout.panes :as p]
-           [avi.lenses]
-           [avi.world :as w]))
+  "Functions (including basse responders, middleware, and utilties) for
+  manipulating the editor map."
+  (:import (java.io FileNotFoundException))
+  (:require [clojure.spec :as s]
+            [clojure.set :as set]
+            [packthread.core :refer :all]
+            [packthread.lenses :as l]
+            [avi.pervasive :refer :all]
+            [avi.beep :as beep]
+            [avi.documents]
+            [avi.edit-context :as ec]
+            [avi.edit-context
+              [lines :as lines]]
+            [avi.layout :as layout]
+            [avi.layout.panes :as p]
+            [avi.lenses]
+            [avi.world :as w]))
 
 (s/def ::mode keyword?)
 (s/def ::beep? boolean?)
