@@ -1,8 +1,8 @@
 (ns avi.layout.panes
-  (:require [avi.beep :as b]
-            [avi.xforms :as xf]
-            [clojure.spec :as s]
-            [packthread.core :refer :all]))
+ (:require [avi.beep :as b]
+           [avi.xforms :as xf]
+           [clojure.spec :as s]
+           [packthread.core :refer :all]))
 
 ;; Yeah, so panes in a horizontal split are layed out vertically, and vice
 ;; versa
@@ -139,8 +139,8 @@
   command-line.)"
   [editor]
   (let [{:keys [::lens] [[pi pj] _] :avi.layout/shape :as pane}
-          (current-pane editor)
-        {:keys [viewport-top] [i j] :point} (get-in editor [:lenses lens])]
+        (current-pane editor)
+        {:keys [:avi.lenses/viewport-top] [i j] :point} (get-in editor [:lenses lens])]
     [(+ (- i viewport-top) pi)
      (+ pj j)]))
 
@@ -254,7 +254,7 @@
   [editor new-lens direction]
   {:post [(::lens (current-pane %))]}
   (let [{:keys [::lens] [[_] [rows cols]] :avi.layout/shape :as pane}
-          (current-pane editor)]
+        (current-pane editor)]
     (if (or (and (= direction :horizontal) (> (/ rows 2) 2))
            (and (= direction :vertical)  (> (/ cols 2) 2)))
       (+> editor

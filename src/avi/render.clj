@@ -26,7 +26,8 @@
         to-line (dec (+ i rows))
         document (get-in editor (e/current-document-path editor))]
     (doseq [i (range (inc (- to-line from-line)))]
-      (let [{:keys [viewport-top] document-number :avi.lenses/document} (get-in editor [:lenses lens])
+      (let [{:keys [:avi.lenses/viewport-top]
+             document-number :avi.lenses/document} (get-in editor [:lenses lens])
             document-line (get-in editor [:avi.documents/documents document-number :avi.documents/lines (+ i viewport-top)])
             line-color (if document-line
                          (color/make :white :black)
@@ -34,7 +35,7 @@
             line-text (or document-line "~")]
         (fill-rendition-line! rendition i shape [line-color line-text])))
     (let [file-name (or (:avi.documents/name document) "[No Name]")
-          {:keys [viewport-top] [i j] :point} (get-in editor [:lenses lens])
+          {:keys [:avi.lenses/viewport-top] [i j] :point} (get-in editor [:lenses lens])
           num-lines (count (:avi.documents/lines document))
           pos-txt (if (= viewport-top 0)
                     (str "Top")

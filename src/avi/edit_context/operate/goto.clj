@@ -1,8 +1,8 @@
 (ns avi.edit-context.operate.goto
-  (:require [avi.edit-context
-              [locations :as l]]
-            [avi.edit-context.operate.resolve :as resolve]
-            [avi.pervasive :refer :all]))
+ (:require [avi.edit-context
+             [locations :as l]]
+           [avi.edit-context.operate.resolve :as resolve]
+           [avi.pervasive :refer :all]))
 
 (defmulti magic-row-value
   (fn [edit-context kind param]
@@ -95,7 +95,7 @@
       [[i j] [i column]])))
 
 (defmethod resolve/resolve-motion :goto-line
-  [{:keys [:avi.documents/lines viewport-top viewport-height] [si sj] :point :as edit-context}
+  [{:keys [:avi.documents/lines :avi.lenses/viewport-top viewport-height] [si sj] :point :as edit-context}
    {count-register :count,
     [_ {:keys [from default-line multiplier]
         :or {default-line 0

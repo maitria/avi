@@ -1,16 +1,16 @@
 (ns avi.edit-context
-  (:require [packthread.core :refer :all]
-            [avi.beep :as beep]
-            [avi.documents]
-            [avi.edit-context
-              [change]
-              [lines :as lines]
-              [locations :as l]
-              [operate]
-              [transactions]]
-            [avi.pervasive :refer :all]
-            [avi.world :as w]
-            [potemkin :refer [import-vars]]))
+ (:require [packthread.core :refer :all]
+           [avi.beep :as beep]
+           [avi.documents]
+           [avi.edit-context
+             [change]
+             [lines :as lines]
+             [locations :as l]
+             [operate]
+             [transactions]]
+           [avi.pervasive :refer :all]
+           [avi.world :as w]
+           [potemkin :refer [import-vars]]))
 
 (import-vars [avi.edit-context.change
                 adjust-viewport-to-contain-point
@@ -31,7 +31,7 @@
   (-> edit-context :avi.documents/lines count))
 
 (defn- adjust-point-to-viewport
-  [{:keys [viewport-top viewport-height]
+  [{:keys [:avi.lenses/viewport-top viewport-height]
     [i] :point
     :as edit-context}]
   (+> edit-context
@@ -48,7 +48,7 @@
 (defn scroll
   [edit-context scroll-fn]
   (+> edit-context
-      (update-in [:viewport-top] scroll-fn)
+      (update-in [:avi.lenses/viewport-top] scroll-fn)
       (adjust-point-to-viewport)))
 
 (defn on-last-line?
@@ -58,7 +58,7 @@
     (= i (dec line-count))))
 
 (defn- clamp-viewport-top
-  [{top :viewport-top,
+  [{top :avi.lenses/viewport-top,
     height :viewport-height,
     :as edit-context}
    new-top]
@@ -67,7 +67,7 @@
     (min max-top (max 0 new-top))))
 
 (defn move-and-scroll-half-page
-  [{top :viewport-top,
+  [{top :avi.lenses/viewport-top,
     height :viewport-height,
     [i] :point,
     :as edit-context}
