@@ -30,10 +30,10 @@
   [[lines columns] [filename]]
   {::mode :normal
    :avi.documents/documents [(avi.documents/load filename)]
-   :lenses {0 #:avi.lenses{:document 0
-                           :viewport-top 0
-                           :point [0 0]
-                           :last-explicit-j 0}}
+   :avi.lenses/lenses {0 #:avi.lenses{:document 0
+                                      :viewport-top 0
+                                      :point [0 0]
+                                      :last-explicit-j 0}}
    ::p/tree {:avi.layout.panes/lens 0}
    ::p/path []
    ::layout/shape [[0 0] [lines columns]]
@@ -53,7 +53,7 @@
 
 (defn current-lens-path
   [editor]
-  [:lenses (::p/lens (p/current-pane editor))])
+  [:avi.lenses/lenses (::p/lens (p/current-pane editor))])
 
 (defn current-lens
   [editor]

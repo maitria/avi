@@ -36,9 +36,9 @@
 
 (defn- split*
   [direction]
-  (fn [{:keys [lenses] :as editor}]
+  (fn [{:keys [:avi.lenses/lenses] :as editor}]
     (-> editor
-        (update :lenses assoc (inc (reduce max -1 (keys lenses))) (e/current-lens editor))
+        (update :avi.lenses/lenses assoc (inc (reduce max -1 (keys lenses))) (e/current-lens editor))
         (p/split-pane (count lenses) direction))))
 (def sp (split* :horizontal))
 (def vsp (split* :vertical))
