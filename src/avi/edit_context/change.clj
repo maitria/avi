@@ -25,5 +25,5 @@
     (let [[_ j :as new-point] (l/adjust-for-replacement point a b replacement bias)]
       (update-in [:avi.documents/lines] lines/replace a b replacement)
       (if new-point
-        (assoc :point new-point :last-explicit-j j))
+        (assoc :point new-point :avi.lenses/last-explicit-j j))
       adjust-viewport-to-contain-point)))

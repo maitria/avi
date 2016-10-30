@@ -60,11 +60,11 @@
      [ei (count (get lines ei))]]))
 
 (defn fix-last-explicit-j
-  [[start [ei ej]] {:keys [last-explicit-j]}]
+  [[start [ei ej]] {:keys [:avi.lenses/last-explicit-j]}]
   [start [ei (or ej last-explicit-j)]])
 
 (defn resolve-range
-  [{:keys [:avi.documents/lines point last-explicit-j] :as edit-context} {:keys [span] :as operation}]
+  [{:keys [:avi.documents/lines point :avi.lenses/last-explicit-j] :as edit-context} {:keys [span] :as operation}]
   (when-let [range (resolve/resolve-motion edit-context operation)]
     (-> range
       (fix-last-explicit-j edit-context)
@@ -72,7 +72,7 @@
       (adjust-for-span lines span))))
 
 (defmethod operate :move-point
-  [{:keys [last-explicit-j] :as edit-context} operation]
+  [{:keys [:avi.lenses/last-explicit-j] :as edit-context} operation]
   (+> edit-context
     (let [[i j :as pos] (second (resolve/resolve-motion edit-context operation))
           set-last-explicit? (not (nil? j))
@@ -82,7 +82,7 @@
       (when pos
         (assoc :point [i j])
         (if set-last-explicit?
-          (assoc :last-explicit-j j))
+          (assoc :avi.lenses/last-explicit-j j))
         clamp-point-j
         c/adjust-viewport-to-contain-point))))
 
