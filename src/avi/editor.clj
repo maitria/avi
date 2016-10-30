@@ -32,12 +32,12 @@
   (let [text (if filename
                (try-load filename)
                "")]
-    {:avi.document/name filename
-     :avi.document/text text
-     :avi.document/lines (lines/content text)
-     :avi.document/undo-log ()
-     :avi.document/redo-log ()
-     :avi.document/in-transaction? false}))
+    #:avi.document{:name filename
+                   :text text
+                   :lines (lines/content text)
+                   :undo-log ()
+                   :redo-log ()
+                   :in-transaction? false}))
 
 (defn initial-editor
   [[lines columns] [filename]]
