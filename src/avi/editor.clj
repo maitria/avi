@@ -20,29 +20,10 @@
 
 ;; -- Initial state ----------------------------------------------------------
 
-(defn- try-load
-  [filename]
-  (try
-    (w/read-file w/*world* filename)
-    (catch FileNotFoundException e
-     "")))
-
-(defn document
-  [filename]
-  (let [text (if filename
-               (try-load filename)
-               "")]
-    #:avi.document{:name filename
-                   :text text
-                   :lines (lines/content text)
-                   :undo-log ()
-                   :redo-log ()
-                   :in-transaction? false}))
-
 (defn initial-editor
   [[lines columns] [filename]]
   {:mode :normal
-   :documents [(document filename)]
+   :documents [(avi.document/load filename)]
    :lenses {0 {:document 0
                :viewport-top 0
                :point [0 0]

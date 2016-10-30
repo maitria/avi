@@ -1,9 +1,10 @@
 (ns avi.commands
   "Avi's command-line-mode commands.
-  
+
   Functions implemented in this namespace can be called by name from the colon
   prompt."
-  (:require [avi.edit-context :as ec]
+  (:require [avi.document]
+            [avi.edit-context :as ec]
             [avi.edit-context
               [lines :as lines]]
             [avi.editor :as e]
@@ -47,5 +48,5 @@
   [editor filename]
   (+> editor
     (let [document-n (count (:documents editor))]
-      (update :documents conj (e/document filename))
+      (update :documents conj (avi.document/load filename))
       (assoc-in (conj (e/current-lens-path editor) :document) document-n))))
