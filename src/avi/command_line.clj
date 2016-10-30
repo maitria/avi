@@ -6,7 +6,7 @@
 (defn enter
   [editor mode-kw prompt]
   (assoc editor
-         :mode mode-kw
+         :avi.editor/mode mode-kw
          :prompt prompt
          :command-line ""
          ::pre-history (get-in editor [::command-line-history mode-kw])
@@ -54,7 +54,7 @@
   [command-fn]
   (e/keystroke-middleware "<Enter>"
     (fn+> [editor]
-      (let [{:keys [command-line mode]} editor]
+      (let [{:keys [command-line :avi.editor/mode]} editor]
         (cond-> (not= "" command-line) (update-in [::command-line-history mode] conj command-line))
         exit
         (command-fn (:command-line editor))))))

@@ -7,7 +7,7 @@
             [avi.layout.panes :as p]))
 
 (defn- point-position
-  [{:keys [mode] :as editor}]
+  [{:keys [:avi.editor/mode] :as editor}]
   (if (= mode :command-line)
     (let [[_ [height]] (::layout/shape editor)]
       [(dec height) (inc (count (:command-line editor)))])

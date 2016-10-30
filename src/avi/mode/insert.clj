@@ -9,7 +9,7 @@
 (defn enter-insert-mode
   [editor spec & [script]]
   (+> editor
-      (assoc :mode :insert,
+      (assoc :avi.editor/mode :insert,
              :message [:white :black "--INSERT--"]
              :insert-mode-state {:count (or (:count spec) 1)
                                  :script (or script [])})

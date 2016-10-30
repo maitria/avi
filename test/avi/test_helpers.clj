@@ -185,7 +185,7 @@
 
 (defn mode
   [expected-mode]
-  (fn [{{:keys [mode]} :editor}]
+  (fn [{{:keys [:avi.editor/mode]} :editor}]
     (compare-result mode expected-mode "Failed mode:")))
 
 (def finished? (comp :finished? :editor))

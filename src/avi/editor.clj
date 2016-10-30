@@ -1,6 +1,6 @@
 (ns avi.editor
   "Functions (including basse responders, middleware, and utilties) for
-   manipulating the editor map."
+    manipulating the editor map."
   (:import (java.io FileNotFoundException))
   (:require [clojure.spec :as s]
             [clojure.set :as set]
@@ -16,13 +16,15 @@
             [avi.layout.panes :as p]
             [avi.world :as w]))
 
-(s/def ::editor (s/merge ::p/editor))
+(s/def ::mode keyword?)
+(s/def ::editor (s/merge (s/keys :req [::mode])
+                         ::p/editor))
 
 ;; -- Initial state ----------------------------------------------------------
 
 (defn initial-editor
   [[lines columns] [filename]]
-  {:mode :normal
+  {::mode :normal
    :documents [(avi.document/load filename)]
    :lenses {0 {:document 0
                :viewport-top 0
@@ -99,13 +101,13 @@
 
 (defn enter-normal-mode
   [editor]
-  (assoc editor :mode :normal :message nil))
+  (assoc editor :avi.editor/mode :normal :message nil))
 
 (defn mode-middleware
   [mode mode-responder]
   (fn [responder]
     (fn [editor event]
-      (if (= mode (:mode editor))
+      (if (= mode (:avi.editor/mode editor))
         (mode-responder editor event)
         (responder editor event)))))
 
