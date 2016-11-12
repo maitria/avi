@@ -19,7 +19,7 @@
                                 ::in-transaction?
                                 ::undo-log
                                 ::redo-log]))
-(s/def ::documents (s/coll-of ::document :into vector?))
+(s/def ::documents (s/map-of nat-int? ::document))
 (s/def ::document-ref nat-int?)
 
 (s/def ::editor (s/keys :req [::documents]))

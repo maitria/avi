@@ -32,7 +32,7 @@
 (defn initial-editor
   [[lines columns] [filename]]
   {::mode :normal
-   :avi.documents/documents [(avi.documents/load filename)]
+   :avi.documents/documents {0 (avi.documents/load filename)}
    :avi.lenses/lenses {0 #:avi.lenses{:document 0
                                       :viewport-top 0
                                       :point [0 0]

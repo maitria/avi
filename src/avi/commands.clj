@@ -45,8 +45,8 @@
 
 (defn e
   {:type-hints [:avi.mode.command-line/string]}
-  [editor filename]
+  [{:keys [:avi.documents/documents] :as editor} filename]
   (+> editor
-    (let [document-n (count (:avi.documents/documents editor))]
-      (update :avi.documents/documents conj (avi.documents/load filename))
-      (assoc-in (conj (e/current-lens-path editor) :avi.lenses/document) document-n))))
+    (let [document-n (inc (reduce max -1 (keys documents)))]
+     (update :avi.documents/documents assoc document-n (avi.documents/load filename))
+     (assoc-in (conj (e/current-lens-path editor) :avi.lenses/document) document-n))))
