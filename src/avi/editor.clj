@@ -2,8 +2,9 @@
   "Functions (including basse responders, middleware, and utilties) for
   manipulating the editor map."
   (:import (java.io FileNotFoundException))
-  (:require [clojure.spec :as s]
-            [clojure.set :as set]
+  (:require [clojure.set :as set]
+            [clojure.spec :as s]
+            [clojure.string :as string]
             [packthread.core :refer :all]
             [packthread.lenses :as l]
             [avi.pervasive :refer :all]
@@ -70,11 +71,9 @@
   :args (s/cat :editor ::editor
                :new-context (s/? any?))
   :ret ::editor)
-(let [document-keys #{:avi.documents/lines
-                      :avi.documents/undo-log
+(let [document-keys #{:avi.documents/undo-log
                       :avi.documents/redo-log
                       :avi.documents/in-transaction?}
-      computed-keys #{:viewport-height}
       lens-keys #{:avi.lenses/viewport-top :avi.lenses/point :avi.lenses/last-explicit-j}]
   (def edit-context
     "Perform some action in an \"edit context\".
@@ -91,18 +90,21 @@
     (beep/add-beep-to-focus
       (fn edit-context*
         ([editor]
-         (merge
-           (-> editor
-               (get-in (current-document-path editor))
-               (select-keys document-keys))
-           (-> (current-lens editor)
-               (select-keys lens-keys))
-           (let [[_ [height _]] (::layout/shape (p/current-pane editor))]
-             {:viewport-height (dec height)})))
+         (let [document (get-in editor (current-document-path editor))
+               {:keys [:avi.documents/text]} document
+               [_ [height _]] (::layout/shape (p/current-pane editor))]
+           (merge
+             (select-keys document document-keys)
+             (select-keys (current-lens editor) lens-keys)
+             {:avi.documents/lines (lines/content text)
+              :viewport-height (dec height)})))
         ([editor new-context]
-         (-> editor
-           (update-in (current-document-path editor) merge (select-keys new-context document-keys))
-           (update-in (current-lens-path editor) merge (select-keys new-context lens-keys))))))))
+         (let [text {:avi.documents/lines (:avi.documents/lines new-context)
+                     :avi.documents/text (str (string/join "\n" (:avi.documents/lines new-context))
+                                              "\n")}]
+           (-> editor
+             (update-in (current-document-path editor) merge (select-keys new-context document-keys) text)
+             (update-in (current-lens-path editor) merge (select-keys new-context lens-keys)))))))))
 
 ;; -- Modes ------------------------------------------------------------------
 
