@@ -99,8 +99,7 @@
              {:avi.documents/lines (lines/content text)
               :viewport-height (dec height)})))
         ([editor new-context]
-         (let [text {:avi.documents/lines (:avi.documents/lines new-context)
-                     :avi.documents/text (str (string/join "\n" (:avi.documents/lines new-context))
+         (let [text {:avi.documents/text (str (string/join "\n" (:avi.documents/lines new-context))
                                               "\n")}]
            (-> editor
              (update-in (current-document-path editor) merge (select-keys new-context document-keys) text)

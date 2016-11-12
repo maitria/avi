@@ -152,10 +152,14 @@
             (let [edit-context (e/edit-context editor)
                   [i] (:avi.lenses/point edit-context)
                   document (get-in editor (e/current-document-path editor))
-                  num-lines (count (:avi.documents/lines document))
+                  num-lines (transduce
+                              (filter #(= % \newline))
+                              (completing (fn [r _] (inc r)))
+                              0
+                              (:avi.documents/text document))
                   line-no (inc i)
                   msg-txt (str "\"" (or (:avi.documents/name document) "[No Name]") "\"\t")]
-              (if (not= (:avi.documents/lines document) [""])
+              (if (not= (:avi.documents/text document) "")
                 (assoc :message [:white :blue (str msg-txt num-lines " lines --" (int (/ (* line-no 100) num-lines)) "%--")])
                 (assoc :message [:white :blue (str msg-txt "--No lines in buffer--")]))))
 

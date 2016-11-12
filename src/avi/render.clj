@@ -2,6 +2,7 @@
  (:import [java.util Arrays])
  (:require [clojure.set :refer [map-invert]]
            [avi.editor :as e]
+           [avi.edit-context.lines :as lines]
            [avi.color :as color]
            [avi.layout :as layout]
            [avi.layout.panes :as p]))
@@ -24,11 +25,13 @@
   [editor rendition {:keys [::p/lens] [[i j] [rows cols] :as shape] ::layout/shape}]
   (let [from-line i
         to-line (dec (+ i rows))
-        document (get-in editor (e/current-document-path editor))]
+        {:keys [:avi.lenses/viewport-top]
+         document-number :avi.lenses/document} (get-in editor [:avi.lenses/lenses lens])
+        document (get-in editor (e/current-document-path editor))
+        text (get-in editor [:avi.documents/documents document-number :avi.documents/text])
+        lines (lines/content text)]
     (doseq [i (range (inc (- to-line from-line)))]
-      (let [{:keys [:avi.lenses/viewport-top]
-             document-number :avi.lenses/document} (get-in editor [:avi.lenses/lenses lens])
-            document-line (get-in editor [:avi.documents/documents document-number :avi.documents/lines (+ i viewport-top)])
+      (let [document-line (get lines (+ i viewport-top))
             line-color (if document-line
                          (color/make :white :black)
                          (color/make :blue :black))
@@ -36,7 +39,7 @@
         (fill-rendition-line! rendition i shape [line-color line-text])))
     (let [file-name (or (:avi.documents/name document) "[No Name]")
           {:keys [:avi.lenses/viewport-top] [i j] :avi.lenses/point} (get-in editor [:avi.lenses/lenses lens])
-          num-lines (count (:avi.documents/lines document))
+          num-lines (count lines)
           pos-txt (if (= viewport-top 0)
                     (str "Top")
                     (if-not (< (+ viewport-top (dec rows)) num-lines)

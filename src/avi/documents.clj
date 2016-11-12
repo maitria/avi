@@ -8,7 +8,6 @@
 
 (s/def ::name string?)
 (s/def ::text string?)
-(s/def ::lines (s/coll-of string? :into vector?))
 (s/def ::in-transaction? boolean?)
 
 (s/def ::undo-entry (s/keys :req [:avi.documents/lines :avi.lenses/point]))
@@ -17,7 +16,6 @@
 
 (s/def ::document (s/keys :req [::name
                                 ::text
-                                ::lines
                                 ::in-transaction?
                                 ::undo-log
                                 ::redo-log]))
@@ -41,7 +39,6 @@
                "")]
     {::name filename
      ::text text
-     ::lines (lines/content text)
      ::undo-log ()
      ::redo-log ()
      ::in-transaction? false}))

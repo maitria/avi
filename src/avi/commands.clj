@@ -5,8 +5,6 @@
   prompt."
  (:require [avi.documents]
            [avi.edit-context :as ec]
-           [avi.edit-context
-             [lines :as lines]]
            [avi.editor :as e]
            [avi.layout.panes :as p]
            [avi.world :as w]
@@ -28,8 +26,8 @@
 (defn w
   [editor]
   (let [{filename :avi.documents/name,
-         :keys [:avi.documents/lines]} (get-in editor (e/current-document-path editor))]
-    (w/write-file w/*world* filename (string/join "\n" lines))
+         :keys [:avi.documents/text]} (get-in editor (e/current-document-path editor))]
+    (w/write-file w/*world* filename text)
     editor))
 
 (def wq (comp q w))
