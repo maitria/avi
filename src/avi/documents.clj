@@ -10,8 +10,10 @@
 (s/def ::text string?)
 (s/def ::lines (s/coll-of string? :into vector?))
 (s/def ::in-transaction? boolean?)
-(s/def ::undo-log (s/coll-of any? :into list?))
-(s/def ::redo-log (s/coll-of any? :into list?))
+
+(s/def ::undo-entry (s/keys :req [:avi.documents/lines :avi.lenses/point]))
+(s/def ::undo-log (s/coll-of ::undo-entry :into list?))
+(s/def ::redo-log (s/coll-of ::undo-entry :into list?))
 
 (s/def ::document (s/keys :req [::name
                                 ::text
