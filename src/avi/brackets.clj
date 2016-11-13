@@ -3,6 +3,7 @@
             [packthread.core :refer :all]
             [packthread.lenses :as l]
             [avi.beep :as beep]
+            [avi.edit-context :as ec]
             [avi.edit-context
              [lines :as lines]
              [locations :as loc]]
@@ -22,38 +23,39 @@
 (def ^:private brackets (into #{} (concat (keys bracket-map) (vals bracket-map))))
 
 (defn- go-to-matching-bracket
-  [{[i j] :avi.lenses/point lines :avi.documents/lines :as edit-context}]
-  (+> edit-context
-    (let [bracket (get-in lines [i j])
-          open-bracket? (open-brackets bracket)
-          scan (if open-bracket?
-                 (loc/forward [i j] (lines/line-length lines))
-                 (loc/backward [i j] (lines/line-length lines)))
-          brackets (if open-bracket?
-                     bracket-map
-                     reverse-bracket-map)
-          new-point (->> scan
-                          (reductions
-                            (fn [stack [i j]]
-                              (let [char (get-in lines [i j])]
-                                (cond-> stack
-                                  (get brackets char) (conj (get brackets char))
-                                  (= char (first stack)) rest)))
-                            ())
-                          (drop 1)
-                          (map vector scan)
-                          (drop-while #(not (empty? (second %))))
-                          first
-                          first)]
-      (cond
-        (not (brackets bracket))
-        beep/beep
+  [{[i j] :avi.lenses/point :as edit-context}]
+  (let [lines (ec/lines edit-context)]
+   (+> edit-context
+     (let [bracket (get-in lines [i j])
+           open-bracket? (open-brackets bracket)
+           scan (if open-bracket?
+                  (loc/forward [i j] (lines/line-length lines))
+                  (loc/backward [i j] (lines/line-length lines)))
+           brackets (if open-bracket?
+                      bracket-map
+                      reverse-bracket-map)
+           new-point (->> scan
+                           (reductions
+                             (fn [stack [i j]]
+                               (let [char (get-in lines [i j])]
+                                 (cond-> stack
+                                   (get brackets char) (conj (get brackets char))
+                                   (= char (first stack)) rest)))
+                             ())
+                           (drop 1)
+                           (map vector scan)
+                           (drop-while #(not (empty? (second %))))
+                           first
+                           first)]
+       (cond
+         (not (brackets bracket))
+         beep/beep
 
-        (not new-point)
-        beep/beep
+         (not new-point)
+         beep/beep
 
-        :else
-        (assoc :avi.lenses/point new-point)))))
+         :else
+         (assoc :avi.lenses/point new-point))))))
 
 (def normal-commands
   {"%" (fn+> [editor _]
