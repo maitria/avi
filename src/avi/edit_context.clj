@@ -22,6 +22,10 @@
                 start-transaction
                 commit])
 
+(defn lines
+  [edit-context]
+  (lines/content (:avi.documents/text edit-context)))
+
 (defn line
   [edit-context i]
   (-> edit-context :avi.documents/lines (get i)))

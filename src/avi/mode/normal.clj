@@ -130,8 +130,8 @@
                      (let [n (or (:count spec) 2)]
                        (in e/edit-context
                            ec/start-transaction
-                           (n-times (dec n) (fn+> [{:keys [:avi.documents/lines] [i] :avi.lenses/point}]
-                                              (let [start-j (count (get lines i))]
+                           (n-times (dec n) (fn+> [{[i] :avi.lenses/point :as ec}]
+                                              (let [start-j (count (ec/line ec i))]
                                                 (ec/change [i start-j] [(inc i) 0] " " :left)
                                                 (ec/operate {:operator :move-point
                                                              :motion [:goto [i start-j]]}))))

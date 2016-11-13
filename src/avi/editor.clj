@@ -75,7 +75,8 @@
   :args (s/cat :editor ::editor
                :new-context (s/? any?))
   :ret ::editor)
-(let [document-keys #{:avi.documents/undo-log
+(let [document-keys #{:avi.documents/text
+                      :avi.documents/undo-log
                       :avi.documents/redo-log
                       :avi.documents/in-transaction?}
       lens-keys #{:avi.lenses/viewport-top :avi.lenses/point :avi.lenses/last-explicit-j}]
