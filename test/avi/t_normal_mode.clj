@@ -59,7 +59,7 @@
     (fact "`l` won't move beyond the end of the line."
       (editor :editing "One\n.." :after "lll") => (point [0 2])
       (editor :editing "One\n.." :after "lll") => beeped)
-      (editor :editing "One\n.." :after "9l") => (point [0 2])
+    (editor :editing "One\n.." :after "9l") => (point [0 2])
       (editor :editing "One\n.." :after "9l") =not=> beeped)
 
   (facts "about `h`"
@@ -96,42 +96,42 @@
   (fact "line-wise point movement will keep the point in the viewport"
     (fact "can scroll down some lines"
       (editor :editing ten-lines :after "7j")
-        => (terminal-buffer ["Three"
-                      "Four"
-                      "Five"
-                      "Six"
-                      "Seven"
-                      "Eight"])
+      => (terminal-buffer ["Three"
+                           "Four"
+                           "Five"
+                           "Six"
+                           "Seven"
+                           "Eight"])
       (editor :editing ten-lines :after "7j") => (point [5 0]))
         
     (fact "viewport stays when moving back up"
       (editor :editing ten-lines :after "7jk")
-        => (terminal-buffer ["Three"
-                      "Four"
-                      "Five"
-                      "Six"
-                      "Seven"
-                      "Eight"])
+      => (terminal-buffer ["Three"
+                           "Four"
+                           "Five"
+                           "Six"
+                           "Seven"
+                           "Eight"])
       (editor :editing ten-lines :after "7jk") => (point [4 0]))
 
     (fact "can scroll up some lines"
       (editor :editing ten-lines :after "7j6k")
-        => (terminal-buffer ["Two"
-                      "Three"
-                      "Four"
-                      "Five"
-                      "Six"
-                      "Seven"])
+      => (terminal-buffer ["Two"
+                           "Three"
+                           "Four"
+                           "Five"
+                           "Six"
+                           "Seven"])
       (editor :editing ten-lines :after "7j6k") => (point [0 0])))
   (facts "about `^E`"
     (fact "`^E` scrolls the lens down one line"
       (editor :editing ten-lines :after "<C-E>")
-        => (terminal-buffer ["Two"
-                      "Three"
-                      "Four"
-                      "Five"
-                      "Six"
-                      "Seven"]))
+      => (terminal-buffer ["Two"
+                           "Three"
+                           "Four"
+                           "Five"
+                           "Six"
+                           "Seven"]))
     (fact "`^E` moves the point down to keep it in the viewport"
       (editor :editing ten-lines :after "<C-E>") => (point [0 0]))
     (fact "`^E` doesn't move the point when unnecessary"
@@ -141,25 +141,25 @@
   (facts "about `^G`"
     (fact "`^G` on empty buffer"
       (editor :editing "" :after "<C-G>")
-        => (message-line ["\"test.txt\"\t--No lines in buffer--" :white :on :blue]))
+      => (message-line ["\"test.txt\"\t--No lines in buffer--" :white :on :blue]))
     (fact "`^G` on start of buffer"
       (editor :editing "a\nb\nc\nd" :after "H<C-G>")
-        => (message-line ["\"test.txt\"\t4 lines --25%--" :white :on :blue]))
+      => (message-line ["\"test.txt\"\t4 lines --25%--" :white :on :blue]))
     (fact "`^G` on end of buffer"
       (editor :editing "a\nb\nc\nd" :after "L<C-G>")
-        => (message-line ["\"test.txt\"\t4 lines --100%--" :white :on :blue]))
+      => (message-line ["\"test.txt\"\t4 lines --100%--" :white :on :blue]))
     (fact "`^G` on middle of buffer"
       (editor :editing "a\nb\nc\nd" :after "M<C-G>")
-        => (message-line ["\"test.txt\"\t4 lines --50%--" :white :on :blue])))
+      => (message-line ["\"test.txt\"\t4 lines --50%--" :white :on :blue])))
   (facts "about `^Y`"
     (fact "`^Y` scrolls the lens up one line"
       (editor :editing ten-lines :after "<C-E><C-Y>")
-        => (terminal-buffer ["One"
-                      "Two"
-                      "Three"
-                      "Four"
-                      "Five"
-                      "Six"]))
+      => (terminal-buffer ["One"
+                           "Two"
+                           "Three"
+                           "Four"
+                           "Five"
+                           "Six"]))
     (fact "`^Y` moves the point up to keep it in the viewport"
       (editor :editing ten-lines :after "7G<C-Y>") => (point [5 0]))
     (fact "`^Y` doesn't move the point when unnecessary"
@@ -169,34 +169,34 @@
   (facts "about `^D`"
     (fact "`^D` scrolls down half a page"
       (editor :editing ten-lines :after "<C-D>")
-        => (terminal-buffer ["Four"
-                      "Five"
-                      "Six"
-                      "Seven"
-                      "Eight"
-                      "Nine"]))
+      => (terminal-buffer ["Four"
+                           "Five"
+                           "Six"
+                           "Seven"
+                           "Eight"
+                           "Nine"]))
     (fact "`^D` moves the point down half a page"
       (editor :editing ten-lines :after "jj<C-D>") => (point [2 0]))
     (fact "`^D` won't scroll past end-of-file"
       (editor :editing ten-lines :after "<C-D><C-D><C-D>")
-        => (terminal-buffer ["Five"
-                      "Six"
-                      "Seven"
-                      "Eight"
-                      "Nine"
-                      "Ten"]))
+      => (terminal-buffer ["Five"
+                           "Six"
+                           "Seven"
+                           "Eight"
+                           "Nine"
+                           "Ten"]))
     (fact "`^D` near end-of-file moves the point to last line (and not past)"
       (editor :editing ten-lines :after "Gk<C-D>") => (point [5 0]))
     (fact "`^D` on last line beeps"
       (editor :editing ten-lines :after "G<C-D>") => beeped)
     (fact "`^D` won't scroll when file is shorter than document viewport"
       (editor :after "<C-D>")
-        => (terminal-buffer ["One"
-                      "Two"
-                      "Three"
-                      "."
-                      "~" :blue
-                      "~" :blue]))
+      => (terminal-buffer ["One"
+                           "Two"
+                           "Three"
+                           "."
+                           "~" :blue
+                           "~" :blue]))
     (fact "`^D` won't move point past end-of-file when file is shorter than document viewport"
       (editor :editing "One\nTwo" :after "<C-D>") => (point [1 0])))
 
@@ -205,22 +205,22 @@
       (editor :after "<C-U>") => beeped)
     (fact "`^U` scrolls up a half page"
       (editor :editing ten-lines :after "<C-D><C-U>")
-        => (terminal-buffer ["One"
-                      "Two"
-                      "Three"
-                      "Four"
-                      "Five"
-                      "Six"]))
+      => (terminal-buffer ["One"
+                           "Two"
+                           "Three"
+                           "Four"
+                           "Five"
+                           "Six"]))
     (fact "`^U` moves the point up half a page"
       (editor :editing ten-lines :after "Gk<C-U>") => (point [4 0]))
     (fact "`^U` does not scroll to before first line of file"
       (editor :editing ten-lines :after "<C-E><C-U>")
-        => (terminal-buffer ["One"
-                      "Two"
-                      "Three"
-                      "Four"
-                      "Five"
-                      "Six"]))
+      => (terminal-buffer ["One"
+                           "Two"
+                           "Three"
+                           "Four"
+                           "Five"
+                           "Six"]))
     (fact "`^U` does not move point before beginning of file"
       (editor :editing ten-lines :after "j<C-U>") => (point [0 0]))))
 
@@ -231,12 +231,12 @@
     (fact "`L` moves to the last line on the lens when the file is longer"
       (editor :editing ten-lines-indented :after "L") => (point [5 2])
       (editor :editing ten-lines :after "L")
-        => (terminal-buffer ["One"
-                      "Two"
-                      "Three"
-                      "Four"
-                      "Five"
-                      "Six"]))
+      => (terminal-buffer ["One"
+                           "Two"
+                           "Three"
+                           "Four"
+                           "Five"
+                           "Six"]))
     (fact "`L` will move to count line from bottom of viewport"
       (editor :editing ten-lines-indented :after "<C-E>2L") => (point [4 2]))
     (fact "`L` will move to count line from bottom of file when file is shorter"
@@ -244,40 +244,40 @@
     (fact "`L` will not move above top of viewport"
       (editor :editing ten-lines :after "G8L") => (point [0 0])
       (editor :editing ten-lines :after "G8L")
-        => (terminal-buffer ["Five"
-                      "Six"
-                      "Seven"
-                      "Eight"
-                      "Nine"
-                      "Ten"]))))
+      => (terminal-buffer ["Five"
+                           "Six"
+                           "Seven"
+                           "Eight"
+                           "Nine"
+                           "Ten"]))))
 
-  (facts "about `H`"
-    (fact "`H` moves to the first line in the lens"
-      (editor :editing ten-lines-indented :after "G$H") => (point [0 2])
-      (editor :editing ten-lines :after "GH")
-        => (terminal-buffer ["Five"
-                      "Six"
-                      "Seven"
-                      "Eight"
-                      "Nine"
-                      "Ten"]))
-    (fact "`H` moves to the count line in the lens"
-      (editor :editing ten-lines :after "G3H") => (point [2 0]))
-    (fact "`H` will not move below the bottom of the lens"
-      (editor :editing ten-lines :after "11H") => (point [5 0]))
+(facts "about `H`"
+  (fact "`H` moves to the first line in the lens"
+    (editor :editing ten-lines-indented :after "G$H") => (point [0 2])
+    (editor :editing ten-lines :after "GH")
+    => (terminal-buffer ["Five"
+                         "Six"
+                         "Seven"
+                         "Eight"
+                         "Nine"
+                         "Ten"]))
+  (fact "`H` moves to the count line in the lens"
+    (editor :editing ten-lines :after "G3H") => (point [2 0]))
+  (fact "`H` will not move below the bottom of the lens"
+    (editor :editing ten-lines :after "11H") => (point [5 0]))
 
-  (facts "about `M`"
-    (fact "`M` moves to the middle line of the lens when document has more lines than the lens"
-      (editor :editing ten-lines-indented :after "M") => (point [2 2])
-      (editor :editing ten-lines :after "M")
-        => (terminal-buffer ["One"
-                      "Two"
-                      "Three"
-                      "Four"
-                      "Five"
-                      "Six"]))
-    (fact "`M` moves to the middle line of document text when document contains fewer lines than the lens"
-      (editor :editing "One\nTwo\nThree" :after "M") => (point [1 0]))))
+ (facts "about `M`"
+   (fact "`M` moves to the middle line of the lens when document has more lines than the lens"
+     (editor :editing ten-lines-indented :after "M") => (point [2 2])
+     (editor :editing ten-lines :after "M")
+     => (terminal-buffer ["One"
+                          "Two"
+                          "Three"
+                          "Four"
+                          "Five"
+                          "Six"]))
+   (fact "`M` moves to the middle line of document text when document contains fewer lines than the lens"
+     (editor :editing "One\nTwo\nThree" :after "M") => (point [1 0]))))
 
 (facts "about `gg`"
   (fact "`gg` moves to the first non-blank character on the first line"
@@ -287,12 +287,12 @@
   (fact "`gg` won't move past end-of-file"
     (editor :editing ten-lines :after "99gg") => (point [5 0])
     (editor :editing ten-lines :after "99gg")
-      => (terminal-buffer ["Five"
-                    "Six"
-                    "Seven"
-                    "Eight"
-                    "Nine"
-                    "Ten"])))
+    => (terminal-buffer ["Five"
+                         "Six"
+                         "Seven"
+                         "Eight"
+                         "Nine"
+                         "Ten"])))
 
 (facts "about `x`"
   (fact "`x` deletes the current character"
@@ -307,24 +307,24 @@
 (facts "about `dd`"
   (fact "`dd` deletes the current line"
     (editor :editing "One\nTwo\nThree..." :after "jdd")
-      => (terminal-buffer ["One"
-                    "Three..."
-                    "~" :blue
-                    "~" :blue
-                    "~" :blue
-                    "~" :blue]))
+    => (terminal-buffer ["One"
+                         "Three..."
+                         "~" :blue
+                         "~" :blue
+                         "~" :blue
+                         "~" :blue]))
   (fact "`dd` moves the point to the first non-space"
     (editor :editing "One\nTwo\n  Three..." :after "jdd") => (point [1 2]))
   (fact "`dd` moves the point up when deleting the last line"
     (editor :editing "One\nTwo\nThree" :after "Gdd") => (point [1 0]))
   (fact "`dd` can delete the only line in a file"
     (editor :editing "One" :after "dd")
-      => (terminal-buffer [""
-                    "~" :blue
-                    "~" :blue
-                    "~" :blue
-                    "~" :blue
-                    "~" :blue])))
+    => (terminal-buffer [""
+                         "~" :blue
+                         "~" :blue
+                         "~" :blue
+                         "~" :blue
+                         "~" :blue])))
 
 (tabular
   (facts "about `J`"

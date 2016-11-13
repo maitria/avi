@@ -160,7 +160,11 @@
 (defn contents
   [expected]
   (fn [editor]
-    (compare-result (string/join "\n" (:avi.documents/lines (e/edit-context (:editor editor)))) expected "Failed contents:")))
+    (let [text (:avi.documents/text (e/current-document (:editor editor)))
+          text (if (string/ends-with? text "\n")
+                 (subs text 0 (dec (count text)))
+                 text)]
+      (compare-result text expected "Failed contents:"))))
 
 (defn attributes
   [[i j] expected]

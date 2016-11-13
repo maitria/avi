@@ -67,6 +67,10 @@
   [editor]
   [:avi.documents/documents (:avi.lenses/document (current-lens editor))])
 
+(defn current-document
+  [editor]
+  (get-in editor (current-document-path editor)))
+
 (s/fdef edit-context
   :args (s/cat :editor ::editor
                :new-context (s/? any?))
