@@ -24,7 +24,7 @@
 
 (defn lines
   [edit-context]
-  (lines/content (:avi.documents/text edit-context)))
+  (:avi.documents/lines edit-context))
 
 (defn line
   [edit-context i]

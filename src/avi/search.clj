@@ -21,16 +21,17 @@
 
 (defn scanner
   [succ which pred reset]
-  (fn [{:keys [:avi.documents/lines] [start-i start-j] :avi.lenses/point} re]
-    (loop [n (inc (count lines))
-           i start-i
-           j (succ start-j)]
-      (if-not (zero? n)
-        (if-let [found-j (which (occurrences re (get lines (mod i (count lines))) (partial pred j)))]
-          (let [found-pos [(mod i (count lines)) found-j]
-                wrapped? (pred (compare found-pos [start-i start-j]) 0)]
-            (conj found-pos wrapped?))
-          (recur (dec n) (succ i) reset))))))
+  (fn [{[start-i start-j] :avi.lenses/point :as edit-context} re]
+    (let [lines (ec/lines edit-context)]
+     (loop [n (inc (count lines))
+            i start-i
+            j (succ start-j)]
+       (if-not (zero? n)
+         (if-let [found-j (which (occurrences re (get lines (mod i (count lines))) (partial pred j)))]
+           (let [found-pos [(mod i (count lines)) found-j]
+                 wrapped? (pred (compare found-pos [start-i start-j]) 0)]
+             (conj found-pos wrapped?))
+           (recur (dec n) (succ i) reset)))))))
 
 (def directions
   {:forward {:wrap-message "Wrapped to beginning of file!"
