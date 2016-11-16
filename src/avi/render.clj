@@ -28,13 +28,6 @@
     (Arrays/fill rendered-attrs start (+ start width) attrs)
     rendition))
 
-(defn fill-rendition-line!
-  [{:keys [width] rendered-chars :chars, rendered-attrs :attrs :as rendition} n [[i j] [rows cols]] [attrs text]]
-  (let [start (+ j (* (+ n i) width))
-        text-size (count text)]
-    (.getChars text 0 (min cols text-size) rendered-chars start)
-    (Arrays/fill rendered-attrs start (+ start cols) attrs)))
-
 (defmethod layout/render! ::p/pane
   [editor rendition {:keys [::p/lens] [[i j] [rows cols] :as shape] ::layout/shape}]
   (let [from-line i
