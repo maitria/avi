@@ -17,14 +17,16 @@
 (defn copy-blit!
   [{rendition-width :width,
     rendered-chars :chars,
-    rendered-attrs :attrs}
+    rendered-attrs :attrs
+    :as rendition}
    {:keys [::width ::foreground ::background ::text]
     [i j] ::position}]
   (let [start (+ j (* i rendition-width))
         text-size (count text)
         attrs (color/make foreground background)]
     (.getChars text 0 (min width text-size) rendered-chars start)
-    (Arrays/fill rendered-attrs start (+ start width) attrs)))
+    (Arrays/fill rendered-attrs start (+ start width) attrs)
+    rendition))
 
 (defn fill-rendition-line!
   [{:keys [width] rendered-chars :chars, rendered-attrs :attrs :as rendition} n [[i j] [rows cols]] [attrs text]]
@@ -63,14 +65,18 @@
           msg-txt (str (format fmt-str file-name) status-txt)]
        (fill-rendition-line! rendition (dec rows) shape [(color/make :black :white) (str msg-txt)]))))
 
-(defmethod layout/render! ::p/vertical-bar
-  [editor rendition {[[i j] [rows cols] :as shape] ::layout/shape}]
-  (doseq [n (range rows)]
-    (copy-blit! rendition {::position [(+ i n) j]
-                           ::width cols
-                           ::text "|"
-                           ::foreground :black
-                           ::background :white})))
+(defmethod layout/blits ::p/vertical-bar
+  [rendition renderable editor rf]
+  (let [{[[i j] [rows cols] :as shape] ::layout/shape} renderable]
+    (reduce
+      (fn [rendition n]
+        (rf rendition {::position [(+ i n) j]
+                       ::width cols
+                       ::text "|"
+                       ::foreground :black
+                       ::background :white}))
+      rendition
+      (range rows))))
 
 (defn render-message-line!
   [editor rendition]
@@ -94,6 +100,15 @@
     (when blit
       (copy-blit! rendition blit))))
 
+(defn blits
+  [editor]
+  (fn [rf]
+    (fn blits*
+      ([] (rf))
+      ([rendition] (rf rendition))
+      ([rendition renderable]
+       (layout/blits rendition renderable editor rf)))))
+
 (defn render
   [editor]
   (let [[_ [height width]] (::layout/shape editor)
@@ -107,6 +122,12 @@
     (run!
       #(layout/render! editor rendition %)
       (eduction layout/all-renderables [editor]))
+    (transduce
+      (comp layout/all-renderables
+            (blits editor))
+      (completing copy-blit!)
+      rendition
+      [editor])
     (render-message-line! editor rendition)
     rendition))
 
