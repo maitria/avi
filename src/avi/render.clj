@@ -14,8 +14,20 @@
       [(dec height) (inc (count (:command-line editor)))])
     (p/point-position editor)))
 
+(defn copy-blit!
+  [{rendition-width :width,
+    rendered-chars :chars,
+    rendered-attrs :attrs}
+   {:keys [::width ::foreground ::background ::text]
+    [i j] ::position}]
+  (let [start (+ j (* i rendition-width))
+        text-size (count text)
+        attrs (color/make foreground background)]
+    (.getChars text 0 (min width text-size) rendered-chars start)
+    (Arrays/fill rendered-attrs start (+ start width) attrs)))
+
 (defn fill-rendition-line!
-  [{:keys [width] rendered-chars :chars, rendered-attrs :attrs} n [[i j] [rows cols]] [attrs text]]
+  [{:keys [width] rendered-chars :chars, rendered-attrs :attrs :as rendition} n [[i j] [rows cols]] [attrs text]]
   (let [start (+ j (* (+ n i) width))
         text-size (count text)]
     (.getChars text 0 (min cols text-size) rendered-chars start)
@@ -53,9 +65,12 @@
 
 (defmethod layout/render! ::p/vertical-bar
   [editor rendition {[[i j] [rows cols] :as shape] ::layout/shape}]
-  (let [color (color/make :black :white)]
-    (doseq [n (range rows)]
-      (fill-rendition-line! rendition n shape [color "|"]))))
+  (doseq [n (range rows)]
+    (copy-blit! rendition {::position [(+ i n) j]
+                           ::width cols
+                           ::text "|"
+                           ::foreground :black
+                           ::background :white})))
 
 (defn render-message-line!
   [editor rendition]
