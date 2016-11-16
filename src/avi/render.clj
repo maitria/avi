@@ -28,14 +28,35 @@
     (Arrays/fill rendered-attrs start (+ start width) attrs)
     rendition))
 
+(defn- status-text
+  [editor lens [rows cols]]
+  (let [{:keys [:avi.lenses/viewport-top]
+         document-number :avi.lenses/document
+         [pi pj] :avi.lenses/point} (get-in editor [:avi.lenses/lenses lens])
+        document (get-in editor [:avi.documents/documents document-number])
+        text (:avi.documents/text document)
+        lines (lines/content text)
+        file-name (or (:avi.documents/name document) "[No Name]")
+        num-lines (count lines)
+        pos-txt (if (= viewport-top 0)
+                  (str "Top")
+                  (if-not (< (+ viewport-top (dec rows)) num-lines)
+                    (str "End")
+                    (str (int (/ (* viewport-top 100) (- num-lines (dec rows)))) "%")))
+        status-txt (str "  [" (inc pi) "," (inc pj) "]  " pos-txt)
+        filelen (- cols (count status-txt))
+        fmt-str (if (> filelen 0) (str "%-"filelen"."filelen"s" ) (str "%s"))]
+    (str (format fmt-str file-name) status-txt)))
+
+
 (defmethod layout/render! ::p/pane
   [editor rendition {:keys [::p/lens] [[i j] [rows cols] :as shape] ::layout/shape}]
   (let [from-line i
         to-line (dec (+ i rows))
         {:keys [:avi.lenses/viewport-top]
          document-number :avi.lenses/document} (get-in editor [:avi.lenses/lenses lens])
-        document (get-in editor (e/current-document-path editor))
-        text (get-in editor [:avi.documents/documents document-number :avi.documents/text])
+        document (get-in editor [:avi.documents/documents document-number])
+        text (:avi.documents/text document)
         lines (lines/content text)]
     (doseq [n (range (inc (- to-line from-line)))]
       (let [document-line (get lines (+ n viewport-top))
@@ -47,22 +68,10 @@
                                ::width cols
                                ::text line-text
                                ::foreground foreground
-                               ::background :black})))
-    (let [file-name (or (:avi.documents/name document) "[No Name]")
-          {:keys [:avi.lenses/viewport-top] [pi pj] :avi.lenses/point} (get-in editor [:avi.lenses/lenses lens])
-          num-lines (count lines)
-          pos-txt (if (= viewport-top 0)
-                    (str "Top")
-                    (if-not (< (+ viewport-top (dec rows)) num-lines)
-                      (str "End")
-                      (str (int (/ (* viewport-top 100) (- num-lines (dec rows)))) "%")))
-          status-txt (str "  [" (inc pi) "," (inc pj) "]  " pos-txt)
-          filelen (- cols (count status-txt))
-          fmt-str (if (> filelen 0) (str "%-"filelen"."filelen"s" ) (str "%s"))
-          msg-txt (str (format fmt-str file-name) status-txt)]
+                               ::background :black}))
       (copy-blit! rendition {::position [to-line j]
                              ::width cols
-                             ::text msg-txt
+                             ::text (status-text editor lens [rows cols])
                              ::foreground :black
                              ::background :white}))))
 
