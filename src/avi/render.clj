@@ -44,13 +44,17 @@
         document (get-in editor (e/current-document-path editor))
         text (get-in editor [:avi.documents/documents document-number :avi.documents/text])
         lines (lines/content text)]
-    (doseq [i (range (inc (- to-line from-line)))]
-      (let [document-line (get lines (+ i viewport-top))
-            line-color (if document-line
-                         (color/make :white :black)
-                         (color/make :blue :black))
-            line-text (or document-line "~")]
-        (fill-rendition-line! rendition i shape [line-color line-text])))
+    (doseq [n (range (inc (- to-line from-line)))]
+      (let [document-line (get lines (+ n viewport-top))
+            line-text (or document-line "~")
+            foreground (if document-line
+                         :white
+                         :blue)]
+        (copy-blit! rendition {::position [(+ n i) j]
+                               ::width cols
+                               ::text line-text
+                               ::foreground foreground
+                               ::background :black})))
     (let [file-name (or (:avi.documents/name document) "[No Name]")
           {:keys [:avi.lenses/viewport-top] [i j] :avi.lenses/point} (get-in editor [:avi.lenses/lenses lens])
           num-lines (count lines)
