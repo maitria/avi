@@ -10,18 +10,6 @@
   (comp (mapcat p/augmented-root-panes)
         p/all-renderables))
   
-(defmulti render!
-  (fn [editor rendition renderable]
-    (::renderable-type renderable)))
-
-(defmethod render! :default
-  [editor rendition renderable]
-  nil)
-
 (defmulti blits
   (fn [rendition renderable editor rf]
     (::renderable-type renderable)))
-
-(defmethod blits :default
-  [rendition _ _ _]
-  rendition)

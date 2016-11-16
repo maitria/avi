@@ -132,9 +132,6 @@
                    :chars rendered-chars
                    :attrs rendered-attrs
                    :point (point-position editor)}]
-    (run!
-      #(layout/render! editor rendition %)
-      (eduction layout/all-renderables [editor]))
     (transduce
       (comp layout/all-renderables
             (blits editor))
