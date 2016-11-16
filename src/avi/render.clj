@@ -56,18 +56,22 @@
                                ::foreground foreground
                                ::background :black})))
     (let [file-name (or (:avi.documents/name document) "[No Name]")
-          {:keys [:avi.lenses/viewport-top] [i j] :avi.lenses/point} (get-in editor [:avi.lenses/lenses lens])
+          {:keys [:avi.lenses/viewport-top] [pi pj] :avi.lenses/point} (get-in editor [:avi.lenses/lenses lens])
           num-lines (count lines)
           pos-txt (if (= viewport-top 0)
                     (str "Top")
                     (if-not (< (+ viewport-top (dec rows)) num-lines)
                       (str "End")
                       (str (int (/ (* viewport-top 100) (- num-lines (dec rows)))) "%")))
-          status-txt (str "  [" (inc i) "," (inc j) "]  " pos-txt)
+          status-txt (str "  [" (inc pi) "," (inc pj) "]  " pos-txt)
           filelen (- cols (count status-txt))
           fmt-str (if (> filelen 0) (str "%-"filelen"."filelen"s" ) (str "%s"))
           msg-txt (str (format fmt-str file-name) status-txt)]
-       (fill-rendition-line! rendition (dec rows) shape [(color/make :black :white) (str msg-txt)]))))
+      (copy-blit! rendition {::position [to-line j]
+                             ::width cols
+                             ::text msg-txt
+                             ::foreground :black
+                             ::background :white}))))
 
 (defmethod layout/blits ::p/vertical-bar
   [rendition renderable editor rf]
