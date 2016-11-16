@@ -48,32 +48,35 @@
         fmt-str (if (> filelen 0) (str "%-"filelen"."filelen"s" ) (str "%s"))]
     (str (format fmt-str file-name) status-txt)))
 
-
-(defmethod layout/render! ::p/pane
-  [editor rendition {:keys [::p/lens] [[i j] [rows cols] :as shape] ::layout/shape}]
-  (let [from-line i
+(defmethod layout/blits ::p/pane
+  [rendition renderable editor rf]
+  (let [{:keys [::p/lens] [[i j] [rows cols] :as shape] ::layout/shape} renderable
+        from-line i
         to-line (dec (+ i rows))
         {:keys [:avi.lenses/viewport-top]
          document-number :avi.lenses/document} (get-in editor [:avi.lenses/lenses lens])
         document (get-in editor [:avi.documents/documents document-number])
         text (:avi.documents/text document)
         lines (lines/content text)]
-    (doseq [n (range (inc (- to-line from-line)))]
-      (let [document-line (get lines (+ n viewport-top))
-            line-text (or document-line "~")
-            foreground (if document-line
-                         :white
-                         :blue)]
-        (copy-blit! rendition {::position [(+ n i) j]
-                               ::width cols
-                               ::text line-text
-                               ::foreground foreground
-                               ::background :black}))
-      (copy-blit! rendition {::position [to-line j]
+    (-> (reduce
+          (fn [rendition n]
+            (let [document-line (get lines (+ n viewport-top))
+                  line-text (or document-line "~")
+                  foreground (if document-line
+                               :white
+                               :blue)]
+              (rf rendition {::position [(+ n i) j]
                              ::width cols
-                             ::text (status-text editor lens [rows cols])
-                             ::foreground :black
-                             ::background :white}))))
+                             ::text line-text
+                             ::foreground foreground
+                             ::background :black})))
+          rendition
+          (range (inc (- to-line from-line))))
+      (rf {::position [to-line j]
+           ::width cols
+           ::text (status-text editor lens [rows cols])
+           ::foreground :black
+           ::background :white}))))
 
 (defmethod layout/blits ::p/vertical-bar
   [rendition renderable editor rf]
