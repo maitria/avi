@@ -74,16 +74,25 @@
 
 (defn render-message-line!
   [editor rendition]
-  (let [{:keys [::layout/shape]} editor
-        [_ [height]] (::layout/shape editor)
-        i (dec height)]
-    (cond
-      (and (:prompt editor) (:command-line editor))
-      (fill-rendition-line! rendition i shape [(color/make :white :black) (str (:prompt editor) (:command-line editor))])
+  (let [[_ [rows cols]] (::layout/shape editor)
+        i (dec rows)
+        blit (merge (cond
+                      (and (:prompt editor) (:command-line editor))
+                      {::position [i 0]
+                       ::width cols
+                       ::text (str (:prompt editor) (:command-line editor))
+                       ::foreground :white
+                       ::background :black}
 
-      (:message editor)
-      (let [[foreground background text] (:message editor)]
-        (fill-rendition-line! rendition i shape [(color/make foreground background) text])))))
+                      (:message editor)
+                      (let [[foreground background text] (:message editor)]
+                        {::position [i 0]
+                         ::width cols
+                         ::text text
+                         ::foreground foreground
+                         ::background background})))]
+    (when blit
+      (copy-blit! rendition blit))))
 
 (defn render
   [editor]
