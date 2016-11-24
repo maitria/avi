@@ -4,6 +4,7 @@
 
 (s/def ::position (s/tuple nat-int? nat-int?))
 (s/def ::width nat-int?)
+(s/def ::text string?)
 
 (s/def ::shape (s/tuple ::position
                         (s/tuple nat-int? nat-int?)))

@@ -19,7 +19,7 @@
     rendered-chars :chars,
     rendered-attrs :attrs
     :as rendition}
-   {:keys [::layout/width ::foreground ::background ::text]
+   {:keys [::layout/width ::foreground ::background ::layout/text]
     [i j] ::layout/position}]
   (let [start (+ j (* i rendition-width))
         text-size (count text)
@@ -67,14 +67,14 @@
                                :blue)]
               (rf rendition {::layout/position [(+ n i) j]
                              ::layout/width cols
-                             ::text line-text
+                             ::layout/text line-text
                              ::foreground foreground
                              ::background :black})))
           rendition
           (range (inc (- to-line from-line))))
       (rf {::layout/position [to-line j]
            ::layout/width cols
-           ::text (status-text editor lens [rows cols])
+           ::layout/text (status-text editor lens [rows cols])
            ::foreground :black
            ::background :white}))))
 
@@ -85,7 +85,7 @@
       (fn [rendition n]
         (rf rendition {::layout/position [(+ i n) j]
                        ::layout/width cols
-                       ::text "|"
+                       ::layout/text "|"
                        ::foreground :black
                        ::background :white}))
       rendition
@@ -99,7 +99,7 @@
                       (and (:prompt editor) (:command-line editor))
                       {::layout/position [i 0]
                        ::layout/width cols
-                       ::text (str (:prompt editor) (:command-line editor))
+                       ::layout/text (str (:prompt editor) (:command-line editor))
                        ::foreground :white
                        ::background :black}
 
@@ -107,7 +107,7 @@
                       (let [[foreground background text] (:message editor)]
                         {::layout/position [i 0]
                          ::layout/width cols
-                         ::text text
+                         ::layout/text text
                          ::foreground foreground
                          ::background background})))]
     (when blit
