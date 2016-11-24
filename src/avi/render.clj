@@ -19,7 +19,7 @@
     rendered-chars :chars,
     rendered-attrs :attrs
     :as rendition}
-   {:keys [::layout/width ::foreground ::background ::layout/text]
+   {:keys [::layout/width ::layout/foreground ::background ::layout/text]
     [i j] ::layout/position}]
   (let [start (+ j (* i rendition-width))
         text-size (count text)
@@ -68,14 +68,14 @@
               (rf rendition {::layout/position [(+ n i) j]
                              ::layout/width cols
                              ::layout/text line-text
-                             ::foreground foreground
+                             ::layout/foreground foreground
                              ::background :black})))
           rendition
           (range (inc (- to-line from-line))))
       (rf {::layout/position [to-line j]
            ::layout/width cols
            ::layout/text (status-text editor lens [rows cols])
-           ::foreground :black
+           ::layout/foreground :black
            ::background :white}))))
 
 (defmethod layout/blits ::p/vertical-bar
@@ -86,7 +86,7 @@
         (rf rendition {::layout/position [(+ i n) j]
                        ::layout/width cols
                        ::layout/text "|"
-                       ::foreground :black
+                       ::layout/foreground :black
                        ::background :white}))
       rendition
       (range rows))))
@@ -100,7 +100,7 @@
                       {::layout/position [i 0]
                        ::layout/width cols
                        ::layout/text (str (:prompt editor) (:command-line editor))
-                       ::foreground :white
+                       ::layout/foreground :white
                        ::background :black}
 
                       (:message editor)
@@ -108,7 +108,7 @@
                         {::layout/position [i 0]
                          ::layout/width cols
                          ::layout/text text
-                         ::foreground foreground
+                         ::layout/foreground foreground
                          ::background background})))]
     (when blit
       (copy-blit! rendition blit))))

@@ -1,5 +1,6 @@
 (ns avi.color
-  (:require [clojure.set :refer [map-invert]]))
+  (:require [clojure.set :refer [map-invert]]
+            [clojure.spec :as s]))
 
 (def color->number
   {:black 0
@@ -10,6 +11,9 @@
    :magenta 5
    :cyan 6
    :white 7})
+
+(def color-keyword? (into #{} (keys color->number)))
+(s/def ::color color-keyword?)
 
 (def number->color
   (map-invert color->number))
