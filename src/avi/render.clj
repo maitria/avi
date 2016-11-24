@@ -98,27 +98,32 @@
       rendition
       (range rows))))
 
-(defn render-message-line!
-  [editor rendition]
-  (let [[_ [rows cols]] (::layout/shape editor)
-        i (dec rows)
-        blit (merge (cond
-                      (and (:prompt editor) (:command-line editor))
-                      {::layout/position [i 0]
-                       ::layout/width cols
-                       ::layout/text (str (:prompt editor) (:command-line editor))
-                       ::layout/foreground :white
-                       ::layout/background :black}
+(defmethod layout/blit-producer :message-line
+  [rf]
+  (fn
+    ([] (rf))
+    ([result] (rf result))
+    ([result editor]
+     (let [[_ [rows cols]] (::layout/shape editor)
+           i (dec rows)
+           blit (cond
+                  (and (:prompt editor) (:command-line editor))
+                  {::layout/position [i 0]
+                   ::layout/width cols
+                   ::layout/text (str (:prompt editor) (:command-line editor))
+                   ::layout/foreground :white
+                   ::layout/background :black}
 
-                      (:message editor)
-                      (let [[foreground background text] (:message editor)]
-                        {::layout/position [i 0]
-                         ::layout/width cols
-                         ::layout/text text
-                         ::layout/foreground foreground
-                         ::layout/background background})))]
-    (when blit
-      (copy-blit! rendition blit))))
+                  (:message editor)
+                  (let [[foreground background text] (:message editor)]
+                    {::layout/position [i 0]
+                     ::layout/width cols
+                     ::layout/text text
+                     ::layout/foreground foreground
+                     ::layout/background background}))]
+       (if blit
+         (rf result blit)
+         result)))))
 
 (defn blits
   [editor]
@@ -145,8 +150,7 @@
       (completing copy-blit!)
       rendition
       [editor])
-    (render-message-line! editor rendition)
-    rendition))
+    (transduce layout/all-blits (completing copy-blit!) rendition [editor])))
 
 (defn rendered
   [editor]
