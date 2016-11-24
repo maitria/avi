@@ -1,11 +1,14 @@
 (ns avi.render
  (:import [java.util Arrays])
  (:require [clojure.set :refer [map-invert]]
+           [clojure.spec :as s]
            [avi.editor :as e]
            [avi.edit-context.lines :as lines]
            [avi.color :as color]
            [avi.layout :as layout]
            [avi.layout.panes :as p]))
+
+(s/def ::rendition map?)
 
 (defn- point-position
   [{:keys [:avi.editor/mode] :as editor}]
@@ -14,6 +17,10 @@
       [(dec height) (inc (count (:command-line editor)))])
     (p/point-position editor)))
 
+(s/fdef copy-blit!
+  :args (s/cat :rendition ::rendition
+               :blit ::layout/blit)
+  :ret ::rendition)
 (defn copy-blit!
   [{rendition-width :width,
     rendered-chars :chars,
