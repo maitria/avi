@@ -20,7 +20,7 @@
     rendered-attrs :attrs
     :as rendition}
    {:keys [::width ::foreground ::background ::text]
-    [i j] ::position}]
+    [i j] ::layout/position}]
   (let [start (+ j (* i rendition-width))
         text-size (count text)
         attrs (color/make foreground background)]
@@ -65,14 +65,14 @@
                   foreground (if document-line
                                :white
                                :blue)]
-              (rf rendition {::position [(+ n i) j]
+              (rf rendition {::layout/position [(+ n i) j]
                              ::width cols
                              ::text line-text
                              ::foreground foreground
                              ::background :black})))
           rendition
           (range (inc (- to-line from-line))))
-      (rf {::position [to-line j]
+      (rf {::layout/position [to-line j]
            ::width cols
            ::text (status-text editor lens [rows cols])
            ::foreground :black
@@ -83,7 +83,7 @@
   (let [{[[i j] [rows cols] :as shape] ::layout/shape} renderable]
     (reduce
       (fn [rendition n]
-        (rf rendition {::position [(+ i n) j]
+        (rf rendition {::layout/position [(+ i n) j]
                        ::width cols
                        ::text "|"
                        ::foreground :black
@@ -97,7 +97,7 @@
         i (dec rows)
         blit (merge (cond
                       (and (:prompt editor) (:command-line editor))
-                      {::position [i 0]
+                      {::layout/position [i 0]
                        ::width cols
                        ::text (str (:prompt editor) (:command-line editor))
                        ::foreground :white
@@ -105,7 +105,7 @@
 
                       (:message editor)
                       (let [[foreground background text] (:message editor)]
-                        {::position [i 0]
+                        {::layout/position [i 0]
                          ::width cols
                          ::text text
                          ::foreground foreground
