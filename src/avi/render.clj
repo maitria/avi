@@ -19,7 +19,7 @@
     rendered-chars :chars,
     rendered-attrs :attrs
     :as rendition}
-   {:keys [::width ::foreground ::background ::text]
+   {:keys [::layout/width ::foreground ::background ::text]
     [i j] ::layout/position}]
   (let [start (+ j (* i rendition-width))
         text-size (count text)
@@ -66,14 +66,14 @@
                                :white
                                :blue)]
               (rf rendition {::layout/position [(+ n i) j]
-                             ::width cols
+                             ::layout/width cols
                              ::text line-text
                              ::foreground foreground
                              ::background :black})))
           rendition
           (range (inc (- to-line from-line))))
       (rf {::layout/position [to-line j]
-           ::width cols
+           ::layout/width cols
            ::text (status-text editor lens [rows cols])
            ::foreground :black
            ::background :white}))))
@@ -84,7 +84,7 @@
     (reduce
       (fn [rendition n]
         (rf rendition {::layout/position [(+ i n) j]
-                       ::width cols
+                       ::layout/width cols
                        ::text "|"
                        ::foreground :black
                        ::background :white}))
@@ -98,7 +98,7 @@
         blit (merge (cond
                       (and (:prompt editor) (:command-line editor))
                       {::layout/position [i 0]
-                       ::width cols
+                       ::layout/width cols
                        ::text (str (:prompt editor) (:command-line editor))
                        ::foreground :white
                        ::background :black}
@@ -106,7 +106,7 @@
                       (:message editor)
                       (let [[foreground background text] (:message editor)]
                         {::layout/position [i 0]
-                         ::width cols
+                         ::layout/width cols
                          ::text text
                          ::foreground foreground
                          ::background background})))]
