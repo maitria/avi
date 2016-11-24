@@ -19,7 +19,7 @@
     rendered-chars :chars,
     rendered-attrs :attrs
     :as rendition}
-   {:keys [::layout/width ::layout/foreground ::background ::layout/text]
+   {:keys [::layout/width ::layout/foreground ::layout/background ::layout/text]
     [i j] ::layout/position}]
   (let [start (+ j (* i rendition-width))
         text-size (count text)
@@ -69,14 +69,14 @@
                              ::layout/width cols
                              ::layout/text line-text
                              ::layout/foreground foreground
-                             ::background :black})))
+                             ::layout/background :black})))
           rendition
           (range (inc (- to-line from-line))))
       (rf {::layout/position [to-line j]
            ::layout/width cols
            ::layout/text (status-text editor lens [rows cols])
            ::layout/foreground :black
-           ::background :white}))))
+           ::layout/background :white}))))
 
 (defmethod layout/blits ::p/vertical-bar
   [rendition renderable editor rf]
@@ -87,7 +87,7 @@
                        ::layout/width cols
                        ::layout/text "|"
                        ::layout/foreground :black
-                       ::background :white}))
+                       ::layout/background :white}))
       rendition
       (range rows))))
 
@@ -101,7 +101,7 @@
                        ::layout/width cols
                        ::layout/text (str (:prompt editor) (:command-line editor))
                        ::layout/foreground :white
-                       ::background :black}
+                       ::layout/background :black}
 
                       (:message editor)
                       (let [[foreground background text] (:message editor)]
@@ -109,7 +109,7 @@
                          ::layout/width cols
                          ::layout/text text
                          ::layout/foreground foreground
-                         ::background background})))]
+                         ::layout/background background})))]
     (when blit
       (copy-blit! rendition blit))))
 

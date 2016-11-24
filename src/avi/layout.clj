@@ -6,6 +6,7 @@
 (s/def ::width nat-int?)
 (s/def ::text string?)
 (s/def ::foreground :avi.color/color)
+(s/def ::background :avi.color/color)
 
 (s/def ::shape (s/tuple ::position
                         (s/tuple nat-int? nat-int?)))
