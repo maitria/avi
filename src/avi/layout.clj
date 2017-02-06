@@ -1,6 +1,7 @@
 (ns avi.layout
-  (:require [avi.layout.panes :as p]
-            [clojure.spec :as s]))
+ (:require [avi.color]
+           [avi.layout.panes :as p]
+           [clojure.spec :as s]))
 
 ;; A blit is a one atomic unit drawn to the text buffer.  For efficiency's
 ;; sake, it is a string, which cannot span lines, and all of the cells have
