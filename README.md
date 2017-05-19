@@ -1,5 +1,7 @@
 # avi
 
+https://github.com/maitria/avi
+
 A lively vi.
 
 ## Vision
