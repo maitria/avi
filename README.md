@@ -43,7 +43,7 @@ $ lein midje :print-facts
 ## Installing
 
 * Works with Leiningen 2.3.4
-* On Linux, `libncursesw5-dev` or equivalent must be installed.
+* On Linux, `gcc` and `libncursesw5-dev` or equivalent must be installed.
 
 ```
 $ git clone https://github.com/maitria/avi.git
